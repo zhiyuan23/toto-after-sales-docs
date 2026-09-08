@@ -1,12 +1,14 @@
 # 售后服务 gaia-ui 目录与菜单设计
 
-- 版本：V1.0
-- 更新日期：2026-09-07
-- 文档状态：菜单设计基线
+- 版本：V2.0
+- 更新日期：2026-09-08
+- 文档状态：V2 前端已实施；权威菜单与正式账号待分发联调
 - 适用范围：统一管理后台、代理商工作台
 - 需求依据：[TOTO 系统调研 ProcessOn 流程图](https://www.processon.com/f/6a681a83e50b43092180ded9#TOTO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94)、[页面清单](../01-功能需求/08-页面清单.md)及各端需求文档
 
 本文确定统一管理后台和代理商工作台在 `gaia-ui` 中的导航归属、菜单名称、页面目录和角色可见范围。菜单设计以原调研图为主，但将原图中的流程步骤、详情页和上传页从侧栏菜单中移出，以便形成面向业务对象和日常任务的稳定信息架构。
+
+当前导航以[后台菜单与角色权限手册](../04-业务阅读/05-后台菜单与角色权限手册.md)为准。程序已接入四个工作视角、授权菜单投影、默认首页与直达校验；原有 10 个业务域仅保留为唯一注册和代码存储结构。实施范围及验证边界见[V2 菜单实施记录](../specs/2026-09-08-多角色菜单V2实施.md)。
 
 ## 1. 已确认的总体方案
 
@@ -18,8 +20,8 @@
 | 顶部菜单代码 | `afterSales` |
 | 页面根目录 | `src/views/afterSales/` |
 | 导航层级 | 顶部一级菜单 → 左侧业务分组 → 功能菜单；详情、编辑、扫码填写、签名等作为隐藏路由或页面内流程 |
-| 权限方式 | 共用一棵菜单树，按总部、客服、服务站、代理商/门店等角色分配菜单、按钮、接口和数据范围 |
-| 默认首页 | 按角色进入运营概览、服务站工作台或门店工作台，不为代理商单独建设登录页 |
+| 权限方式 | 唯一注册功能树；按总部运营、客服作业、服务站作业、门店业务投影已授权功能；管理员可查看全部 |
+| 默认首页 | 按视角进入运营概览、服务受理、服务站工作台或门店工作台，不为代理商单独建设登录页 |
 | 门店切换 | 放在门店工作台页头或全局业务上下文，不作为左侧菜单 |
 | 菜单来源 | 继续由 `/api/sys/Module/tree` 返回动态菜单，菜单节点指向 `src/views/<path>/index.vue` |
 
@@ -28,85 +30,126 @@
 ## 2. 命名原则
 
 1. 一级菜单使用通用 SaaS 领域名称“**售后服务**”，不包含具体租户或品牌名称，也不使用“管理后台”“代理商系统”等技术或角色名称。
-2. 业务分组使用稳定领域名，例如“客户服务、顾客与预约、渠道与网点”；功能菜单使用“对象 + 动作/用途”，例如“工单管理、派单调度”。
+2. 导航分组按岗位任务组织，例如“运营分析、服务办理、本站服务、门店服务”；功能名称、code 和 path 保持稳定。
 3. 同一概念只使用一个词：统一使用“顾客”而非顾客/客户混用；“客户服务”仅表示客服业务域；统一使用“服务人员”而非师傅/安装师傅。
 4. 原图“售后网点管理”改为“服务站管理”，“服务商品管理”改为“服务项目”，“商品条码异常查询”简化为“条码异常”。
 5. “管理”用于可增删改的主业务对象，“查询”用于只读检索，“工作台”用于待办与概览，“配置”用于规则或参数。
 6. 列表、详情、创建、编辑原则上属于同一功能菜单；商品图片、顾客扫码填写、隐私签名、退货确认等不单独占用侧栏菜单。
 7. 菜单显示名称使用简体中文；目录与路径使用有业务含义的英文 camelCase，菜单代码统一使用 `afs` 前缀，避免与 Gaia 既有模块冲突。
 
-## 3. 完整菜单树
+## 3. V2 完整菜单树
+
+工作视角放在页头选择器，侧栏只显示当前视角的“分组 → 功能”；不是新增顶部菜单。
 
 ```text
-售后服务
-├── 工作台
-│   ├── 运营概览
-│   ├── 服务站工作台
-│   └── 门店工作台
-├── 客户服务
-│   ├── 服务受理
-│   ├── 工单管理
-│   ├── 派单调度
-│   ├── 异常工单
-│   ├── 完工审核
-│   ├── 回访管理
-│   ├── 服务知识库
-│   ├── 投诉管理
-│   └── 服务结算（范围待确认）
-├── 顾客与预约
-│   ├── 顾客档案
-│   ├── 预约管理
-│   ├── 顾客登记
-│   ├── 门店顾客
-│   └── 门店预约
-├── 渠道与网点
-│   ├── 代理商管理
-│   ├── 门店管理
-│   ├── 家装公司
-│   ├── 服务站管理
-│   └── 服务区域
-├── 商品与服务
-│   ├── 商品分类
-│   ├── 商品档案
-│   ├── 商品系列
-│   ├── 配套品管理
-│   ├── 服务项目
-│   └── 配件档案
-├── 服务资源
-│   ├── 服务人员
-│   ├── 排班管理
-│   └── 服务质量
-├── 配件库存
-│   ├── 库存台账
-│   ├── 领料管理
-│   ├── 退料管理
-│   ├── 调拨管理
-│   ├── 工单耗用
-│   └── 盘点管理
-├── 防窜货
-│   ├── 防窜货查询
-│   ├── 条码异常
-│   ├── 安装码管理
-│   ├── 异常复核
-│   └── 防窜货规则
-├── 会员运营
-│   ├── 会员档案
-│   ├── 标签管理
-│   ├── 消息推送
-│   ├── 服务评价
-│   └── 产品问卷
-└── 数据中心
-    ├── 运营报表
-    └── 数据任务
+蓝鲸数字
+└── 售后服务
+    ├── 总部运营（工作视角） [管理员、总部]
+    │   ├── 运营分析
+    │   │   ├── 运营概览 [管理员、总部]
+    │   │   ├── 运营报表 [管理员、总部]
+    │   │   ├── 服务质量 [管理员、总部]
+    │   │   └── 服务评价 [管理员、总部]
+    │   ├── 渠道与服务网络
+    │   │   ├── 代理商管理 [管理员、总部]
+    │   │   ├── 门店管理 [管理员、总部]
+    │   │   ├── 家装公司 [管理员、总部]
+    │   │   ├── 服务站管理 [管理员、总部]
+    │   │   └── 服务区域 [管理员、总部]
+    │   ├── 商品与服务
+    │   │   ├── 商品分类 [管理员、总部]
+    │   │   ├── 商品档案 [管理员、总部]
+    │   │   ├── 商品系列 [管理员、总部]
+    │   │   ├── 配套品管理 [管理员、总部]
+    │   │   ├── 服务项目 [管理员、总部]
+    │   │   └── 配件档案 [管理员、总部]
+    │   ├── 顾客与服务
+    │   │   ├── 顾客档案 [管理员、总部]
+    │   │   ├── 预约管理 [管理员、总部]
+    │   │   ├── 工单管理 [管理员、总部]
+    │   │   └── 安装码管理 [管理员、总部]
+    │   ├── 防窜货
+    │   │   ├── 防窜货查询 [管理员、总部]
+    │   │   ├── 条码异常 [管理员、总部]
+    │   │   ├── 异常复核 [管理员、总部]
+    │   │   └── 防窜货规则 [管理员、总部]
+    │   ├── 配件管理
+    │   │   ├── 库存台账 [管理员、总部]
+    │   │   ├── 领料管理 [管理员、总部]
+    │   │   ├── 退料管理 [管理员、总部]
+    │   │   ├── 调拨管理 [管理员、总部]
+    │   │   ├── 工单耗用 [管理员、总部]
+    │   │   └── 盘点管理 [管理员、总部]
+    │   ├── 会员运营
+    │   │   ├── 会员档案 [管理员、总部]
+    │   │   ├── 标签管理 [管理员、总部]
+    │   │   ├── 消息推送 [管理员、总部]
+    │   │   └── 产品问卷 [管理员、总部]
+    │   └── 数据与结算
+    │       ├── 数据任务 [管理员、总部]
+    │       └── 服务结算 [管理员]（待启用；总部角色暂不开放）
+    ├── 客服作业（工作视角） [管理员、客服主管、客服专员]
+    │   ├── 服务办理
+    │   │   ├── 服务受理 [管理员、客服主管、客服专员]
+    │   │   ├── 工单管理 [管理员、客服主管、客服专员]
+    │   │   ├── 预约管理 [管理员、客服主管、客服专员]
+    │   │   ├── 派单调度 [管理员、客服主管]
+    │   │   ├── 异常工单 [管理员、客服主管、客服专员]
+    │   │   ├── 完工审核 [管理员、客服主管]
+    │   │   ├── 回访管理 [管理员、客服主管、客服专员]
+    │   │   └── 投诉管理 [管理员、客服主管、客服专员]
+    │   ├── 顾客查询
+    │   │   ├── 顾客档案 [管理员、客服主管、客服专员]
+    │   │   └── 安装码管理 [管理员、客服主管、客服专员]
+    │   ├── 资料参考
+    │   │   ├── 商品档案 [管理员、客服主管、客服专员]
+    │   │   ├── 服务项目 [管理员、客服主管、客服专员]
+    │   │   └── 服务知识库 [管理员、客服主管、客服专员]
+    │   └── 服务分析
+    │       ├── 运营概览 [管理员、客服主管、客服专员]
+    │       ├── 服务质量 [管理员、客服主管、客服专员]
+    │       ├── 服务评价 [管理员、客服主管、客服专员]
+    │       └── 运营报表 [管理员、客服主管、客服专员]
+    ├── 服务站作业（工作视角） [管理员、站点]
+    │   ├── 本站服务
+    │   │   ├── 服务站工作台 [管理员、站点]
+    │   │   ├── 工单管理 [管理员、站点]
+    │   │   ├── 预约管理 [管理员、站点]
+    │   │   ├── 派单调度 [管理员、站点]
+    │   │   ├── 异常工单 [管理员、站点]
+    │   │   └── 完工审核 [管理员、站点]
+    │   ├── 人员安排
+    │   │   ├── 服务人员 [管理员、站点]
+    │   │   └── 排班管理 [管理员、站点]
+    │   ├── 配件管理
+    │   │   ├── 配件档案 [管理员、站点]
+    │   │   ├── 库存台账 [管理员、站点]
+    │   │   ├── 领料管理 [管理员、站点]
+    │   │   ├── 退料管理 [管理员、站点]
+    │   │   ├── 调拨管理 [管理员、站点]
+    │   │   ├── 工单耗用 [管理员、站点]
+    │   │   └── 盘点管理 [管理员、站点]
+    │   ├── 资料参考
+    │   │   └── 服务知识库 [管理员、站点]
+    │   └── 服务分析
+    │       ├── 服务质量 [管理员、站点]
+    │       ├── 服务评价 [管理员、站点]
+    │       └── 运营报表 [管理员、站点]
+    └── 门店业务（工作视角） [管理员、代理商、店员]
+        └── 门店服务
+            ├── 门店工作台 [管理员、代理商、店员]
+            ├── 顾客登记 [管理员、代理商、店员]
+            ├── 门店顾客 [管理员、代理商、店员]
+            └── 门店预约 [管理员、代理商、店员]
 ```
 
-菜单共 10 个业务分组、49 个建议可见功能菜单。角色、用户、业务配置和日志审计不在售后服务下重复建菜单，由蓝鲸数字全局系统能力承接 A46～A53。每个角色只看到授权范围，代理商/门店角色默认只显示 4 个菜单；尚未完成验收的菜单在生产租户保持隐藏。页面清单中的 63 个 Web 入口组用于需求追踪，不等同于 63 个侧栏菜单。
+共 4 个工作视角、18 个展示分组、75 处功能引用，去重为 49 个功能。总部业务角色默认 34 项、客服主管 17 项、客服专员 15 项、站点 19 项、代理商与店员各 4 项；管理员 49 项，服务结算只显示待启用状态。63 个 Web 需求入口分母不变。
 
 ## 4. 菜单节点、路径和需求入口映射
 
-角色缩写：`总部` 为品牌方管理与运营人员，`客服` 为客服中心，`站点` 为服务站管理人员，`门店` 为代理商及门店人员，`系统` 为系统管理员。角色列是初始建议，最终以后续角色权限矩阵为准。
+下表按原有存储目录列出唯一功能注册，**不表示运行侧栏分组**。角色列已按 V2 查看矩阵更新；查看不包含写操作，管理员全查看仍受租户和业务数据范围限制。
 
-### 4.0 顶部菜单与分组节点
+### 4.0 顶部菜单与存储分组节点
 
 | 层级／名称 | 菜单代码 | path／页面目录 | 说明 |
 | --- | --- | --- | --- |
@@ -126,33 +169,33 @@
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 运营概览 | `afsDashboardOverview` | `afterSales/dashboard/overview` | A01 | 总部、客服、系统 |
-| 服务站工作台 | `afsDashboardStation` | `afterSales/dashboard/serviceStation` | A02 | 总部、客服、站点 |
-| 门店工作台 | `afsDashboardDealer` | `afterSales/dashboard/dealer` | D02 | 门店 |
+| 运营概览 | `afsDashboardOverview` | `afterSales/dashboard/overview` | A01 | 管理员、总部、客服主管、客服专员 |
+| 服务站工作台 | `afsDashboardStation` | `afterSales/dashboard/serviceStation` | A02 | 管理员、服务站管理员 |
+| 门店工作台 | `afsDashboardDealer` | `afterSales/dashboard/dealer` | D02 | 管理员、代理商管理员、门店店员 |
 
 ### 4.2 客户服务
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 服务受理 | `afsServiceIntake` | `afterSales/customerService/intake` | A17 | 客服、总部 |
-| 工单管理 | `afsWorkOrder` | `afterSales/customerService/workOrder` | A18 | 客服、总部、站点 |
-| 派单调度 | `afsDispatch` | `afterSales/customerService/dispatch` | A19 | 客服、总部、站点 |
-| 异常工单 | `afsWorkOrderException` | `afterSales/customerService/exception` | A20 | 客服、总部、站点 |
-| 完工审核 | `afsCompletionReview` | `afterSales/customerService/completionReview` | A21 | 客服、总部、站点 |
-| 回访管理 | `afsFollowUp` | `afterSales/customerService/followUp` | A22 | 客服、总部 |
-| 服务知识库 | `afsKnowledgeBase` | `afterSales/customerService/knowledgeBase` | A23 | 客服、总部、站点 |
-| 投诉管理 | `afsComplaint` | `afterSales/customerService/complaint` | A24 | 客服、总部 |
-| 服务结算 | `afsSettlement` | `afterSales/customerService/settlement` | A25 | 总部、系统 |
+| 服务受理 | `afsServiceIntake` | `afterSales/customerService/intake` | A17 | 管理员、客服主管、客服专员 |
+| 工单管理 | `afsWorkOrder` | `afterSales/customerService/workOrder` | A18 | 管理员、总部、客服主管、客服专员、服务站管理员 |
+| 派单调度 | `afsDispatch` | `afterSales/customerService/dispatch` | A19 | 管理员、客服主管、服务站管理员 |
+| 异常工单 | `afsWorkOrderException` | `afterSales/customerService/exception` | A20 | 管理员、客服主管、客服专员、服务站管理员 |
+| 完工审核 | `afsCompletionReview` | `afterSales/customerService/completionReview` | A21 | 管理员、客服主管、服务站管理员 |
+| 回访管理 | `afsFollowUp` | `afterSales/customerService/followUp` | A22 | 管理员、客服主管、客服专员 |
+| 服务知识库 | `afsKnowledgeBase` | `afterSales/customerService/knowledgeBase` | A23 | 管理员、客服主管、客服专员、服务站管理员 |
+| 投诉管理 | `afsComplaint` | `afterSales/customerService/complaint` | A24 | 管理员、客服主管、客服专员 |
+| 服务结算 | `afsSettlement` | `afterSales/customerService/settlement` | A25 | 管理员 |
 
 ### 4.3 顾客与预约
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 顾客档案 | `afsCustomerArchive` | `afterSales/customer/customerArchive` | A15 | 总部、客服 |
-| 预约管理 | `afsAppointment` | `afterSales/customer/appointment` | A16 | 总部、客服、站点 |
-| 顾客登记 | `afsDealerRegistration` | `afterSales/customer/dealerRegistration` | D03、D04 | 门店 |
-| 门店顾客 | `afsDealerCustomer` | `afterSales/customer/dealerCustomer` | D07 | 门店 |
-| 门店预约 | `afsDealerAppointment` | `afterSales/customer/dealerAppointment` | D08 | 门店 |
+| 顾客档案 | `afsCustomerArchive` | `afterSales/customer/customerArchive` | A15 | 管理员、总部、客服主管、客服专员 |
+| 预约管理 | `afsAppointment` | `afterSales/customer/appointment` | A16 | 管理员、总部、客服主管、客服专员、服务站管理员 |
+| 顾客登记 | `afsDealerRegistration` | `afterSales/customer/dealerRegistration` | D03、D04 | 管理员、代理商管理员、门店店员 |
+| 门店顾客 | `afsDealerCustomer` | `afterSales/customer/dealerCustomer` | D07 | 管理员、代理商管理员、门店店员 |
+| 门店预约 | `afsDealerAppointment` | `afterSales/customer/dealerAppointment` | D08 | 管理员、代理商管理员、门店店员 |
 
 “顾客登记”页面内选择线下门店或虚拟门店登记类型。D05 顾客扫码填写和 D06 隐私签名属于该流程的隐藏页面；D01 沿用 Gaia 登录，并将授权门店选择实现为登录后业务上下文或页头切换器。
 
@@ -160,22 +203,22 @@
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 代理商管理 | `afsDealer` | `afterSales/network/dealer` | A03 | 总部、系统 |
-| 门店管理 | `afsStore` | `afterSales/network/store` | A04 | 总部、系统 |
-| 家装公司 | `afsDecorationCompany` | `afterSales/network/decorationCompany` | A05 | 总部 |
-| 服务站管理 | `afsServiceStation` | `afterSales/network/serviceStation` | A06 | 总部、系统 |
-| 服务区域 | `afsServiceArea` | `afterSales/network/serviceArea` | A07 | 总部、系统 |
+| 代理商管理 | `afsDealer` | `afterSales/network/dealer` | A03 | 管理员、总部 |
+| 门店管理 | `afsStore` | `afterSales/network/store` | A04 | 管理员、总部 |
+| 家装公司 | `afsDecorationCompany` | `afterSales/network/decorationCompany` | A05 | 管理员、总部 |
+| 服务站管理 | `afsServiceStation` | `afterSales/network/serviceStation` | A06 | 管理员、总部 |
+| 服务区域 | `afsServiceArea` | `afterSales/network/serviceArea` | A07 | 管理员、总部 |
 
 ### 4.5 商品与服务
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 商品分类 | `afsProductCategory` | `afterSales/catalog/category` | A08 | 总部、系统 |
-| 商品档案 | `afsProduct` | `afterSales/catalog/product` | A09、A11 | 总部、客服、系统 |
-| 商品系列 | `afsProductSeries` | `afterSales/catalog/series` | A10 | 总部、系统 |
-| 配套品管理 | `afsProductBundle` | `afterSales/catalog/bundle` | A12 | 总部、系统 |
-| 服务项目 | `afsServiceItem` | `afterSales/catalog/serviceItem` | A13 | 总部、客服、系统 |
-| 配件档案 | `afsPart` | `afterSales/catalog/part` | A29 | 总部、站点、系统 |
+| 商品分类 | `afsProductCategory` | `afterSales/catalog/category` | A08 | 管理员、总部 |
+| 商品档案 | `afsProduct` | `afterSales/catalog/product` | A09、A11 | 管理员、总部、客服主管、客服专员 |
+| 商品系列 | `afsProductSeries` | `afterSales/catalog/series` | A10 | 管理员、总部 |
+| 配套品管理 | `afsProductBundle` | `afterSales/catalog/bundle` | A12 | 管理员、总部 |
+| 服务项目 | `afsServiceItem` | `afterSales/catalog/serviceItem` | A13 | 管理员、总部、客服主管、客服专员 |
+| 配件档案 | `afsPart` | `afterSales/catalog/part` | A29 | 管理员、总部、服务站管理员 |
 
 A11 商品图片并入“商品档案”的详情/编辑页，不再单列“商品图上传”菜单；上传仍保留文件类型、大小、病毒和权限校验要求。
 
@@ -183,40 +226,40 @@ A11 商品图片并入“商品档案”的详情/编辑页，不再单列“商
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 服务人员 | `afsServicePersonnel` | `afterSales/serviceResource/personnel` | A26 | 总部、站点、系统 |
-| 排班管理 | `afsSchedule` | `afterSales/serviceResource/schedule` | A27 | 总部、站点 |
-| 服务质量 | `afsServiceQuality` | `afterSales/serviceResource/quality` | A28 | 总部、客服、站点 |
+| 服务人员 | `afsServicePersonnel` | `afterSales/serviceResource/personnel` | A26 | 管理员、服务站管理员 |
+| 排班管理 | `afsSchedule` | `afterSales/serviceResource/schedule` | A27 | 管理员、服务站管理员 |
+| 服务质量 | `afsServiceQuality` | `afterSales/serviceResource/quality` | A28 | 管理员、总部、客服主管、客服专员、服务站管理员 |
 
 ### 4.7 配件库存
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 库存台账 | `afsPartStock` | `afterSales/inventory/stock` | A30 | 总部、站点 |
-| 领料管理 | `afsPartRequisition` | `afterSales/inventory/requisition` | A31 | 总部、站点 |
-| 退料管理 | `afsPartReturn` | `afterSales/inventory/return` | A32 | 总部、站点 |
-| 调拨管理 | `afsPartTransfer` | `afterSales/inventory/transfer` | A33 | 总部、站点 |
-| 工单耗用 | `afsPartConsumption` | `afterSales/inventory/consumption` | A34 | 总部、站点 |
-| 盘点管理 | `afsStocktake` | `afterSales/inventory/stocktake` | A35 | 总部、站点 |
+| 库存台账 | `afsPartStock` | `afterSales/inventory/stock` | A30 | 管理员、总部、服务站管理员 |
+| 领料管理 | `afsPartRequisition` | `afterSales/inventory/requisition` | A31 | 管理员、总部、服务站管理员 |
+| 退料管理 | `afsPartReturn` | `afterSales/inventory/return` | A32 | 管理员、总部、服务站管理员 |
+| 调拨管理 | `afsPartTransfer` | `afterSales/inventory/transfer` | A33 | 管理员、总部、服务站管理员 |
+| 工单耗用 | `afsPartConsumption` | `afterSales/inventory/consumption` | A34 | 管理员、总部、服务站管理员 |
+| 盘点管理 | `afsStocktake` | `afterSales/inventory/stocktake` | A35 | 管理员、总部、服务站管理员 |
 
 ### 4.8 防窜货
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 防窜货查询 | `afsDiversionSearch` | `afterSales/antiDiversion/search` | A36 | 总部 |
-| 条码异常 | `afsBarcodeException` | `afterSales/antiDiversion/barcodeException` | A37 | 总部 |
-| 安装码管理 | `afsInstallationCode` | `afterSales/antiDiversion/installationCode` | A38 | 总部、客服 |
-| 异常复核 | `afsDiversionReview` | `afterSales/antiDiversion/review` | A39 | 总部 |
-| 防窜货规则 | `afsDiversionRule` | `afterSales/antiDiversion/rule` | A40 | 总部、系统 |
+| 防窜货查询 | `afsDiversionSearch` | `afterSales/antiDiversion/search` | A36 | 管理员、总部 |
+| 条码异常 | `afsBarcodeException` | `afterSales/antiDiversion/barcodeException` | A37 | 管理员、总部 |
+| 安装码管理 | `afsInstallationCode` | `afterSales/antiDiversion/installationCode` | A38 | 管理员、总部、客服主管、客服专员 |
+| 异常复核 | `afsDiversionReview` | `afterSales/antiDiversion/review` | A39 | 管理员、总部 |
+| 防窜货规则 | `afsDiversionRule` | `afterSales/antiDiversion/rule` | A40 | 管理员、总部 |
 
 ### 4.9 会员运营
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 会员档案 | `afsMember` | `afterSales/memberOperation/member` | A41 | 总部、客服 |
-| 标签管理 | `afsMemberTag` | `afterSales/memberOperation/tag` | A14 | 总部 |
-| 消息推送 | `afsMemberPush` | `afterSales/memberOperation/push` | A42、A43 | 总部 |
-| 服务评价 | `afsServiceSurvey` | `afterSales/memberOperation/serviceSurvey` | A44 | 总部、客服、站点 |
-| 产品问卷 | `afsProductSurvey` | `afterSales/memberOperation/productSurvey` | A45 | 总部 |
+| 会员档案 | `afsMember` | `afterSales/memberOperation/member` | A41 | 管理员、总部 |
+| 标签管理 | `afsMemberTag` | `afterSales/memberOperation/tag` | A14 | 管理员、总部 |
+| 消息推送 | `afsMemberPush` | `afterSales/memberOperation/push` | A42、A43 | 管理员、总部 |
+| 服务评价 | `afsServiceSurvey` | `afterSales/memberOperation/serviceSurvey` | A44 | 管理员、总部、客服主管、客服专员、服务站管理员 |
+| 产品问卷 | `afsProductSurvey` | `afterSales/memberOperation/productSurvey` | A45 | 管理员、总部 |
 
 A43 推送结果作为“消息推送”的结果页或页签，不单列侧栏菜单。
 
@@ -224,8 +267,8 @@ A43 推送结果作为“消息推送”的结果页或页签，不单列侧栏�
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 运营报表 | `afsReport` | `afterSales/dataCenter/report` | A54 | 总部、客服、站点 |
-| 数据任务 | `afsDataJob` | `afterSales/dataCenter/job` | A55 | 总部、系统 |
+| 运营报表 | `afsReport` | `afterSales/dataCenter/report` | A54 | 管理员、总部、客服主管、客服专员、服务站管理员 |
+| 数据任务 | `afsDataJob` | `afterSales/dataCenter/job` | A55 | 管理员、总部 |
 
 “数据任务”统一承载导入、导出、预检、错误明细、文件下载和任务状态，避免各业务菜单重复建设导入导出中心。
 
@@ -247,6 +290,7 @@ A43 推送结果作为“消息推送”的结果页或页签，不单列侧栏�
 ```text
 src/views/afterSales/
 ├── index.vue                         # 顶部菜单默认入口，按角色重定向工作台
+├── access/                          # 5 个隐藏导航授权承载页，访问时重定向
 ├── dashboard/
 │   ├── index.vue                     # 分组落地/重定向
 │   ├── overview/index.vue
@@ -320,7 +364,7 @@ src/views/afterSales/
 └── shared/
     ├── components/                   # 售后域内复用组件
     ├── composables/                  # 售后域内组合逻辑
-    ├── constants/                    # 菜单无关的业务常量
+    ├── constants/                    # 功能清单、工作视角、导航与角色模板
     └── types/                        # 售后前端类型
 ```
 
@@ -336,17 +380,22 @@ src/views/afterSales/
 6. 菜单权限、按钮权限、API 权限和数据范围必须同步配置；仅隐藏前端菜单不构成授权控制。
 7. 菜单初始化应幂等，可按租户分配；未验收菜单可在开发/测试租户启用，在生产租户保持隐藏。
 
-## 7. 角色默认导航
+## 7. 角色默认导航与授权来源
 
-| 角色类型 | 默认首页 | 主要可见分组 |
-| --- | --- | --- |
-| 总部管理/运营 | 运营概览 | 除门店专属入口外的授权业务分组 |
-| 客服人员 | 服务受理 | 工作台、客户服务、顾客与预约、商品与服务、服务评价、报表 |
-| 服务站管理人员 | 服务站工作台 | 工作台、工单处理、顾客预约、服务资源、配件库存、服务评价、报表 |
-| 代理商/门店人员 | 门店工作台 | 工作台、顾客登记、门店顾客、门店预约 |
-| 系统管理员 | 运营概览 | 渠道与网点、商品与服务、数据中心及授权业务菜单；权限配置从蓝鲸数字全局入口进入 |
+| 角色 | 工作视角 | 默认首页 | 功能数 |
+| --- | --- | --- | ---: |
+| 管理员／超级管理员 | 全部四个 | 运营概览；可切换视角 | 49 |
+| 总部管理／运营 | 总部运营 | 运营概览 | 34 |
+| 客服主管 | 客服作业 | 服务受理 | 17 |
+| 客服专员 | 客服作业 | 服务受理 | 15 |
+| 服务站管理员 | 服务站作业 | 服务站工作台 | 19 |
+| 代理商管理员、店员 | 门店业务 | 门店工作台 | 各 4 |
 
-同一用户具有多个门店或组织权限时，在页面头部切换当前业务上下文；切换后必须立即刷新按钮权限和数据范围。角色名称、默认首页和可见菜单将在角色权限切片中最终确认。
+正式导航取新鲜 `/api/sys/Module/tree` 的功能授权与隐藏视角授权项的交集，不读取登录页写死的 `roles: ['admin']` 推断管理员。5 个导航授权项见配置清单：`afsNavigationAdministrator` 与四个 `afsWorkspace*`；它们只承载导航授权，不包含业务接口或按钮授权。管理员角色需绑定全部功能与全局能力对应查看权限，前端不会凭管理员标记补出后端未授权的功能。
+
+多角色账号合并功能授权，在当前视角下去重显示。单视角直接进入；多视角恢复本账号仍有效的上次视角，否则采用总部→客服→站点→门店中的第一个有效视角。首页无权时落到第一个授权功能；空视角不显示。旧分组链接转入有效首页，越权功能直达 `/401`。
+
+切换工作视角前提示未保存内容，页面重新挂载；视角偏好不当作授权缓存，登录后重新核对菜单。组织／门店切换、待办数量、全局快捷入口、业务数据范围联动尚待各切片完成，当前选择器只切导航，不改变后端身份。
 
 ## 8. 原调研节点的调整说明
 
@@ -368,13 +417,20 @@ src/views/afterSales/
 | 系统管理中的角色、权限、三类用户、业务配置、两类日志 | 蓝鲸数字全局系统能力承接 | 售后服务保持通用 SaaS 业务菜单，不重复建设系统配置入口 |
 | Excel 导入导出 | 数据任务 | 统一承载异步任务、错误明细和文件生命周期 |
 
-## 9. 实施顺序
+## 9. Gaia 菜单配置与分发
 
-1. 在菜单/权限数据中建立“售后服务”顶部节点及 10 个业务分组，一级菜单排在“数码中心”之后，并先保持生产隐藏。
-2. 按本文件创建 `src/views/afterSales` 目录和 49 个菜单落地入口；范围待确认的“服务结算”只保留隐藏节点；A46～A53 由蓝鲸数字全局系统能力承接。
-3. 配置角色默认首页和首批可见菜单：总部、客服、服务站、代理商/门店、系统管理员。
-4. 实现 D01 的门店业务上下文选择，以及 D05/D06 等隐藏流程路由。
-5. 验证菜单加载、刷新、直接访问、返回、无权限、跨门店和跨租户场景；通过后再更新入口进度。
-6. 后续按业务切片逐个接入真实数据和 API，业务验收前不把菜单可打开计为功能完成。
+业务目录与角色规则统一见[后台菜单与角色权限手册](../04-业务阅读/05-后台菜单与角色权限手册.md)。代码映射位于 `shared/constants/workspace-manifest.mjs`；菜单配置 JSON 从相同代码按需生成，文档目录不重复保存生成产物。生成内容包括 68 个唯一节点（1 顶部＋10 存储组＋49 功能＋3 流程＋5 导航授权）、四视角和七种角色模板，是按 code 核对的配置源，不是可直接提交的批量 API 请求。
 
-本设计只确定信息架构、命名和代码目录，不代表具体业务规则、接口、角色矩阵或生产菜单已完成。
+保留[生成脚本](../../../frontend/gaia-ui/scripts/after-sales-menu-package.mjs)。在 `gaia-ui` 仓库中执行，输出位置按本次分发任务指定，例如：
+
+```sh
+node scripts/after-sales-menu-package.mjs /tmp/toto-menu-v2-review.json
+```
+
+1. 在目标环境的 `gaia-tenant` 权威菜单中按 code 对照，保留既有 ID；路径冲突先核实，不删除重建功能。不直接改运行库 `sys_module`。
+2. 依父子关系注册缺失节点；解析真实 parentId、分类、排序及已存在“数码中心”的顺序，导航授权与流程项隐藏。生产业务按验收开通；服务结算只向管理员开放状态查看。
+3. 指定目标租户并合并本次模块分配，保留租户已有无关模块；经平台现有分发及回执链同步。现有 `/api/tenantSaasModule/saveTenantModuleOperation` 接口需真实租户 ID 和模块／操作 ID，不可直接提交清单中的 code。
+4. 将角色模板绑定目标环境的实际角色 ID；管理员包含全部售后功能与四视角，其他岗位按模板裁剪，已有非售后授权保持。功能查询 API 按已确认切片配套，写操作单独授权；A46～A53 在现有全局模块中配置，不新增重复菜单。
+5. 关闭本地预览与临时 API 放行，用各角色真实账号验证菜单、直达、动作、租户及组织范围，再回写入口验收。
+
+前端与清单生成脚本已更新；当前接口检测到旧版“本地菜单初始化”记录，不等于本次完成了权威注册。目标租户／环境尚待指定，尚未执行正式分发和角色写入。本地开发开关开启且旧菜单缺少导航项时，仅补导航预览标记，保留后端功能集合和 ID，不补未授权功能；页面明确标注“本地菜单预览”。
