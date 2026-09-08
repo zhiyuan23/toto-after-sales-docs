@@ -15,7 +15,7 @@
 - `backend/gaia-after-sales`：售后领域、管理端 API 和小程序 API。
 - `mobile/gaia-after-sales-uni`：原 TOTO 售后小程序与 H5。
 - `mobile/gaia-customer-service-uni`：“TOTO客服助手”计划仓库，当前尚未创建；没有已确认 Spec 时不得虚构技术基线和业务功能。
-- `frontend/gaia-ui`：售后管理页面和权限适配。
+- `frontend/gaia-ui`：统一管理后台和代理商工作台，共用“TOTO 售后服务”一级顶部菜单；目录与命名见 `02-技术设计/03-gaia-ui目录与菜单设计.md`。
 - `frontend/gaia-ui/src/views/common`：公共页面子仓库；只有用户单独明确授权修改和提交 `common` 时才能操作，不得随 `gaia-ui` 或跨仓任务一起提交。
 - `backend/gaia-saas-proj`：业务 API 聚合与运行宿主；可以按已确认功能范围修改，但只有用户明确要求提交时才能执行 `git commit`。
 
