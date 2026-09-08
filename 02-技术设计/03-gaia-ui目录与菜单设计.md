@@ -97,14 +97,18 @@ TOTO 售后服务
 ├── 数据中心
 │   ├── 运营报表
 │   └── 数据任务
-└── 系统配置
+├── 下载中心
+│   ├── 任务中心
+│   ├── 模板管理
+│   └── 场景配置
+└── 系统配置（蓝鲸数字全局能力承接）
     ├── 角色与权限
     ├── 用户管理
     ├── 业务配置
     └── 日志审计
 ```
 
-菜单共 11 个业务分组、53 个建议可见功能菜单。每个角色只看到授权范围，代理商/门店角色默认只显示 4 个菜单；尚未完成验收的菜单在生产租户保持隐藏。页面清单中的 63 个 Web 入口组用于需求追踪，不等同于 63 个侧栏菜单。
+售后本地菜单共 11 个业务分组、52 个建议可见功能菜单；系统配置由 4 项蓝鲸数字全局能力承接，覆盖 A46～A53，不在售后菜单中重复创建。每个角色只看到授权范围，代理商/门店角色默认只显示 4 个菜单；尚未完成验收的菜单在生产租户保持隐藏。页面清单中的 66 个 Web 入口组用于需求追踪，不等同于 66 个侧栏菜单；下载中心为后续导入导出能力新增通用入口。
 
 ## 4. 菜单节点、路径和需求入口映射
 
@@ -125,7 +129,8 @@ TOTO 售后服务
 | 分组／防窜货 | `afsAntiDiversion` | `afterSales/antiDiversion` | 码查询、异常和规则 |
 | 分组／会员运营 | `afsMemberOperation` | `afterSales/memberOperation` | 会员、标签、推送、评价和问卷 |
 | 分组／数据中心 | `afsDataCenter` | `afterSales/dataCenter` | 报表、对账和数据任务 |
-| 分组／系统配置 | `afsSettings` | `afterSales/settings` | 售后角色、用户、配置和审计入口 |
+| 分组／下载中心 | `afsDownloadCenter` | `afterSales/downloadCenter` | 导入导出任务、模板文件和菜单按钮场景绑定 |
+| 全局能力／系统配置 | `gaiaRolePermission`、`gaiaUserManagement`、`gaiaBusinessConfiguration`、`gaiaAuditLog` | 蓝鲸数字全局页面 | 售后角色、用户、配置和审计入口由 Gaia 既有能力承接 |
 
 ### 4.1 工作台
 
@@ -232,22 +237,32 @@ A43 推送结果作为“消息推送”的结果页或页签，不单列侧栏�
 | 运营报表 | `afsReport` | `afterSales/dataCenter/report` | A54 | 总部、客服、站点 |
 | 数据任务 | `afsDataJob` | `afterSales/dataCenter/job` | A55 | 总部、系统 |
 
-“数据任务”统一承载导入、导出、预检、错误明细、文件下载和任务状态，避免各业务菜单重复建设导入导出中心。
+“数据任务”承载后台数据处理任务；导入导出模板、文件下载和业务按钮绑定由“下载中心”统一承载，避免各业务菜单重复建设文件中心。
 
-### 4.11 系统配置
+### 4.11 下载中心
 
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
-| 角色与权限 | `afsRolePermission` | `afterSales/settings/rolePermission` | A46、A47 | 系统 |
-| 用户管理 | `afsUser` | `afterSales/settings/user` | A48、A49、A50 | 系统 |
-| 业务配置 | `afsBusinessConfig` | `afterSales/settings/businessConfig` | A51 | 系统、总部 |
-| 日志审计 | `afsAuditLog` | `afterSales/settings/auditLog` | A52、A53 | 系统 |
+| 任务中心 | `afsDownloadTask` | `afterSales/downloadCenter/task` | A56 | 总部、客服、站点、系统 |
+| 模板管理 | `afsDownloadTemplate` | `afterSales/downloadCenter/template` | A57 | 总部、系统 |
+| 场景配置 | `afsDownloadScene` | `afterSales/downloadCenter/scene` | A58 | 总部、系统 |
+
+“场景配置”不维护静态菜单清单，而是从 Gaia 当前授权菜单和按钮动态生成树：左侧默认展示“售后服务”下二级菜单结构，逐级展开到下级菜单和按钮；按钮节点可绑定“模板管理”中维护并启用的模板。新增菜单按钮完成 Gaia 权限注册后，会自动出现在可选择树中。
+
+### 4.12 系统配置
+
+| 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
+| --- | --- | --- | --- | --- |
+| 角色与权限 | `gaiaRolePermission` | 蓝鲸数字全局权限管理 | A46、A47 | 系统 |
+| 用户管理 | `gaiaUserManagement` | 蓝鲸数字全局用户管理 | A48、A49、A50 | 系统 |
+| 业务配置 | `gaiaBusinessConfiguration` | 蓝鲸数字全局系统配置 | A51 | 系统、总部 |
+| 日志审计 | `gaiaAuditLog` | 蓝鲸数字全局日志能力 | A52、A53 | 系统 |
 
 能通过 Gaia 既有系统管理页面按 TOTO 范围复用的能力，应复用已有页面或以业务入口跳转，不复制角色、用户和日志实现。“业务配置”内部按业务字典、系统参数和通知模板分为页签。
 
 ## 5. gaia-ui 页面目录
 
-以下为目标目录结构；当前 `gaia-ui` 尚未创建 `src/views/afterSales/`，功能实现时按此逐步落地。
+售后域目录结构如下；功能实现时按业务分组逐步落地。
 
 ```text
 src/views/afterSales/
@@ -322,12 +337,11 @@ src/views/afterSales/
 │   ├── index.vue
 │   ├── report/index.vue
 │   └── job/index.vue
-├── settings/
+├── downloadCenter/
 │   ├── index.vue
-│   ├── rolePermission/index.vue
-│   ├── user/index.vue
-│   ├── businessConfig/index.vue
-│   └── auditLog/index.vue
+│   ├── task/index.vue
+│   ├── template/index.vue
+│   └── scene/index.vue
 └── shared/
     ├── components/                   # 售后域内复用组件
     ├── composables/                  # 售后域内组合逻辑
@@ -378,12 +392,12 @@ src/views/afterSales/
 | 推送结果管理 | 消息推送结果页/页签 | 结果依赖推送任务，不需要独立菜单 |
 | 问卷调查管理 | 拆为服务评价、产品问卷 | 区分首期工单评价与二期产品满意度调查 |
 | 系统管理中的角色、权限、三类用户、两类日志 | 角色与权限、用户管理、日志审计 | 保留完整能力，减少低频菜单碎片 |
-| Excel 导入导出 | 数据任务 | 统一承载异步任务、错误明细和文件生命周期 |
+| Excel 导入导出 | 下载中心 | 统一承载任务、模板、业务场景按钮绑定和文件生命周期 |
 
 ## 9. 实施顺序
 
 1. 在菜单/权限数据中建立 `afterSales` 一级节点及业务分组，先保持生产隐藏；菜单、按钮、API 与角色授权按[Gaia 菜单角色按钮权限接入调研](06-gaia菜单角色按钮权限接入调研.md)执行。
-2. 按本文件创建 `src/views/afterSales` 目录和 53 个菜单落地入口；范围待确认的“服务结算”只保留隐藏节点。
+2. 按本文件创建 `src/views/afterSales` 目录和 52 个售后功能菜单落地入口；A46～A53 映射到蓝鲸数字全局能力，范围待确认的“服务结算”只保留隐藏节点。
 3. 配置角色默认首页和首批可见菜单：总部、客服、服务站、代理商/门店、系统管理员。
 4. 实现 D01 的门店业务上下文选择，以及 D05/D06 等隐藏流程路由。
 5. 验证菜单加载、刷新、直接访问、返回、无权限、跨门店和跨租户场景；通过后再更新入口进度。
