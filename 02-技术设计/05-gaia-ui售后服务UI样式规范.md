@@ -11,10 +11,10 @@
 标准列表结构固定为：
 
 ```text
-CommonPageMain（整体白卡）
+CommonPageMain layout="list"（整体白卡，固定为可用高度）
 ├── CommonSearch（横向标签与控件，内置虚线）
 ├── CommonListToolbar（新增／批量操作，按权限提供）
-└── CommonTable
+└── CommonTable fill（撑满剩余高度，表体内部滚动）
     └── CommonPagination（有真实分页数据时）
 ```
 
@@ -30,6 +30,8 @@ CommonPageMain（整体白卡）
 
 ## 3. 表格、操作与分页
 
+- 标准列表不提供独立刷新按钮；筛选和业务动作成功后更新数据，加载失败保留表格内重试。无新增／批量等操作时不渲染空工具栏。
+- 标准列表采用 `CommonPageMain layout="list"` + `CommonTable fill`，白卡占满宿主剩余高度，筛选与工具栏按内容占高，表格消化余下空间。表头保持可见，长数据在表体内滚动，分页固定在表格下方、白卡底部。展开筛选、错误提示、窗口/容器高度变化时自动重新分配，不在页面写固定高度。看板、流程和嵌入式表格保持自然内容高度。
 - 操作栏无额外背景、边框或内距，与表格间距 16px；新增使用 Element Plus primary plain，32px 高。
 - 表格默认细网格、浅色斑马纹；白色表头，标题灰色 `#909399`、14px / 600。单行 40px，单元格 padding 为 0，内容横向内距 12px、行高 23px，多行内容自然增高。
 - 行操作按钮 32px、间距 8px、圆角 6px，普通编辑／删除保持中性色图标。1 项操作列 56px，2 项或“首项＋更多”96px；没有可见动作时隐藏操作列。业务页传入已授权动作，不在通用组件推断权限。
@@ -59,7 +61,7 @@ CommonPageMain（整体白卡）
 
 组件契约与运行命令见 [commonV2 使用说明](../../../frontend/gaia-ui/src/components/commonV2/README.md)。本地示例仅内存数据，不连接真实 API，不进入生产默认构建入口。测试、类型检查、构建、浏览器检查与未验边界记录在[阶段验收记录](../specs/2026-09-07-第一阶段菜单路由与页面UI架构.md)。后续业务切片仍需验证接口、权限、并发、租户数据隔离及真实失败状态。
 
-商品档案现已作为公共方法与目录组织的[开发范例](../../../frontend/gaia-ui/src/views/afterSales/catalog/product/README.md)，配套 `src/hooks/commonV2/useListPage` / `useCrudDialog`。后续涉及列表和弹窗的功能按 [AI 开发执行规范](../03-开发管理/03-AI开发执行规范.md)复用；商品档案的内存交互示例需在 DEV 环境手动开启，不能作为真实商品业务验收。
+商品档案现已作为公共方法与目录组织的[开发范例](../../../frontend/gaia-ui/src/views/afterSales/catalog/product/README.md)，配套 `src/hooks/commonV2/useListPage` / `useCrudDialog`。后续涉及列表和弹窗的功能按 [AI 开发执行规范](../03-开发管理/03-AI开发执行规范.md)复用；旧内存示例仅保留为测试夹具，正式商品页已接入 API，完整业务验收以功能 Spec 为准。
 
 ## 7. 首版真实业务与当前验收范围
 

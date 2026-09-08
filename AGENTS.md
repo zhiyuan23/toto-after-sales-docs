@@ -24,7 +24,7 @@
 ## Web 功能开发：新版通用组件与样式
 
 - 开发或修改 `gaia-ui` 售后功能前，先读 [UI 样式规范](02-技术设计/05-gaia-ui售后服务UI样式规范.md)、[commonV2 组件说明](../../frontend/gaia-ui/src/components/commonV2/README.md)和 [AI 开发执行规范](03-开发管理/03-AI开发执行规范.md)中的 Web UI 约束。
-- 售后功能开发默认使用 `src/components/commonV2/`，从目录入口按需导入 `Common*` 组件。全部功能页（含工作台、流程、配置和隐藏／上下文页）使用 `CommonPageMain` 整体白卡；标准列表按 `CommonSearch → CommonListToolbar → CommonTable / CommonPagination` 组合。
+- 售后功能开发默认使用 `src/components/commonV2/`，从目录入口按需导入 `Common*` 组件。全部功能页（含工作台、流程、配置和隐藏／上下文页）使用 `CommonPageMain` 整体白卡；标准列表按 `CommonSearch → CommonListToolbar → CommonTable / CommonPagination` 组合，采用 `CommonPageMain layout="list"` 与 `CommonTable fill` 撑满剩余高度，表体内部滚动、分页留在底部；不放独立刷新按钮，保留业务动作后自动更新与失败重试。
 - 筛选标签与输入控件横向排列，筛选与表格之间的虚线由 `CommonSearch` 提供。普通列表不得恢复为纵向标签、筛选卡＋表格卡或页面自行编写的一套 CRUD 样式；具体尺寸以 UI 规范和组件实现为准。
 - 表单弹窗和行操作复用 `CommonFormDialog`、`CommonRowActions` 及删除确认工具。组件暂不覆盖的业务交互可在页面实现；可复用的视觉能力在 `commonV2` 中补充，不复制整套组件或引入第二套样式体系。
 - 后续功能涉及列表查询、分页、刷新或新增／编辑弹窗时，默认复用 `src/hooks/commonV2/` 的 `useListPage` / `useCrudDialog`，先读[商品档案开发范例](../../frontend/gaia-ui/src/views/afterSales/catalog/product/README.md)和[公共方法契约](../../frontend/gaia-ui/src/hooks/commonV2/README.md)。沿用功能目录内 `index.vue + components + model + schemas` 的职责划分，按需建文件；不要复制查询／弹窗状态逻辑或示例内存数据源。
