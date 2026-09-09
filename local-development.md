@@ -30,6 +30,7 @@ bash scripts/start-local-backend.sh
 
 ```bash
 yarn dev --host 127.0.0.1 --port 7004 --strictPort
+# 根命令现在同时启动 9010 售后底座；仅主系统可用 yarn dev:main
 ```
 
 后端断点调试：先停止占用 `8080` 的后端，在 VS Code 中打开 `gaia-saas-proj`，选择本机新增的 `TOTO 本地后端 · 测试数据库` 启动项。不要选择未加载 `.local/` 的旧启动项。断点入口与 JAR 启动二选一；修改售后模块后重新安装模块并重启宿主。前端页面变更由 Vite 热更新。
@@ -135,3 +136,26 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 ## 售后菜单 V2 正式配置（2026-09-08）
 
 前端不再读取 `VITE_ENABLE_AFTER_SALES_LOCAL_MENU`，也不会创建或补齐售后菜单。登录后直接使用 `/api/sys/Module/tree?categoryCode=pc_web` 返回的售后功能和导航授权项；账号没有同时获得有效工作视角与功能时，顶部不显示“售后服务”，未授权的工作视角和直达路径同样不可用。“系统管理员”下拉项要求后端返回 `afsNavigationAdministrator`，其全菜单视图只投影当前账号实际获授的功能节点。
+
+## 售后独立前端底座（2026-09-08）
+
+`gaia-ui/apps/after-sales` 已建立单包独立工程。使用 Node 22.23.1、Yarn 1.22.22（主）和 pnpm 10.8.1（子），先分别安装：
+
+```bash
+# gaia-ui 根目录
+yarn install --frozen-lockfile
+cd apps/after-sales
+corepack pnpm install --frozen-lockfile
+```
+
+Corepack 命令须在子目录执行，以选中该目录固定 pnpm 版本；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
+
+回到 gaia-ui 根目录运行 `yarn dev`，主应用在 7004，子应用在 9010；统一访问 `http://127.0.0.1:7004/after-sales/#/`。`yarn dev:main` / `yarn dev:after-sales` 可分别启动。子目录可独立执行 `corepack pnpm dev`、`typecheck`、`test`、`build`。新子系统首页不依赖后端，也不包含临时身份。
+
+原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序构建主、子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。push.sh 已增加 pnpm 冻结安装，构建失败会中止；本次没有执行上传或发布。
+
+验证通过：子系统冻结安装、typecheck、production build、仓库外隔离构建、31 项底座测试、原主构建、统一 production:saas、静态产物校验、双服务访问、HMR 和 SIGINT 清理。Chrome 售后入口的品牌、布局及控制台验证通过。原 legacy 页面和主路由无修改。
+
+本次浏览器主应用请求本机 8080 返回 ECONNREFUSED，真实登录／legacy 菜单页面依赖后端启动后另验；不要将主入口 HTTP 200 或构建通过等同于真实业务联调。Gaia 会话、权限、业务页面迁移、iframe 和三模式切换尚未实现。详细来源、命令与边界见[子系统 README](../../frontend/gaia-ui/apps/after-sales/README.md)和[改造方案实施记录](02-技术设计/07-gaia-ui售后子系统独立前端改造方案.md#13-第一阶段实施与验证2026-09-08)。
+
+补充本地启动核验：用户开启 VPN 后，按原脚本启动独立 Redis 16379 并重新装配后端，两次 Maven 构建通过，未修改本地代理或数据库配置。现有数据库 TCP 端口可达，但 JDBC 握手持续返回 EOF（未收到 MySQL 响应），后端 8080 未成功监听；已停止本次失败启动，避免持续重试。主／子前端仍按原配置运行，legacy 登录页面验收仍受后端连接阻塞。未改动后端已有 `.gitignore`、宿主 POM 或本机配置。
