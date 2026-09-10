@@ -1,0 +1,84 @@
+<div id="action-icon-proposal" aria-label="操作图标设计提案">
+  <style>
+    #action-icon-proposal { --icon-size: 16px; --icon-stroke: 2; --surface: light-dark(#ffffff,#202124); --ink: light-dark(#454b54,#d9dce1); --line: light-dark(#dcdfe6,#50535b); --soft: light-dark(#f5f7fa,#303238); --danger: light-dark(#c73535,#ff9090); color:var(--ink); font:14px/1.5 system-ui,sans-serif; }
+    #action-icon-proposal .sheet { background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:20px; }
+    #action-icon-proposal h3 { font:500 14px/1.5 system-ui,sans-serif; margin:0 0 12px; }
+    #action-icon-proposal .comparison { display:flex; flex-wrap:wrap; gap:28px; align-items:center; padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid var(--line); }
+    #action-icon-proposal .compare-item { display:flex; align-items:center; gap:10px; }
+    #action-icon-proposal .icon-button { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:4px; cursor:pointer; }
+    #action-icon-proposal .icon-button:hover { background:var(--soft); }
+    #action-icon-proposal svg { width:var(--icon-size); height:var(--icon-size); stroke-width:var(--icon-stroke); flex:none; }
+    #action-icon-proposal .icon-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px 12px; margin-bottom:22px; }
+    #action-icon-proposal .icon-item { display:flex; align-items:center; gap:9px; min-height:28px; }
+    #action-icon-proposal .business { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #action-icon-proposal .danger { color:var(--danger); }
+    #action-icon-proposal .row-example { display:flex; align-items:center; justify-content:space-between; padding:12px 0 0; border-top:1px solid var(--line); gap:12px; }
+    #action-icon-proposal .row-actions { display:flex; gap:8px; align-items:center; position:relative; }
+    #action-icon-proposal .menu { position:absolute; z-index:2; right:0; bottom:40px; padding:5px; min-width:156px; border:1px solid var(--line); border-radius:6px; background:var(--surface); box-shadow:0 4px 12px #00000012; }
+    #action-icon-proposal .menu button { display:flex; align-items:center; gap:9px; width:100%; padding:7px 9px; background:transparent; border:0; font:inherit; color:inherit; text-align:left; cursor:pointer; border-radius:3px; }
+    #action-icon-proposal .menu button:hover { background:var(--soft); }
+    #action-icon-proposal .menu .danger { color:var(--danger); }
+    #action-icon-proposal .choice { min-height:22px; margin-top:8px; color:var(--ink); }
+    @media(max-width:520px) { #action-icon-proposal .icon-grid, #action-icon-proposal .business { grid-template-columns:repeat(2,minmax(0,1fr)); } #action-icon-proposal .sheet { padding:14px; } }
+  </style>
+  <div class="sheet">
+    <div class="comparison">
+      <div class="compare-item"><button type="button" class="icon-button" aria-label="当前常见编辑图标" data-tooltip="当前：clipboard-pen"><i data-lucide="clipboard-pen" aria-hidden="true"></i></button><span>当前常见：剪贴板加笔</span></div>
+      <div class="compare-item"><button type="button" class="icon-button" aria-label="建议编辑图标" data-tooltip="建议：pencil"><i data-lucide="pencil" aria-hidden="true"></i></button><span>建议统一：单支铅笔</span></div>
+    </div>
+    <h3>通用操作 · 统一 Lucide 简洁线性图标</h3>
+    <div class="icon-grid">
+      <div class="icon-item" data-tooltip="lucide:pencil"><i data-lucide="pencil" aria-hidden="true"></i><span>编辑</span></div>
+      <div class="icon-item" data-tooltip="lucide:circle-check"><i data-lucide="circle-check" aria-hidden="true"></i><span>启用</span></div>
+      <div class="icon-item" data-tooltip="lucide:ban"><i data-lucide="ban" aria-hidden="true"></i><span>停用</span></div>
+      <div class="icon-item danger" data-tooltip="lucide:trash-2"><i data-lucide="trash-2" aria-hidden="true"></i><span>删除</span></div>
+      <div class="icon-item" data-tooltip="lucide:check"><i data-lucide="check" aria-hidden="true"></i><span>确认</span></div>
+      <div class="icon-item" data-tooltip="lucide:undo-2"><i data-lucide="undo-2" aria-hidden="true"></i><span>撤销</span></div>
+      <div class="icon-item" data-tooltip="lucide:rotate-cw"><i data-lucide="rotate-cw" aria-hidden="true"></i><span>重试</span></div>
+      <div class="icon-item" data-tooltip="lucide:refresh-cw"><i data-lucide="refresh-cw" aria-hidden="true"></i><span>同步</span></div>
+      <div class="icon-item" data-tooltip="lucide:link"><i data-lucide="link" aria-hidden="true"></i><span>关联</span></div>
+      <div class="icon-item" data-tooltip="lucide:settings-2"><i data-lucide="settings-2" aria-hidden="true"></i><span>配置</span></div>
+      <div class="icon-item" data-tooltip="lucide:shield-check"><i data-lucide="shield-check" aria-hidden="true"></i><span>授权</span></div>
+      <div class="icon-item" data-tooltip="lucide:ellipsis"><i data-lucide="ellipsis" aria-hidden="true"></i><span>更多</span></div>
+    </div>
+    <h3>业务操作 · 图标与完整文字一起出现</h3>
+    <div class="icon-grid business">
+      <div class="icon-item" data-tooltip="lucide:user-round-plus"><i data-lucide="user-round-plus" aria-hidden="true"></i><span>派单</span></div>
+      <div class="icon-item" data-tooltip="lucide:arrow-right-left"><i data-lucide="arrow-right-left" aria-hidden="true"></i><span>改派</span></div>
+      <div class="icon-item" data-tooltip="lucide:building-2"><i data-lucide="building-2" aria-hidden="true"></i><span>分配站点</span></div>
+      <div class="icon-item" data-tooltip="lucide:clipboard-check"><i data-lucide="clipboard-check" aria-hidden="true"></i><span>审核</span></div>
+      <div class="icon-item" data-tooltip="lucide:circle-x"><i data-lucide="circle-x" aria-hidden="true"></i><span>拒绝</span></div>
+      <div class="icon-item" data-tooltip="lucide:triangle-alert"><i data-lucide="triangle-alert" aria-hidden="true"></i><span>异常处理</span></div>
+      <div class="icon-item" data-tooltip="lucide:send"><i data-lucide="send" aria-hidden="true"></i><span>提交完工</span></div>
+      <div class="icon-item" data-tooltip="lucide:rotate-ccw"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>复开工单</span></div>
+      <div class="icon-item" data-tooltip="lucide:package-check"><i data-lucide="package-check" aria-hidden="true"></i><span>确认收货</span></div>
+      <div class="icon-item" data-tooltip="lucide:package-minus"><i data-lucide="package-minus" aria-hidden="true"></i><span>出库确认</span></div>
+      <div class="icon-item" data-tooltip="lucide:package-plus"><i data-lucide="package-plus" aria-hidden="true"></i><span>入库确认</span></div>
+      <div class="icon-item" data-tooltip="lucide:key-round"><i data-lucide="key-round" aria-hidden="true"></i><span>重置密码</span></div>
+    </div>
+    <div class="row-example"><span>表格行操作示例</span><div class="row-actions">
+      <button type="button" class="icon-button" aria-label="编辑" data-tooltip="编辑" data-demo="编辑"><i data-lucide="pencil" aria-hidden="true"></i></button>
+      <button type="button" class="icon-button" id="icon-more-button" aria-label="更多操作" data-tooltip="更多操作" aria-expanded="false" aria-controls="icon-more-menu"><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+      <div id="icon-more-menu" class="menu" hidden>
+        <button type="button" data-demo="关联商品"><i data-lucide="link" aria-hidden="true"></i>关联商品</button>
+        <button type="button" data-demo="停用"><i data-lucide="ban" aria-hidden="true"></i>停用</button>
+        <button type="button" data-demo="删除" class="danger"><i data-lucide="trash-2" aria-hidden="true"></i>删除</button>
+      </div>
+    </div></div>
+    <div class="choice" aria-live="polite"></div>
+  </div>
+  <script>
+    (function () {
+      const root = document.getElementById('action-icon-proposal');
+      const more = root.querySelector('#icon-more-button');
+      const menu = root.querySelector('#icon-more-menu');
+      more.addEventListener('click', () => { menu.hidden = !menu.hidden; more.setAttribute('aria-expanded', String(!menu.hidden)); });
+      root.querySelectorAll('[data-demo]').forEach(button => button.addEventListener('click', () => { root.querySelector('.choice').textContent = '已选择：' + button.dataset.demo + '（演示）'; menu.hidden = true; more.setAttribute('aria-expanded','false'); }));
+      root.addEventListener('keydown', event => { if(event.key === 'Escape') { menu.hidden = true; more.setAttribute('aria-expanded','false'); more.focus(); } });
+      const state = { size:'16', stroke:'2' };
+      function render() { root.style.setProperty('--icon-size', state.size + 'px'); root.style.setProperty('--icon-stroke', state.stroke); }
+      render();
+      if (globalThis.Tweak) { const tweak = new Tweak({container:root,onChange:render}); tweak.addSelect(state,'size',{label:'图标尺寸',options:[{label:'16px · 当前尺寸',value:'16'},{label:'18px · 更易辨认',value:'18'}]}); tweak.addSelect(state,'stroke',{label:'线条粗细',options:['1.75','2']}); }
+    })();
+  </script>
+</div>
