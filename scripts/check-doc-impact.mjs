@@ -72,7 +72,7 @@ function printHelp() {
 }
 
 function gitLines(repositoryRoot, args) {
-  const output = execFileSync('git', ['-C', repositoryRoot, ...args], {
+  const output = execFileSync('git', ['-c', 'core.quotePath=false', '-C', repositoryRoot, ...args], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe']
   })
