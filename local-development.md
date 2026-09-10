@@ -28,7 +28,7 @@ yarn dev:full
 redis-server --bind 127.0.0.1 --port 16379 --protected-mode yes --save '' --appendonly no
 ```
 
-在本工作区 `docs/toto` 下启动后端；脚本先安装本地售后模块，再打包宿主，避免使用旧 API。这里只做构建并跳过测试，不代表业务测试通过：
+在本工作区 `docs/toto` 下启动后端；脚本先安装本地售后模块，再打包宿主，并将可执行 JAR 复制为 `.local/runtime/` 下的本次运行副本后启动，避免后续 Maven 打包覆盖 `target/gaia-web.jar` 时破坏运行中 JVM 的延迟类加载。这里只做构建并跳过测试，不代表业务测试通过：
 
 ```bash
 bash scripts/start-local-backend.sh

@@ -114,12 +114,17 @@ gaia-ui/
             │       ├── session.ts       # Gaia 会话状态和失效处理
             │       ├── navigation.ts    # Gaia 菜单树到子系统路由的投影
             │       └── permission.ts    # 页面、操作和领域权限适配
-            ├── api/
-            │   └── afterSales/           # 继续调用 /api/afterSales/**
+            ├── api/                      # 按 catalog、network 等领域直接分组
+            │   ├── catalog/              # 源码目录不重复 afterSales；仍调用 /api/afterSales/catalog/**
+            │   ├── network/              # 仍调用 /api/afterSales/network/**
+            │   ├── serviceResource/      # 仍调用 /api/afterSales/service-resource/**
+            │   └── system/               # Gaia 全局身份等系统接口
             ├── components/              # 按需迁移的通用组件
             ├── styles/                  # 子系统自己的主题与 reset
-            └── views/                   # 售后页面和隐藏流程页
+            └── views/                   # 按 catalog、network 等模块直接分组，不再嵌套 afterSales
 ```
+
+`apps/after-sales` 已经是售后应用边界，子系统内部的业务源码不得再建立 `views/afterSales` 或 `api/afterSales` 重复命名层级。该规则仅约束物理源码目录；部署路径 `/after-sales/`、后端接口 `/api/afterSales/**`、Gaia 菜单根 `afterSales`、`afs*` 权限代码及同源存储前缀保持不变。主系统 `src/views/afterSales/` 在 legacy 迁移结束前继续保留。
 
 默认不在 `gaia-ui` 根目录建立 pnpm workspace，避免 pnpm 接管主项目依赖和锁文件。若子系统确实需要多个内部包，只在 `apps/after-sales/` 内建立嵌套 workspace；更小的共享类型和常量优先直接放入子系统源码。
 

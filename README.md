@@ -45,7 +45,7 @@ docs/toto/
 | 模块进度与开发计划 | [开发进度总览](03-开发管理/00-开发进度与下一步.md) | 统一进度入口；下钻到 4 份功能端入口级明细，面向人展示并由 AI 同步维护 |
 | 菜单和页面范围 | [页面清单](01-功能需求/08-页面清单.md) | 96 个入口及模块对应关系，不维护状态 |
 | Web 目录与菜单命名 | [`gaia-ui` 目录与菜单设计](02-技术设计/03-gaia-ui目录与菜单设计.md) | 通用 SaaS“售后服务”顶部菜单、四视角、49 个独立功能、角色模板与唯一页面路径；系统配置由蓝鲸数字全局能力承接 |
-| Web 页面样式与复用边界 | [售后服务 UI 样式规范](02-技术设计/05-gaia-ui售后服务UI样式规范.md) | commonV2 整体白卡、横向筛选、虚线分隔、表格/分页交互及组件隔离边界；目标规范与当前实现分开记录 |
+| Web 页面样式与复用边界 | [售后服务 UI 样式规范](02-技术设计/05-gaia-ui售后服务UI样式规范.md) | 独立子系统默认开发位置、商品分类范例、`FaPageMain` / `EsSearch` / `EsTable` 及通用 composables 的复用边界 |
 | Web 独立子系统改造 | [`gaia-ui` 售后子系统独立前端改造方案](02-技术设计/07-gaia-ui售后子系统独立前端改造方案.md) | 同仓库独立 SPA、Gaia 权限适配、双前端运行与构建、单部署包和 Tomcat 目录方案；底座与独立登录基础闭环已完成，用户/角色管理已完成只读切片，写入和共享环境验收待后续 |
 | 小程序目录与页面路由 | [小程序目录与页面路由设计](02-技术设计/04-小程序目录与页面路由设计.md) | 消费者端可实施目录、C01～C17 路由，以及服务人员端待绑定仓库的逻辑目录 |
 | 需求到开发的追踪 | [AI 开发需求索引](01-功能需求/09-AI开发需求索引.md) | 119 个编号关联原文、菜单，保留任务依赖与工程参考 |
@@ -63,7 +63,7 @@ docs/toto/
 | --- | --- | --- |
 | `gaia-after-sales` | 售后领域、管理端 API、小程序 API | [开发说明](../../backend/gaia-after-sales/docs/catalog-development.md) |
 | `gaia-after-sales-uni` | 原 TOTO 售后小程序与 H5 | [README](../../mobile/gaia-after-sales-uni/README.md) |
-| `gaia-ui` | 统一管理后台和代理商工作台，共用通用“售后服务”顶部菜单、页面与权限体系 | [README](../../frontend/gaia-ui/README.md) |
+| `gaia-ui` | 同仓的售后独立子系统 `apps/after-sales`，复用 Gaia 认证、菜单、权限与租户体系；主系统旧售后页面仅作 legacy 保留 | [子系统 README](../../frontend/gaia-ui/apps/after-sales/README.md) |
 | `gaia-saas-proj` | 聚合并运行售后 API | [POM](../../backend/gaia-saas-proj/pom.xml) |
 | `gaia-customer-service-uni` | “TOTO客服助手”独立小程序 | 待创建，功能与技术基线待 Spec 确认 |
 
