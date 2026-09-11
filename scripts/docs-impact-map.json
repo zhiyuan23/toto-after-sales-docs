@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "documentationPatterns": [
+    "README.md",
+    "01-功能需求/**",
+    "02-技术设计/**",
+    "03-开发管理/**",
+    "04-业务阅读/**",
+    "specs/**"
+  ],
+  "repositories": [
+    {
+      "id": "gaia-ui",
+      "path": "frontend/gaia-ui",
+      "impactPatterns": [
+        "apps/after-sales/src/**",
+        "apps/after-sales/package.json",
+        "apps/after-sales/vite.config.ts",
+        "scripts/frontends/**",
+        "src/views/afterSales/**",
+        "vite.config.ts"
+      ],
+      "localDocumentationPatterns": [
+        "apps/after-sales/README.md",
+        "docs/**"
+      ]
+    },
+    {
+      "id": "gaia-after-sales",
+      "path": "backend/gaia-after-sales",
+      "impactPatterns": [
+        "database/**",
+        "**/src/main/**",
+        "pom.xml",
+        "**/pom.xml"
+      ],
+      "localDocumentationPatterns": [
+        "README.md",
+        "docs/**"
+      ]
+    },
+    {
+      "id": "gaia-saas-proj",
+      "path": "backend/gaia-saas-proj",
+      "impactPatterns": [
+        "**/src/**",
+        "pom.xml",
+        "**/pom.xml"
+      ],
+      "localDocumentationPatterns": [
+        "README.md",
+        "docs/**"
+      ]
+    },
+    {
+      "id": "gaia-after-sales-uni",
+      "path": "mobile/gaia-after-sales-uni",
+      "impactPatterns": [
+        "src/**",
+        "build/**",
+        "scripts/**",
+        "package.json",
+        "vite.config.*",
+        "uno.config.*"
+      ],
+      "localDocumentationPatterns": [
+        "README.md",
+        "docs/**"
+      ]
+    },
+    {
+      "id": "gaia-customer-service-uni",
+      "path": "mobile/gaia-customer-service-uni",
+      "impactPatterns": [
+        "src/**",
+        "build/**",
+        "scripts/**",
+        "package.json",
+        "vite.config.*",
+        "uno.config.*"
+      ],
+      "localDocumentationPatterns": [
+        "README.md",
+        "docs/**"
+      ]
+    }
+  ]
+}

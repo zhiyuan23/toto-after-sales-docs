@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+hook_dir="$(cd "$(dirname "$0")" && pwd)"
+documentation_root="$(cd "$hook_dir/.." && pwd)"
+repository_root="$(git rev-parse --show-toplevel)"
+
+node "$documentation_root/scripts/check-doc-impact.mjs" \
+    --staged \
+    --repo "$repository_root"
