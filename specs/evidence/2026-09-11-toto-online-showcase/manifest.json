@@ -1,0 +1,494 @@
+{
+  "batch": "20260911-toto-online",
+  "sources": [
+    {
+      "model": "CES8G820GCN",
+      "source": "https://www.toto.com.cn/cn/products/categories/toilet/auto/product/CES8G820GCN.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/CES8G820GCN/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 21080
+    },
+    {
+      "model": "CW636REB",
+      "source": "https://www.toto.com.cn/cn/products/categories/toilet/one_piece/product/CW636REB.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/CW636REB/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 55119
+    },
+    {
+      "model": "CW188SEBT305",
+      "source": "https://www.toto.com.cn/cn/products/categories/toilet/one_piece/product/CW188SEBT305.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/CW188SEBT305/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 55153
+    },
+    {
+      "model": "TCF4E360KCN",
+      "source": "https://www.toto.com.cn/cn/products/categories/washlets/product/TCF4E360KCN.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/TCF4E360KCN/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 49822
+    },
+    {
+      "model": "LW1535B",
+      "source": "https://www.toto.com.cn/cn/products/categories/lavatory/under_desk/product/LW1535B.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/LW1535B/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 55688
+    },
+    {
+      "model": "TLG12303B",
+      "source": "https://www.toto.com.cn/cn/products/categories/faucet/lava_tory/dresser/product/TLG12303B.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/TLG12303B/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 35172
+    },
+    {
+      "model": "HP101T3",
+      "source": "https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101T3.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/HP101T3/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 62137
+    },
+    {
+      "model": "HP101T4",
+      "source": "https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101T4.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/HP101T4/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 65794
+    },
+    {
+      "model": "HP101TM",
+      "source": "https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101TM.html",
+      "image": "https://www.toto.com.cn/cn/resource/images/product/HP101TM/l.jpg",
+      "contentType": "image/jpeg",
+      "bytes": 43136
+    }
+  ],
+  "rows": [
+    {
+      "table": "afs_product_category",
+      "key": "toilet",
+      "fields": {
+        "code": "TOTO-CAT-TOILET",
+        "name": "坐便器",
+        "kind": "PRODUCT",
+        "parent_id": "-1",
+        "sort_order": 10,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CES8G820GCN/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_category",
+      "key": "basin",
+      "fields": {
+        "code": "TOTO-CAT-BASIN",
+        "name": "洗面器",
+        "kind": "PRODUCT",
+        "parent_id": "-1",
+        "sort_order": 20,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/LW1535B/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_category",
+      "key": "faucet",
+      "fields": {
+        "code": "TOTO-CAT-FAUCET",
+        "name": "水嘴花洒",
+        "kind": "PRODUCT",
+        "parent_id": "-1",
+        "sort_order": 30,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/TLG12303B/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_category",
+      "key": "smart",
+      "fields": {
+        "code": "TOTO-CAT-SMART",
+        "name": "智能一体型坐便器",
+        "kind": "PRODUCT",
+        "parent_id": "@toilet",
+        "sort_order": 11,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CES8G820GCN/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_category",
+      "key": "onepiece",
+      "fields": {
+        "code": "TOTO-CAT-ONEPIECE",
+        "name": "连体式坐便器",
+        "kind": "PRODUCT",
+        "parent_id": "@toilet",
+        "sort_order": 12,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CW636REB/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_category",
+      "key": "washlet",
+      "fields": {
+        "code": "TOTO-CAT-WASHLET",
+        "name": "智能冲洗坐便盖",
+        "kind": "PRODUCT",
+        "parent_id": "@toilet",
+        "sort_order": 13,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/TCF4E360KCN/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_category",
+      "key": "under",
+      "fields": {
+        "code": "TOTO-CAT-UNDER",
+        "name": "台下式洗面器",
+        "kind": "PRODUCT",
+        "parent_id": "@basin",
+        "sort_order": 21,
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/LW1535B/l.jpg",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。"
+      }
+    },
+    {
+      "table": "afs_product_series",
+      "key": "ls",
+      "fields": {
+        "code": "TOTO-NEOREST-LS",
+        "name": "NEOREST 诺锐斯特 LS",
+        "sort_order": 17,
+        "remark": "一体型智能坐便器，搭载电解除菌水、自动开闭盖与暖风干燥；LS 排水连接件按坑距选配。",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CES8G820GCN/l.jpg"
+      }
+    },
+    {
+      "table": "afs_product_series",
+      "key": "cw636",
+      "fields": {
+        "code": "TOTO-CW636",
+        "name": "CW636 连体坐便器",
+        "sort_order": 18,
+        "remark": "流线型连体设计，3.0/4.5L 双档冲洗与纳米抗污釉面，可搭配卫洗丽 S7 智能坐便盖。",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CW636REB/l.jpg"
+      }
+    },
+    {
+      "table": "afs_product_series",
+      "key": "cw188",
+      "fields": {
+        "code": "TOTO-CW188",
+        "name": "CW188 连体坐便器",
+        "sort_order": 19,
+        "remark": "3.8L 节水冲洗，喷射虹吸结构；卫洗丽电源和进水管隐蔽设计，呈现简洁卫浴空间。",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CW188SEBT305/l.jpg"
+      }
+    },
+    {
+      "table": "afs_product_series",
+      "key": "s7",
+      "fields": {
+        "code": "TOTO-WASHLET-S7",
+        "name": "WASHLET 卫洗丽 S7",
+        "sort_order": 20,
+        "remark": "纤薄智能冲洗坐便盖，即热式温水、便座加热与暖风干燥，官网推荐搭配 CW636、CW188 系列。",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/TCF4E360KCN/l.jpg"
+      }
+    },
+    {
+      "table": "afs_product",
+      "key": "TLG12303B",
+      "fields": {
+        "code": "TLG12303B",
+        "name": "单柄双控抽取式洗面器水嘴",
+        "category_id": "@faucet",
+        "model": "TLG12303B",
+        "specification": "铜合金；抽取式；未配置排水配件",
+        "product_size": "水效等级1级",
+        "product_description": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/faucet/lava_tory/dresser/product/TLG12303B.html 保修期限待业务核定。",
+        "product_function": "抽拉出水口，便于清洁，耐用水嘴阀芯。",
+        "unit_name": "件"
+      }
+    },
+    {
+      "table": "afs_product_image_asset",
+      "key": "image-TLG12303B",
+      "fields": {
+        "product_id": "@TLG12303B",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/TLG12303B/l.jpg",
+        "sort_order": 0
+      }
+    },
+    {
+      "table": "afs_product",
+      "key": "LW1535B",
+      "fields": {
+        "code": "LW1535B",
+        "name": "台下式洗面器 LW1535B",
+        "category_id": "@under",
+        "model": "LW1535B",
+        "specification": "容量9.0L；台下式安装",
+        "product_size": "w500 × h380 × d207 mm（官网标注）",
+        "product_description": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/lavatory/under_desk/product/LW1535B.html 保修期限待业务核定。",
+        "product_function": "紧凑方形外观，纳米抗污釉面；图中龙头另购。",
+        "unit_name": "件"
+      }
+    },
+    {
+      "table": "afs_product_image_asset",
+      "key": "image-LW1535B",
+      "fields": {
+        "product_id": "@LW1535B",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/LW1535B/l.jpg",
+        "sort_order": 0
+      }
+    },
+    {
+      "table": "afs_product",
+      "key": "TCF4E360KCN",
+      "fields": {
+        "code": "TCF4E360KCN",
+        "name": "卫洗丽 S7 智能冲洗坐便盖",
+        "category_id": "@washlet",
+        "model": "TCF4E360KCN",
+        "specification": "即热式；遥控器操作",
+        "product_size": "宽383 × 深530 × 高103 mm",
+        "product_description": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/washlets/product/TCF4E360KCN.html 保修期限待业务核定。",
+        "product_function": "官网推荐搭配CW636、CW188系列；自动开闭、便座加热、暖风干燥。",
+        "unit_name": "件",
+        "series_id": "@s7"
+      }
+    },
+    {
+      "table": "afs_product_image_asset",
+      "key": "image-TCF4E360KCN",
+      "fields": {
+        "product_id": "@TCF4E360KCN",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/TCF4E360KCN/l.jpg",
+        "sort_order": 0
+      }
+    },
+    {
+      "table": "afs_product",
+      "key": "CW188SEBT305",
+      "fields": {
+        "code": "CW188SEBT305",
+        "name": "连体式坐便器 CW188",
+        "category_id": "@onepiece",
+        "model": "CW188SEBT305",
+        "specification": "坑距305mm；名义冲水量3.8L",
+        "product_size": "宽420 × 深722 × 高655 mm",
+        "product_description": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/toilet/one_piece/product/CW188SEBT305.html 保修期限待业务核定。",
+        "product_function": "喷射虹吸式，卫洗丽水电管路隐蔽设计。",
+        "unit_name": "件",
+        "series_id": "@cw188"
+      }
+    },
+    {
+      "table": "afs_product_image_asset",
+      "key": "image-CW188SEBT305",
+      "fields": {
+        "product_id": "@CW188SEBT305",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CW188SEBT305/l.jpg",
+        "sort_order": 0
+      }
+    },
+    {
+      "table": "afs_product",
+      "key": "CW636REB",
+      "fields": {
+        "code": "CW636REB",
+        "name": "连体式坐便器 CW636",
+        "category_id": "@onepiece",
+        "model": "CW636REB",
+        "specification": "坑距305mm；3.0/4.5L双档冲洗",
+        "product_size": "宽490 × 深740 × 高670 mm",
+        "product_description": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/toilet/one_piece/product/CW636REB.html 保修期限待业务核定。",
+        "product_function": "漩涡冲洗与纳米抗污釉面。",
+        "unit_name": "件",
+        "series_id": "@cw636"
+      }
+    },
+    {
+      "table": "afs_product_image_asset",
+      "key": "image-CW636REB",
+      "fields": {
+        "product_id": "@CW636REB",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CW636REB/l.jpg",
+        "sort_order": 0
+      }
+    },
+    {
+      "table": "afs_product",
+      "key": "CES8G820GCN",
+      "fields": {
+        "code": "CES8G820GCN",
+        "name": "诺锐斯特 LS 智能一体型坐便器",
+        "category_id": "@smart",
+        "model": "CES8G820GCN",
+        "specification": "3.0/3.8L双档冲洗；下排水",
+        "product_size": "宽411 × 深725 × 高497 mm",
+        "product_description": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/toilet/auto/product/CES8G820GCN.html 保修期限待业务核定。",
+        "product_function": "电解除菌水、自动开闭盖、暖风干燥。",
+        "unit_name": "件",
+        "series_id": "@ls"
+      }
+    },
+    {
+      "table": "afs_product_image_asset",
+      "key": "image-CES8G820GCN",
+      "fields": {
+        "product_id": "@CES8G820GCN",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/CES8G820GCN/l.jpg",
+        "sort_order": 0
+      }
+    },
+    {
+      "table": "afs_product_bundle_item",
+      "key": "bundle-TCF4E360KCN",
+      "fields": {
+        "code": "TOTO-B-TCF4E360KCN",
+        "name": "卫洗丽 S7 智能坐便盖",
+        "brand": "TOTO",
+        "model": "TCF4E360KCN",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/TCF4E360KCN/l.jpg",
+        "function_description": "官网推荐与CW636、CW188系列搭配。",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/washlets/product/TCF4E360KCN.html 价格未录入，0为系统默认值。"
+      }
+    },
+    {
+      "table": "afs_product_bundle_product_relation",
+      "key": "bundle-rel-TCF4E360KCN-CW636REB",
+      "fields": {
+        "bundle_id": "@bundle-TCF4E360KCN",
+        "product_id": "@CW636REB",
+        "quantity": 1
+      }
+    },
+    {
+      "table": "afs_product_bundle_product_relation",
+      "key": "bundle-rel-TCF4E360KCN-CW188SEBT305",
+      "fields": {
+        "bundle_id": "@bundle-TCF4E360KCN",
+        "product_id": "@CW188SEBT305",
+        "quantity": 1
+      }
+    },
+    {
+      "table": "afs_product_bundle_item",
+      "key": "bundle-HP101T3",
+      "fields": {
+        "code": "TOTO-B-HP101T3",
+        "name": "305mm 排水连接件",
+        "brand": "TOTO",
+        "model": "HP101T3",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/HP101T3/l.jpg",
+        "function_description": "LS系列安装选配；按实际坑距选择其中一种，并非全部必装。",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101T3.html 价格未录入，0为系统默认值。"
+      }
+    },
+    {
+      "table": "afs_product_bundle_product_relation",
+      "key": "bundle-rel-HP101T3-CES8G820GCN",
+      "fields": {
+        "bundle_id": "@bundle-HP101T3",
+        "product_id": "@CES8G820GCN",
+        "quantity": 1
+      }
+    },
+    {
+      "table": "afs_product_bundle_item",
+      "key": "bundle-HP101TM",
+      "fields": {
+        "code": "TOTO-B-HP101TM",
+        "name": "可变坑距排水连接件",
+        "brand": "TOTO",
+        "model": "HP101TM",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/HP101TM/l.jpg",
+        "function_description": "LS系列安装选配；按实际坑距选择其中一种，并非全部必装。",
+        "remark": "2026-09-11 卡片展示资料；型号与图片来自 TOTO 官网。 https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101TM.html 价格未录入，0为系统默认值。"
+      }
+    },
+    {
+      "table": "afs_product_bundle_product_relation",
+      "key": "bundle-rel-HP101TM-CES8G820GCN",
+      "fields": {
+        "bundle_id": "@bundle-HP101TM",
+        "product_id": "@CES8G820GCN",
+        "quantity": 1
+      }
+    },
+    {
+      "table": "afs_part",
+      "key": "part-HP101T3",
+      "fields": {
+        "code": "TOTO-P-HP101T3",
+        "name": "305mm 排水连接件",
+        "brand": "TOTO",
+        "model": "HP101T3",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/HP101T3/l.jpg",
+        "function_description": "适配诺锐斯特LS系列；坑距305mm。",
+        "remark": "官网适配；按坑距择一，非全部必装。价格未录入，0为默认值。 https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101T3.html"
+      }
+    },
+    {
+      "table": "afs_part_product_relation",
+      "key": "part-rel-HP101T3",
+      "fields": {
+        "part_id": "@part-HP101T3",
+        "product_id": "@CES8G820GCN",
+        "quantity": 1
+      }
+    },
+    {
+      "table": "afs_part",
+      "key": "part-HP101T4",
+      "fields": {
+        "code": "TOTO-P-HP101T4",
+        "name": "400mm 排水连接件",
+        "brand": "TOTO",
+        "model": "HP101T4",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/HP101T4/l.jpg",
+        "function_description": "适配诺锐斯特LS系列；坑距400mm。",
+        "remark": "官网适配；按坑距择一，非全部必装。价格未录入，0为默认值。 https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101T4.html"
+      }
+    },
+    {
+      "table": "afs_part_product_relation",
+      "key": "part-rel-HP101T4",
+      "fields": {
+        "part_id": "@part-HP101T4",
+        "product_id": "@CES8G820GCN",
+        "quantity": 1
+      }
+    },
+    {
+      "table": "afs_part",
+      "key": "part-HP101TM",
+      "fields": {
+        "code": "TOTO-P-HP101TM",
+        "name": "可变坑距排水连接件",
+        "brand": "TOTO",
+        "model": "HP101TM",
+        "image_url": "https://www.toto.com.cn/cn/resource/images/product/HP101TM/l.jpg",
+        "function_description": "适配诺锐斯特LS系列；坑距305—435mm。",
+        "remark": "官网适配；按坑距择一，非全部必装。价格未录入，0为默认值。 https://www.toto.com.cn/cn/products/categories/toilet/others/product/HP101TM.html"
+      }
+    },
+    {
+      "table": "afs_part_product_relation",
+      "key": "part-rel-HP101TM",
+      "fields": {
+        "part_id": "@part-HP101TM",
+        "product_id": "@CES8G820GCN",
+        "quantity": 1
+      }
+    }
+  ]
+}

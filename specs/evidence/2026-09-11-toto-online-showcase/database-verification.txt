@@ -1,0 +1,26 @@
+QUERY: SELECT p.id,p.code,c.name category,s.name series,i.image_url FROM afs_product p JOIN afs_product_category c ON c.id=p.category_id LEFT JOIN afs_product_series s ON s.id=p.series_id JOIN afs_product_image_asset i ON i.product_id=p.id WHERE p.id BETWEEN 2 AND 7 ORDER BY p.id DESC
+id=7 code=CES8G820GCN category=智能一体型坐便器 series=NEOREST 诺锐斯特 LS image_url=https://www.toto.com.cn/cn/resource/images/product/CES8G820GCN/l.jpg
+id=6 code=CW636REB category=连体式坐便器 series=CW636 连体坐便器 image_url=https://www.toto.com.cn/cn/resource/images/product/CW636REB/l.jpg
+id=5 code=CW188SEBT305 category=连体式坐便器 series=CW188 连体坐便器 image_url=https://www.toto.com.cn/cn/resource/images/product/CW188SEBT305/l.jpg
+id=4 code=TCF4E360KCN category=智能冲洗坐便盖 series=WASHLET 卫洗丽 S7 image_url=https://www.toto.com.cn/cn/resource/images/product/TCF4E360KCN/l.jpg
+id=3 code=LW1535B category=台下式洗面器 series=null image_url=https://www.toto.com.cn/cn/resource/images/product/LW1535B/l.jpg
+id=2 code=TLG12303B category=水嘴花洒 series=null image_url=https://www.toto.com.cn/cn/resource/images/product/TLG12303B/l.jpg
+QUERY: SELECT b.code,p.code product,r.quantity FROM afs_product_bundle_product_relation r JOIN afs_product_bundle_item b ON b.id=r.bundle_id JOIN afs_product p ON p.id=r.product_id WHERE b.code LIKE 'TOTO-B-%'
+code=TOTO-B-HP101T3 product=CES8G820GCN quantity=1
+code=TOTO-B-HP101TM product=CES8G820GCN quantity=1
+code=TOTO-B-TCF4E360KCN product=CW188SEBT305 quantity=1
+code=TOTO-B-TCF4E360KCN product=CW636REB quantity=1
+QUERY: SELECT b.code,p.code product,r.quantity FROM afs_part_product_relation r JOIN afs_part b ON b.id=r.part_id JOIN afs_product p ON p.id=r.product_id WHERE b.code LIKE 'TOTO-P-%'
+code=TOTO-P-HP101T3 product=CES8G820GCN quantity=1
+code=TOTO-P-HP101T4 product=CES8G820GCN quantity=1
+code=TOTO-P-HP101TM product=CES8G820GCN quantity=1
+QUERY: SELECT COUNT(*) audits FROM afs_catalog_audit WHERE actor_id=1662552458226 AND created_at>=CURRENT_DATE AND ((entity_type='CATEGORY' AND entity_id BETWEEN 5 AND 11) OR (entity_type='PRODUCT_SERIES' AND entity_id BETWEEN 2 AND 5) OR (entity_type='PRODUCT' AND entity_id BETWEEN 2 AND 7) OR (entity_type='PRODUCT_BUNDLE' AND entity_id BETWEEN 1 AND 3) OR (entity_type='PART' AND entity_id BETWEEN 2 AND 4))
+audits=23
+QUERY: SELECT COUNT(*) existing_product FROM afs_product WHERE id=1 AND code='1' AND name='1'
+existing_product=1
+QUERY: SELECT COUNT(*) existing_categories FROM afs_product_category WHERE id BETWEEN 1 AND 4
+existing_categories=4
+QUERY: SELECT COUNT(*) existing_series FROM afs_product_series WHERE id=1 AND code='V2S20260910175400'
+existing_series=1
+QUERY: SELECT COUNT(*) existing_part FROM afs_part WHERE id=1 AND code='111'
+existing_part=1

@@ -1,0 +1,24 @@
+COMMITTED gaia_wh_init_wzy batch=20260911-toto-online
+afs_product_category	5	TOTO-CAT-TOILET	坐便器
+afs_product_category	6	TOTO-CAT-BASIN	洗面器
+afs_product_category	7	TOTO-CAT-FAUCET	水嘴花洒
+afs_product_category	8	TOTO-CAT-SMART	智能一体型坐便器
+afs_product_category	9	TOTO-CAT-ONEPIECE	连体式坐便器
+afs_product_category	10	TOTO-CAT-WASHLET	智能冲洗坐便盖
+afs_product_category	11	TOTO-CAT-UNDER	台下式洗面器
+afs_product_series	2	TOTO-NEOREST-LS	NEOREST 诺锐斯特 LS
+afs_product_series	3	TOTO-CW636	CW636 连体坐便器
+afs_product_series	4	TOTO-CW188	CW188 连体坐便器
+afs_product_series	5	TOTO-WASHLET-S7	WASHLET 卫洗丽 S7
+afs_product	2	TLG12303B	单柄双控抽取式洗面器水嘴
+afs_product	3	LW1535B	台下式洗面器 LW1535B
+afs_product	4	TCF4E360KCN	卫洗丽 S7 智能冲洗坐便盖
+afs_product	5	CW188SEBT305	连体式坐便器 CW188
+afs_product	6	CW636REB	连体式坐便器 CW636
+afs_product	7	CES8G820GCN	诺锐斯特 LS 智能一体型坐便器
+afs_product_bundle_item	1	TOTO-B-TCF4E360KCN	卫洗丽 S7 智能坐便盖
+afs_product_bundle_item	2	TOTO-B-HP101T3	305mm 排水连接件
+afs_product_bundle_item	3	TOTO-B-HP101TM	可变坑距排水连接件
+afs_part	2	TOTO-P-HP101T3	305mm 排水连接件
+afs_part	3	TOTO-P-HP101T4	400mm 排水连接件
+afs_part	4	TOTO-P-HP101TM	可变坑距排水连接件
