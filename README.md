@@ -65,6 +65,41 @@ docs/toto/
 
 路径相对于 `Gaia/`；完整职责和改动边界见[仓库与系统关系](00-项目资料/02-仓库与系统关系.md)。
 
+### 团队首次拉取：保持多仓独立，只统一目录
+
+TOTO 使用“一个项目目录、多个独立 Git 仓库”的工作区方式，不把业务仓库合并为 monorepo，也不移动其他蓝鲸项目正在使用的仓库。每位开发者为 TOTO 单独检出一套工作目录，特别是 `gaia-saas-proj` 必须使用 TOTO 独立检出，避免分支、本地配置和构建产物影响其他项目。
+
+```text
+Gaia/
+├── docs/
+│   └── toto/                       # 本文档仓库，也是工作区入口
+├── backend/
+│   ├── gaia-after-sales/           # 售后领域与 API
+│   └── gaia-saas-proj/             # TOTO 独立检出的聚合运行宿主
+├── frontend/
+│   └── gaia-ui/                    # apps/after-sales Web 子系统
+└── mobile/
+    ├── gaia-after-sales-uni/       # 消费者小程序与 H5
+    └── gaia-customer-service-uni/  # 尚未建仓，当前不自动创建
+```
+
+同事首次准备工作区时，先拉取本仓库，再运行安全、可重复执行的初始化脚本：
+
+```bash
+mkdir -p Gaia/docs
+git clone https://github.com/zhiyuan23/toto-after-sales-docs.git Gaia/docs/toto
+cd Gaia/docs/toto
+bash scripts/bootstrap-workspace.sh
+```
+
+脚本只拉取缺失仓库，不会对已有仓库执行 `pull`、切换分支或覆盖本地修改。默认使用当前 TOTO 业务开发分支；需要更换时通过 `TOTO_WORK_BRANCH` 指定。`gaia-after-sales-uni` 当前没有已确认的远程地址，拿到地址后按以下方式补充：
+
+```bash
+TOTO_AFTER_SALES_UNI_REPO_URL='<仓库地址>' bash scripts/bootstrap-workspace.sh
+```
+
+仓库齐备后，在本目录执行 `yarn dev:afs` 即可启动 TOTO 售后 Web、聚合后端和本地 Redis；该命令只转发到 `frontend/gaia-ui` 的同名启动器，不复制启动逻辑。也可以继续从 `frontend/gaia-ui` 执行原命令。完整环境要求和调试方式见[本地开发与联调](local-development.md)。
+
 | 仓库 | 职责 | 入口 |
 | --- | --- | --- |
 | `gaia-after-sales` | 售后领域、管理端 API、小程序 API | [开发说明](../../backend/gaia-after-sales/docs/catalog-development.md) |

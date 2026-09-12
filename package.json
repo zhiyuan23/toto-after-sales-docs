@@ -1,0 +1,7 @@
+{
+  "name": "toto-after-sales-workspace",
+  "private": true,
+  "scripts": {
+    "dev:afs": "yarn --cwd ../../frontend/gaia-ui dev:afs"
+  }
+}
