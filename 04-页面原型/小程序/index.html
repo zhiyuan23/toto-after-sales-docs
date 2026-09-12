@@ -6,12 +6,12 @@
   <meta name="color-scheme" content="light">
   <title>TOTO · 两端小程序设计原型</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="consumer.css?v=0.6.1">
+  <link rel="stylesheet" href="consumer.css?v=0.7.0">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
-  <script src="consumer.js?v=0.6.1" defer></script>
+  <script src="consumer.js?v=0.7.0" defer></script>
   <script src="worker.js" defer></script>
   <script src="consumer-outlets.js?v=0.6.0" defer></script>
-  <script src="app.js?v=0.6.0" defer></script>
+  <script src="app.js?v=0.7.0" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -29,7 +29,7 @@
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer">消费者 v0.6 · 地图查找服务网点<br>服务人员 v0.1 · 结构原型<br>本轮评审原型，确认后再做视觉定稿。</div>
+      <div class="sidebar-footer">消费者 v0.7 · 服务进度优先<br>服务人员 v0.1 · 结构原型<br>本轮评审原型，确认后再做视觉定稿。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
@@ -64,7 +64,7 @@
           <div id="consumer-controls">
             <div class="review-divider"></div>
             <label class="review-field" for="consumer-scenario">消费者使用场景</label>
-            <select id="consumer-scenario"><option value="registered">已登记产品 · 申请服务</option><option value="welcome">首次使用 · 添加产品</option><option value="confirmed">服务进行中 · 查看进度</option></select>
+            <select id="consumer-scenario"><option value="registered">已登记产品 · 申请服务</option><option value="welcome">首次使用 · 添加产品</option><option value="pending">申请已收到 · 等待联系</option><option value="confirmed">服务进行中 · 查看进度</option><option value="multiple">多项服务 · 切换进度</option></select>
             <p class="fine-print">切换场景会重置消费者端的演示数据。</p>
           </div>
           <div class="review-divider"></div>

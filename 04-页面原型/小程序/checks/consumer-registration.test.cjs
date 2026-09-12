@@ -317,3 +317,101 @@ test('worker appointment and completion keep their existing form transitions and
   f.submit('w-completion-form', 'w-review');
   assert.equal(f.current().id, 'w-review');
 });
+
+const serviceOrder = (product, overrides = {}) => ({
+  id: `DEMO-TEST-${product.id}`, productId: product.id, productIds: [product.id],
+  productName: product.name, serviceType: 'repair', status: 'pending',
+  description: '虚构服务问题', contactName: '虚构顾客', phone: '13800000000', address: '虚构地址',
+  preferredDate: '2026-09-15', preferredTime: 'morning', ...overrides,
+});
+const renderedServiceButtons = f => [...f.get('#phone-body').innerHTML.matchAll(/<button\b([^>]*)>/g)].map(([, attributes]) =>
+  Object.fromEntries([...attributes.matchAll(/data-([a-z-]+)="([^"]*)"/g)].map(([, name, value]) => [name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), value]))
+);
+const serviceProgressButton = f => {
+  const buttons = renderedServiceButtons(f).filter(button => button.go === 'c-progress');
+  assert.equal(buttons.length, 1, 'the selected service must expose one progress action');
+  return buttons[0];
+};
+
+test('the service hub deduplicates a multi-product installation by order id', () => {
+  const f = fixture();
+  const [first, second] = f.consumer.ownedProducts;
+  const order = serviceOrder(first, { serviceType: 'install', productIds: [first.id, second.id], productName: `${first.name}、${second.name}` });
+  f.consumer.orders.set(first.id, order);
+  f.consumer.orders.set(second.id, { ...order }); // Separate objects still represent the same application.
+  f.consumer.productId = second.id;
+  const orders = f.consumerContext().serviceOrders;
+  assert.equal(orders.length, 1);
+  assert.equal(orders[0].id, order.id);
+  assert.deepEqual(copy(orders[0].productIds), [first.id, second.id]);
+  f.showScreen('c-service');
+  const action = serviceProgressButton(f);
+  assert.equal(action.product, order.productId);
+  f.click(action);
+  assert.equal(f.current().id, 'c-progress');
+  assert.equal(f.consumerContext().order.id, order.id);
+});
+
+test('the service hub exposes another product service when the current product has no active order', () => {
+  const f = fixture();
+  const [currentProduct, otherProduct] = f.consumer.ownedProducts;
+  const order = serviceOrder(otherProduct);
+  f.consumer.orders.set(otherProduct.id, order);
+  f.consumer.productId = currentProduct.id;
+  assert.equal(f.consumerContext().order, null);
+  f.showScreen('c-service');
+  assert.ok(f.get('#phone-body').innerHTML.includes(otherProduct.name));
+  const action = serviceProgressButton(f);
+  assert.equal(action.product, otherProduct.id);
+  f.click(action);
+  assert.equal(f.current().id, 'c-progress');
+  assert.equal(f.consumer.productId, otherProduct.id);
+  assert.equal(f.consumerContext().order.id, order.id);
+});
+
+test('the service hub prefers the current order and switches service records without returning home', () => {
+  const f = fixture();
+  const [first, second] = f.consumer.ownedProducts;
+  f.consumer.orders.set(first.id, serviceOrder(first));
+  f.consumer.orders.set(second.id, serviceOrder(second, { status: 'confirmed', confirmedDate: '2026-09-16', confirmedTime: 'afternoon' }));
+  f.consumer.productId = second.id; // The current order must win over the first aggregate record.
+  f.showScreen('c-service');
+  assert.equal(serviceProgressButton(f).product, second.id);
+  for (const product of [first, second]) {
+    const action = renderedServiceButtons(f).find(button => button.product === product.id && button.go === 'c-service');
+    assert.ok(action, 'each service record must be selectable within the service hub');
+    f.click(action);
+    assert.equal(f.current().id, 'c-service');
+    assert.equal(f.consumer.productId, product.id);
+    assert.equal(serviceProgressButton(f).product, product.id);
+  }
+});
+
+test('pending service does not present requested or stale confirmation times as a confirmed arrangement', () => {
+  const f = fixture();
+  const product = f.consumer.ownedProducts[0];
+  const order = serviceOrder(product, { preferredDate: '2026-09-17', preferredTime: '期望时段示例', confirmedDate: '2026-09-19', confirmedTime: '确认时段示例' });
+  f.consumer.orders.set(product.id, order);
+  f.showScreen('c-service');
+  const pending = f.get('#phone-body').innerHTML.replace(/<[^>]+>/g, ' ');
+  assert.ok(!pending.includes(order.confirmedDate));
+  assert.ok(!pending.includes(order.confirmedTime));
+  assert.ok(!pending.includes(order.preferredDate) || /期望/.test(pending), 'a requested date must remain identified as a preference');
+  assert.doesNotMatch(pending, /时间已确认|已确认时间|安排已确认/);
+  order.status = 'confirmed';
+  f.showScreen('c-service');
+  const confirmed = f.get('#phone-body').innerHTML;
+  assert.ok(confirmed.includes(order.confirmedDate));
+  assert.ok(confirmed.includes(order.confirmedTime));
+});
+
+test('an empty service hub does not imply active service or offer a progress action', () => {
+  for (const scenario of ['registered', 'welcome']) {
+    const f = fixture();
+    f.resetConsumer(scenario);
+    f.showScreen('c-service');
+    assert.equal(f.consumerContext().serviceOrders.length, 0);
+    assert.doesNotMatch(f.get('#phone-body').innerHTML, /正在为这件产品服务/);
+    assert.equal(renderedServiceButtons(f).filter(button => button.go === 'c-progress').length, 0);
+  }
+});

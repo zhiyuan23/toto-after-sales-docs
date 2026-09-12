@@ -60,6 +60,26 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
     const ids = Array.isArray(chosen) ? chosen : [chosen];
     return allProducts(ctx).filter(p => ids.includes(p.id)).map(p => p.name).join('、') || item(ctx).name;
   };
+  const serviceProducts = (ctx, order) => allProducts(ctx).filter(p => (order.productIds || [order.productId]).includes(p.id));
+  const serviceProductSummary = (ctx, order) => {
+    const list=serviceProducts(ctx,order),first=list[0];
+    return `<div class="c-hub-product">${first?`<img src="${e(first.image)}" alt="${e(first.name)}">`:''}<div><strong>${e(list.map(p=>p.name).join('、') || order.productName || '本次服务产品')}</strong><p>${list.length>1?`${list.length} 件产品 · 同一服务申请`:e(first?`${first.room} · ${first.model}`:'产品资料见申请详情')}</p></div></div>`;
+  };
+  const serviceHub = ctx => {
+    const orders=ctx.serviceOrders || (ctx.order?[ctx.order]:[]);
+    const order=orders.find(o=>o.id===ctx.order?.id) || orders[0];
+    const header=`<header class="c-hub-header"><div><h2>我的服务</h2><p>${orders.length?`正在跟进 ${orders.length} 项服务`:'每一次需要，都有回应'}</p></div>${order?'<button class="c-text-button" data-go="c-products">＋ 申请新服务</button>':''}</header>`;
+    const help=`<section class="c-hub-help"><button class="c-menu-row" data-go="c-evaluation"><span>历史服务与评价</span><span class="c-secondary-text">已完结示例 ›</span></button><div class="c-hub-help-links"><button data-go="c-outlets">查找服务网点 <span aria-hidden="true">›</span></button>${order?'':'<button data-action="可选择电话客服或微信客服；本次仅演示入口。">联系 TOTO 客服 <span aria-hidden="true">›</span></button>'}</div></section>`;
+    if (!order) return `${header}<section class="c-hub-empty"><span class="c-hub-empty-symbol" data-icon="service" aria-hidden="true"></span><h3>暂无进行中的服务</h3><p>${ctx.hasProducts===false?'登记产品后，即可申请售后服务。':'提交申请后，可以在这里查看<br>服务进度与联系安排。'}</p><button class="primary" data-go="${ctx.hasProducts===false?'c-register':'c-products'}">${ctx.hasProducts===false?'登记产品':'申请服务'}</button></section>${help}`;
+    const confirmed=order.status==='confirmed',remote=order.serviceType==='remote-guidance';
+    const switcher=orders.length>1?`<div class="c-hub-switcher" aria-label="选择要跟进的服务">${orders.map(o=>{const list=serviceProducts(ctx,o),first=list[0];return `<button data-product="${e(o.productId)}" data-go="c-service" aria-pressed="${order.id===o.id}"><strong>${e(list.length>1?`${list.length} 件产品`:first?.room || '产品') } · ${e(types[o.serviceType] || '售后服务')}</strong><span>${o.status==='confirmed'?'时间已确认':'等待联系'}</span></button>`;}).join('')}</div>`:'';
+    const currentTitle=confirmed?'时间已确认':'等待联系确认';
+    const stageLabels=['申请提交','联系确认',remote?'使用指导':'服务处理','服务完成'];
+    const stages=`<ol class="c-hub-stages" aria-label="服务阶段">${stageLabels.map((label,i)=>`<li class="${i===0?'is-done':i===1?'is-current':'is-next'}" ${i===1?'aria-current="step"':''}><span class="c-hub-stage-dot" aria-hidden="true">${i===0?'✓':i+1}</span><strong>${label}</strong><small>${i===0?'已提交':i===1?(confirmed?'已确认':'待联系'):'待进行'}</small></li>`).join('')}</ol>`;
+    const arrangement=confirmed?`<div class="c-hub-arrangement"><span>${remote?'已确认联系时间':'已确认上门时间'}</span><strong>${e(order.confirmedDate || '日期待确认')}</strong><p>${e(times[order.confirmedTime] || order.confirmedTime || '时段待确认')}</p></div>`:`<div class="c-hub-arrangement is-pending"><span>服务安排</span><strong>联系后确认${remote?'指导方式与时间':'服务方式与时间'}</strong><p>申请已收到，请留意来电。</p></div>`;
+    const next=confirmed?(remote?'请在确认时段保持电话畅通，便于沟通使用问题。':'请留意来电，并在确认时段做好产品现场准备。'):'我们将与您核对需求并确认安排，您暂时无需重复申请。';
+    return `${header}${switcher}<section class="c-hub-overview" aria-label="当前服务"><div class="c-hub-status"><span>${e(types[order.serviceType] || '售后服务')}</span><h2>${currentTitle}</h2></div>${serviceProductSummary(ctx,order)}${stages}${arrangement}<div class="c-hub-next"><span>接下来</span><p>${next}</p></div><div class="c-hub-actions"><button class="secondary" data-action="本次只演示客服联系入口，未发起真实通话。">联系客服</button><button class="primary" data-product="${e(order.productId)}" data-go="c-progress">查看完整进度</button></div></section>${help}`;
+  };
   const welcome = ctx => `<div class="c-welcome"><div class="c-welcome-brand">TOTO</div><h2>让家的每一份舒适<br>都有照顾</h2><p>登记您的 TOTO 产品，<br>安装、维修与使用指导，随时找到我们。</p><div class="c-welcome-image"><img src="${e(item(ctx).image)}" alt="TOTO 智能坐便器产品示意"></div><button class="primary" data-go="c-register">登记我的产品</button><button class="c-text-button" data-go="c-service">先了解售后服务</button></div>`;
 
   window.TOTO_SCREENS.consumer = {
@@ -79,9 +99,9 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
       },
       {
         id: 'c-service', title: '服务', entry: 'C02 · 服务聚合与进度', tab: 'c-service',
-        goal: '让消费者围绕当前产品选择服务方式，同时就近查看申请进度、联系渠道和历史记录。',
-        note: '服务记录归属当前产品。安装入口为需求探索，不表示业务已开放。网点查询可体验授权门店与维修网点两类，电话与地图均为示例；客服与问卷未接真实渠道；评价入口只对应固定的历史完结单。',
-        body: ctx => `<header class="c-page-heading"><h2>有需要，我们都在</h2><p>从第一次使用，到每一天的安心。</p></header>${ctx.hasProducts === false ? '<button class="c-register-prompt" data-go="c-register"><strong>先登记您的产品</strong><span>让服务准确找到这一件产品 ›</span></button>' : `${compact(ctx, '正在为这件产品服务')}<button class="c-text-button c-switch-link" data-go="c-products">切换产品</button>`}${actions()}<section class="c-section"><div class="c-section-heading"><h3>服务进度</h3>${ctx.order ? '<button class="c-text-button" data-go="c-progress">查看详情</button>' : ''}</div>${ctx.order ? orderSummary(ctx) : '<p class="c-quiet-empty">这件产品暂时没有进行中的服务。<br>需要时，从上方选择适合您的帮助。</p>'}</section><section class="c-section"><h3>更多帮助</h3><button class="c-menu-row" data-go="c-outlets"><span>查找服务网点</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="可选择电话客服或微信客服；本次仅演示入口。"><span>联系 TOTO 客服</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-go="c-evaluation"><span>评价历史服务</span><span class="c-secondary-text">已完结示例 ›</span></button></section>`,
+        goal: '优先跟进服务：快速识别当前状态、确认安排和下一步；多产品直接切换服务记录，新申请从轻量入口回到产品选择。',
+        note: '按申请单号汇总活动服务，多商品安装申请只展示一次。待联系和时间已确认沿用原有示例状态，期望时间不冒充确认时间；未来节点为待进行。无活动申请显示空态；历史入口仍为独立已完结评价示例，客服未接真实渠道。',
+        body: serviceHub,
       },
       {
         id: 'c-mine', title: '我的', entry: 'C13 · 个人中心', tab: 'c-mine',
@@ -241,7 +261,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
           const order = ctx.order;
           if (!order) return `<header class="c-page-heading"><h2>这件产品暂无进行中服务</h2><p>需要帮助时，可以从产品中心发起申请。</p></header>${compact(ctx)}<button class="primary" data-go="c-home">回到产品中心</button>`;
           const confirmed = order.status === 'confirmed';
-          return `<header class="c-progress-heading"><span class="c-tag">${e(types[order.serviceType] || '售后服务')}</span><h2>${confirmed ? '时间已确认，安心等候' : '申请已收到，等待联系'}</h2><p>${confirmed ? '请留意来电，具体安排以双方沟通为准。' : '我们会联系您，确认问题与服务安排。'}</p></header>${compact(ctx, order.productName || '本次服务产品')}<section class="c-section"><ol class="c-timeline"><li class="is-done"><strong>申请已提交</strong><p>您的服务需求已收到。</p></li><li class="${confirmed ? 'is-done' : 'is-current'}"><strong>${confirmed ? '服务安排已确认' : '等待联系确认'}</strong><p>${confirmed ? e(`${order.confirmedDate || '日期待确认'} ${times[order.confirmedTime] || order.confirmedTime || '时段待确认'}`) : '问题、服务方式与时间将在联系后确认。'}</p></li><li class="is-next"><strong>${order.serviceType === 'remote-guidance' ? '提供使用指导' : '服务人员处理'}</strong><p>处理后可查看服务记录。</p></li><li class="is-next"><strong>服务完成</strong><p>处理结果将随进度更新。</p></li></ol></section><section class="c-section"><h3>申请详情</h3><dl class="c-details">${row('申请单号', order.id)}${row(order.serviceType === 'remote-guidance' ? '期望联系时间' : '期望上门时间', `${order.preferredDate || '未填写'} ${times[order.preferredTime] || order.preferredTime || ''}`)}${confirmed ? row('已确认时间', `${order.confirmedDate || '日期待确认'} ${times[order.confirmedTime] || order.confirmedTime || '时段待确认'}`) : ''}${row('问题 / 需求', order.description || '未补充其他说明')}${row('联系人', `${order.contactName || ''} · ${order.phone || ''}`)}${order.serviceType === 'remote-guidance' ? '' : row('使用地址', order.address || '待联系确认')}</dl></section>`;
+          return `<header class="c-progress-heading"><span class="c-tag">${e(types[order.serviceType] || '售后服务')}</span><h2>${confirmed ? '时间已确认，安心等候' : '申请已收到，等待联系'}</h2><p>${confirmed ? '请留意来电，具体安排以双方沟通为准。' : '我们会联系您，确认问题与服务安排。'}</p></header>${serviceProductSummary(ctx, order)}<section class="c-section"><ol class="c-timeline"><li class="is-done"><strong>申请已提交</strong><p>您的服务需求已收到。</p></li><li class="${confirmed ? 'is-done' : 'is-current'}"><strong>${confirmed ? '服务安排已确认' : '等待联系确认'}</strong><p>${confirmed ? e(`${order.confirmedDate || '日期待确认'} ${times[order.confirmedTime] || order.confirmedTime || '时段待确认'}`) : '问题、服务方式与时间将在联系后确认。'}</p></li><li class="is-next"><strong>${order.serviceType === 'remote-guidance' ? '提供使用指导' : '服务人员处理'}</strong><p>处理后可查看服务记录。</p></li><li class="is-next"><strong>服务完成</strong><p>处理结果将随进度更新。</p></li></ol></section><section class="c-section"><h3>申请详情</h3><dl class="c-details">${row('申请单号', order.id)}${row(order.serviceType === 'remote-guidance' ? '期望联系时间' : '期望上门时间', `${order.preferredDate || '未填写'} ${times[order.preferredTime] || order.preferredTime || ''}`)}${confirmed ? row('已确认时间', `${order.confirmedDate || '日期待确认'} ${times[order.confirmedTime] || order.confirmedTime || '时段待确认'}`) : ''}${row('问题 / 需求', order.description || '未补充其他说明')}${row('联系人', `${order.contactName || ''} · ${order.phone || ''}`)}${order.serviceType === 'remote-guidance' ? '' : row('使用地址', order.address || '待联系确认')}</dl></section>`;
         },
         footer: ctx => ctx.order ? '<button class="secondary" data-action="本次只演示客服联系入口，未发起真实通话。">联系客服</button><button class="primary" data-go="c-home">回到产品中心</button>' : '',
       },

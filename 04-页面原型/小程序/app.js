@@ -48,6 +48,7 @@
     const product=products.find(p=>p.id===consumer.productId) || products[0] || apps.consumer.products[0];
     return {products,catalog:apps.consumer.products,product,registration:registrationContext(),registrationReceipt:consumer.registrationReceipt,serviceType:consumer.serviceType,
       order:consumer.orders.get(consumer.productId) || null,submittedOrder:consumer.lastSubmitted,
+      serviceOrders:[...new Map([...consumer.orders.values()].map(order=>[order.id,order])).values()],
       form:consumer.forms.get(serviceKey()) || {},registered:product?.registration || consumer.registered,
       mediaStatus:consumer.media.get(serviceKey()) || 'none',hasProducts:consumer.hasProducts};
   };
@@ -200,7 +201,7 @@
       ['产品需要维修或指导','带入当前产品，分步说明问题、确认联系方式和期望时间，再复核提交。同一笔申请可从产品页继续跟进。',['c-home','c-repair','c-contact','c-confirm','c-submit-result','c-progress']],
       ['查找授权门店与维修网点','地图选点后直接电话或导航；列表按需展开，地区与详情独立查看，无需先登记产品。',['c-service','c-outlets','c-outlet-region','c-outlet-detail']],
       ['新产品安装 · 设计探索','选择本次涉及的产品，确认地址和期望时间，提交后等待联系。消费者安装正式开放条件仍待确认。',['c-home','c-install','c-contact','c-confirm','c-submit-result']],
-      ['多产品与服务跟进','切换产品时同步切换资料及关联服务；已确认预约可在右侧切换“服务进行中”场景查看。评价页独立展示已完成示例。',['c-products','c-home','c-product','c-progress','c-evaluation']]
+      ['多产品与服务跟进','服务页按申请汇总，直接切换服务，查看确认安排和完整进度；右侧可体验等待联系、已确认及多项服务。评价页展示独立已完成示例。',['c-home','c-service','c-progress','c-evaluation']]
     ] : [
       ['联系客户与现场履约','先确认预约，再记录现场作业；提交完工后进入审核。',['w-tasks','w-detail','w-appointment','w-service','w-completion','w-review']],
       ['缺件与重新安排','先记录异常和配件需求，到件后重新联系确认时间。',['w-detail','w-exception','w-parts','w-requisition','w-appointment']],
@@ -232,12 +233,21 @@
     [...drafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>drafts.delete(key));
     [...namedDrafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>namedDrafts.delete(key));
     [...submitted].filter(key=>key.startsWith('c-')).forEach(key=>submitted.delete(key));
-    if (scenario==='confirmed') consumer.orders.set('t01',{
+    if (['confirmed','multiple'].includes(scenario)) consumer.orders.set('t01',{
       id:'DEMO-SR-001',productId:'t01',productName:apps.consumer.products?.[0]?.name || '智能坐便器',serviceType:'repair',
       serviceLabel:'维修',status:'confirmed',description:'冲洗功能偶尔无法启动。',contactName:'陈女士',phone:'13800000026',
       address:'虚构地址：示例市样板路88号1栋101室',preferredDate:'2026-09-15',preferredTime:'上午 09:00–12:00',
       confirmedDate:'2026-09-15',confirmedTime:'下午 14:00–17:00'
     });
+    if (['pending','multiple'].includes(scenario)) {
+      const productId=scenario==='multiple'?'b02':'t01';
+      const product=consumer.ownedProducts.find(p=>p.id===productId);
+      consumer.orders.set(productId,{
+        id:'DEMO-SR-002',productId,productIds:[productId],productName:product.name,serviceType:'remote-guidance',
+        serviceLabel:'远程使用指导',status:'pending',description:'希望了解日常清洁与保养方法。',contactName:'陈女士',phone:'13800000026',
+        preferredDate:'2026-09-16',preferredTime:'morning'
+      });
+    }
     $('#consumer-scenario').value=scenario;
   }
   const validPurchaseDate = value => /^\d{4}-\d{2}-\d{2}$/.test(value || '') && value<=new Date().toLocaleDateString('en-CA') && !Number.isNaN(Date.parse(value));
@@ -429,7 +439,7 @@
   });
   $('#prev-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)-1].id);});
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
-  $('#consumer-scenario').addEventListener('change',event=>{resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(consumer.hasProducts?'c-home':'c-welcome',false,true);});
+  $('#consumer-scenario').addEventListener('change',event=>{const keepService=current.id==='c-service';resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepService?'c-service':consumer.hasProducts?'c-home':'c-welcome',false,true);});
   $('#reset-demo').addEventListener('click',()=>{drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(all[0].id,false);showToast('本次演示已重置。');});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
   if(all.length) showScreen(captureId || location.hash.slice(1) || all[0].id,false);
