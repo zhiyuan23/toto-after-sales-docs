@@ -182,10 +182,59 @@ Corepack 命令须在子目录执行，以选中该目录固定 pnpm 版本；�
 
 验证通过：子系统冻结安装、typecheck、production build、仓库外隔离构建、31 项底座测试、原主构建、统一 production:saas、静态产物校验、双服务访问、HMR 和 SIGINT 清理。Chrome 售后入口的品牌、布局及控制台验证通过。原 legacy 页面和主路由无修改。
 
-本次浏览器主应用请求本机 8080 返回 ECONNREFUSED，真实登录／legacy 菜单页面依赖后端启动后另验；不要将主入口 HTTP 200 或构建通过等同于真实业务联调。Gaia 会话、权限、业务页面迁移、iframe 和三模式切换尚未实现。详细来源、命令与边界见[子系统 README](../../frontend/gaia-ui/apps/after-sales/README.md)和[改造方案实施记录](02-技术设计/07-gaia-ui售后子系统独立前端改造方案.md#13-第一阶段实施与验证2026-09-08)。
+本次浏览器主应用请求本机 8080 返回 ECONNREFUSED，真实登录／legacy 菜单页面依赖后端启动后另验；不要将主入口 HTTP 200 或构建通过等同于真实业务联调。Gaia 会话、权限、业务页面迁移、iframe 和三模式切换尚未实现。详细来源、命令与边界见[子系统 README](../../frontend/gaia-ui/apps/after-sales/README.md)和[改造方案实施记录](02-技术设计/07-gaia-ui售后子系统独立前端改造方案.md#14-第一阶段实施与验证2026-09-08)。
 
 补充本地启动核验：用户开启 VPN 后，按原脚本启动独立 Redis 16379 并重新装配后端，两次 Maven 构建通过，未修改本地代理或数据库配置。现有数据库 TCP 端口可达，但 JDBC 握手持续返回 EOF（未收到 MySQL 响应），后端 8080 未成功监听；已停止本次失败启动，避免持续重试。主／子前端仍按原配置运行，legacy 登录页面验收仍受后端连接阻塞。未改动后端已有 `.gitignore`、宿主 POM 或本机配置。
 
 ### 2026-09-10 全部修改提交时的依赖文件边界
 
 按用户“提交所有修改”的要求，保留 `gaia-ui` 根目录已有的 `pnpm-lock.yaml` 和 `pnpm-workspace.yaml`。其中 `allowBuilds` 仍含 `set this to true or false` 占位值，尚未确定依赖构建脚本授权，也未验证根目录 pnpm 冻结安装；不能据此认定主系统已经迁移到 pnpm。主系统继续以已有 Yarn 命令为运行依据，售后子系统仍使用自身依赖目录；本次前端测试、类型检查和生产构建均在子系统已有安装上完成。后续启用根目录 pnpm 前，需要明确构建脚本策略并独立验证安装。
+
+## 项目与仓库入口
+
+路径相对于 `Gaia/`；完整职责和改动边界见[仓库与系统关系](00-项目资料/02-仓库与系统关系.md)。
+
+### 团队首次拉取：保持多仓独立，只统一目录
+
+TOTO 使用“一个项目目录、多个独立 Git 仓库”的工作区方式，不把业务仓库合并为 monorepo，也不移动其他蓝鲸项目正在使用的仓库。每位开发者为 TOTO 单独检出一套工作目录，特别是 `gaia-saas-proj` 必须使用 TOTO 独立检出，避免分支、本地配置和构建产物影响其他项目。
+
+```text
+Gaia/
+├── docs/
+│   └── toto/                       # 本文档仓库，也是工作区入口
+├── backend/
+│   ├── gaia-after-sales/           # 售后领域与 API
+│   └── gaia-saas-proj/             # TOTO 独立检出的聚合运行宿主
+├── frontend/
+│   └── gaia-ui/                    # apps/after-sales Web 子系统
+└── mobile/
+    ├── gaia-after-sales-uni/       # 消费者小程序与 H5
+    └── gaia-customer-service-uni/  # 尚未建仓，当前不自动创建
+```
+
+同事首次准备工作区时，先拉取本仓库，再运行安全、可重复执行的初始化脚本：
+
+```bash
+mkdir -p Gaia/docs
+git clone https://github.com/zhiyuan23/toto-after-sales-docs.git Gaia/docs/toto
+cd Gaia/docs/toto
+bash scripts/bootstrap-workspace.sh
+```
+
+脚本只拉取缺失仓库，不会对已有仓库执行 `pull`、切换分支或覆盖本地修改。默认使用当前 TOTO 业务开发分支；需要更换时通过 `TOTO_WORK_BRANCH` 指定。`gaia-after-sales-uni` 当前没有已确认的远程地址，拿到地址后按以下方式补充：
+
+```bash
+TOTO_AFTER_SALES_UNI_REPO_URL='<仓库地址>' bash scripts/bootstrap-workspace.sh
+```
+
+仓库齐备后，在本目录执行 `yarn dev:afs` 即可启动 TOTO 售后 Web、聚合后端和本地 Redis；该命令只转发到 `frontend/gaia-ui` 的同名启动器，不复制启动逻辑。也可以继续从 `frontend/gaia-ui` 执行原命令。完整环境要求和调试方式见[本地开发与联调](local-development.md)。
+
+| 仓库 | 职责 | 入口 |
+| --- | --- | --- |
+| `gaia-after-sales` | 售后领域、管理端 API、小程序 API | [开发说明](../../backend/gaia-after-sales/docs/catalog-development.md) |
+| `gaia-after-sales-uni` | 原 TOTO 售后小程序与 H5 | [README](../../mobile/gaia-after-sales-uni/README.md) |
+| `gaia-ui` | 同仓的售后独立子系统 `apps/after-sales`，复用 Gaia 认证、菜单、权限与租户体系；主系统旧售后页面仅作 legacy 保留 | [子系统 README](../../frontend/gaia-ui/apps/after-sales/README.md) |
+| `gaia-saas-proj` | 聚合并运行售后 API | [POM](../../backend/gaia-saas-proj/pom.xml) |
+| `gaia-customer-service-uni` | “TOTO客服助手”独立小程序 | 待创建，功能与技术基线待 Spec 确认 |
+
+`gaia-ui/src/views/common` 是受保护的公共子仓库，未经单独明确授权不得修改或提交。`gaia-saas-proj` 可按已确认 Spec 修改，但不得自动提交。菜单、权限和租户平台按需复用 `gaia-sys`、`gaia-tenant`；售后业务主数据自有，出库与追溯只按另行确认的外部接口契约接入，不直接引用主系统业务表或默认同步。

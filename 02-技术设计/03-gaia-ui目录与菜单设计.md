@@ -10,7 +10,7 @@
 
 > 架构演进说明：售后 Web 的默认实现位置已经调整为同一 `gaia-ui` 仓库的 `apps/after-sales/` 独立 SPA，菜单 code、角色投影和 Gaia 权限来源保持不变；`src/views/afterSales/` 是 legacy 保留入口。源码、运行、构建及部署改造见[售后子系统独立前端改造方案](07-gaia-ui售后子系统独立前端改造方案.md)。
 
-当前导航以[后台菜单与角色权限手册](../04-业务阅读/05-后台菜单与角色权限手册.md)为准。程序已接入四个工作视角、16 个展示分组（2026-09-12 源码快照）、管理员全局切换、授权菜单投影、默认首页与直达校验；原有 10 个业务域仅保留为唯一注册和代码存储结构。V3 实施范围及验证边界见[后台菜单与工作视角收敛记录](../specs/2026-09-11-后台菜单与工作视角收敛.md)。
+当前导航以[后台菜单与角色权限手册](09-后台菜单与岗位权限矩阵.md)为准。程序已接入四个工作视角、16 个展示分组（2026-09-12 源码快照）、管理员全局切换、授权菜单投影、默认首页与直达校验；原有 10 个业务域仅保留为唯一注册和代码存储结构。V3 实施范围及验证边界见[后台菜单与工作视角收敛记录](../specs/2026-09-11-后台菜单与工作视角收敛.md)。
 
 ## 1. 已确认的总体方案
 
@@ -41,7 +41,7 @@
 
 ## 3. V2 历史菜单树（已被 V3 取代）
 
-本节保留 2026-09-08 的 V2 目录用于差异追溯，不再作为当前导航实现依据。V3 当前目录以[角色权限手册第 2 节](../04-业务阅读/05-后台菜单与角色权限手册.md#full-catalog)和独立子系统 `src/features/navigation/manifest.json` 为准：管理员切换器位于全局页头，侧栏只显示当前视角的“分组 → 功能”，不存在第五套管理员混合菜单。
+本节保留 2026-09-08 的 V2 目录用于差异追溯，不再作为当前导航实现依据。V3 当前目录以[角色权限手册第 2 节](09-后台菜单与岗位权限矩阵.md#full-catalog)和独立子系统 `src/features/navigation/manifest.json` 为准：管理员切换器位于全局页头，侧栏只显示当前视角的“分组 → 功能”，不存在第五套管理员混合菜单。
 
 ```text
 蓝鲸数字
@@ -425,7 +425,7 @@ src/views/afterSales/
 
 ## 9. Gaia 菜单配置与分发
 
-业务目录与角色规则统一见[后台菜单与角色权限手册](../04-业务阅读/05-后台菜单与角色权限手册.md)。独立子系统当前代码映射位于 `apps/after-sales/src/features/navigation/manifest.json`；48 个当前功能 code/path 和 5 个导航授权 code 由该清单集中维护。`afsDealerAppointment`、`afsDecorationCompany`、`afsServiceItem` 已从注册与路由删除；`afsInstallationCode` 已按本次明确要求恢复；旧生成脚本只用于既有 Gaia 节点核对，不得据此恢复已删除功能或 V2 全量侧栏。
+业务目录与角色规则统一见[后台菜单与角色权限手册](09-后台菜单与岗位权限矩阵.md)。独立子系统当前代码映射位于 `apps/after-sales/src/features/navigation/manifest.json`；48 个当前功能 code/path 和 5 个导航授权 code 由该清单集中维护。`afsDealerAppointment`、`afsDecorationCompany`、`afsServiceItem` 已从注册与路由删除；`afsInstallationCode` 已按本次明确要求恢复；旧生成脚本只用于既有 Gaia 节点核对，不得据此恢复已删除功能或 V2 全量侧栏。
 
 保留[生成脚本](../../../frontend/gaia-ui/scripts/after-sales-menu-package.mjs)。在 `gaia-ui` 仓库中执行，输出位置按本次分发任务指定，例如：
 
