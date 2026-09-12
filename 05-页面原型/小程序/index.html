@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>TOTO · 两端小程序设计原型</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="consumer.css?v=0.6.1">
+  <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
+  <script src="consumer.js?v=0.6.1" defer></script>
+  <script src="worker.js" defer></script>
+  <script src="consumer-outlets.js?v=0.6.0" defer></script>
+  <script src="app.js?v=0.6.0" defer></script>
+</head>
+<body>
+  <header class="workspace-header">
+    <a class="workspace-brand" href="#c-home"><strong>TOTO</strong><span>售后服务 · 产品设计</span></a>
+    <span class="phase-label">01 需求与结构原型</span>
+    <a class="brief-link" href="01-两端小程序设计说明.md">设计说明 ↗</a>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar">
+      <p class="eyebrow">应用载体</p>
+      <div class="app-switch" aria-label="选择小程序">
+        <button data-app="consumer" class="selected">消费者端</button>
+        <button data-app="worker">服务人员端</button>
+      </div>
+      <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
+      <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
+      <nav id="screen-list" aria-label="原型页面"></nav>
+      <div class="sidebar-footer">消费者 v0.6 · 地图查找服务网点<br>服务人员 v0.1 · 结构原型<br>本轮评审原型，确认后再做视觉定稿。</div>
+    </aside>
+    <main class="main">
+      <div class="view-toolbar">
+        <nav aria-label="评审视图" class="view-switch">
+          <button data-view="screen" class="selected">单页走查</button>
+          <button data-view="flows">核心流程</button>
+          <button data-view="atlas">页面总览</button>
+        </nav>
+        <span class="prototype-tag">交互演示 · 虚构数据</span>
+      </div>
+      <div id="screen-view" class="screen-layout">
+        <section class="canvas" aria-label="手机原型预览">
+          <div class="canvas-caption"><span id="canvas-name"></span><span>390 × 844</span></div>
+          <div id="phone" class="phone">
+            <div class="phone-nav"><button id="phone-back" aria-label="返回上一页">‹</button><strong id="phone-title"></strong><span class="miniapp-menu" aria-label="小程序菜单">···</span></div>
+            <div id="phone-body" class="phone-body"></div>
+            <div id="phone-footer" class="phone-footer"></div>
+            <nav id="phone-tabs" class="phone-tabs" aria-label="小程序底部导航"></nav>
+            <div id="outlet-overlay" hidden></div>
+            <div id="toast" class="toast" role="status" hidden></div>
+          </div>
+          <div class="canvas-pager"><button id="prev-page">← 上一页</button><span id="page-number"></span><button id="next-page">下一页 →</button></div>
+        </section>
+        <aside class="review-panel">
+          <p class="eyebrow">本页设计意图</p>
+          <h1 id="review-title"></h1>
+          <span id="entry-id" class="entry-label"></span>
+          <p id="review-goal"></p>
+          <div class="review-divider"></div>
+          <p class="eyebrow">边界与评审提示</p>
+          <p id="review-note"></p>
+          <div id="consumer-controls">
+            <div class="review-divider"></div>
+            <label class="review-field" for="consumer-scenario">消费者使用场景</label>
+            <select id="consumer-scenario"><option value="registered">已登记产品 · 申请服务</option><option value="welcome">首次使用 · 添加产品</option><option value="confirmed">服务进行中 · 查看进度</option></select>
+            <p class="fine-print">切换场景会重置消费者端的演示数据。</p>
+          </div>
+          <div class="review-divider"></div>
+          <label class="review-field" for="ui-state">查看通用状态</label>
+          <select id="ui-state"><option value="normal">正常内容</option><option value="empty">暂无数据</option><option value="error">加载失败与重试</option><option value="upload">上传失败与重试</option></select>
+          <p class="fine-print">通用状态用于讨论反馈方式。实际适用页面、必填项和权限以功能契约为准。</p>
+          <div id="outlet-controls" hidden>
+            <div class="review-divider"></div>
+            <label class="review-field" for="outlet-location-outcome">网点定位演示</label>
+            <select id="outlet-location-outcome"><option value="success">定位成功 · 示例位置</option><option value="denied">用户拒绝定位</option><option value="failed">定位失败</option></select>
+            <p class="fine-print">选择后点击手机内“使用当前位置”按钮体验；不获取真实位置。网点页的“加载失败”保留地区与关键词，可在页内重试。</p>
+          </div>
+          <div class="review-divider"></div>
+          <p class="eyebrow">操作方式</p>
+          <p class="fine-print">点击手机内按钮体验流程。表单支持填写和必填校验，数据仅保留在本次页面会话；拨号、扫码、定位与上传均为模拟反馈。</p>
+          <button id="reset-demo" class="reset-button">重置本次演示</button>
+        </aside>
+      </div>
+      <section id="flows-view" class="overview-view" hidden></section>
+      <section id="atlas-view" class="overview-view" hidden></section>
+    </main>
+  </div>
+</body>
+</html>

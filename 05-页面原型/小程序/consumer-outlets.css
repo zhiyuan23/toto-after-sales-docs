@@ -1,0 +1,110 @@
+/* Consumer-only map discovery. Static map illustrates native miniapp interactions. */
+.consumer-phone .o-icon { width:20px; height:20px; flex-shrink:0; vertical-align:middle; }
+.consumer-phone .o-sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.consumer-phone[data-screen="c-outlets"] .phone-body { padding:0; overflow:hidden; }
+.consumer-phone .o-discovery { position:relative; height:100%; background:#eef1eb; isolation:isolate; }
+.consumer-phone .o-map { position:relative; height:220px; overflow:hidden; background:#eef1eb; }
+.consumer-phone .o-discovery > .o-map { position:absolute; inset:0 0 208px; height:auto; }
+.consumer-phone .o-map-art { position:absolute; inset:0; width:100%; height:100%; }
+.consumer-phone .o-top-controls { position:absolute; z-index:3; top:14px; left:16px; right:16px; }
+.consumer-phone .o-search { display:flex; align-items:center; height:48px; background:#fff; border-radius:12px; box-shadow:0 3px 15px #304f4612; }
+.consumer-phone .o-search > button { min-height:44px; min-width:44px; padding:0 12px; color:#2d434c; font-size:14px; }
+.consumer-phone .o-search > button:first-child { display:flex; align-items:center; gap:7px; white-space:nowrap; }
+.consumer-phone .o-search > button:first-child span { color:#71818b; font-size:12px; }
+.consumer-phone .o-search > button:last-child { color:#6f808a; }
+.consumer-phone .o-search label { display:flex; align-items:center; flex:1; min-width:0; border-left:1px solid #e6eae9; }
+.consumer-phone .o-search input { width:100%; height:28px; min-width:0; padding:0 10px; border:0; border-radius:0; background:transparent; color:var(--c-ink); font-size:13px; }
+.consumer-phone .o-search input::placeholder { color:#89959b; }
+.consumer-phone .o-type-switch { display:flex; width:230px; padding:4px; margin:12px auto 0; border-radius:28px; background:#fff; box-shadow:0 3px 14px #304f4612; }
+.consumer-phone .o-type-switch button { flex:1; min-height:44px; padding:0 12px; border-radius:24px; color:#596d7a; font-size:14px; }
+.consumer-phone .o-type-switch button[aria-pressed=true] { background:#1769aa; color:#fff; font-weight:600; }
+.consumer-phone .o-map-pin { position:absolute; transform:translate(-50%,-50%); width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:transparent!important; color:var(--c-blue); }
+.consumer-phone .o-map-pin > span { display:grid; place-items:center; width:30px; height:30px; border:3px solid #fff; border-radius:50%; background:#fff; box-shadow:0 2px 9px #44675d38; font-size:12px; font-weight:600; }
+.consumer-phone .o-map-pin.is-active { z-index:2; }
+.consumer-phone .o-map-pin.is-active > span { width:36px; height:36px; background:var(--c-blue); color:white; box-shadow:0 0 0 7px #1769aa15,0 2px 9px #44675d28; }
+.consumer-phone .o-map-pin strong { position:absolute; left:50%; bottom:53px; transform:translateX(-50%); padding:9px 12px; border-radius:8px; white-space:nowrap; font-size:12px; font-weight:550; background:#fff; color:#264f6d; box-shadow:0 3px 14px #304f4617; }
+.consumer-phone .o-map-pin strong:after { content:''; position:absolute; left:calc(50% - 4px); bottom:-4px; width:8px; height:8px; transform:rotate(45deg); background:#fff; }
+.consumer-phone .o-user-point { position:absolute; left:48%; top:76%; width:14px; height:14px; background:#2d85cd; border:3px solid white; border-radius:50%; box-shadow:0 0 0 12px #358eda20; }
+.consumer-phone .o-map-tools { position:absolute; left:18px; right:16px; bottom:258px; display:flex; align-items:end; justify-content:space-between; }
+.consumer-phone .o-map-tools > span { font-size:10px; color:#6d7d76; background:#f5f7f0de; padding:3px 6px; border-radius:4px; }
+.consumer-phone .o-map-tools button { width:46px; height:46px; display:grid; place-items:center; background:#fff; border-radius:12px; color:#436779; box-shadow:0 3px 14px #304f4615; }
+.consumer-phone .o-sheet { position:absolute; z-index:4; left:0; right:0; bottom:0; border-radius:24px 24px 0 0; padding:4px 22px 28px; background:#fff; box-shadow:0 -4px 28px #244b5c0d; max-height:calc(100% - 144px); overflow:auto; }
+.consumer-phone .o-sheet-bar { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:51px; border-bottom:1px solid #edf0f1; }
+.consumer-phone .o-sheet-bar > span { font-size:12px; color:#768792; }
+.consumer-phone .o-sheet-bar > button { display:flex; align-items:center; gap:6px; min-height:44px; padding:0; color:#456c86; font-size:12px; white-space:nowrap; }
+.consumer-phone .o-sheet-bar .o-icon { width:15px; height:15px; }
+.consumer-phone .o-selected { padding:12px 0 0; }
+.consumer-phone .o-result-title { display:flex; justify-content:space-between; gap:8px; align-items:center; text-align:left; width:100%; min-height:44px; padding:0; }
+.consumer-phone .o-result-title strong { font-size:21px; font-weight:600; letter-spacing:-.035em; }
+.consumer-phone .o-result-title > span { font-size:12px; color:#7e8d97; flex-shrink:0; }
+.consumer-phone .o-address { font-size:13px; line-height:1.75; color:#71828e; margin:3px 0 0; overflow-wrap:anywhere; }
+.consumer-phone .o-distance { display:flex; align-items:center; gap:4px; color:#7b8b96; font-size:11px; min-height:29px; margin:2px 0 12px; }
+.consumer-phone .o-distance .o-icon { width:13px; height:13px; }
+.consumer-phone .o-selected > .o-actions { margin-top:16px; }
+.consumer-phone .o-selected > .o-distance + .o-actions { margin-top:0; }
+.consumer-phone .o-actions { display:grid; grid-template-columns:1fr 1.5fr; gap:12px; width:100%; }
+.consumer-phone .o-actions button { display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; border-radius:12px; font-size:15px; font-weight:550; color:#1769aa; background:#edf4f9; }
+.consumer-phone .o-actions button:last-child { color:#fff; background:#1769aa; }
+.consumer-phone .o-actions .o-icon { width:19px; height:19px; }
+.consumer-phone .o-discovery.is-list .o-sheet { top:144px; max-height:none; display:flex; flex-direction:column; }
+.consumer-phone .o-discovery.is-list .o-sheet-bar { flex-shrink:0; }
+.consumer-phone .o-result-list { overflow:auto; margin:0 -6px; }
+.consumer-phone .o-list-item { display:flex; align-items:center; width:100%; gap:12px; padding:21px 6px; text-align:left; border-bottom:1px solid #edf0f1; border-radius:0; }
+.consumer-phone .o-list-item > span { min-width:0; flex:1; }
+.consumer-phone .o-list-item strong { display:block; font-size:16px; line-height:1.6; font-weight:550; }
+.consumer-phone .o-list-item > span > span { display:block; color:#71828e; font-size:12px; line-height:1.8; margin-top:5px; }
+.consumer-phone .o-list-item small { flex-shrink:0; color:#71828e; font-size:11px; text-align:right; }
+.consumer-phone .o-list-item small span { display:block; color:#1769aa; margin-top:10px; font-size:12px; }
+.consumer-phone .o-list-item.is-selected strong { color:#1769aa; }
+.consumer-phone .o-location-note { display:flex; align-items:center; gap:8px; font-size:12px; line-height:1.7; color:#866943; padding:6px 0; border-bottom:1px solid #f0e9de; }
+.consumer-phone .o-location-note > span { flex:1; }
+.consumer-phone .o-location-note button { color:#1769aa; font-size:12px; min-height:44px; flex-shrink:0; }
+.consumer-phone .o-empty { padding:28px 0 4px; text-align:center; }
+.consumer-phone .o-empty > .o-icon { color:#95a9b7; width:32px; height:32px; margin:0 0 12px; }
+.consumer-phone .o-empty h3 { font-size:17px; margin:0 0 7px; font-weight:550; }
+.consumer-phone .o-empty p { font-size:13px; color:#71828e; margin:0 0 22px; }
+.consumer-phone .o-empty .primary { width:100%; }
+.consumer-phone .o-empty .c-text-button { display:block; margin:5px auto 0; }
+.consumer-phone .o-location-button { display:flex; align-items:center; gap:10px; width:100%; min-height:58px; color:#1769aa; font-size:15px; }
+.consumer-phone .o-location-button > span { margin-left:auto; }
+.consumer-phone .o-region-section { padding:26px 0; border-top:1px solid var(--c-line); }
+.consumer-phone .o-region-section h3 { display:flex; justify-content:space-between; font-size:15px; font-weight:550; margin:0 0 18px; }
+.consumer-phone .o-region-section h3 > span { font-size:11px; color:var(--c-muted); font-weight:400; }
+.consumer-phone .o-region-options { display:flex; flex-wrap:wrap; gap:10px; }
+.consumer-phone .o-region-options button { min-height:46px; min-width:94px; padding:10px 14px; border:1px solid #e1e8ec; border-radius:9px; font-size:13px; color:#627783; }
+.consumer-phone .o-region-options button[aria-pressed=true] { border-color:#91b5d1; background:#edf5fb; color:#1769aa; }
+.consumer-phone .o-kind { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#1769aa; }
+.consumer-phone .o-kind .o-icon { width:15px; height:15px; }
+.consumer-phone .o-detail-heading { padding:7px 0 23px; }
+.consumer-phone .o-detail-heading h2 { margin:12px 0 8px; font-size:25px; letter-spacing:-.04em; font-weight:600; }
+.consumer-phone .o-detail-heading p { font-size:13px; line-height:1.8; color:#71828e; }
+.consumer-phone .o-map.is-detail { height:170px; border-radius:14px; }
+.consumer-phone .o-map.is-detail .o-map-pin strong { display:none; }
+.consumer-phone .o-detail-data { margin:0; padding:18px 0; }
+.consumer-phone .o-detail-data > div { display:grid; grid-template-columns:68px 1fr; gap:16px; padding:10px 0; font-size:13px; line-height:1.75; }
+.consumer-phone .o-detail-data dt { color:#7a8b96; }
+.consumer-phone .o-detail-data dd { margin:0; }
+.consumer-phone .o-detail-section { padding:21px 0; border-top:1px solid var(--c-line); }
+.consumer-phone .o-detail-section h3,.consumer-phone .o-repair-entry h3 { font-size:15px; margin:0 0 13px; font-weight:550; }
+.consumer-phone .o-service-tags { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+.consumer-phone .o-service-tags span { font-size:12px; color:#5d7383; border-radius:5px; padding:6px 9px; background:#f1f5f8; }
+.consumer-phone .o-detail-section p,.consumer-phone .o-repair-entry p { font-size:12px; color:#7a8b96; line-height:1.8; }
+.consumer-phone .o-repair-entry { display:flex; align-items:center; gap:10px; padding:17px 14px; background:#f2f7fb; border-radius:12px; }
+.consumer-phone .o-repair-entry > div { flex:1; }
+.consumer-phone .o-repair-entry h3 { margin-bottom:4px; font-size:14px; }
+.consumer-phone .o-repair-entry button { min-height:44px; padding:0; color:#1769aa; font-size:12px; }
+.consumer-phone .o-example-note { font-size:10px; color:#8b989f; text-align:center; margin:18px 0 0; }
+.consumer-phone #outlet-overlay { position:absolute; z-index:30; inset:0; display:flex; align-items:center; justify-content:center; padding:28px; }
+.consumer-phone button.o-overlay-backdrop, .consumer-phone button.o-overlay-backdrop:hover { position:absolute; inset:0; border-radius:0; background:#0c1f2b66; }
+.consumer-phone .o-native-dialog { position:relative; width:100%; text-align:center; background:#fff; border-radius:17px; padding:27px 22px 0; overflow:hidden; box-shadow:0 8px 35px #162e4815; }
+.consumer-phone .o-native-label { display:block; font-size:10px; color:#88969f; margin-bottom:22px; }
+.consumer-phone .o-native-dialog h2 { font-size:23px; margin:0 0 12px; font-weight:550; }
+.consumer-phone .o-native-dialog p { color:#435c6a; font-size:13px; line-height:1.8; }
+.consumer-phone .o-native-dialog .o-native-hint { font-size:11px; color:#8b989f; margin:12px 0 25px; }
+.consumer-phone .o-native-actions { display:flex; border-top:1px solid #edf0f1; margin:0 -22px; }
+.consumer-phone .o-native-actions button { flex:1; min-height:55px; font-size:16px; border-radius:0; }
+.consumer-phone .o-native-actions button:last-child { border-left:1px solid #edf0f1; color:#07814e; }
+.consumer-phone .o-native-location-icon { display:grid; place-items:center; width:54px; height:54px; margin:0 auto 19px; background:#edf4f9; color:#1769aa; border-radius:50%; }
+.consumer-phone .o-native-location-icon .o-icon { width:26px; height:26px; }
+.consumer-phone .o-native-dialog .primary { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; }
+.consumer-phone .o-native-close { display:block; width:100%; min-height:54px; font-size:13px; color:#607682; }
