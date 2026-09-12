@@ -1,0 +1,176 @@
+{
+  "testedAt": "2026-09-11 22:49:58",
+  "loginCode": 0,
+  "cleanupBefore": [],
+  "createdIds": {
+    "dictionaryId": "3",
+    "dictionaryItemId": "3",
+    "dealerId": "2",
+    "storeId": "1",
+    "serviceAreaId": "1",
+    "serviceStationId": "1"
+  },
+  "networkPermissions": {
+    "dealers": {
+      "read": true,
+      "create": true,
+      "edit": true,
+      "status": true,
+      "delete": true,
+      "configure": false
+    },
+    "stores": {
+      "read": true,
+      "create": true,
+      "edit": true,
+      "status": true,
+      "delete": true,
+      "configure": false
+    },
+    "decorationCompanies": {
+      "read": true,
+      "create": true,
+      "edit": true,
+      "status": true,
+      "delete": false,
+      "configure": false
+    },
+    "serviceStations": {
+      "read": true,
+      "create": true,
+      "edit": true,
+      "status": true,
+      "delete": true,
+      "configure": true
+    },
+    "serviceAreas": {
+      "read": true,
+      "create": true,
+      "edit": true,
+      "status": true,
+      "delete": true,
+      "configure": false
+    }
+  },
+  "dictionaryPermissions": {
+    "read": true,
+    "create": true,
+    "edit": true,
+    "status": true,
+    "delete": true,
+    "itemCreate": true,
+    "itemEdit": true,
+    "itemStatus": true,
+    "itemDelete": true
+  },
+  "listCodes": {
+    "dealers": 0,
+    "stores": 0,
+    "serviceStations": 0,
+    "serviceAreas": 0,
+    "dictionaries": 0,
+    "adminRegions": 0
+  },
+  "steps": [
+    {
+      "step": "network.permissions",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.permissions",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.create",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.item.create",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.item.disable",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.item.delete",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.disable",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dictionary.delete",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dealer.create",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dealer.disable",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dealer.enable",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "store.create",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "store.disable",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "store.delete",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "dealer.delete",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "serviceArea.create",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "serviceStation.create",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "serviceStation.disable",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "serviceStation.delete",
+      "code": 0,
+      "ok": true
+    },
+    {
+      "step": "serviceArea.delete",
+      "code": 0,
+      "ok": true
+    }
+  ]
+}
