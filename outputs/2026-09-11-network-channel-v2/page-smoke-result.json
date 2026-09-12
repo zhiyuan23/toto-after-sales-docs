@@ -1,0 +1,51 @@
+{
+  "testedAt": "2026-09-11T14:57:48.406Z",
+  "login": {
+    "ok": true,
+    "code": 0,
+    "captchaCode": 0,
+    "hasUser": true
+  },
+  "pages": [
+    {
+      "name": "dealer",
+      "url": "http://localhost:7004/after-sales/#/network/dealer",
+      "expected": "代理商管理",
+      "found": true,
+      "textSample": "蓝鲸数字 售后服务 工作台 客户服务 顾客与预约 渠道与网点 商品与服务 服务资源 配件库存 防窜货 会员运营 数据中心 搜索 Ctrl K admin 代理商管理 门店管理 家装公司 服务站管理 服务区域 代理商管理 代理商管理 代理商 主档状态 请选择 重置 筛选 新增代理商 代理商资料由售后系统独立维护；有下级代理商时不能修改层级或所属代理商。 代理商编号 代理商名称 代理商级别 所属代理商 所在地 数据来源 状态 暂无当前数据权限范围内的代理商 共 0 条 15条/页 1 前往 页",
+      "screenshot": "E:/workspace/toto-after-sales-docs/outputs/2026-09-11-network-channel-v2/dealer.png"
+    },
+    {
+      "name": "store",
+      "url": "http://localhost:7004/after-sales/#/network/store",
+      "expected": "门店管理",
+      "found": true,
+      "textSample": "蓝鲸数字 售后服务 工作台 客户服务 顾客与预约 渠道与网点 商品与服务 服务资源 配件库存 防窜货 会员运营 数据中心 搜索 Ctrl K admin 代理商管理 门店管理 家装公司 服务站管理 服务区域 代理商管理 门店管理 门店管理 门店 所属代理商 重置 筛选 展开 新增门店 门店资料由售后系统独立维护；所属代理商支持选择任意级别代理商。 门店编号 门店名称 门店类型 所属代理商 营业状态 所在地 数据来源 状态 暂无当前数据权限范围内的门店 共 0 条 15条/页 1 前往 页",
+      "screenshot": "E:/workspace/toto-after-sales-docs/outputs/2026-09-11-network-channel-v2/store.png"
+    },
+    {
+      "name": "service-station",
+      "url": "http://localhost:7004/after-sales/#/network/serviceStation",
+      "expected": "服务站管理",
+      "found": true,
+      "textSample": "蓝鲸数字 售后服务 工作台 客户服务 顾客与预约 渠道与网点 商品与服务 服务资源 配件库存 防窜货 会员运营 数据中心 搜索 Ctrl K admin 代理商管理 门店管理 家装公司 服务站管理 服务区域 代理商管理 门店管理 服务站管理 服务站管理 服务站 服务站状态 请选择 重置 筛选 新增服务站 服务站维护基础身份、联系人、服务热线、服务项目和服务区域优先级；负责人账号、技能字典和派单规则后续接入。 服务站编码 服务站名称 负责人 负责人手机 服务热线 服务项目 服务区域 关联师傅数量 满意度 备注 状态 暂无服务站 共 0 条 15条/页 1 前往 页",
+      "screenshot": "E:/workspace/toto-after-sales-docs/outputs/2026-09-11-network-channel-v2/service-station.png"
+    },
+    {
+      "name": "service-area",
+      "url": "http://localhost:7004/after-sales/#/network/serviceArea",
+      "expected": "服务区域",
+      "found": true,
+      "textSample": "蓝鲸数字 售后服务 工作台 客户服务 顾客与预约 渠道与网点 商品与服务 服务资源 配件库存 防窜货 会员运营 数据中心 搜索 Ctrl K admin 代理商管理 门店管理 家装公司 服务站管理 服务区域 代理商管理 门店管理 服务站管理 服务区域 服务区域 服务区域 区域层级 请选择 重置 筛选 展开 新增服务区域 当前按省、市、区县或街道维护行政区域；服务站与区域优先级在服务站管理内绑定，地图围栏和自动派单后续接入。 区域编码 区域名称 层级 行政区域 关联服务站 状态 暂无服务区域 共 0 条 15条/页 1 前往 页",
+      "screenshot": "E:/workspace/toto-after-sales-docs/outputs/2026-09-11-network-channel-v2/service-area.png"
+    },
+    {
+      "name": "dictionary",
+      "url": "http://localhost:7004/after-sales/#/dataCenter/dictionary",
+      "expected": "字典管理",
+      "found": true,
+      "textSample": "蓝鲸数字 售后服务 工作台 客户服务 顾客与预约 渠道与网点 商品与服务 服务资源 配件库存 防窜货 会员运营 数据中心 搜索 Ctrl K admin 运营报表 字典管理 数据任务 代理商管理 门店管理 服务站管理 服务区域 字典管理 字典管理 关键字 状态 请选择 重置 筛选 新增字典 售后自建字典用于维护独立业务枚举和行政区划；渠道与网点的省市区街道从 ADMIN_REGION 字典读取。 字典 0 项 字典编码 字典名称 字典项 状态 暂无字典 共 0 条 10条/页 1 前往 页 字典项 关键字 上级 请选择 层级 请选择 状态 请选择 重置 筛选 字典项编码 字典项名称 上级 层级",
+      "screenshot": "E:/workspace/toto-after-sales-docs/outputs/2026-09-11-network-channel-v2/dictionary.png"
+    }
+  ]
+}
