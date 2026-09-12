@@ -1,0 +1,151 @@
+{
+  "executed_at": "2026-09-12T13:18:52.641701+08:00",
+  "status": "开发库两表迁移与6项读取权限已执行；结构/配置核验及既有登录会话下页面读取冒烟通过",
+  "database": "gaia_wh_init_wzy",
+  "backup_directory": "/Users/snow/Documents/Ehsure/Gaia/backend/gaia-saas-proj/.local/backups/dashboard-env-20260912-131849",
+  "ddl_sha256": "d6afc08e2765e38efb836075bd1a756b8ac30853676506e3c13ff7fd34db71d4",
+  "created_tables": [
+    {
+      "table_name": "afs_complaint",
+      "engine": "InnoDB",
+      "table_collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "engine": "InnoDB",
+      "table_collation": "utf8mb4_0900_ai_ci"
+    }
+  ],
+  "constraints": [
+    {
+      "table_name": "afs_complaint",
+      "constraint_name": "ck_complaint_status",
+      "constraint_type": "CHECK"
+    },
+    {
+      "table_name": "afs_complaint",
+      "constraint_name": "fk_complaint_order",
+      "constraint_type": "FOREIGN KEY"
+    },
+    {
+      "table_name": "afs_complaint",
+      "constraint_name": "PRIMARY",
+      "constraint_type": "PRIMARY KEY"
+    },
+    {
+      "table_name": "afs_complaint",
+      "constraint_name": "uq_complaint_request",
+      "constraint_type": "UNIQUE"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "constraint_name": "fk_complaint_event",
+      "constraint_type": "FOREIGN KEY"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "constraint_name": "PRIMARY",
+      "constraint_type": "PRIMARY KEY"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "constraint_name": "uq_complaint_event_request",
+      "constraint_type": "UNIQUE"
+    }
+  ],
+  "indexes": [
+    {
+      "table_name": "afs_complaint",
+      "index_name": "ix_complaint_received",
+      "indexed_columns": "received_at,id"
+    },
+    {
+      "table_name": "afs_complaint",
+      "index_name": "ix_complaint_status",
+      "indexed_columns": "status,received_at"
+    },
+    {
+      "table_name": "afs_complaint",
+      "index_name": "PRIMARY",
+      "indexed_columns": "id"
+    },
+    {
+      "table_name": "afs_complaint",
+      "index_name": "uq_complaint_request",
+      "indexed_columns": "order_id,request_id"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "index_name": "ix_complaint_event_time",
+      "indexed_columns": "complaint_id,created_at,id"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "index_name": "PRIMARY",
+      "indexed_columns": "id"
+    },
+    {
+      "table_name": "afs_complaint_event",
+      "index_name": "uq_complaint_event_request",
+      "indexed_columns": "complaint_id,request_id"
+    }
+  ],
+  "table_rows": {
+    "afs_complaint_event": 0,
+    "afs_complaint": 0
+  },
+  "modules": [
+    {
+      "id": "2026090800000022",
+      "code": "afsComplaint",
+      "path": "afterSales/customerService/complaint",
+      "enable": "1",
+      "is_hide": "0",
+      "api_list": "GET$/api/afterSales/complaints,GET$/api/afterSales/complaints/permissions,GET$/api/afterSales/complaints/*,GET$/api/afterSales/complaints/*/history",
+      "update_user": "-1",
+      "update_time": "2026-09-12 13:18:52"
+    },
+    {
+      "id": "2026090800000059",
+      "code": "afsReport",
+      "path": "afterSales/dataCenter/report",
+      "enable": "1",
+      "is_hide": "0",
+      "api_list": "GET$/api/afterSales/reports/permissions,GET$/api/afterSales/reports/work-orders",
+      "update_user": "-1",
+      "update_time": "2026-09-12 13:18:51"
+    }
+  ],
+  "role_links_unchanged": true,
+  "operations_unchanged": true,
+  "business_rows_inserted": 0,
+  "host_restarted": false,
+  "authorization": "用户在本次会话明确批准：执行开发库补齐并验证",
+  "browser_verification": {
+    "status": "passed_for_existing_account_read_smoke",
+    "source": "主任务通过Chrome既有会话实际交互和DOM读取后回报",
+    "account_display_name": "操作员01",
+    "headquarters": {
+      "reload_completed": true,
+      "permission_warning_absent": true,
+      "last_30_days_order_total_displayed": 0,
+      "daily_chart_positions": 30,
+      "note": "日期位置为前端补齐；不是声称后端返回30个统计分组"
+    },
+    "service_desk": {
+      "open_complaint_count_displayed": 0,
+      "queue_opened_in_page": true,
+      "loading_completed": true,
+      "empty_state_and_total_zero": true,
+      "error_absent": true
+    },
+    "http_status_code_observed": false,
+    "browser_credentials_exported": false,
+    "business_rows_written": false,
+    "does_not_establish": [
+      "投诉写入和状态流转验收",
+      "拒绝角色验证",
+      "完整跨组织或跨租户业务验收"
+    ]
+  }
+}

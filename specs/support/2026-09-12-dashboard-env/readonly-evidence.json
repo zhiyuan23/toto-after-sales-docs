@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-12",
+  "status": "只读调查；未执行数据库写入",
+  "database": "gaia_wh_init_wzy",
+  "mysql": "8.4.10-10",
+  "running_report_api_present": true,
+  "missing_tables": [
+    "afs_complaint",
+    "afs_complaint_event"
+  ],
+  "modules": [
+    {
+      "id": "2026090800000059",
+      "code": "afsReport",
+      "path": "afterSales/dataCenter/report",
+      "enable": 1,
+      "is_hide": 0,
+      "api_list": null,
+      "roles": [
+        {
+          "id": "1",
+          "code": "admin",
+          "name": "超级管理员"
+        },
+        {
+          "id": "2",
+          "code": "管理员",
+          "name": "管理员"
+        }
+      ],
+      "operation_count": 0
+    },
+    {
+      "id": "2026090800000022",
+      "code": "afsComplaint",
+      "path": "afterSales/customerService/complaint",
+      "enable": 1,
+      "is_hide": 0,
+      "api_list": null,
+      "roles": [
+        {
+          "id": "1",
+          "code": "admin",
+          "name": "超级管理员"
+        },
+        {
+          "id": "2",
+          "code": "管理员",
+          "name": "管理员"
+        }
+      ],
+      "operation_count": 0
+    }
+  ],
+  "dependency_key": {
+    "afs_service_order.id": "bigint signed NOT NULL",
+    "engine": "InnoDB",
+    "collation": "utf8mb4_0900_ai_ci"
+  },
+  "validation": "ReportIntegrationTest + ComplaintIntegrationTest：4 tests, 0 failures, 0 errors; H2隔离验证"
+}
