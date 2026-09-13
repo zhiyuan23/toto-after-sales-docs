@@ -28,7 +28,7 @@ yarn dev:full
 yarn dev:afs
 ```
 
-本目录命令只转发到 `frontend/gaia-ui` 的原 `yarn dev:afs`，不改变原启动器；继续在 `frontend/gaia-ui` 根目录执行同名命令也保持有效。该命令先清理 7004/9010 上一轮本工作区前端以及 8080/16379 上可确认属于本项目的服务，再重新启动独立 Redis、Gaia 聚合后端和 9010 售后子系统，不启动 7004 主系统。若目标端口属于其他程序，脚本会显示 PID 并拒绝强杀；9010 入口确认返回 HTTP 200 后自动使用系统默认浏览器打开 `http://127.0.0.1:9010/after-sales/?entry=standalone#/`，自动打开失败时在终端输出同一手动访问地址。因此它是本地“售后独立全栈”入口，不等同于只启动一个静态前端。
+本目录命令只转发到 `frontend/gaia-ui` 的原 `yarn dev:afs`，不改变原启动器；继续在 `frontend/gaia-ui` 根目录执行同名命令也保持有效。该命令先清理 7004/9010 上一轮本工作区前端以及 8080/16379 上可确认属于本项目的服务，再重新启动独立 Redis、Gaia 聚合后端和 9010 售后子系统，不启动 7004 主系统。若目标端口属于其他程序，脚本会显示 PID 并拒绝强杀；9010 入口确认返回 HTTP 200 后自动使用系统默认浏览器打开无参数独立入口 `http://127.0.0.1:9010/after-sales/#/`，自动打开失败时在终端输出同一手动访问地址。因此它是本地“售后独立全栈”入口，不等同于只启动一个静态前端。
 
 需要分别调试进程时，仍可使用下面的三个终端方式。所有服务仅监听本机：
 
@@ -176,7 +176,7 @@ node scripts/frontends/after-sales.mjs install --frozen-lockfile
 
 根目录的 `after-sales.mjs` 会读取子项目 `.nvmrc`，使用 Node 24.21.0 和子项目 `packageManager` 执行命令，不改变根进程 Node。直接进入子目录执行时，先运行 `nvm use`，再使用 `corepack pnpm --ignore-workspace ...`；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
 
-回到 gaia-ui 根目录运行 `yarn dev`，主应用在 7004，子应用在 9010；统一访问 `http://127.0.0.1:7004/after-sales/#/`。`yarn dev:main` 可只启动主系统；`yarn dev:afs` 可清理旧进程后启动售后子系统及其本地 Redis、Gaia 聚合后端。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
+回到 gaia-ui 根目录运行 `yarn dev`，主应用在 7004，子应用在 9010。独立子系统直接访问 `http://127.0.0.1:9010/after-sales/#/`；从主系统进入时由主系统链接携带 `entry=main`。`yarn dev:main` 可只启动主系统；`yarn dev:afs` 可清理旧进程后启动售后子系统及其本地 Redis、Gaia 聚合后端。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
 
 原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以 Node 22 构建主项目、以 Node 24 构建子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装也使用同一 Node 24 编排入口，构建失败会中止；上传和发布仍需单独授权。
 

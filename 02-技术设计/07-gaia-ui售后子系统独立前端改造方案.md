@@ -181,10 +181,10 @@ legacy
 
 embedded
 └── Gaia 菜单 -> 通用 iframe 容器
-                  └── /after-sales/#/embed/<业务路由> -> 同一子系统页面 -> 同一 Gaia 售后 API
+                  └── /after-sales/?entry=main#/embed/<业务路由> -> 同一子系统页面 -> 同一 Gaia 售后 API
 
 standalone
-└── Gaia 顶部入口 -> /after-sales/#/<业务路由> -> 同一子系统页面 -> 同一 Gaia 售后 API
+└── Gaia 顶部入口 -> /after-sales/?entry=main#/<业务路由> -> 同一子系统页面 -> 同一 Gaia 售后 API
 ```
 
 `embedded` 不是第三套业务实现，而是子系统的展示模式。子系统通过 `EmbeddedLayout` 隐藏自己的顶部栏、侧栏和面包屑，只渲染业务内容；普通业务功能只在子系统实现一次，同时供 `embedded` 和 `standalone` 使用。
@@ -218,7 +218,7 @@ yarn dev
 
 ```text
 http://127.0.0.1:7004/
-http://127.0.0.1:7004/after-sales/#/
+http://127.0.0.1:7004/after-sales/?entry=main#/
 ```
 
 这样本地也保持同源，沿用 Gaia 当前会话协议和相对 API 地址。运行脚本应满足：
@@ -245,7 +245,7 @@ yarn dev:afs             # 清理旧进程后运行售后子系统及本地后�
 ```ts
 if (mode === 'legacy') router.push('/afterSales')
 if (mode === 'embedded') router.push('/afterSales/<业务路由>')
-if (mode === 'standalone') window.location.assign('/after-sales/#/<业务路由>')
+if (mode === 'standalone') window.location.assign('/after-sales/?entry=main#/<业务路由>')
 ```
 
 沿用 Gaia 当前认证协议，不通过 URL、Hash 或 `postMessage` 传递 Token、角色和授权上下文。当前子系统源码从同源 `localStorage.token` 读取 Gaia 凭据，以原始 `Authorization` 请求头调用接口，并设置同源 credentials；不能假定仅靠 Cookie 已完成认证。新增登录入口必须核对主系统现有登录、凭据保存、失效和退出契约，不自行切换为 Compass Bearer JWT。
@@ -268,8 +268,8 @@ if (mode === 'standalone') window.location.assign('/after-sales/#/<业务路由>
 主系统仍使用 Gaia 返回的 `afterSales` 菜单节点判断顶部入口是否可见，并按模式确定目标：
 
 - `legacy`：保持当前行为，将售后菜单解析为 `src/views/afterSales/**/index.vue`。
-- `embedded`：保留 Gaia 顶部和侧边菜单，将已授权业务路由映射到唯一 `AfterSalesEmbed` 容器；容器加载 `/after-sales/#/embed/<业务路由>`。
-- `standalone`：将售后根节点作为外部子应用入口，跳转 `/after-sales/#/<业务路由>`，不再查找主系统售后页面组件。
+- `embedded`：保留 Gaia 顶部和侧边菜单，将已授权业务路由映射到唯一 `AfterSalesEmbed` 容器；容器加载 `/after-sales/?entry=main#/embed/<业务路由>`。
+- `standalone`：将售后根节点作为外部子应用入口，跳转 `/after-sales/?entry=main#/<业务路由>`，不再查找主系统售后页面组件。
 
 同一次运行中每个售后入口必须由唯一模式确定，不得随机进入新旧页面。最终形态确认前保留 `legacy` 页面；确认后再决定冻结、删除或继续保留，不在子系统开发初期提前移除现有成果。
 
@@ -290,7 +290,7 @@ if (mode === 'standalone') window.location.assign('/after-sales/#/<业务路由>
 - `standalone`：支持直接访问子系统登录页，不依赖主系统 HTML、页面路由或运行时；同源已有有效 Gaia 会话时直接复用。
 - `embedded`：复用主系统会话；失效时由主系统承接登录，默认隐藏子系统登录和管理导航，避免 iframe 内出现第二层登录外壳。
 - `legacy`：保持现有主系统入口和权限管理行为，作为迁移兼容路径。
-- 子系统管理页是蓝鲸数字全局能力的可选前端入口，不是新的售后业务模块；不因此扩充 49 项业务菜单或 96 项业务入口统计。管理菜单单独注册并依据 Gaia 真实权限投影，不通过售后业务子树制造授权。
+- 子系统管理页是蓝鲸数字全局能力的可选前端入口，不是新的售后业务模块；不因此扩充 49 项业务菜单或 96 项业务入口统计。该入口只在未携带 `entry=main`、非 iframe 且配置开启时注册，并依据 Gaia 真实 `sys_user_list`、`sys_role_list` 权限投影；`entry=main` 与 iframe 隐藏入口并拒绝管理路由直达，不通过售后业务子树或角色名称制造授权。
 
 ### 5.6 Compass Admin 前端复用要求
 
@@ -305,7 +305,7 @@ if (mode === 'standalone') window.location.assign('/after-sales/#/<业务路由>
 
 本次已只读确认上述登录、用户和角色页面存在；尚未完成全部依赖和 Gaia 管理接口兼容性审计。原 `system.*` 权限编码、Resource RBAC 模型、内置权限同步动作、mock 及来源 API 不得直接作为 Gaia 授权依据。菜单资源定义是否可维护以 Gaia 现有能力和管理员权限为准，不因来源有权限管理功能就新增权限目录 CRUD。
 
-继续使用子系统原生 Admin 组件、hooks 和样式，不从主系统复制 commonV2，不重建公共底座；保留“蓝鲸数字售后服务”品牌、当前 Logo、head 导航和模式切换按钮。不可直接复用处记录原因、最小调整和验证结果。
+继续使用子系统原生 Admin 组件、hooks 和样式，不从主系统复制 commonV2，不重建公共底座；保留“蓝鲸数字售后服务”品牌、当前 Logo、单侧栏默认导航和模式切换按钮。不可直接复用处记录原因、最小调整和验证结果。
 
 权限相关页面在子系统内以 Compass Admin 的信息架构和交互为准，不以主系统旧生成页为视觉范例。至少复用其用户／角色工作区、筛选和列表、抽屉或弹窗编辑、权限选择器、危险操作确认、未保存离开确认、保存互斥、错误重试和并发冲突反馈；字段与动作则以 Gaia 当前真实能力为准。Compass 的 `system_admin`、租户 owner、Resource Permission 等保护判断不能直接照搬，必须逐项映射到 Gaia 的管理员、租户、模块和按钮规则。
 
@@ -351,11 +351,13 @@ Gaia 用户／角色聚合写服务增加事务；编辑请求继续携带已有
 
 ### 5.11 2026-09-10 双入口独立运行补充
 
-主系统集成入口和子系统独立入口使用同一份子系统构建、Gaia 登录协议、菜单树及业务 API。运行模式由 Hash 前的 `entry=main|standalone` 选择，并可由 `VITE_APP_ENTRY_MODE=auto|main|standalone` 提供部署默认值；查询参数优先，只影响退出和登录导航，不参与菜单、按钮、租户或 API 授权。无参数的本地 9010 自动按独立模式处理，其余入口保持主系统模式。
+主系统集成入口和子系统独立入口使用同一份子系统构建、Gaia 登录协议、菜单树及业务 API。只有 Hash 前显式携带 `entry=main` 才进入主系统模式；没有 `entry`、`entry=standalone` 或未知值均按独立子系统模式处理，不再根据端口或环境变量推断。入口参数只影响登录、退出及系统管理导航，不参与菜单、按钮、租户或 API 授权。
 
-主系统“进入售后子系统”链接固定携带 `entry=main`，继续复用 7004 同源登录态；独立入口使用 `http://127.0.0.1:9010/after-sales/?entry=standalone#/`。子系统 Vite 为 `/api` 增加独立代理：显式 `VITE_APP_API_PROXY_TARGET` 优先，否则沿用根项目当前模式的绝对 `VITE_API_URL`，再回退本机 `http://127.0.0.1:8080/api`；本地全栈命令明确覆盖为该 Gaia 聚合宿主 context path。生产仍要求部署网关把同源 `/api` 转发到同一 Gaia 后端，不因入口模式复制用户或权限数据。
+主系统“进入售后子系统”链接固定携带 `entry=main`，继续复用 7004 同源登录态；独立入口默认使用无参数地址 `http://127.0.0.1:9010/after-sales/#/`。子系统 Vite 为 `/api` 增加独立代理：显式 `VITE_APP_API_PROXY_TARGET` 优先，否则沿用根项目当前模式的绝对 `VITE_API_URL`，再回退本机 `http://127.0.0.1:8080/api`；本地全栈命令明确覆盖为该 Gaia 聚合宿主 context path。生产仍要求部署网关把同源 `/api` 转发到同一 Gaia 后端，不因入口模式复制用户或权限数据。
 
 退出和业务异常页按入口模式返回主系统或售后登录页。首次改密、密码过期和 MFA 仍属于统一账号安全能力；独立模式未配置 `VITE_APP_ACCOUNT_SECURITY_URL` 时明确提示管理员处理，不输出不可用的主系统链接。完整账号安全页面迁移或统一账号中心接入仍是后续边界。
+
+独立入口中的“系统管理”进一步收敛为三重前置条件：独立模式、非 iframe、`VITE_APP_IDENTITY_MANAGEMENT=true`；满足前置条件后仍由 Gaia `/api/sys/Module/tree` 的真实授权决定具体入口。根系统 `sys_user_list`、`sys_role_list` 分别映射子系统 `/system/user`、`/system/role`，按钮权限查询使用相同真实模块编码。主系统模式不重复显示这组入口，且前端路由守卫拒绝绕过导航直接访问；该策略不修改根系统本身的权限逻辑。
 
 ## 6. 构建方案
 
@@ -577,8 +579,8 @@ ROOT.tar.gz
 ### 11.2 路由与导航
 
 - `legacy` 模式继续进入当前 `src/views/afterSales` 页面。
-- `embedded` 模式保留 Gaia 菜单，只在内容区加载 `/after-sales/#/embed/<业务路由>`。
-- `standalone` 模式从 Gaia 顶部入口进入 `/after-sales/#/<业务路由>`。
+- `embedded` 模式保留 Gaia 菜单，只在内容区加载 `/after-sales/?entry=main#/embed/<业务路由>`。
+- `standalone` 模式从 Gaia 顶部入口进入 `/after-sales/?entry=main#/<业务路由>`。
 - 子系统内部导航、刷新、复制深层链接和返回主系统正常。
 - 未授权用户不显示售后顶部入口。
 - 未授权用户直接输入子系统 URL 时得到无权限结果，不能进入业务页面。
@@ -679,7 +681,7 @@ ROOT.tar.gz
 
 ### 子系统菜单层级、图标与导航模式
 
-用户确认子系统不再显示重复的“售后服务”一级菜单。菜单数据直接使用工作台、客户服务等分组为第一层，默认 `head` 顶部导航，默认展示工具栏导航模式切换按钮；可切换单侧栏且保留分组。49项功能和全部工作视角分组配置本地打包的统一 Lucide 图标，首页入口与标签同步使用。浏览器核验顶部重复菜单消失、功能图标显示、两种模式切换正常；39项现有测试、类型检查、构建及合并产物校验通过。临时关闭菜单权限配置保持不变。
+用户确认子系统不再显示重复的“售后服务”一级菜单。菜单数据直接使用工作台、客户服务等分组为第一层。子系统默认使用 `single` 单侧栏模式（一级与展开的二级均在同一左侧栏），工具栏导航按钮用于快速切换 `single` 与 `head` 顶部导航模式（顶部一级＋左侧二级）；`side` 左侧两栏模式仅保留在开发设置中。工具栏按操作习惯排列为导航搜索、刷新／全屏页面操作、导航模式／深浅色／语言显示偏好，最后为身份管理。49项功能和全部工作视角分组配置本地打包的统一 Lucide 图标，首页入口与标签同步使用。原有顶部重复菜单消失、功能图标显示和临时关闭菜单权限的配置保持不变。
 
 ### 商品分类/商品档案接入
 
