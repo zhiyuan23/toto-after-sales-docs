@@ -25,7 +25,7 @@ function renderOrders(){
 }
 function selectQueue(queue){
  activeQueue=queue;const info=queues[queue];$('queueTitle').textContent=info.title;$('queueDescription').textContent=info.description;$('tableCount').textContent=`共 ${info.total} 条，当前展示演示数据`
- document.querySelectorAll('[data-queue]').forEach(button=>{const selected=button.dataset.queue===queue;if(button.classList.contains('metric-card'))button.classList.toggle('is-active',selected);button.setAttribute(button.getAttribute('role')==='tab'?'aria-selected':'aria-pressed',String(selected))})
+ document.querySelectorAll('[data-queue]').forEach(button=>{const selected=button.dataset.queue===queue;if(button.classList.contains('metric-card')||button.hasAttribute('data-status-node'))button.classList.toggle('is-active',selected);button.setAttribute(button.getAttribute('role')==='tab'?'aria-selected':'aria-pressed',String(selected))})
  $('orderSearch').value='';setTableState('data');renderOrders();document.querySelector('.orders-panel').scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'nearest'})
 }
 function stateMarkup(icon,title,description,action){return `<div class="state-content"><span class="state-icon"><span class="icon">${svgIcon(icon)}</span></span><strong>${title}</strong><p>${description}</p>${action?`<button class="secondary-button" type="button" id="retryTable">${action}</button>`:''}</div>`}
@@ -51,8 +51,9 @@ function openOverlay(panel){closePopovers();$('scrim').hidden=false;panel.hidden
 function closeOverlays(){$('scrim').hidden=true;$('prototypePanel').hidden=true;$('commandDialog').hidden=true;$('detailDrawer').hidden=true}
 function openDetail(id){const order=orders.find(item=>item.id===id);if(!order)return;$('detailTitle').textContent=order.id;$('detailContent').innerHTML=`<div class="detail-hero"><span>当前状态</span><strong>${order.status}</strong></div><div class="detail-grid"><div class="detail-field"><span>服务类型</span><strong>${order.type}</strong></div><div class="detail-field"><span>顾客</span><strong>${order.customer}</strong></div><div class="detail-field"><span>服务站</span><strong>${order.station}</strong></div><div class="detail-field"><span>期望服务日期</span><strong>${order.date}</strong></div><div class="detail-field"><span>数据范围</span><strong>当前授权组织范围</strong></div><div class="detail-field"><span>数据说明</span><strong>原型演示数据</strong></div></div>`;openOverlay($('detailDrawer'))}
 
-const commands=['运营概览','服务质量','运营报表','服务工单','顾客购买记录','安装码管理','代理商管理','门店管理','服务站管理','商品档案','配件主档']
-function renderCommands(keyword){const results=commands.filter(item=>item.includes(keyword.trim()));$('commandResults').innerHTML=results.length?results.map(item=>`<button type="button" data-command="${item}"><strong>${item}</strong><span>总部运营</span></button>`).join(''):'<div class="state-content" style="padding:32px;margin:auto"><strong>未找到功能</strong><p>请尝试其他关键词。</p></div>';document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('click',()=>{closeOverlays();showToast(`${button.dataset.command}：该专业页未纳入本轮原型`)}))}
+const commands=['运营工作台','服务质量','运营报表','服务工单','顾客购买记录','安装码管理','代理商管理','门店管理','服务站管理','商品档案','配件主档']
+const commandRoutes={'运营工作台':'index.html','服务质量':'service-quality.html','运营报表':'operations-report.html'}
+function renderCommands(keyword){const results=commands.filter(item=>item.includes(keyword.trim()));$('commandResults').innerHTML=results.length?results.map(item=>`<button type="button" data-command="${item}"><strong>${item}</strong><span>总部运营</span></button>`).join(''):'<div class="state-content" style="padding:32px;margin:auto"><strong>未找到功能</strong><p>请尝试其他关键词。</p></div>';document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('click',()=>{const route=commandRoutes[button.dataset.command];if(route){location.href=route;return}closeOverlays();showToast(`${button.dataset.command}：该专业页未纳入本轮原型`)}))}
 function openCommand(){closePopovers();$('scrim').hidden=false;$('commandDialog').hidden=false;renderCommands('');$('commandInput').focus()}
 
 document.querySelectorAll('[data-queue]').forEach(button=>button.addEventListener('click',()=>selectQueue(button.dataset.queue)))

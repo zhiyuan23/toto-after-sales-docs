@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="description" content="TOTO 售后服务 Web 管理后台四视角第一版原型预览，当前展示总部运营概览。">
+  <meta name="description" content="TOTO 售后服务 Web 管理后台四视角第一版原型预览，当前展示总部运营工作台。">
   <title>TOTO 售后服务 | 后台系统原型</title>
   <link rel="stylesheet" href="admin.css">
 </head>
@@ -37,9 +37,9 @@
     <aside class="sidebar" aria-label="总部运营功能菜单">
       <div class="sidebar-scroll">
         <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>运营管理</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list">
-          <a href="#headquarters" class="menu-item is-active"><span class="icon" data-icon="gauge"></span><span>运营概览</span></a>
-          <button type="button" class="menu-item" data-preview-link="服务质量"><span class="icon" data-icon="shield"></span><span>服务质量</span></button>
-          <button type="button" class="menu-item" data-preview-link="运营报表"><span class="icon" data-icon="file-chart"></span><span>运营报表</span></button>
+          <a href="#headquarters" class="menu-item is-active"><span class="icon" data-icon="gauge"></span><span>运营工作台</span></a>
+          <a href="service-quality.html" class="menu-item"><span class="icon" data-icon="shield"></span><span>服务质量</span></a>
+          <a href="operations-report.html" class="menu-item"><span class="icon" data-icon="file-chart"></span><span>运营报表</span></a>
         </div></section>
         <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>业务查询</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list">
           <button type="button" class="menu-item" data-preview-link="服务工单"><span class="icon" data-icon="clipboard"></span><span>服务工单</span></button>
@@ -64,7 +64,7 @@
 
     <main class="workspace" id="workspace">
       <div class="page-heading reveal" style="--delay:0ms">
-        <div><div class="context-line"><span id="fullDate">2026 年 9 月 13 日</span><i></i><span>授权组织范围</span><button type="button" id="scopeButton">全国总部<span class="icon" data-icon="chevron-down"></span></button></div><h1>运营概览</h1><p>快速判断服务量与待办压力，再下钻到具体工单和服务站。</p></div>
+        <div><div class="context-line"><span id="fullDate">2026 年 9 月 13 日</span><i></i><span>授权组织范围</span><button type="button" id="scopeButton">全国总部<span class="icon" data-icon="chevron-down"></span></button></div><h1>运营工作台</h1><p>快速判断服务量与待办压力，再下钻到具体工单和服务站。</p></div>
         <div class="heading-actions"><span class="sample-badge"><span class="status-dot"></span>原型演示数据</span><span class="last-updated">更新于 <strong id="lastUpdated">09:32</strong></span></div>
       </div>
 
@@ -75,11 +75,25 @@
         <button class="metric-card reveal" type="button" data-queue="parts" aria-pressed="false" style="--delay:240ms"><span class="metric-top"><span class="metric-icon is-rose"><span class="icon" data-icon="triangle-alert"></span></span><span class="metric-link">优先关注<span class="icon" data-icon="arrow-up-right"></span></span></span><span class="metric-label">缺件工单</span><strong class="metric-value" data-value="23">0</strong><span class="metric-caption">仅含 MISSING_PARTS 状态</span></button>
       </section>
 
+      <section class="status-visual is-flow reveal" data-status-layout="flow" aria-label="工单状态河流图" style="--delay:270ms">
+        <header><span class="status-visual-icon"><span class="icon" data-icon="chart"></span></span><div><h2>工单状态河</h2><p>近 30 天演示阶段量：看流转、阶段积压和异常分支，不与顶部总量重复</p></div><span class="status-source"><i></i>原型演示阶段量</span></header>
+        <div class="flow-river" role="img" aria-label="受理中 82，待分站 48，待派人 76，履约中 215，待完工 316，待审核 63">
+          <div class="flow-stage"><span>受理中</span><strong>82</strong><small>待办</small></div><i><b>89%</b><small>流入下一阶段</small></i>
+          <button class="flow-stage is-backlog" type="button" data-queue="station" data-status-node aria-pressed="false"><span>待分站</span><strong>48</strong><small>积压 +12%</small></button><i><b>86%</b><small>已分站</small></i>
+          <div class="flow-stage"><span>待派人</span><strong>76</strong><small>站点处理</small></div><i><b>91%</b><small>已预约</small></i>
+          <div class="flow-stage"><span>履约中</span><strong>215</strong><small>现场服务</small></div><i><b>78%</b><small>完工转化</small></i>
+          <button class="flow-stage is-backlog" type="button" data-queue="completion" data-status-node aria-pressed="false"><span>待完工</span><strong>316</strong><small>积压 +18%</small></button><i><b>83%</b><small>提交审核</small></i>
+          <div class="flow-stage"><span>待审核</span><strong>63</strong><small>客服处理</small></div>
+          <button class="flow-exception" type="button" data-queue="parts" data-status-node aria-pressed="false"><span class="icon" data-icon="triangle-alert"></span><span><small>异常分支</small><strong>缺件 23</strong></span><em>从履约节点分流</em></button>
+        </div>
+        <footer class="flow-legend"><span><i class="is-normal"></i>正常流转</span><span><i class="is-backlog"></i>积压上升</span><span><i class="is-exception"></i>异常分支</span><p>转化与阶段量为视觉方案演示，待数据口径确认后再接入正式页面。</p></footer>
+      </section>
+
       <section class="dashboard-grid">
         <article class="panel trend-panel reveal" style="--delay:300ms">
           <header class="panel-heading"><div><h2>近 30 天工单趋势</h2><p>按工单创建日期分组</p></div><div class="trend-summary"><small>30 天合计</small><strong id="trendTotal">3,735</strong><span>单</span></div></header>
           <div class="chart-wrap"><div class="chart-y-axis" aria-hidden="true"><span>160</span><span>120</span><span>80</span><span>40</span><span>0</span></div><div class="chart-stage"><div class="chart-grid-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><svg class="trend-chart" viewBox="0 0 900 240" preserveAspectRatio="none" role="img" aria-label="过去 30 天工单量折线图，演示数据"><defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#377ef0" stop-opacity=".24"></stop><stop offset="1" stop-color="#377ef0" stop-opacity="0"></stop></linearGradient></defs><path id="trendArea" class="trend-area" d=""></path><path id="trendLine" class="trend-line" d=""></path><g id="trendPoints"></g></svg><div class="chart-tooltip" id="chartTooltip" role="status" aria-live="polite"><span></span><strong></strong></div><div class="chart-x-axis" aria-hidden="true"><span>08/15</span><span>08/22</span><span>08/29</span><span>09/05</span><span>09/13</span></div></div></div>
-          <footer class="chart-footer"><span><i class="legend-line"></i>新建工单</span><button type="button" data-preview-link="运营报表">打开运营报表<span class="icon" data-icon="arrow-right"></span></button></footer>
+          <footer class="chart-footer"><span><i class="legend-line"></i>新建工单</span><a href="operations-report.html">打开运营报表<span class="icon" data-icon="arrow-right"></span></a></footer>
         </article>
 
         <aside class="panel focus-panel reveal" style="--delay:360ms"><header class="panel-heading"><div><h2>当前关注</h2><p>按待办类型快速下钻</p></div><button class="plain-icon-button" type="button" data-preview-link="关注队列设置" aria-label="关注队列设置"><span class="icon" data-icon="sliders"></span></button></header><div class="focus-list">
@@ -95,13 +109,13 @@
           <footer class="table-footer"><span id="tableCount">共 12,486 条，当前展示演示数据</span><button type="button" data-preview-link="服务工单完整列表">查看完整列表<span class="icon" data-icon="arrow-right"></span></button></footer>
         </article>
 
-        <aside class="right-stack reveal" style="--delay:480ms"><section class="panel quality-panel"><header class="panel-heading"><div><h2>服务质量摘要</h2><p>近 30 天日汇总，展示前 3 条</p></div><button class="plain-icon-button" type="button" data-preview-link="服务质量全部数据" aria-label="查看全部服务质量"><span class="icon" data-icon="arrow-up-right"></span></button></header><div class="quality-list">
+        <aside class="right-stack reveal" style="--delay:480ms"><section class="panel quality-panel"><header class="panel-heading"><div><h2>服务质量摘要</h2><p>近 30 天日汇总，展示前 3 条</p></div><a class="plain-icon-button" href="service-quality.html" aria-label="查看全部服务质量"><span class="icon" data-icon="arrow-up-right"></span></a></header><div class="quality-list">
           <button type="button" data-preview-link="华东大区服务质量"><span class="quality-place"><i class="rank">01</i><span><strong>华东大区</strong><small>区域 09/12</small></span></span><span class="quality-value"><strong>94.72%</strong><small>682 单</small></span></button>
           <button type="button" data-preview-link="华南大区服务质量"><span class="quality-place"><i class="rank">02</i><span><strong>华南大区</strong><small>区域 09/12</small></span></span><span class="quality-value"><strong>92.36%</strong><small>537 单</small></span></button>
           <button type="button" data-preview-link="华北大区服务质量"><span class="quality-place"><i class="rank">03</i><span><strong>华北大区</strong><small>区域 09/12</small></span></span><span class="quality-value"><strong>90.18%</strong><small>496 单</small></span></button>
         </div><p class="quality-footnote"><span class="icon" data-icon="info"></span>及时率和服务量为单条日汇总演示，不对对象均值再求平均。</p></section>
         <section class="panel shortcuts-panel"><header class="panel-heading"><div><h2>快捷入口</h2><p>仅显示已获授权功能</p></div></header><div class="shortcut-grid">
-          <button type="button" data-preview-link="运营报表"><span class="shortcut-icon"><span class="icon" data-icon="file-chart"></span></span><span>运营报表</span><span class="icon" data-icon="arrow-up-right"></span></button><button type="button" data-preview-link="服务质量"><span class="shortcut-icon"><span class="icon" data-icon="shield"></span></span><span>服务质量</span><span class="icon" data-icon="arrow-up-right"></span></button><button type="button" data-preview-link="服务工单"><span class="shortcut-icon"><span class="icon" data-icon="clipboard"></span></span><span>服务工单</span><span class="icon" data-icon="arrow-up-right"></span></button><button type="button" data-preview-link="顾客购买记录"><span class="shortcut-icon"><span class="icon" data-icon="receipt"></span></span><span>顾客购买记录</span><span class="icon" data-icon="arrow-up-right"></span></button>
+          <a href="operations-report.html"><span class="shortcut-icon"><span class="icon" data-icon="file-chart"></span></span><span>运营报表</span><span class="icon" data-icon="arrow-up-right"></span></a><a href="service-quality.html"><span class="shortcut-icon"><span class="icon" data-icon="shield"></span></span><span>服务质量</span><span class="icon" data-icon="arrow-up-right"></span></a><button type="button" data-preview-link="服务工单"><span class="shortcut-icon"><span class="icon" data-icon="clipboard"></span></span><span>服务工单</span><span class="icon" data-icon="arrow-up-right"></span></button><button type="button" data-preview-link="顾客购买记录"><span class="shortcut-icon"><span class="icon" data-icon="receipt"></span></span><span>顾客购买记录</span><span class="icon" data-icon="arrow-up-right"></span></button>
         </div></section></aside>
       </section>
     </main>
@@ -111,7 +125,7 @@
   <div class="scrim" id="scrim" hidden></div>
   <aside class="prototype-panel" id="prototypePanel" role="dialog" aria-modal="true" aria-labelledby="prototypeTitle" hidden>
     <header><div><span class="panel-kicker">WEB 管理后台</span><h2 id="prototypeTitle">四视角原型目录</h2><p>同一套后台外壳，按角色工作目标分别设计。</p></div><button class="icon-button" id="closePrototypePanel" type="button" aria-label="关闭原型目录"><span class="icon" data-icon="x"></span></button></header>
-    <div class="prototype-list"><a href="#headquarters" class="prototype-card is-current"><span class="prototype-number">01</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>总部运营</strong><small>运营概览</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="customer-service.html" class="prototype-card"><span class="prototype-number">02</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>客服作业</strong><small>客服工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="service-station.html" class="prototype-card"><span class="prototype-number">03</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>服务站作业</strong><small>服务站工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="dealer.html" class="prototype-card"><span class="prototype-number">04</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>门店业务</strong><small>门店工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a></div>
+    <div class="prototype-list"><a href="#headquarters" class="prototype-card is-current"><span class="prototype-number">01</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>总部运营</strong><small>运营工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="customer-service.html" class="prototype-card"><span class="prototype-number">02</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>客服作业</strong><small>客服工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="service-station.html" class="prototype-card"><span class="prototype-number">03</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>服务站作业</strong><small>服务站工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="dealer.html" class="prototype-card"><span class="prototype-number">04</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>门店业务</strong><small>门店工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a></div>
     <footer><a href="01-四视角后台原型设计说明.md">查看原型设计说明<span class="icon" data-icon="arrow-right"></span></a><a href="../README.md">返回全部页面原型</a></footer>
   </aside>
 
