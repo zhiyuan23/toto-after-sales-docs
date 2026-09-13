@@ -2,7 +2,7 @@
 
 - 版本：V3.0
 - 更新日期：2026-09-13
-- 文档状态：V3 前端已实施；权威菜单与正式账号待分发联调
+- 文档状态：V3 前端已实施；测试库菜单已同步，租户分发与正式账号联调待完成
 - 适用范围：单一 Web 管理后台及其总部运营、客服作业、服务站作业、门店业务视角
 - 需求依据：[TOTO 系统调研 ProcessOn 流程图](https://www.processon.com/f/6a681a83e50b43092180ded9#TOTO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94)、[页面清单](../01-功能需求/08-页面清单.md)及各端需求文档
 
@@ -425,18 +425,21 @@ src/views/afterSales/
 
 ## 9. Gaia 菜单配置与分发
 
-业务目录与角色规则统一见[后台菜单与角色权限手册](09-后台菜单与岗位权限矩阵.md)。独立子系统当前代码映射位于 `apps/after-sales/src/features/navigation/manifest.json`；48 个当前功能 code/path 和 5 个导航授权 code 由该清单集中维护。`afsDealerAppointment`、`afsDecorationCompany`、`afsServiceItem` 已从注册与路由删除；`afsInstallationCode` 已按本次明确要求恢复；旧生成脚本只用于既有 Gaia 节点核对，不得据此恢复已删除功能或 V2 全量侧栏。
+业务目录与角色规则统一见[后台菜单与角色权限手册](09-后台菜单与岗位权限矩阵.md)。独立子系统当前代码映射位于 `apps/after-sales/src/features/navigation/manifest.json`；48 个当前功能 code/path 和 5 个导航授权 code 由该清单集中维护。`afsDealerAppointment`、`afsDecorationCompany`、`afsServiceItem` 已从注册与路由删除；`afsInstallationCode` 已按本次明确要求恢复。菜单交付生成器必须直接读取这份独立子系统清单，不得读取 legacy 常量或据此恢复已删除功能、下载中心节点和 V2 全量侧栏。
 
 保留[生成脚本](../../../frontend/gaia-ui/scripts/after-sales-menu-package.mjs)。在 `gaia-ui` 仓库中执行，输出位置按本次分发任务指定，例如：
 
 ```sh
-node scripts/after-sales-menu-package.mjs /tmp/toto-menu-v2-review.json
+node scripts/after-sales-menu-package.mjs /tmp/toto-after-sales-menu.json \
+  --preflight /tmp/toto-after-sales-menu-preflight.sql
 ```
+
+生成结果为 1 个售后根节点、10 个稳定存储分组、48 个唯一功能节点和 5 个隐藏导航授权节点，共 64 个当前节点；同时区分只允许人工复核后退役的 legacy 候选，以及本次必须保持不变的根系统兼容节点。只读预检 SQL 核对现有模块、父级、启停、隐藏状态、角色绑定、操作和 API，不包含写语句。工作视角的 16 个展示分组仍由前端投影，不在数据库复制同一功能。
 
 1. 在目标环境的 `gaia-tenant` 权威菜单中按 code 对照，保留既有 ID；路径冲突先核实，不删除重建功能。不直接改运行库 `sys_module`。
 2. 依父子关系注册缺失节点；解析真实 parentId、分类、排序及已存在“数码中心”的顺序，导航授权、流程项及 V3 规划功能保持隐藏。生产业务按验收开通，不通过“占位可见”表示开发进度。
-3. 指定目标租户并合并本次模块分配，保留租户已有无关模块；经平台现有分发及回执链同步。现有 `/api/tenantSaasModule/saveTenantModuleOperation` 接口需真实租户 ID 和模块／操作 ID，不可直接提交清单中的 code。
+3. 指定目标租户，先调用 `/api/tenantSaasModule/getTenantModuleOperationByTenantId` 读取该租户当前 `pc_web` 的完整选择，再按真实模块／操作 ID 合并售后增量。`/api/tenantSaasModule/saveTenantModuleOperation` 按整份选择计算删除项，禁止只提交售后 ID；经平台现有分发及回执链同步，并保留租户已有全部无关模块与按钮。
 4. 将角色模板绑定目标环境的实际角色 ID；管理员包含管理员导航授权和按需业务功能授权，其他岗位使用对应工作视角并按模板裁剪，已有非售后授权保持。功能查询 API 按已确认切片配套，写操作单独授权；A46～A53 在现有全局模块中配置，不新增重复菜单。
 5. 关闭本地预览与临时 API 放行，用各角色真实账号验证菜单、直达、动作、租户及组织范围，再回写入口验收。
 
-前端与清单生成脚本已更新；当前接口检测到旧版“本地菜单初始化”记录，不等于本次完成了权威注册。目标租户／环境尚待指定，尚未执行正式分发和角色写入。本地开发开关开启且旧菜单缺少导航项时，仅补导航预览标记，保留后端功能集合和 ID，不补未授权功能；页面明确标注“本地菜单预览”。
+2026-09-13 已将生成器从 legacy 常量切换到独立子系统清单，加入结构漂移、退役回流、跨视角重复注册和租户全量覆盖风险检查，并可生成只读预检 SQL；验证见[多角色菜单实施记录](../specs/2026-09-08-多角色菜单V2实施.md#v3-delivery-tool)。同日已在关闭多租户的测试环境 `gaia_wh_init_wzy` 按当前生效的根系统模块表执行受控事务同步：补齐 `afsDashboardCustomerService`，修正 21 个现有节点，解除并停用 3 个退出范围节点；同步后二次预检为 0 条差异，主系统角色权限树可见最新菜单。该结果只代表当前测试环境，启用多租户的环境仍须按上列 `gaia-tenant` 合并式分发流程执行，不能把本次测试库写入方式直接套用于生产。
