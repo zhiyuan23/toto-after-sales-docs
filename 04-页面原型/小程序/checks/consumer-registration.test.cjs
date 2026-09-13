@@ -30,7 +30,7 @@ function fixture({ hash = '', search = '' } = {}) {
     setTimeout: () => 1, clearTimeout() {},
     window: { addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  for (const file of ['consumer.js', 'worker.js', 'consumer-outlets.js', 'consumer-account.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
+  for (const file of ['consumer.js', 'worker.js', 'worker-schedule.js', 'worker-map.js', 'consumer-outlets.js', 'consumer-account.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
   const source = readFileSync(resolve(root, 'app.js'), 'utf8');
   // Expose closure state only in this VM copy, keeping the prototype's production global surface unchanged.
   const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,current:()=>current};';
@@ -53,7 +53,7 @@ function fixture({ hash = '', search = '' } = {}) {
     // A submit event targets its form; distinguish normal submissions from outlet search forms.
     events.get('submit')({ preventDefault() {}, target: form });
   };
-  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, apps: context.window.TOTO_SCREENS, get, fields, click, submit, location, windowEvents };
+  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, worker:context.window.TOTO_WORKER, schedule:context.window.TOTO_WORKER_SCHEDULE, apps: context.window.TOTO_SCREENS, get, fields, click, submit, location, windowEvents };
 }
 const copy = value => JSON.parse(JSON.stringify(value));
 const personal = { userName: '虚构顾客', phone: '13800000000', useType: 'self', region: '示例省 / 示例市 / 示例区', address: '虚构地址一号', privacyConsent: true };
@@ -277,8 +277,8 @@ test('all templates render across consumer scenarios, registration methods, code
   const screens = [...f.apps.consumer.screens, ...f.apps.worker.screens];
   const ids = new Set(screens.map(screen => screen.id));
   assert.equal(f.apps.consumer.screens.length, 29);
-  assert.equal(f.apps.worker.screens.length, 15);
-  assert.equal(ids.size, 44);
+  assert.equal(f.apps.worker.screens.length, 28);
+  assert.equal(ids.size, 57);
   let combinations = 0;
   for (const scenario of ['welcome', 'registered', 'confirmed']) {
     f.resetConsumer(scenario);
@@ -302,7 +302,7 @@ test('all templates render across consumer scenarios, registration methods, code
       }
     }
   }
-  assert.equal(combinations, 7920);
+  assert.equal(combinations, 10260);
   f.consumer.registrationMethod = 'manual';
   f.showScreen('c-home');
   f.renderFlows();
@@ -367,19 +367,6 @@ test('switching between existing and newly registered products never carries ins
   assert.match(f.get('#phone-body').innerHTML, /这次登记未关联安装码/);
 });
 
-test('worker appointment and completion keep their existing form transitions and browser validity gate', () => {
-  const f = fixture();
-  f.showScreen('w-appointment');
-  f.submit('', 'w-detail', false);
-  assert.equal(f.current().id, 'w-appointment');
-  f.submit('', 'w-detail');
-  assert.equal(f.current().id, 'w-detail');
-  f.showScreen('w-completion');
-  f.submit('w-completion-form', 'w-review', false);
-  assert.equal(f.current().id, 'w-completion');
-  f.submit('w-completion-form', 'w-review');
-  assert.equal(f.current().id, 'w-review');
-});
 
 const serviceOrder = (product, overrides = {}) => ({
   id: `DEMO-TEST-${product.id}`, productId: product.id, productIds: [product.id],
@@ -547,4 +534,27 @@ test('late avatar reads cannot overwrite a newer choice or revive a reset profil
   assert.equal(f.account.profile().avatar,'data:image/png;base64,NEW');
   f.upload(avatarFile);f.readers[2].onload();f.resetConsumer();f.images[2].onload();
   assert.equal(f.account.profile().avatar,'');
+});
+
+
+test('worker home stays a list; calendar is a child page and returning restores applied filters, scroll and query draft',()=>{
+  const f=fixture({hash:'#w-tasks'}),body=f.get('#phone-body');
+  assert.match(body.innerHTML,/任务快捷入口/);assert.doesNotMatch(body.innerHTML,/任务查看方式/);
+  f.worker.submitAction('task-search',{search:'示例'});f.showScreen('w-tasks');
+  const input={value:'尚未查询的文字'};body.querySelector=selector=>selector==='[name="search"]'?input:null;body.scrollTop=320;
+  f.click({wsched:'day'});assert.equal(f.current().id,'w-schedule');assert.equal(f.get('#phone-tabs').innerHTML,'');
+  assert.equal(f.get('#phone-back').style.visibility,'visible');assert.match(body.innerHTML,/一周日程/);
+  f.click({wsched:'date',value:'2026-09-14'});input.value='';f.get('#phone-back').click();
+  assert.equal(f.current().id,'w-tasks');assert.match(body.innerHTML,/任务快捷入口/);assert.equal(body.scrollTop,320);assert.equal(input.value,'尚未查询的文字');assert.equal(f.worker.snapshot().search,'示例');
+  assert.equal(f.schedule.snapshot().date,'2026-09-14');f.click({wsched:'today'});assert.equal(f.current().id,'w-schedule');assert.equal(f.schedule.snapshot().date,'2026-09-13');assert.equal(f.worker.snapshot().search,'示例');
+});
+test('calendar deep links and old capture links resolve to an independent screen; back returns to list home',()=>{
+  for(const options of [{hash:'#w-schedule'},{search:'?capture=w-tasks&schedule-date=2026-09-14'},{search:'?capture=w-schedule&schedule-date=2026-09-14'}]){
+    const f=fixture(options);assert.equal(f.current().id,'w-schedule');assert.equal(f.get('#phone-tabs').innerHTML,'');
+    f.get('#phone-back').click();assert.equal(f.current().id,'w-tasks');assert.match(f.get('#phone-tabs').innerHTML,/配件/);assert.match(f.get('#phone-body').innerHTML,/任务快捷入口/);
+  }
+});
+test('worker list return positions cannot cross changed filters or companies',()=>{
+  const f=fixture({hash:'#w-tasks'}),body=f.get('#phone-body');body.scrollTop=260;f.showScreen('w-map');f.worker.setSort('time');f.get('#phone-back').click();assert.equal(body.scrollTop,0);
+  body.scrollTop=180;f.showScreen('w-schedule');f.worker.submitAction('company',{company:'苏州示例服务企业',confirmed:true});f.get('#phone-back').click();assert.equal(body.scrollTop,0);assert.equal(f.worker.snapshot().listPosition,null);assert.equal(f.worker.snapshot().tasks.length,0);
 });

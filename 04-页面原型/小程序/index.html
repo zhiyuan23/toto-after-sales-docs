@@ -9,7 +9,12 @@
   <link rel="stylesheet" href="consumer.css?v=0.10.3">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
   <script src="consumer.js?v=0.10.3" defer></script>
-  <script src="worker.js" defer></script>
+  <link rel="stylesheet" href="worker.css?v=0.5.0">
+  <script src="worker.js?v=0.5.0" defer></script>
+  <link rel="stylesheet" href="worker-map.css?v=0.3.0">
+  <link rel="stylesheet" href="worker-schedule.css?v=0.5.0">
+  <script src="worker-schedule.js?v=0.5.0" defer></script>
+  <script src="worker-map.js?v=0.5.0" defer></script>
   <script src="consumer-outlets.js?v=0.6.0" defer></script>
   <script src="consumer-account.js?v=0.10.3" defer></script>
   <script src="app.js?v=0.10.3" defer></script>
@@ -30,7 +35,7 @@
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer">消费者 v0.10.3 · 恢复资料表单<br>服务人员 v0.1 · 结构原型<br>本轮评审原型，确认后再做视觉定稿。</div>
+      <div class="sidebar-footer">消费者 v0.10.3 · 恢复资料表单<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，确认后再做视觉定稿。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
@@ -62,6 +67,31 @@
           <div class="review-divider"></div>
           <p class="eyebrow">边界与评审提示</p>
           <p id="review-note"></p>
+          <div id="worker-controls" hidden>
+            <div class="review-divider"></div>
+            <label class="review-field" for="worker-event">模拟后台结果 · 仅供评审</label>
+            <select id="worker-event">
+              <option value="approved">当前工单：审核通过 → 服务中心回访</option>
+              <option value="returned">当前工单：审核退回补充</option>
+              <option value="closed">当前工单：完成回访及后续办结</option>
+              <option value="part-approved">当前配件单：库房处理 / 实物退回</option>
+              <option value="part-rejected">当前配件单：拒绝申请</option>
+              <option value="transfer">新增授权调拨待收件示例</option>
+              <option value="upload-fail">下一次添加材料：模拟上传失败</option>
+            </select>
+            <button id="worker-simulate" class="reset-button">应用后台结果</button>
+            <p class="fine-print">用于走查跨角色流程，不属于师傅端操作。取消恢复、回访关闭和库存规则仍需按正式契约确认。</p>
+          </div>
+          <div id="worker-map-controls" hidden>
+            <div class="review-divider"></div>
+            <label class="review-field" for="worker-map-scenario">地图样例 · 仅供评审</label>
+            <select id="worker-map-scenario" data-wmap-sim="scenario"><option value="normal">标准任务位置</option><option value="overlap">同址多单</option><option value="missing">全部地址待核实</option></select>
+            <label class="review-field" for="worker-map-location">下次定位结果</label>
+            <select id="worker-map-location" data-wmap-sim="location"><option value="success">模拟定位成功</option><option value="denied">位置权限未开启</option><option value="failed">定位超时 / 不可用</option></select>
+            <label class="review-field" for="worker-map-route">路线服务结果</label>
+            <select id="worker-map-route" data-wmap-sim="route"><option value="success">示例路线</option><option value="failed">请求失败</option><option value="no-route">未找到可用路线</option></select>
+            <p class="fine-print">未调用定位或算路接口，路线及里程为虚构样例。切企业、重置会清空地图上下文。</p>
+          </div>
           <div id="consumer-controls">
             <div class="review-divider"></div>
             <label class="review-field" for="consumer-scenario">消费者使用场景</label>

@@ -3,6 +3,9 @@
   const apps = window.TOTO_SCREENS || {};
   const outlets = window.TOTO_OUTLETS;
   const account = window.TOTO_ACCOUNT;
+  const worker = window.TOTO_WORKER;
+  const workerMap = window.TOTO_WORKER_MAP;
+  const workerSchedule = window.TOTO_WORKER_SCHEDULE;
   const $ = (selector) => document.querySelector(selector);
   const escape = (text) => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const all = Object.entries(apps).flatMap(([app, value]) => value.screens.map(screen => ({...screen, app})));
@@ -65,6 +68,7 @@
   if (captureId) document.body.classList.add('capture-mode');
   const saveDraft = () => {
     if (!current || renderedState !== 'normal') return;
+    if (worker?.owns(current.id)) {worker.saveDraft($('#phone-body'),current.id);return;}
     if (account?.owns(current.id)) {account.saveDraft($('#phone-body'));return;}
     if (outlets?.owns(current.id)) return;
     const fields = [...$('#phone-body').querySelectorAll('input,select,textarea')];
@@ -76,6 +80,7 @@
     if (registrationPages.has(current.id)) Object.assign(registrationDraft(),values);
   };
   const restoreDraft = () => {
+    if (worker?.owns(current.id)) return;
     if (account?.owns(current.id)) return;
     if (outlets?.owns(current.id)) return;
     const values = drafts.get(draftKey());
@@ -92,6 +97,10 @@
   };
   function showScreen(id, push = true, skipSave = false) {
     if (!skipSave) saveDraft();
+    const previousId=current?.id;
+    if(previousId==='w-tasks'&&id!=='w-tasks'&&renderedState==='normal')worker?.saveListPosition($('#phone-body'));
+    id=worker?.guard(id)||id;
+    worker?.onNavigate(id);
     if (['c-outlet-contact','c-outlet-navigation'].includes(id)) id='c-outlet-detail';
     outlets?.clearOverlay();
     if (id === 'c-home' && !consumer.hasProducts) id = 'c-welcome';
@@ -115,20 +124,26 @@
     if (!captureId && location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
     view = 'screen';
     render();
+    if(id==='w-tasks'&&previousId&&previousId!=='w-tasks')worker?.restoreListPosition($('#phone-body'));
   }
   function renderOutletOverlay() {
     const overlay=$('#outlet-overlay');
-    overlay.innerHTML=outlets?.owns(current.id) ? outlets.overlay() : '';
+    overlay.innerHTML=worker?.owns(current.id) ? (current.id==='w-map'&&workerMap?.overlay() || worker.overlay()) : outlets?.owns(current.id) ? outlets.overlay() : '';
     overlay.hidden=!overlay.innerHTML;
     ['#phone-body','#phone-footer','#phone-tabs'].forEach(selector=>{$(selector).inert=!overlay.hidden;});
     const target=outlets?.takeFocus();
     if(target) $('#phone').querySelector(target)?.focus();
+    if(!overlay.hidden&&current.id==='w-map') overlay.querySelector('[role="dialog"]')?.focus();
     if(!overlay.hidden) overlay.querySelector('[role="dialog"]')?.scrollIntoView({block:'center',inline:'nearest'});
   }
   function render() {
     outlets?.clearOverlay();
     const app = apps[current.app];
     $('#phone').classList.toggle('consumer-phone', current.app === 'consumer');
+    $('#phone').classList.toggle('worker-phone', current.app === 'worker');
+    $('#worker-controls').hidden=current.app!=='worker'||current.id==='w-map';
+    $('#worker-map-controls').hidden=current.id!=='w-map';
+    if(current.id==='w-map'&&workerMap){const m=workerMap.snapshot();$('#worker-map-scenario').value=m.scenario;$('#worker-map-location').value=m.locationOutcome;$('#worker-map-route').value=m.routeOutcome;}
     $('#phone').dataset.screen = current.id;
     $('#consumer-controls').hidden = current.app !== 'consumer';
     $('#outlet-controls').hidden = !outlets?.owns(current.id);
@@ -146,7 +161,7 @@
     $('#phone-footer').innerHTML = markup(current.footer);
     renderOutletOverlay();
     const isRoot = app.tabs.some(t => t.go === current.id) || current.id==='c-welcome';
-    $('#phone-tabs').innerHTML = isRoot ? app.tabs.map((t,i) => `<button data-go="${escape(t.go)}" class="${t.go === (current.tab || current.id) ? 'selected' : ''}" ${t.go === (current.tab || current.id) ? 'aria-current="page"' : ''}>${current.app==='consumer'?`<span data-icon="${['home','service','mine'][i]}" aria-hidden="true"></span>`:''}${escape(t.label)}</button>`).join('') : '';
+    $('#phone-tabs').innerHTML = isRoot ? app.tabs.map((t,i) => `<button data-go="${escape(t.go)}" class="${t.go === (current.tab || current.id) ? 'selected' : ''}" ${t.go === (current.tab || current.id) ? 'aria-current="page"' : ''}><span data-icon="${current.app==='consumer'?['home','service','mine'][i]:t.icon}" aria-hidden="true"></span>${escape(t.label)}</button>`).join('') : '';
     $('#phone-back').style.visibility = isRoot ? 'hidden' : 'visible';
     $('#review-title').textContent = current.title;
     $('#entry-id').textContent = current.entry;
@@ -164,25 +179,6 @@
       const value = namedDrafts.get(screenId)?.[field];
       if (value !== undefined && value !== '') el.textContent = value;
     });
-    if (submitted.has('w-returned') && current.id === 'w-tasks') {
-      const card = $('#phone-body [data-returned-card]');
-      if (card) {
-        card.hidden = true;
-        card.querySelector('[data-returned-status]').textContent = '待审核 · 已补充资料';
-        card.querySelector('.notice').textContent = '第 2 次提交已收到，等待重新审核。';
-        const button = card.querySelector('[data-returned-button]');
-        button.textContent = '查看重提状态';
-        button.dataset.go = 'w-resubmitted';
-      }
-      const count = $('#phone-body [data-return-count]');
-      if (count) count.textContent='0';
-      const reviewCount = $('#phone-body [data-review-count]');
-      if (reviewCount) reviewCount.textContent='2';
-      const queue = $('#phone-body [data-pending-queue]');
-      if (queue) queue.textContent='待完工 2';
-      const reviewQueue = $('#phone-body [data-review-queue]');
-      if (reviewQueue) reviewQueue.textContent='待审核 2';
-    }
     setView(view);
   }
   function setView(next) {
@@ -206,15 +202,11 @@
       ['新产品安装 · 设计探索','选择本次涉及的产品，确认地址和期望时间，提交后等待联系。消费者安装正式开放条件仍待确认。',['c-home','c-install','c-contact','c-confirm','c-submit-result']],
       ['个人资料与购买记录','从我的修改头像、常用资料和兴趣偏好，按购买记录查看商品和安装码；历史购买和服务信息不随资料编辑而改变。',['c-mine','c-profile','c-preferences','c-purchases','c-product']],
       ['多产品与服务跟进','服务页按申请汇总，直接切换服务，查看确认安排和完整进度；右侧可体验等待联系、已确认及多项服务。评价页展示独立已完成示例。',['c-home','c-service','c-progress','c-evaluation']]
-    ] : [
-      ['联系客户与现场履约','先确认预约，再记录现场作业；提交完工后进入审核。',['w-tasks','w-detail','w-appointment','w-service','w-completion','w-review']],
-      ['缺件与重新安排','先记录异常和配件需求，到件后重新联系确认时间。',['w-detail','w-exception','w-parts','w-requisition','w-appointment']],
-      ['审核退回与补充','清楚展示退回原因，修正资料后产生新的提交版本。',['w-tasks','w-returned','w-resubmitted']]
-    ];
+    ] : worker.flows;
     $('#flows-view').innerHTML = `<h1>${apps[current.app].name} · 核心流程</h1><p class="muted">点击任意节点进入对应页面。连接表示设计中的用户路径，不替代后端状态机与权限契约。</p>` + definitions.map(([title,desc,ids]) => `<article class="flow-card"><h2>${escape(title)}</h2><p class="muted">${escape(desc)}</p><div class="flow-stops">${ids.filter(id => all.some(s => s.id === id)).map(id => {const s=all.find(s=>s.id===id);return `<button data-go="${id}">${escape(s.title)}</button>`;}).join('<span>→</span>')}</div></article>`).join('');
   }
   function renderAtlas() {
-    $('#atlas-view').innerHTML = `<h1>${apps[current.app].name} · 页面总览</h1><p class="muted">点击页面名称进入交互走查；缩略图用于检查跨页面结构一致性。</p><div class="screen-grid">${apps[current.app].screens.map(s => `<article class="screen-tile"><button data-go="${escape(s.id)}"><strong>${escape(s.title)}</strong><span>${escape(s.entry)}</span></button><div class="thumb-shell" inert aria-hidden="true"><div class="phone ${current.app==='consumer'?'consumer-phone':''}" data-screen="${escape(s.id)}"><div class="phone-nav"><strong>${escape(s.title)}</strong></div><div class="phone-body">${markup(s.body).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><div class="phone-footer">${markup(s.footer).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><nav class="phone-tabs">${apps[current.app].tabs.some(t=>t.go===s.id) ? apps[current.app].tabs.map(t=>`<button class="${t.go===s.id?'selected':''}">${escape(t.label)}</button>`).join(''):''}</nav></div></div><p>${escape(s.goal)}</p></article>`).join('')}</div>`;
+    $('#atlas-view').innerHTML = `<h1>${apps[current.app].name} · 页面总览</h1><p class="muted">点击页面名称进入交互走查；缩略图用于检查跨页面结构一致性。</p><div class="screen-grid">${apps[current.app].screens.map(s => `<article class="screen-tile"><button data-go="${escape(s.id)}"><strong>${escape(s.title)}</strong><span>${escape(s.entry)}</span></button><div class="thumb-shell" inert aria-hidden="true"><div class="phone ${current.app==='consumer'?'consumer-phone':'worker-phone'}" data-screen="${escape(s.id)}"><div class="phone-nav"><strong>${escape(s.title)}</strong></div><div class="phone-body">${markup(s.body).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><div class="phone-footer">${markup(s.footer).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><nav class="phone-tabs">${apps[current.app].tabs.some(t=>t.go===s.id) ? apps[current.app].tabs.map(t=>`<button class="${t.go===s.id?'selected':''}">${escape(t.label)}</button>`).join(''):''}</nav></div></div><p>${escape(s.goal)}</p></article>`).join('')}</div>`;
     hydrateIcons($('#atlas-view'));
   }
   function renderState(value) {
@@ -323,6 +315,9 @@
   document.addEventListener('click', event => {
     const el = event.target.closest('button,[data-go],[data-action]');
     if (!el || el.disabled) return;
+    if (worker?.owns(current.id) && workerSchedule?.handle(el,{render,showScreen,showToast})) {event.preventDefault();return;}
+    if (worker?.owns(current.id) && workerMap?.handle(el,{render,showScreen,showToast})) {event.preventDefault();return;}
+    if (worker?.owns(current.id) && worker.handle(el,{root:$('#phone-body'),page:current.id,render,showScreen,showToast})) {event.preventDefault();return;}
     if (outlets?.handle(el,{render:()=>{$('#ui-state').value='normal';render();},renderOverlay:renderOutletOverlay,showScreen,showToast,returnTo:id=>{const index=routeHistory.lastIndexOf(id);if(index>=0)routeHistory.length=index;showScreen(id,false);}})) {event.preventDefault();return;}
     if (account?.owns(current.id) && account.handle(el,{root:$('#phone-body'),context:consumerContext(),render,showToast})) {event.preventDefault();return;}
     if (el.dataset.regMethod) {
@@ -382,8 +377,11 @@
     else if (el.dataset.action) {event.preventDefault();showToast(el.dataset.action);}
   });
   document.addEventListener('submit', event => {
+    if (current.id==='w-map' && workerMap?.submit(event.target,{render})) {event.preventDefault();return;}
+    if (worker?.owns(current.id) && worker.submit(event.target,{root:$('#phone-body'),page:current.id,showScreen,showToast})) {event.preventDefault();return;}
     if (account?.owns(current.id) && account.submit(event.target,{root:$('#phone-body'),render,showToast})) {event.preventDefault();return;}
     if (event.target.matches('form[data-outlet-search]')) {event.preventDefault();outlets.submit(event.target,{render:()=>{$('#ui-state').value='normal';render();}});return;}
+    if (worker?.owns(current.id)) {event.preventDefault();return;}
     const form=event.target.closest('form[data-submit-go]');
     if (!form) return;
     event.preventDefault();
@@ -430,19 +428,25 @@
     if (event.target.validity?.valid) {event.target.removeAttribute('aria-invalid');event.target.parentElement.querySelector('.field-error')?.remove();}
   });
   document.addEventListener('change',event=>{
+    if(current.id==='w-schedule'&&event.target.hasAttribute('data-wsched-date')){try{workerSchedule.setDate(event.target.value);render();}catch(err){showToast(err.message);}}
+    if(current.id==='w-map' && event.target.dataset.wmapSim){workerMap.simulate(event.target.dataset.wmapSim,event.target.value);render();}
+    if(worker?.owns(current.id) && event.target.hasAttribute('data-worker-sort')){worker.setSort(event.target.value);render();}
     if (current.id==='c-profile' && event.target.id==='c-avatar-file') account.changeAvatar(event.target,{root:$('#phone-body'),render,showToast});
   });
   $('#ui-state').addEventListener('change',event=>{saveDraft();renderState(event.target.value);});
   $('#outlet-location-outcome').addEventListener('change',event=>outlets?.setLocationOutcome(event.target.value));
   $('#phone-back').addEventListener('click',()=>{
+    if(current.id==='w-schedule'&&workerSchedule?.back()){render();return;}
+    if(current.id==='w-map' && workerMap?.back()){render();return;}
+    if(worker?.owns(current.id) && worker.overlay()){worker.actAction('dismiss');renderOutletOverlay();return;}
     if(outlets?.dismiss()){renderOutletOverlay();return;}
     showScreen(routeHistory.pop() || current.parent || current.tab || apps[current.app].screens[0].id,false);
   });
   document.addEventListener('keydown',event=>{
     if($('#outlet-overlay').hidden)return;
-    if(event.key==='Escape'){event.preventDefault();outlets.dismiss();renderOutletOverlay();}
+    if(event.key==='Escape'){event.preventDefault();if(current.id==='w-map'&&workerMap?.overlay())workerMap.act('dismiss');else if(worker?.owns(current.id))worker.actAction('dismiss');else outlets.dismiss();renderOutletOverlay();}
     if(event.key==='Tab'){
-      const buttons=Array.from($('#outlet-overlay').querySelectorAll('#outlet-dialog button'));
+      const buttons=Array.from($('#outlet-overlay').querySelectorAll('[role="dialog"] button,[role="dialog"] input,[role="dialog"] textarea'));
       const first=buttons[0],last=buttons[buttons.length-1];
       if(event.shiftKey && document.activeElement===first){event.preventDefault();last?.focus();}
       else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first?.focus();}
@@ -451,7 +455,11 @@
   $('#prev-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)-1].id);});
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
   $('#consumer-scenario').addEventListener('change',event=>{const keepPage=current.id==='c-service' || account?.owns(current.id) ? current.id : null;resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (consumer.hasProducts?'c-home':'c-welcome'),false,true);});
-  $('#reset-demo').addEventListener('click',()=>{drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(all[0].id,false);showToast('本次演示已重置。');});
+  $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
+  $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
-  if(all.length) showScreen(captureId || location.hash.slice(1) || all[0].id,false);
+  if(captureId==='w-map'&&workerMap){const demo=new URLSearchParams(location.search).get('map-demo');if(['single','today'].includes(demo)){workerMap.open();workerMap.act(demo);workerMap.act('origin','station');workerMap.act('calculate');}}
+  if(['w-tasks','w-schedule'].includes(captureId)&&workerSchedule){const date=new URLSearchParams(location.search).get('schedule-date');if(date&&workerSchedule.validDate(date))workerSchedule.setDate(date);}
+  const initialId=captureId==='w-tasks'&&new URLSearchParams(location.search).has('schedule-date')?'w-schedule':captureId;
+  if(all.length) showScreen(initialId || location.hash.slice(1) || all[0].id,false);
 })();

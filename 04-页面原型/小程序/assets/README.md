@@ -13,7 +13,7 @@
 
 ## 图标
 
-`icons/` 使用项目现有 `@iconify-json/mdi` 中的 Material Design Icons 原始图形，仅包装 SVG 文件供离线原型引用，未手工重画路径。
+除下述 Lucide 两项外，`icons/` 使用项目现有 `@iconify-json/mdi` 中的 Material Design Icons 原始图形，仅包装 SVG 文件供离线原型引用，未手工重画路径。
 
 - 作者：Pictogrammers / Templarian。
 - 来源：[Material Design Icons](https://github.com/Templarian/MaterialDesign)。
@@ -23,3 +23,16 @@
 ## 截图
 
 `wireframe-*.jpg` 和 `prototype-preview.jpg` 保留首轮 v0.1 结构截图。后续原型以入口页面为准；截图不随代码自动更新。
+
+`worker-v02-overview.png` 为 2026-09-13 服务人员 v0.2 三 Tab 原型的浏览器截图；对应 [并排预览](../worker-overview.html)，不是 AI 生成图片或真实业务数据。
+
+## 服务人员地图
+
+`worker-map-base.svg` 复用本项目 `consumer-outlets.js` 的既有示意地图，裁出显示范围并改用“服务区域（示意）”文字；不是真实地理底图。`worker-v03-map-overview.png` 为 [地图与路线并排预览](../worker-map-overview.html) 的浏览器截图，位置、路线与路程全部为虚构样例。
+
+`worker-v04-schedule-overview.png` 为 [今天／未来／过去日程预览](../worker-schedule-overview.html) 的浏览器截图，所有任务、日期及预约历史均为本地原型样例。
+
+## v0.5 快捷入口与截图
+
+- `icons/calendar.svg` 和 `icons/map.svg` 复用本地 `frontend/gaia-ui/apps/after-sales/src/features/navigation/icons.json` 中 Lucide 的 `calendar-days` / `map` 原始图形，仅包装 SVG 与设置颜色，没有重画路径。Lucide 使用 ISC 许可，来源与许可见 [Lucide](https://github.com/lucide-icons/lucide/blob/main/LICENSE)。
+- `worker-v05-entry-overview.png` 为 [列表首页／日程／地图并排预览](../worker-entry-overview.html) 的浏览器截图，展示 v0.5 快捷入口与独立页面，使用本地虚构任务。
