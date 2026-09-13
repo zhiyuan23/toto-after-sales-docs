@@ -395,7 +395,7 @@ yarn factory:saas
 
 ```bash
 yarn install --frozen-lockfile
-pnpm --dir apps/after-sales install --frozen-lockfile
+pnpm --dir apps/after-sales --ignore-workspace install --frozen-lockfile
 ```
 
 两套依赖、缓存和锁文件互不覆盖。当前 gaia-ui 已固定 Node 22.23.1 和 Yarn 1.22.22，子系统也采用 Node 22，通常不需要切换 Node；pnpm 版本由子系统 `packageManager` 或 Corepack 固定。
@@ -418,6 +418,12 @@ pnpm --dir apps/after-sales install --frozen-lockfile
 ```
 
 必须先完成主系统构建，再复制子系统产物，因为主系统 Vite 会清理根 `dist`。任意一次安装、构建或校验失败都应使总命令失败，不得留下看似完整的可发布包。
+
+### 6.4 子系统质量门禁与包体预算（2026-09-13）
+
+子系统 `check` 统一执行 ESLint 零警告、Knip 直接／缺失依赖检查、应用及脚本／Node 测试／浏览器夹具严格类型检查、国际化键检查和全量测试；production `build` 必须先通过该门禁。ESLint 采用 Flat Config，并以静态规则阻止运行时导入主系统 legacy 售后页面与 `commonV2`。Prettier 与 EditorConfig 已建立，但为避免无关历史文件一次性重排，格式检查暂不进入统一门禁。
+
+来源底座遗留的 VXE Table / UI 在子系统中没有业务组件使用，已删除全局注册、样式和三项依赖；同时删除失效的 shadcn 生成器配置、历史设计核查副本、无消费者环境变量、JSX 插件以及无引用的下载／打印／轮播／表单等模板代码和依赖。应用根 README 已收敛为当前工程契约，并新增短 `AGENTS.md` 约束 AI 的上下文入口、验证命令、架构边界和配置卫生。构建进一步将 Vue、Element Plus 与通用 UI 库拆为稳定缓存边界，并在产物生成后强制单个 JS 不超过 800 KiB、单个 CSS 不超过 400 KiB。优化前最大 JS 约 2.58 MB、最大 CSS 约 1.07 MB；移除 VXE 后未分包基线分别约 1.42 MB 与 501 KB，最终分包产物最大文件约 760 KiB。根开发／构建编排显式使用 `--ignore-workspace`，保证子系统不被 Gaia 根目录非 workspace 型 pnpm 配置干扰。
 
 ## 7. 构建产物目录
 
