@@ -1,4 +1,43 @@
 /* Consumer prototype only. The service-worker prototype retains its existing UI. */
+.consumer-phone .c-account-phone { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px; background: var(--c-soft); border-radius: 12px; margin-bottom: 24px; }
+.consumer-phone .c-account-phone span { display: block; color: var(--c-muted); font-size: 11px; margin-bottom: 6px; }
+.consumer-phone .c-account-phone strong { font-size: 18px; font-weight: 600; letter-spacing: .04em; }
+.consumer-phone .c-address-fields { padding: 18px 0 0; margin: 8px 0 0; border: 0; border-top: 1px solid var(--c-line); }
+.consumer-phone .c-address-fields legend { padding: 0 8px 0 0; font-size: 14px; font-weight: 600; }
+.consumer-phone .c-address-fields legend span { color: var(--c-muted); font-size: 11px; font-weight: 400; margin-left: 6px; }
+.consumer-phone .c-notice-preference { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 8px; }
+.consumer-phone .c-notice-preference strong { display: block; font-size: 13px; font-weight: 600; }
+.consumer-phone .c-notice-preference small { display: block; font-size: 11px; color: var(--c-muted); margin-top: 5px; }
+.consumer-phone .c-notice-preference input { appearance: none; flex: 0 0 40px; width: 40px; height: 24px; border: 0; border-radius: 20px; background: #c5d0da; padding: 3px; cursor: pointer; }
+.consumer-phone .c-notice-preference input:before { content: ''; display: block; width: 18px; height: 18px; border-radius: 50%; background: #fff; }
+.consumer-phone .c-notice-preference input:checked { background: var(--c-blue); }
+.consumer-phone .c-notice-preference input:checked:before { transform: translateX(16px); }
+.consumer-phone .c-phone-editor { margin: -8px 0 24px; padding: 16px; border: 1px solid var(--c-line); border-radius: 12px; }
+.consumer-phone .c-phone-editor .secondary { display: block; width: 100%; margin-top: 6px; }
+.consumer-phone .c-purchase-list { display: grid; gap: 20px; }
+.consumer-phone .c-purchase-card { padding: 18px 16px 0; border: 1px solid var(--c-line); border-radius: 14px; }
+.consumer-phone .c-purchase-card > header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.consumer-phone .c-purchase-card > header div > span { color: var(--c-muted); font-size: 10px; }
+.consumer-phone .c-purchase-card h3 { margin: 4px 0 0; font-size: 18px; font-weight: 600; }
+.consumer-phone .c-purchase-store { margin: 12px 0 16px; font-size: 12px; color: var(--c-muted); }
+.consumer-phone .c-record-product { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 13px 0; border-top: 1px solid var(--c-line); border-radius: 0; }
+.consumer-phone .c-record-product img { width: 58px; height: 64px; object-fit: contain; }
+.consumer-phone .c-record-product > span { min-width: 0; }
+.consumer-phone .c-record-product strong { display: block; font-size: 13px; font-weight: 600; }
+.consumer-phone .c-record-product small { display: block; font-size: 10px; color: var(--c-muted); margin-top: 6px; overflow-wrap: anywhere; }
+.consumer-phone .c-record-quantity { margin-left: auto; white-space: nowrap; font-size: 11px; color: var(--c-muted); }
+.consumer-phone .c-record-quantity span { margin-left: 8px; font-size: 20px; }
+.consumer-phone .c-record-expand { display: flex; width: 100%; justify-content: space-between; align-items: center; min-height: 52px; border-top: 1px solid var(--c-line); border-radius: 0; padding: 0; color: var(--c-blue); font-size: 11px; }
+.consumer-phone .c-record-details { padding: 0 0 14px; font-size: 11px; }
+.consumer-phone .c-record-details > p { color: var(--c-muted); line-height: 1.8; margin: 7px 0; }
+.consumer-phone .c-record-details > div { padding: 12px; background: var(--c-soft); border-radius: 8px; margin: 10px 0; }
+.consumer-phone .c-record-details strong { display: block; font-weight: 500; }
+.consumer-phone .c-record-code { display: block; margin-top: 7px; font-size: 12px; overflow-wrap: anywhere; }
+.consumer-phone .c-account-empty { padding: 65px 14px 30px; text-align: center; }
+.consumer-phone .c-empty-mark { display: inline-flex; padding: 18px; background: var(--c-soft); border-radius: 50%; }
+.consumer-phone .c-account-empty h2 { font-size: 21px; margin: 23px 0 12px; }
+.consumer-phone .c-account-empty p { color: var(--c-muted); font-size: 13px; line-height: 1.9; margin-bottom: 28px; }
+.consumer-phone .c-account-empty .primary { width: 100%; margin-bottom: 12px; }
 .phone.consumer-phone {
   --c-blue: #1769aa;
   --c-blue-dark: #125586;
@@ -46,11 +85,14 @@
 .consumer-phone .c-form h3 { font-size: 15px; margin: 0; color: var(--c-ink); font-weight: 650; line-height: 1.6; }
 .consumer-phone .c-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 30px; margin-bottom: 12px; }
 .consumer-phone .c-section-heading .c-text-button { min-height: 44px; padding: 8px 0; }
-.consumer-phone .c-page-heading { padding: 8px 0 24px; }
-.consumer-phone .c-page-heading h2 { font-size: 24px; line-height: 1.45; font-weight: 650; letter-spacing: -.025em; margin: 0 0 10px; }
+.consumer-phone .c-page-heading { padding: 4px 0 18px; }
+.consumer-phone .c-page-heading h2 { font-size: 20px; line-height: 1.45; font-weight: 650; letter-spacing: -.025em; margin: 0 0 10px; }
 .consumer-phone .c-page-heading p { font-size: 12px; color: var(--c-muted); line-height: 1.8; }
 .consumer-phone .c-page-heading .c-kicker { font-size: 10px; color: var(--c-blue); margin-bottom: 10px; }
-.consumer-phone .c-step-label { font-size: 10px; color: var(--c-blue); margin: 3px 0 14px; letter-spacing: .03em; font-weight: 600; }
+.consumer-phone .c-page-intro { font-size: 12px; line-height: 1.8; color: var(--c-muted); margin: 0 0 20px; }
+.consumer-phone .c-list-summary { font-size: 12px; line-height: 1.8; color: var(--c-muted); padding: 4px 0; margin: 0 0 16px; }
+.consumer-phone .c-list-summary + .c-page-intro { margin-top: -8px; }
+.consumer-phone .c-step-label { font-size: 11px; color: var(--c-blue); margin: 3px 0 14px; letter-spacing: .03em; font-weight: 600; }
 .consumer-phone .c-menu-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; border-radius: 0; border-bottom: 1px solid var(--c-line); text-align: left; padding: 12px 0; font-size: 13px; }
 .consumer-phone .c-menu-row:last-child { border-bottom: 0; }
 .consumer-phone .c-menu-row > span:last-child { color: var(--c-muted); }
@@ -358,3 +400,28 @@
 .consumer-phone .c-hub-empty h3 { font-size:21px; font-weight:550; margin:0 0 12px; }
 .consumer-phone .c-hub-empty p { font-size:13px; color:#80919f; line-height:1.9; }
 .consumer-phone .c-hub-empty > button { min-width:175px; margin:27px 0 0; }
+
+/* Optional avatar and independently saved interests. */
+.consumer-phone .c-avatar { flex-shrink: 0; object-fit: cover; }
+.consumer-phone .c-avatar-editor { margin: 0 0 18px; padding: 0 0 8px; border-bottom: 1px solid var(--c-line); }
+.consumer-phone .c-avatar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 72px; padding: 10px 0; border-radius: 0; text-align: left; font-size: 13px; font-weight: 500; color: var(--c-ink); }
+.consumer-phone .c-avatar-value { display: flex; align-items: center; gap: 12px; }
+.consumer-phone .c-avatar-editor .c-avatar { width: 44px; height: 44px; }
+.consumer-phone .c-avatar-arrow { color: var(--c-muted); font-size: 20px; font-weight: 400; }
+.consumer-phone .c-avatar-row:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 3px; }
+.consumer-phone[data-screen="c-profile"] .c-account-phone { padding: 16px; margin-bottom: 8px; }
+.consumer-phone .c-preference-entry { margin-top: 6px; border-top: 1px solid var(--c-line); }
+.consumer-phone .c-preferences-intro { margin: 4px 0 26px; color: var(--c-muted); font-size: 12px; line-height: 1.8; }
+.consumer-phone .c-preference-group { padding: 0; margin: 0 0 30px; border: 0; min-width: 0; }
+.consumer-phone .c-preference-group legend { padding: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600; }
+.consumer-phone .c-preference-group legend > span { margin-left: 6px; color: var(--c-muted); font-size: 11px; font-weight: 400; }
+.consumer-phone .c-preference-options { display: flex; flex-wrap: wrap; gap: 10px; }
+.consumer-phone .c-preference-option { position: relative; cursor: pointer; }
+.consumer-phone .c-preference-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.consumer-phone .c-preference-option > span { display: flex; align-items: center; gap: 7px; min-height: 44px; padding: 10px 13px; border: 1px solid #ccd9e3; border-radius: 9px; background: #fff; color: var(--c-ink); font-size: 12px; }
+.consumer-phone .c-preference-check { color: transparent; width: 12px; font-size: 12px; }
+.consumer-phone .c-preference-option input:checked + span { color: var(--c-blue-dark); border-color: var(--c-blue); background: #edf5fc; }
+.consumer-phone .c-preference-option input:checked + span .c-preference-check { color: var(--c-blue); }
+.consumer-phone .c-preference-option input:focus-visible + span { outline: 2px solid var(--c-blue); outline-offset: 3px; }
+.consumer-phone .c-preference-tools { display: flex; justify-content: flex-end; margin-top: -12px; }
+.consumer-phone .c-preference-tools button { min-height: 44px; }

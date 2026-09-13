@@ -6,12 +6,13 @@
   <meta name="color-scheme" content="light">
   <title>TOTO · 两端小程序设计原型</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="consumer.css?v=0.7.0">
+  <link rel="stylesheet" href="consumer.css?v=0.10.3">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
-  <script src="consumer.js?v=0.7.0" defer></script>
+  <script src="consumer.js?v=0.10.3" defer></script>
   <script src="worker.js" defer></script>
   <script src="consumer-outlets.js?v=0.6.0" defer></script>
-  <script src="app.js?v=0.7.0" defer></script>
+  <script src="consumer-account.js?v=0.10.3" defer></script>
+  <script src="app.js?v=0.10.3" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -29,7 +30,7 @@
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer">消费者 v0.7 · 服务进度优先<br>服务人员 v0.1 · 结构原型<br>本轮评审原型，确认后再做视觉定稿。</div>
+      <div class="sidebar-footer">消费者 v0.10.3 · 恢复资料表单<br>服务人员 v0.1 · 结构原型<br>本轮评审原型，确认后再做视觉定稿。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
@@ -79,7 +80,7 @@
           </div>
           <div class="review-divider"></div>
           <p class="eyebrow">操作方式</p>
-          <p class="fine-print">点击手机内按钮体验流程。表单支持填写和必填校验，数据仅保留在本次页面会话；拨号、扫码、定位与上传均为模拟反馈。</p>
+          <p class="fine-print">点击手机内按钮体验流程。表单支持填写和必填校验，数据仅保留在本次页面会话；头像支持选择本地图片预览，不上传服务器；拨号、扫码、定位及故障媒体上传仍为模拟反馈。</p>
           <button id="reset-demo" class="reset-button">重置本次演示</button>
         </aside>
       </div>

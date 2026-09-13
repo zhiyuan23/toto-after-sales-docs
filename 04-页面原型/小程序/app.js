@@ -2,6 +2,7 @@
 (() => {
   const apps = window.TOTO_SCREENS || {};
   const outlets = window.TOTO_OUTLETS;
+  const account = window.TOTO_ACCOUNT;
   const $ = (selector) => document.querySelector(selector);
   const escape = (text) => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const all = Object.entries(apps).flatMap(([app, value]) => value.screens.map(screen => ({...screen, app})));
@@ -35,7 +36,7 @@
   function seedProducts(scenario) {
     consumer.ownedProducts=scenario==='welcome'?[]:(apps.consumer.products || []).map((product,i)=>({...product,catalogId:product.id,
       installationCode:`DEMO-INSTALL-00${i+1}`,installationCodeLinked:true,
-      registration:{method:'existing-record',purchaseDate:'2026-09-10',installationCode:`DEMO-INSTALL-00${i+1}`,
+      registration:{method:'existing-record',purchaseRecordId:'DEMO-PURCHASE-001',storeName:'TOTO 示例门店（虚构）',purchaseDate:'2026-09-10',installationCode:`DEMO-INSTALL-00${i+1}`,
         userName:'陈女士',phone:'13800000026',useType:'self',region:'示例省 / 示例市 / 示例区',address:'样板路88号1栋101室（虚构）'}
     }));
   }
@@ -46,7 +47,7 @@
   const consumerContext = () => {
     const products = consumer.ownedProducts;
     const product=products.find(p=>p.id===consumer.productId) || products[0] || apps.consumer.products[0];
-    return {products,catalog:apps.consumer.products,product,registration:registrationContext(),registrationReceipt:consumer.registrationReceipt,serviceType:consumer.serviceType,
+    return {profile:account?.profile(),products,catalog:apps.consumer.products,product,registration:registrationContext(),registrationReceipt:consumer.registrationReceipt,serviceType:consumer.serviceType,
       order:consumer.orders.get(consumer.productId) || null,submittedOrder:consumer.lastSubmitted,
       serviceOrders:[...new Map([...consumer.orders.values()].map(order=>[order.id,order])).values()],
       form:consumer.forms.get(serviceKey()) || {},registered:product?.registration || consumer.registered,
@@ -64,6 +65,7 @@
   if (captureId) document.body.classList.add('capture-mode');
   const saveDraft = () => {
     if (!current || renderedState !== 'normal') return;
+    if (account?.owns(current.id)) {account.saveDraft($('#phone-body'));return;}
     if (outlets?.owns(current.id)) return;
     const fields = [...$('#phone-body').querySelectorAll('input,select,textarea')];
     const values = Object.fromEntries(fields.filter(el => el.name && el.name !== 'installProducts' && (el.type!=='radio' || el.checked)).map(el => [el.name, el.type === 'checkbox' ? el.checked : el.value]));
@@ -74,6 +76,7 @@
     if (registrationPages.has(current.id)) Object.assign(registrationDraft(),values);
   };
   const restoreDraft = () => {
+    if (account?.owns(current.id)) return;
     if (outlets?.owns(current.id)) return;
     const values = drafts.get(draftKey());
     if (!values) return;
@@ -201,6 +204,7 @@
       ['产品需要维修或指导','带入当前产品，分步说明问题、确认联系方式和期望时间，再复核提交。同一笔申请可从产品页继续跟进。',['c-home','c-repair','c-contact','c-confirm','c-submit-result','c-progress']],
       ['查找授权门店与维修网点','地图选点后直接电话或导航；列表按需展开，地区与详情独立查看，无需先登记产品。',['c-service','c-outlets','c-outlet-region','c-outlet-detail']],
       ['新产品安装 · 设计探索','选择本次涉及的产品，确认地址和期望时间，提交后等待联系。消费者安装正式开放条件仍待确认。',['c-home','c-install','c-contact','c-confirm','c-submit-result']],
+      ['个人资料与购买记录','从我的修改头像、常用资料和兴趣偏好，按购买记录查看商品和安装码；历史购买和服务信息不随资料编辑而改变。',['c-mine','c-profile','c-preferences','c-purchases','c-product']],
       ['多产品与服务跟进','服务页按申请汇总，直接切换服务，查看确认安排和完整进度；右侧可体验等待联系、已确认及多项服务。评价页展示独立已完成示例。',['c-home','c-service','c-progress','c-evaluation']]
     ] : [
       ['联系客户与现场履约','先确认预约，再记录现场作业；提交完工后进入审核。',['w-tasks','w-detail','w-appointment','w-service','w-completion','w-review']],
@@ -217,6 +221,7 @@
     if (value === 'normal') { if(current.id==='c-outlets')outlets?.recover(); render(); return; }
     if (value === 'error' && current.id==='c-outlets') {outlets.fail();render();return;}
     renderedState = value;
+    if (value==='empty' && current.id==='c-purchases') {$('#phone-body').innerHTML=account.empty();$('#phone-footer').innerHTML='';hydrateIcons($('#phone'));return;}
     const messages = {
       empty:['暂无记录','这里还没有相关记录。可以返回当前功能，继续登记产品或办理服务。','返回正常内容'],
       error:['暂时无法加载','网络连接不稳定，已有填写内容仍保留在本次演示中。请重试。','重新加载'],
@@ -228,6 +233,7 @@
   }
   function resetConsumer(scenario = 'registered') {
     outlets?.reset();
+    account?.reset();
     consumer.productId='t01'; consumer.serviceType='repair'; consumer.hasProducts=scenario!=='welcome';
     consumer.registered={}; seedProducts(scenario); consumer.registrationMethod='manual'; consumer.registrationDrafts.clear(); consumer.registrationReceipt=null;consumer.nextInstance=3;consumer.orders.clear(); consumer.forms.clear(); consumer.media.clear(); consumer.lastSubmitted=null;
     [...drafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>drafts.delete(key));
@@ -318,6 +324,7 @@
     const el = event.target.closest('button,[data-go],[data-action]');
     if (!el || el.disabled) return;
     if (outlets?.handle(el,{render:()=>{$('#ui-state').value='normal';render();},renderOverlay:renderOutletOverlay,showScreen,showToast,returnTo:id=>{const index=routeHistory.lastIndexOf(id);if(index>=0)routeHistory.length=index;showScreen(id,false);}})) {event.preventDefault();return;}
+    if (account?.owns(current.id) && account.handle(el,{root:$('#phone-body'),context:consumerContext(),render,showToast})) {event.preventDefault();return;}
     if (el.dataset.regMethod) {
       event.preventDefault();
       if (el.dataset.regMethod==='installation-code') {showScreen('c-installation-code');return;}
@@ -375,6 +382,7 @@
     else if (el.dataset.action) {event.preventDefault();showToast(el.dataset.action);}
   });
   document.addEventListener('submit', event => {
+    if (account?.owns(current.id) && account.submit(event.target,{root:$('#phone-body'),render,showToast})) {event.preventDefault();return;}
     if (event.target.matches('form[data-outlet-search]')) {event.preventDefault();outlets.submit(event.target,{render:()=>{$('#ui-state').value='normal';render();}});return;}
     const form=event.target.closest('form[data-submit-go]');
     if (!form) return;
@@ -421,6 +429,9 @@
     if (event.target.name==='productCode' && consumer.registrationMethod==='product-code') {const reg=registrationDraft();reg.lookupStatus='idle';reg.catalogProductId='';}
     if (event.target.validity?.valid) {event.target.removeAttribute('aria-invalid');event.target.parentElement.querySelector('.field-error')?.remove();}
   });
+  document.addEventListener('change',event=>{
+    if (current.id==='c-profile' && event.target.id==='c-avatar-file') account.changeAvatar(event.target,{root:$('#phone-body'),render,showToast});
+  });
   $('#ui-state').addEventListener('change',event=>{saveDraft();renderState(event.target.value);});
   $('#outlet-location-outcome').addEventListener('change',event=>outlets?.setLocationOutcome(event.target.value));
   $('#phone-back').addEventListener('click',()=>{
@@ -439,7 +450,7 @@
   });
   $('#prev-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)-1].id);});
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
-  $('#consumer-scenario').addEventListener('change',event=>{const keepService=current.id==='c-service';resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepService?'c-service':consumer.hasProducts?'c-home':'c-welcome',false,true);});
+  $('#consumer-scenario').addEventListener('change',event=>{const keepPage=current.id==='c-service' || account?.owns(current.id) ? current.id : null;resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (consumer.hasProducts?'c-home':'c-welcome'),false,true);});
   $('#reset-demo').addEventListener('click',()=>{drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(all[0].id,false);showToast('本次演示已重置。');});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
   if(all.length) showScreen(captureId || location.hash.slice(1) || all[0].id,false);

@@ -9,7 +9,7 @@ const vm = require('node:vm');
 const root = resolve(__dirname, '..');
 
 function fixture({ hash = '', search = '' } = {}) {
-  const elements = new Map(), events = new Map(), windowEvents = new Map();
+  const elements = new Map(), events = new Map(), windowEvents = new Map(), readers = [], images = [];
   const element = () => ({
     dataset: {}, fields: [], style: {}, hidden: false, value: '', textContent: '', disabled: false,
     classList: { add() {}, toggle() {} },
@@ -24,11 +24,13 @@ function fixture({ hash = '', search = '' } = {}) {
   const document = { body: element(), querySelector: get, addEventListener: (type, fn) => events.set(type, fn) };
   const context = vm.createContext({
     document, location, console, URLSearchParams,
+    FileReader: class { readAsDataURL(file) { this.result=file.data;readers.push(this); } },
+    Image: class { set src(value) { this.value=value;images.push(this); } },
     history: { replaceState(_state, _title, next) { location.hash = next; } },
     setTimeout: () => 1, clearTimeout() {},
     window: { addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  for (const file of ['consumer.js', 'worker.js', 'consumer-outlets.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
+  for (const file of ['consumer.js', 'worker.js', 'consumer-outlets.js', 'consumer-account.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
   const source = readFileSync(resolve(root, 'app.js'), 'utf8');
   // Expose closure state only in this VM copy, keeping the prototype's production global surface unchanged.
   const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,current:()=>current};';
@@ -41,7 +43,7 @@ function fixture({ hash = '', search = '' } = {}) {
   const submit = (id, target, valid = true) => {
     const form = {
       id, dataset: { submitGo: target }, checkValidity: () => valid,
-      hasAttribute: name => name === 'id' || name === 'data-submit-go',
+      hasAttribute: name => name === 'id' || name === 'data-submit-go' || (name === 'data-account-form' && ['c-profile-form','c-phone-form','c-preferences-form'].includes(id)),
       matches(selector) {
         const match = /^form(?:\[([a-z-]+)\])?$/.exec(selector);
         return Boolean(match && (!match[1] || this.hasAttribute(match[1])));
@@ -51,10 +53,71 @@ function fixture({ hash = '', search = '' } = {}) {
     // A submit event targets its form; distinguish normal submissions from outlet search forms.
     events.get('submit')({ preventDefault() {}, target: form });
   };
-  return { ...api, api, apps: context.window.TOTO_SCREENS, get, fields, click, submit, location, windowEvents };
+  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, apps: context.window.TOTO_SCREENS, get, fields, click, submit, location, windowEvents };
 }
 const copy = value => JSON.parse(JSON.stringify(value));
 const personal = { userName: '虚构顾客', phone: '13800000000', useType: 'self', region: '示例省 / 示例市 / 示例区', address: '虚构地址一号', privacyConsent: true };
+
+test('profile edits retain drafts, require complete optional address, and never rewrite historical registration', () => {
+  const f=fixture({hash:'#c-profile'}), before=copy(f.consumer.ownedProducts);
+  f.fields({userName:'新示例姓名',region:'',address:'',serviceNotice:false});
+  f.click({go:'c-mine'});
+  assert.equal(f.account.profile().userName,'陈女士');
+  f.click({go:'c-profile'});
+  assert.match(f.get('#phone-body').innerHTML,/新示例姓名/);
+  f.fields({userName:'新示例姓名',region:'',address:'只填一半',serviceNotice:false});
+  f.submit('c-profile-form');
+  assert.equal(f.account.profile().userName,'陈女士');
+  f.fields({userName:'  ',region:'',address:'',serviceNotice:false});
+  f.submit('c-profile-form');
+  assert.equal(f.account.profile().userName,'陈女士');
+  f.fields({userName:'新示例姓名',region:'',address:'',serviceNotice:false});
+  f.submit('c-profile-form');
+  assert.equal(f.account.profile().userName,'新示例姓名');
+  assert.equal(f.account.profile().serviceNotice,false);
+  assert.deepEqual(copy(f.consumer.ownedProducts),before);
+  f.click({go:'c-mine'});
+  assert.match(f.get('#phone-body').innerHTML,/新示例姓名/);
+});
+
+test('phone changes require both verification steps and bind the new code to its requested number', () => {
+  const f=fixture({hash:'#c-profile'});
+  f.click({account:'change-phone'});
+  f.fields({oldCode:'123456'});f.submit('c-phone-form');
+  assert.match(f.get('#phone-body').innerHTML,/验证原手机号/);
+  f.click({account:'send-old'});
+  f.fields({oldCode:'000000'});f.submit('c-phone-form');
+  assert.equal(f.account.profile().phone,'13800000026');
+  f.fields({oldCode:'123456'});f.submit('c-phone-form');
+  assert.match(f.get('#phone-body').innerHTML,/验证新手机号/);
+  f.fields({newPhone:'13900000000',newCode:''});f.click({account:'send-new'});
+  f.fields({newPhone:'13900000001',newCode:'654321'});f.submit('c-phone-form');
+  assert.equal(f.account.profile().phone,'13800000026');
+  f.fields({newPhone:'13900000000',newCode:'654321'});f.submit('c-phone-form');
+  assert.equal(f.account.profile().phone,'13900000000');
+  f.resetConsumer();
+  assert.equal(f.account.profile().phone,'13800000026');
+});
+
+test('purchase records group only explicit record IDs and distinguish self reported purchases without invented codes', () => {
+  const f=fixture({hash:'#c-purchases'});
+  assert.equal(f.account.records(f.consumerContext()).length,1);
+  assert.equal(f.account.records(f.consumerContext())[0].products.length,2);
+  f.click({account:'record',recordId:'DEMO-PURCHASE-001'});
+  assert.match(f.get('#phone-body').innerHTML,/DEMO-INSTALL-001/);
+  assert.match(f.get('#phone-body').innerHTML,/DEMO-INSTALL-002/);
+  f.click({product:'b02',go:'c-product'});
+  assert.equal(f.consumer.productId,'b02');
+  f.resetConsumer('welcome');chooseManual(f);finish(f);
+  f.click({go:'c-purchases'});
+  assert.match(f.get('#phone-body').innerHTML,/自行填写/);
+  assert.match(f.get('#phone-body').innerHTML,/购买门店未提供/);
+  f.click({account:'record',recordId:f.consumer.ownedProducts[0].id});
+  assert.match(f.get('#phone-body').innerHTML,/暂无关联安装码/);
+  assert.doesNotMatch(f.get('#phone-body').innerHTML,/DEMO-INSTALL/);
+  f.resetConsumer('welcome');f.showScreen('c-purchases');
+  assert.match(f.get('#phone-body').innerHTML,/还没有购买记录/);
+});
 function chooseManual(f) {
   f.click({ regMethod: 'manual' });
   f.click({ category: 'toilet' });
@@ -213,9 +276,9 @@ test('all templates render across consumer scenarios, registration methods, code
   const f = fixture();
   const screens = [...f.apps.consumer.screens, ...f.apps.worker.screens];
   const ids = new Set(screens.map(screen => screen.id));
-  assert.equal(f.apps.consumer.screens.length, 26);
+  assert.equal(f.apps.consumer.screens.length, 29);
   assert.equal(f.apps.worker.screens.length, 15);
-  assert.equal(ids.size, 41);
+  assert.equal(ids.size, 44);
   let combinations = 0;
   for (const scenario of ['welcome', 'registered', 'confirmed']) {
     f.resetConsumer(scenario);
@@ -239,13 +302,13 @@ test('all templates render across consumer scenarios, registration methods, code
       }
     }
   }
-  assert.equal(combinations, 7380);
+  assert.equal(combinations, 7920);
   f.consumer.registrationMethod = 'manual';
   f.showScreen('c-home');
   f.renderFlows();
-  assert.equal((f.get('#flows-view').innerHTML.match(/class="flow-card"/g) || []).length, 7);
+  assert.equal((f.get('#flows-view').innerHTML.match(/class="flow-card"/g) || []).length, 8);
   f.renderAtlas();
-  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 26);
+  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 29);
 });
 
 test('service request exploration still follows the newly registered product without creating an installation code', () => {
@@ -414,4 +477,74 @@ test('an empty service hub does not imply active service or offer a progress act
     assert.doesNotMatch(f.get('#phone-body').innerHTML, /正在为这件产品服务/);
     assert.equal(renderedServiceButtons(f).filter(button => button.go === 'c-progress').length, 0);
   }
+});
+
+
+const preferenceFields = (f, selected) => {
+  f.get('#phone-body').fields = [['interests','smart-toilet'],['interests','bathtub'],['contentPreferences','care'],['contentPreferences','offers']].map(([name,value])=>({name,value,type:'checkbox',checked:selected.includes(value)}));
+};
+test('preference drafts survive navigation and save independently from profile, purchases and notifications', () => {
+  const f=fixture({hash:'#c-profile'}), purchases=copy(f.consumer.ownedProducts);
+  f.fields({userName:'资料草稿',region:'',address:'',serviceNotice:false});
+  f.click({go:'c-preferences'});
+  assert.equal(f.account.profile().preferencesSaved,false);
+  assert.deepEqual(copy(f.account.profile().interests),[]);
+  preferenceFields(f,['smart-toilet','care','offers']);
+  f.click({go:'c-profile'});
+  assert.match(f.get('#phone-body').innerHTML,/资料草稿/);
+  assert.equal(f.account.profile().preferencesSaved,false);
+  f.click({go:'c-preferences'});
+  assert.match(f.get('#phone-body').innerHTML,/value="care" checked/);
+  preferenceFields(f,['smart-toilet','care','offers']);
+  f.submit('c-preferences-form');
+  assert.deepEqual(copy(f.account.profile().interests),['smart-toilet']);
+  assert.deepEqual(copy(f.account.profile().contentPreferences),['care','offers']);
+  assert.equal(f.account.profile().userName,'陈女士');
+  assert.equal(f.account.profile().serviceNotice,true);
+  f.click({go:'c-profile'});
+  f.fields({userName:'资料草稿',region:'',address:'',serviceNotice:false});
+  f.submit('c-profile-form');
+  assert.deepEqual(copy(f.account.profile().contentPreferences),['care','offers']);
+  assert.deepEqual(copy(f.consumer.ownedProducts),purchases);
+});
+test('preferences can be cleared and empty saved selections differ from an untouched profile', () => {
+  const f=fixture({hash:'#c-preferences'});
+  preferenceFields(f,['smart-toilet','care']);f.submit('c-preferences-form');
+  f.click({account:'clear-preferences'});
+  assert.deepEqual(copy(f.account.profile().interests),['smart-toilet']);
+  preferenceFields(f,[]);f.submit('c-preferences-form');
+  assert.deepEqual(copy(f.account.profile().interests),[]);
+  assert.deepEqual(copy(f.account.profile().contentPreferences),[]);
+  assert.equal(f.account.profile().preferencesSaved,true);
+  f.resetConsumer();
+  assert.equal(f.account.profile().preferencesSaved,false);
+});
+const avatarFile = {type:'image/png',size:256,data:'data:image/png;base64,DEMO'};
+test('avatar preview needs saving, validates files, preserves the saved image on failure, and allows replacing it', () => {
+  const f=fixture({hash:'#c-profile'});
+  f.upload(null);assert.equal(f.readers.length,0);
+  f.upload({type:'image/svg+xml',size:50});assert.equal(f.readers.length,0);
+  f.upload({...avatarFile,size:6*1024*1024});assert.equal(f.readers.length,0);
+  f.upload(avatarFile);
+  f.submit('c-profile-form');assert.equal(f.account.profile().avatar,'');
+  f.readers[0].onload();f.images[0].onload();
+  assert.equal(f.account.profile().avatar,'');
+  assert.match(f.get('#phone-body').innerHTML,/data:image\/png;base64,DEMO/);
+  f.submit('c-profile-form');assert.equal(f.account.profile().avatar,avatarFile.data);
+  f.click({go:'c-mine'});assert.match(f.get('#phone-body').innerHTML,/data:image\/png;base64,DEMO/);
+  f.click({go:'c-profile'});f.upload(avatarFile);f.readers[1].onload();f.images[1].onerror();
+  assert.equal(f.account.profile().avatar,avatarFile.data);
+  f.upload({...avatarFile,data:'data:image/png;base64,REPLACED'});f.readers[2].onload();f.images[2].onload();
+  assert.equal(f.account.profile().avatar,avatarFile.data);
+  f.submit('c-profile-form');assert.equal(f.account.profile().avatar,'data:image/png;base64,REPLACED');
+  f.resetConsumer();f.showScreen('c-mine');assert.match(f.get('#phone-body').innerHTML,/default-avatar.svg/);
+});
+test('late avatar reads cannot overwrite a newer choice or revive a reset profile', () => {
+  const f=fixture({hash:'#c-profile'});
+  f.upload(avatarFile);f.readers[0].onload();
+  f.upload({...avatarFile,data:'data:image/png;base64,NEW'});f.readers[1].onload();f.images[1].onload();
+  f.images[0].onload();f.submit('c-profile-form');
+  assert.equal(f.account.profile().avatar,'data:image/png;base64,NEW');
+  f.upload(avatarFile);f.readers[2].onload();f.resetConsumer();f.images[2].onload();
+  assert.equal(f.account.profile().avatar,'');
 });
