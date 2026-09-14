@@ -28,7 +28,7 @@ yarn dev:full
 yarn dev:afs
 ```
 
-本目录命令只转发到 `frontend/gaia-ui` 的原 `yarn dev:afs`，不改变原启动器；继续在 `frontend/gaia-ui` 根目录执行同名命令也保持有效。该命令先清理 7004/9010 上一轮本工作区前端以及 8080/16379 上可确认属于本项目的服务，再重新启动独立 Redis、Gaia 聚合后端和 9010 售后子系统，不启动 7004 主系统。若目标端口属于其他程序，脚本会显示 PID 并拒绝强杀；9010 入口确认返回 HTTP 200 后自动使用系统默认浏览器打开 `http://127.0.0.1:9010/after-sales/?entry=standalone#/`，自动打开失败时在终端输出同一手动访问地址。因此它是本地“售后独立全栈”入口，不等同于只启动一个静态前端。
+本目录命令只转发到 `frontend/gaia-ui` 的原 `yarn dev:afs`，不改变原启动器；继续在 `frontend/gaia-ui` 根目录执行同名命令也保持有效。该命令先清理 7004/9010 上一轮本工作区前端以及 8080/16379 上可确认属于本项目的服务，再重新启动独立 Redis、Gaia 聚合后端和 9010 售后子系统，不启动 7004 主系统。若目标端口属于其他程序，脚本会显示 PID 并拒绝强杀；9010 入口确认返回 HTTP 200 后自动使用系统默认浏览器打开无参数独立入口 `http://127.0.0.1:9010/after-sales/#/`，自动打开失败时在终端输出同一手动访问地址。因此它是本地“售后独立全栈”入口，不等同于只启动一个静态前端。
 
 需要分别调试进程时，仍可使用下面的三个终端方式。所有服务仅监听本机：
 
@@ -42,14 +42,14 @@ redis-server --bind 127.0.0.1 --port 16379 --protected-mode yes --save '' --appe
 bash scripts/start-local-backend.sh
 ```
 
-在 `frontend/gaia-ui` 下启动前端，使用项目约定的 Node 22 / Yarn：
+在 `frontend/gaia-ui` 下启动前端；根项目使用 Node 22 / Yarn，编排脚本为售后子项目单独使用 Node 24 / pnpm：
 
 ```bash
 yarn dev --host 127.0.0.1 --port 7004 --strictPort
 # 根命令现在同时启动 9010 售后底座；仅主系统可用 yarn dev:main
 ```
 
-`yarn dev` 会检查当前 Node 版本；如果不是项目固定的 22.23.1，会优先从本机 NVM 或 Volta 安装目录找到该版本，并将它用于主系统和售后子系统进程。首次使用前仍需安装一次 `nvm install 22.23.1`；未安装时启动器会给出明确提示，不会自动下载或改动全局默认 Node。
+`yarn dev` 会分别解析两套固定工具链：Gaia 主系统使用 Node 22.23.1，售后子项目使用 Node 24.21.0。启动器优先从当前进程、PATH、NVM、Volta 及 Homebrew 版本目录查找精确版本，只给对应子进程注入独立 PATH，不切换或改动全局默认 Node。首次使用前需分别安装 `nvm install 22.23.1` 和 `nvm install 24.21.0`；任一版本缺失时会明确失败。
 
 后端断点调试：先停止占用 `8080` 的后端，在 VS Code 中打开 `gaia-saas-proj`，选择本机新增的 `TOTO 本地后端 · 测试数据库` 启动项。不要选择未加载 `.local/` 的旧启动项。断点入口与 JAR 启动二选一；修改售后模块后重新安装模块并重启宿主。前端页面变更由 Vite 热更新。
 
@@ -96,7 +96,8 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 | --- | --- | --- |
 | `gaia-after-sales` | JDK 21、Maven 3.9.x、Gaia 父 POM `3.5.0-SNAPSHOT` | `mvn -B -o verify`；缓存不全时配置好内部制品源后使用 `mvn -B verify` |
 | `gaia-after-sales-uni` | Node `>=24.19.0 <25`，`.nvmrc` 为 `24.19.0`；pnpm `10.34.5` | `pnpm install --frozen-lockfile`；`pnpm tenant:check TOTO`；`pnpm dev TOTO` 或 `pnpm dev:h5 TOTO` |
-| `gaia-ui` | `package.json` 的 Volta 固定 Node `22.23.1`、Yarn `1.22.22`，有 `yarn.lock` | `yarn install --frozen-lockfile`；`yarn dev`；`yarn build`。本次仅核对入口，未重新安装或启动 |
+| `gaia-ui` 主系统 | `package.json` 的 Volta 固定 Node `22.23.1`、Yarn `1.22.22`，有 `yarn.lock` | `yarn install --frozen-lockfile`；`yarn dev`；`yarn build`；根编排命令会为售后子项目选择其独立 Node |
+| `gaia-ui/apps/after-sales` | Node `>=24.21.0 <25`，`.nvmrc`／Volta 固定 `24.21.0`；pnpm `10.8.1` | 子目录先 `nvm use` 再执行 `corepack pnpm --ignore-workspace ...`；或在根目录执行 `yarn after-sales:pnpm <命令>` |
 | `gaia-saas-proj` | JDK 21、内部 Gaia 制品；Web JAR 为默认售后宿主 | 装配前提满足后执行 `mvn -B -pl gaia-saas-web-jar -am verify`；入口 `com.ehsure.gaia.WebApplication` |
 
 开始任务时分别检查 Git 状态；管理后台同时检查 `git submodule status`，保留 `src/views/common` 的已有变化。私服认证使用开发者本机 Maven settings，不写入 POM。
@@ -165,20 +166,19 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 
 ## 售后独立前端底座（2026-09-08）
 
-`gaia-ui/apps/after-sales` 已建立单包独立工程。使用 Node 22.23.1、Yarn 1.22.22（主）和 pnpm 10.8.1（子），先分别安装：
+`gaia-ui/apps/after-sales` 已建立单包独立工程。Gaia 主系统固定 Node 22.23.1 / Yarn 1.22.22，售后子项目固定 Node 24.21.0 LTS / pnpm 10.8.1，先分别安装：
 
 ```bash
 # gaia-ui 根目录
 yarn install --frozen-lockfile
-cd apps/after-sales
-corepack pnpm install --frozen-lockfile
+node scripts/frontends/after-sales.mjs install --frozen-lockfile
 ```
 
-Corepack 命令须在子目录执行，以选中该目录固定 pnpm 版本；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
+根目录的 `after-sales.mjs` 会读取子项目 `.nvmrc`，使用 Node 24.21.0 和子项目 `packageManager` 执行命令，不改变根进程 Node。直接进入子目录执行时，先运行 `nvm use`，再使用 `corepack pnpm --ignore-workspace ...`；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
 
-回到 gaia-ui 根目录运行 `yarn dev`，主应用在 7004，子应用在 9010；统一访问 `http://127.0.0.1:7004/after-sales/#/`。`yarn dev:main` 可只启动主系统；`yarn dev:afs` 可清理旧进程后启动售后子系统及其本地 Redis、Gaia 聚合后端。子目录仍可独立执行 `corepack pnpm dev`、`typecheck`、`test`、`build`，但该命令只启动前端。新子系统首页不依赖后端，也不包含临时身份。
+回到 gaia-ui 根目录运行 `yarn dev`，主应用在 7004，子应用在 9010。独立子系统直接访问 `http://127.0.0.1:9010/after-sales/#/`；从主系统进入时由主系统链接携带 `entry=main`。`yarn dev:main` 可只启动主系统；`yarn dev:afs` 可清理旧进程后启动售后子系统及其本地 Redis、Gaia 聚合后端。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
 
-原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序构建主、子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。push.sh 已增加 pnpm 冻结安装，构建失败会中止；本次没有执行上传或发布。
+原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以 Node 22 构建主项目、以 Node 24 构建子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装也使用同一 Node 24 编排入口，构建失败会中止；上传和发布仍需单独授权。
 
 验证通过：子系统冻结安装、typecheck、production build、仓库外隔离构建、31 项底座测试、原主构建、统一 production:saas、静态产物校验、双服务访问、HMR 和 SIGINT 清理。Chrome 售后入口的品牌、布局及控制台验证通过。原 legacy 页面和主路由无修改。
 
