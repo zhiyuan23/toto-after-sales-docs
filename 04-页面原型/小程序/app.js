@@ -21,27 +21,32 @@
   const registrationStarts = {manual:'c-manual-select','product-code':'c-product-code'};
   const registrationSubmits = {'c-product-code': ['c-product-code-form','c-code-result'], 'c-purchase-date': ['c-purchase-date-form','c-purchase'], 'c-purchase': ['c-purchase-form','c-register-result']};
   const registrationAllowed = () => Object.hasOwn(registrationStarts, consumer.registrationMethod);
-  const consumer = {productId:'t01',serviceType:'repair',hasProducts:true,registered:{},orders:new Map(),forms:new Map(),media:new Map(),lastSubmitted:null,
-    ownedProducts:[],registrationMethod:'manual',registrationDrafts:new Map(),registrationReceipt:null,nextInstance:3};
+  const consumer = {productId:'t01',serviceType:'repair',hasProducts:true,phoneAuthorized:true,phoneSyncStatus:'synced',registered:{},orders:new Map(),forms:new Map(),media:new Map(),lastSubmitted:null,
+    ownedProducts:[],registrationMethod:'product-code',registrationDrafts:new Map(),registrationReceipt:null,nextInstance:3};
   const registrationDraft = () => {
     if (!consumer.registrationDrafts.has(consumer.registrationMethod)) consumer.registrationDrafts.set(consumer.registrationMethod, {
       categoryId:'',seriesId:'',catalogProductId:'',purchaseDate:'',productCode:'',lookupStatus:'idle',
-      userName:'',phone:'',useType:'self',region:'示例省 / 示例市 / 示例区',address:'',privacyConsent:false
+      userName:account?.profile().userName || '',phone:account?.profile().phone || '',useType:'self',region:account?.profile().region || '',address:account?.profile().address || '',privacyConsent:false
     });
     return consumer.registrationDrafts.get(consumer.registrationMethod);
   };
   const registrationContext = () => {
     const draft=registrationDraft();
-    const matched=registrationAllowed() && (consumer.registrationMethod==='manual' || draft.lookupStatus==='matched');
+    const matched=registrationAllowed() && (consumer.registrationMethod==='manual' || ['matched-instance','matched-purchase','matched-model','owned'].includes(draft.lookupStatus));
     const selectedProducts=matched ? (apps.consumer.products || []).filter(p=>p.id===draft.catalogProductId) : [];
     return {...draft,method:consumer.registrationMethod,selectedProducts};
   };
-  function seedProducts(scenario) {
-    consumer.ownedProducts=scenario==='welcome'?[]:(apps.consumer.products || []).map((product,i)=>({...product,catalogId:product.id,
+  function syncedProducts() {
+    const profile=account?.profile() || {};
+    return (apps.consumer.products || []).map((product,i)=>({...product,catalogId:product.id,
+      identifierKey:`purchase:DEMO-PURCHASE-001:${i+1}`,identifierKeys:[`purchase:DEMO-PURCHASE-001:${i+1}`],ownershipStatus:'linked',identityLevel:'system-instance',sourceLabel:'手机号同步',
       installationCode:`DEMO-INSTALL-00${i+1}`,installationCodeLinked:true,
       registration:{method:'existing-record',purchaseRecordId:'DEMO-PURCHASE-001',storeName:'TOTO 示例门店（虚构）',purchaseDate:'2026-09-10',installationCode:`DEMO-INSTALL-00${i+1}`,
-        userName:'陈女士',phone:'13800000026',useType:'self',region:'示例省 / 示例市 / 示例区',address:'样板路88号1栋101室（虚构）'}
+        userName:profile.userName || '陈女士',phone:profile.phone || '13800000026',useType:'self',region:profile.region || '示例省 / 示例市 / 示例区',address:profile.address || '样板路88号1栋101室（虚构）'}
     }));
+  }
+  function seedProducts(scenario) {
+    consumer.ownedProducts=scenario==='welcome'?[]:syncedProducts();
   }
   seedProducts('registered');
   const serviceKey = () => `${consumer.productId}:${consumer.serviceType}`;
@@ -54,7 +59,8 @@
       order:consumer.orders.get(consumer.productId) || null,submittedOrder:consumer.lastSubmitted,
       serviceOrders:[...new Map([...consumer.orders.values()].map(order=>[order.id,order])).values()],
       form:consumer.forms.get(serviceKey()) || {},registered:product?.registration || consumer.registered,
-      mediaStatus:consumer.media.get(serviceKey()) || 'none',hasProducts:consumer.hasProducts};
+      mediaStatus:consumer.media.get(serviceKey()) || 'none',hasProducts:consumer.hasProducts,
+      phoneAuthorized:consumer.phoneAuthorized,phoneSyncStatus:consumer.phoneSyncStatus};
   };
   const markup = (value) => typeof value === 'function' ? value(consumerContext()) : value || '';
   function hydrateIcons(scope) {
@@ -194,9 +200,9 @@
   function renderFlows() {
     const c = current.app === 'consumer';
     const definitions = c ? [
-      ['登记产品：手动选择商品','选择分类、系列和商品，补充购买日期与个人信息。登记完成后可从该产品申请服务。',['c-welcome','c-register','c-manual-select','c-purchase-date','c-purchase','c-register-result','c-home']],
-      ['已有安装码：联系查询协助','安装码供门店或客服查询已关联的购买记录。消费者查看用途并联系协助，不通过安装码认领或登记产品。',['c-register','c-installation-code','c-code-help']],
-      ['产品标签码：辅助选择商品','标签码仅用于本次商品识别演示；确认商品后补充购买日期和个人信息，不推断实物身份或购买归属。',['c-code-guide','c-product-code','c-code-result','c-purchase-date','c-purchase','c-register-result']],
+      ['手机号授权：自动同步购买产品','验证手机号后匹配各可信订单来源；同一购买明细只建立一次关系，产品直接出现在“我的产品”。',['c-welcome','c-phone-sync','c-products','c-home']],
+      ['扫一扫：系统识别编码并添加','统一扫描产品码、溯源码、SN 或购买凭证码；可信唯一标识直接关联，普通商品码只识别型号。',['c-register','c-product-code','c-code-result','c-register-result','c-home']],
+      ['无码产品：手动选择作为兜底','无法扫码时再按分类、系列选择商品并填写购买日期；创建待核验产品，不自动获得服务权益。',['c-register','c-manual-select','c-purchase-date','c-purchase','c-register-result']],
       ['产品需要维修或指导','带入当前产品，分步说明问题、确认联系方式和期望时间，再复核提交。同一笔申请可从产品页继续跟进。',['c-home','c-repair','c-contact','c-confirm','c-submit-result','c-progress']],
       ['查找授权门店与维修网点','地图选点后直接电话或导航；列表按需展开，地区与详情独立查看，无需先登记产品。',['c-service','c-outlets','c-outlet-region','c-outlet-detail']],
       ['新产品安装 · 设计探索','选择本次涉及的产品，确认地址和期望时间，提交后等待联系。消费者安装正式开放条件仍待确认。',['c-home','c-install','c-contact','c-confirm','c-submit-result']],
@@ -226,8 +232,8 @@
   function resetConsumer(scenario = 'registered') {
     outlets?.reset();
     account?.reset();
-    consumer.productId='t01'; consumer.serviceType='repair'; consumer.hasProducts=scenario!=='welcome';
-    consumer.registered={}; seedProducts(scenario); consumer.registrationMethod='manual'; consumer.registrationDrafts.clear(); consumer.registrationReceipt=null;consumer.nextInstance=3;consumer.orders.clear(); consumer.forms.clear(); consumer.media.clear(); consumer.lastSubmitted=null;
+    consumer.productId='t01'; consumer.serviceType='repair'; consumer.hasProducts=scenario!=='welcome';consumer.phoneAuthorized=scenario!=='welcome';consumer.phoneSyncStatus=scenario==='welcome'?'idle':'synced';
+    consumer.registered={}; seedProducts(scenario); consumer.registrationMethod='product-code'; consumer.registrationDrafts.clear(); consumer.registrationReceipt=null;consumer.nextInstance=3;consumer.orders.clear(); consumer.forms.clear(); consumer.media.clear(); consumer.lastSubmitted=null;
     [...drafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>drafts.delete(key));
     [...namedDrafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>namedDrafts.delete(key));
     [...submitted].filter(key=>key.startsWith('c-')).forEach(key=>submitted.delete(key));
@@ -254,12 +260,59 @@
     const reg=registrationDraft();
     const value=String(reg.productCode || '').trim().toUpperCase();
     delete reg.completedInstanceId;
-    reg.catalogProductId='';reg.lookupStatus='not-found';reg.productCode=value;
-    if (value.startsWith('DEMO-INSTALL-') || value.startsWith('TOTO-')) {reg.lookupStatus='wrong-type';return true;}
-    const productByExample={'DEMO-PRODUCT-001':'t01','DEMO-PRODUCT-002':'b02','DEMO-PRODUCT-003':'t01'};
-    if (!Object.hasOwn(productByExample,value)) return true;
-    reg.lookupStatus='matched';reg.catalogProductId=productByExample[value];
+    reg.catalogProductId='';reg.lookupStatus='not-found';reg.productCode=value;reg.codeType='';reg.identifierKey='';
+    const examples={
+      'DEMO-SN-001':{product:'t01',status:'matched-instance',type:'可信 SN',key:'sn:DEMO-SN-001',knownInstanceId:'t01'},
+      'DEMO-TRACE-002':{product:'b02',status:'matched-instance',type:'逐件溯源码',key:'trace:DEMO-TRACE-002',knownInstanceId:'b02'},
+      'DEMO-INSTALL-003':{product:'t01',status:'matched-purchase',type:'安装／购买凭证码',key:'purchase:DEMO-PURCHASE-003:1'},
+      'DEMO-PRODUCT-001':{product:'t01',status:'matched-model',type:'普通商品码',key:''},
+      'DEMO-PRODUCT-002':{product:'b02',status:'matched-model',type:'普通商品码',key:''},
+      'DEMO-PRODUCT-003':{product:'t01',status:'matched-model',type:'普通商品码',key:''}
+    };
+    if (!Object.hasOwn(examples,value)) return true;
+    const result=examples[value];reg.lookupStatus=result.status;reg.catalogProductId=result.product;reg.codeType=result.type;reg.identifierKey=result.key;reg.knownInstanceId=result.knownInstanceId || '';
+    const existing=result.key && consumer.ownedProducts.find(product=>(product.identifierKeys || [product.identifierKey]).includes(result.key) || (result.knownInstanceId && product.id===result.knownInstanceId));
+    if (existing) {reg.lookupStatus='owned';reg.completedInstanceId=existing.id;}
     return true;
+  }
+  function completeScanClaim() {
+    if (consumer.registrationMethod!=='product-code') return false;
+    const reg=registrationDraft(),ctx=registrationContext();
+    if (!['matched-instance','matched-purchase','owned'].includes(reg.lookupStatus) || !ctx.selectedProducts.length) return false;
+    const existing=reg.identifierKey && consumer.ownedProducts.find(product=>(product.identifierKeys || [product.identifierKey]).includes(reg.identifierKey) || (reg.knownInstanceId && product.id===reg.knownInstanceId));
+    if (existing || reg.lookupStatus==='owned') {
+      const product=existing || consumer.ownedProducts.find(item=>item.id===reg.completedInstanceId);
+      if (!product) return false;
+      product.identifierKeys=[...new Set([...(product.identifierKeys || [product.identifierKey]).filter(Boolean),reg.identifierKey].filter(Boolean))];
+      consumer.productId=product.id;consumer.hasProducts=true;reg.completedInstanceId=product.id;
+      consumer.registrationReceipt={...product.registration,products:[product],alreadyOwned:true};
+      return true;
+    }
+    const catalogProduct=ctx.selectedProducts[0];
+    const fromPurchase=reg.lookupStatus==='matched-purchase';
+    const profile=account?.profile() || {};
+    const info={method:fromPurchase?'scan-credential':'scan-unique',purchaseDate:fromPurchase?'2026-09-08':'',storeName:fromPurchase?'TOTO 示例门店（虚构）':'',
+      recognizedProductCode:reg.productCode,codeType:reg.codeType,userName:profile.userName || '',phone:profile.phone || '',useType:'self',region:'',address:''};
+    const instance={...catalogProduct,id:`registered-${consumer.nextInstance++}`,catalogId:catalogProduct.id,room:'新添加产品',identifierKey:reg.identifierKey,identifierKeys:[reg.identifierKey],
+      ownershipStatus:'linked',identityLevel:'trusted-identifier',sourceLabel:'扫码添加',code:'',productCode:reg.productCode,installationCode:'',installationCodeLinked:false,registration:info};
+    consumer.ownedProducts.push(instance);consumer.productId=instance.id;consumer.hasProducts=true;
+    consumer.registered={...info};consumer.registrationReceipt={...info,products:[instance]};reg.completedInstanceId=instance.id;
+    routeHistory=[];$('#consumer-scenario').value='registered';return true;
+  }
+  function syncProductsByPhone() {
+    consumer.phoneAuthorized=true;consumer.phoneSyncStatus='synced';
+    const linkedIdentifiers={t01:'sn:DEMO-SN-001',b02:'trace:DEMO-TRACE-002'};
+    for (const product of syncedProducts()) {
+      const existing=consumer.ownedProducts.find(item=>(item.identifierKeys || [item.identifierKey]).includes(product.identifierKey)
+        || (item.identifierKeys || [item.identifierKey]).includes(linkedIdentifiers[product.catalogId]));
+      if (existing) {
+        existing.identifierKeys=[...new Set([...(existing.identifierKeys || [existing.identifierKey]).filter(Boolean),product.identifierKey])];
+        existing.registration={...existing.registration,...product.registration};existing.sourceLabel='手机号同步 + 扫码';existing.ownershipStatus='linked';
+      } else consumer.ownedProducts.push(product);
+    }
+    consumer.hasProducts=consumer.ownedProducts.length>0;
+    if (consumer.hasProducts && !consumer.ownedProducts.some(product=>product.id===consumer.productId)) consumer.productId=consumer.ownedProducts[0].id;
+    $('#consumer-scenario').value=consumer.hasProducts?'registered':'welcome';
   }
   function completeRegistration() {
     if (!registrationAllowed()) {consumer.registrationReceipt=null;showScreen('c-installation-code');showToast('安装码用于向门店或客服查询记录，不能在这里登记产品。');return false;}
@@ -278,6 +331,7 @@
       userName:reg.userName.trim(),phone:reg.phone,useType:reg.useType,region:reg.region,address:reg.address.trim()};
     const catalogProduct=ctx.selectedProducts[0];
     const instance={...catalogProduct,id:`registered-${consumer.nextInstance++}`,catalogId:catalogProduct.id,room:'新登记产品',
+      identifierKey:'',ownershipStatus:'pending-verification',identityLevel:'model-only',sourceLabel:'手动添加 · 待核验',
       code:'',productCode:'',installationCode:'',installationCodeLinked:false,registration:info};
     consumer.ownedProducts.push(instance);consumer.productId=instance.id;consumer.hasProducts=true;
     consumer.registered={...info};consumer.registrationReceipt={...info,products:[instance]};reg.completedInstanceId=instance.id;
@@ -332,6 +386,14 @@
       }
       showScreen(registrationStarts[consumer.registrationMethod],true,true);
     }
+    else if ('phoneSync' in el.dataset) {
+      event.preventDefault();syncProductsByPhone();showScreen('c-products',true,true);showToast('已按授权手机号同步 2 件购买产品。');
+    }
+    else if ('claimScan' in el.dataset) {
+      event.preventDefault();
+      if (!completeScanClaim()) {showToast('请先扫描并核对可认领的产品编码。');return;}
+      showScreen('c-register-result',true,true);showToast(consumer.registrationReceipt?.alreadyOwned?'该产品已在“我的产品”中。':'产品已添加到“我的产品”。');
+    }
     else if (el.dataset.category || el.dataset.series || el.dataset.catalogProduct) {
       event.preventDefault();saveDraft();
       const reg=registrationDraft(),catalog=apps.consumer.products || [];
@@ -346,7 +408,7 @@
       event.preventDefault();saveDraft();
       if (current.id!=='c-product-code' || consumer.registrationMethod!=='product-code') {showScreen('c-installation-code');return;}
       const example=el.dataset.codeExample;
-      registrationDraft().productCode=example==='not-found'?'NOT-FOUND':example==='wrong-type'?'DEMO-INSTALL-003':`DEMO-PRODUCT-${example==='alternate'?'002':'003'}`;
+      registrationDraft().productCode=example==='not-found'?'NOT-FOUND':example==='credential'?'DEMO-INSTALL-003':example==='model'?'DEMO-PRODUCT-001':example==='alternate'?'DEMO-TRACE-002':'DEMO-SN-001';
       drafts.delete(draftKey());lookupRegistrationCode();showScreen('c-code-result',true,true);
     }
     else if (el.dataset.product) {
@@ -424,7 +486,7 @@
   document.addEventListener('input',event=>{
     if (!event.target.closest('#phone-body')) return;
     outlets?.input(event.target);
-    if (event.target.name==='productCode' && consumer.registrationMethod==='product-code') {const reg=registrationDraft();reg.lookupStatus='idle';reg.catalogProductId='';}
+    if (event.target.name==='productCode' && consumer.registrationMethod==='product-code') {const reg=registrationDraft();reg.lookupStatus='idle';reg.catalogProductId='';reg.codeType='';reg.identifierKey='';reg.knownInstanceId='';delete reg.completedInstanceId;}
     if (event.target.validity?.valid) {event.target.removeAttribute('aria-invalid');event.target.parentElement.querySelector('.field-error')?.remove();}
   });
   document.addEventListener('change',event=>{

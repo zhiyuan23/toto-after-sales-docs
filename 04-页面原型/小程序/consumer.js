@@ -36,24 +36,23 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
   const row = (label, value) => `<div class="c-detail-row"><dt>${e(label)}</dt><dd>${e(value)}</dd></div>`;
   const registration = ctx => ctx.registration || {};
   const catalog = ctx => ctx.catalog || products;
-  const registrationProducts = ctx => ['manual', 'product-code'].includes(registration(ctx).method) && (registration(ctx).method === 'manual' || registration(ctx).lookupStatus === 'matched') ? registration(ctx).selectedProducts || [] : [];
-  const registrationMethods = {manual: '手动选择商品', 'product-code': '辅助识别商品', 'existing-record': '已有购买登记'};
+  const registrationProducts = ctx => ['manual', 'product-code'].includes(registration(ctx).method) && (registration(ctx).method === 'manual' || ['matched-instance','matched-purchase','matched-model','owned'].includes(registration(ctx).lookupStatus)) ? registration(ctx).selectedProducts || [] : [];
+  const registrationMethods = {manual: '无码辅助添加', 'product-code': '扫码识别', 'scan-unique': '可信实物码扫码添加', 'scan-credential': '购买凭证码扫码添加', 'existing-record': '手机号自动同步'};
   const linkedInstallationCode = product => product?.installationCodeLinked === true ? product.installationCode || '' : '';
-  const installationExplanation = () => '<header class="c-page-heading"><h2>安装码，帮助查询服务记录</h2><p>门店或客服可用安装码查找相应商品的购买记录和服务信息。</p></header><section class="c-code-explanation"><h3>拿到安装码后，怎么用？</h3><p>联系购买门店或客服时，提供安装码并说明您需要的帮助。</p><p>安装码不能在这里添加产品，也不表示已经申请安装服务。</p></section><button class="c-menu-row" data-go="c-code-help"><span>联系购买门店或客服</span><span aria-hidden="true">›</span></button>';
   const dateLimit = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; };
   const registrationField = (ctx, name, fallback = '') => registration(ctx)[name] ?? fallback;
   const phoneMask = value => String(value || '').replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2');
   const registrationSummary = (selected, caption = '本次登记的商品') => selected.length ? `<section class="c-registration-summary"><span class="c-registration-caption">${e(caption)}</span>${selected.map(product => `<div class="c-product-context"><img src="${e(product.image)}" alt="${e(product.name)}"><div><strong>${e(product.name)}</strong><p>${e(product.model)}</p></div></div>`).join('')}</section>` : '<div class="c-info-note">尚未选择或识别商品，请先完成上一项操作。</div>';
   const registrationResult = ctx => {
     if (ctx.registrationReceipt) {
-      if (!['manual', 'product-code'].includes(ctx.registrationReceipt.method)) return null;
+      if (!['manual', 'product-code', 'scan-unique', 'scan-credential'].includes(ctx.registrationReceipt.method)) return null;
       return {...ctx.registrationReceipt, installationCode: ''};
     }
     if (ctx.hasProducts === false || !ctx.product) return null;
     const info = ctx.product.registration || {};
     return {...info, products: [ctx.product], method: info.method || '', installationCode: linkedInstallationCode(ctx.product)};
   };
-  const codeInput = ctx => `<p class="c-page-intro">识别后请核对商品，再填写购买与使用信息。</p><button class="c-scan-button c-scan-compact" data-code-example="valid"><span class="c-scan-frame" data-icon="camera" aria-hidden="true"></span><strong>扫描产品标签码</strong><span>查看商品识别示例</span></button><div class="c-divider-label"><span>也可以手动填写</span></div><form id="c-product-code-form" class="c-form" data-submit-go="c-code-result"><label class="field"><span>产品标签码 <em>必填</em></span><input name="productCode" value="${e(registrationField(ctx, 'productCode'))}" placeholder="请输入产品标签上的编码" maxlength="80" autocomplete="off" required></label></form><button class="c-text-button" data-go="c-code-guide">不确定手上是哪一种码？</button><details class="c-code-examples"><summary>试用演示码</summary><p>示例只用于选择商品，不判断是否已登记。</p><div><button data-code-example="valid">坐便器示例</button><button data-code-example="alternate">洗面器示例</button><button data-code-example="not-found">未找到示例</button><button data-code-example="wrong-type">误填安装码</button></div></details>`;
+  const codeInput = ctx => `<p class="c-page-intro">无需判断码的类型，系统会自动识别并选择安全的添加方式。</p><button class="c-scan-button c-scan-compact" data-code-example="valid"><span class="c-scan-frame" data-icon="camera" aria-hidden="true"></span><strong>扫一扫产品上的码</strong><span>产品码、溯源码、SN、安装／购买凭证码均可</span></button><div class="c-divider-label"><span>也可以输入编码</span></div><form id="c-product-code-form" class="c-form" data-submit-go="c-code-result"><label class="field"><span>编码 <em>必填</em></span><input name="productCode" value="${e(registrationField(ctx, 'productCode'))}" placeholder="请输入完整编码" maxlength="80" autocomplete="off" required></label></form><button class="c-text-button" data-go="c-code-guide">没有码或无法识别？</button><details class="c-code-examples"><summary>试用演示码</summary><p>示例分别演示唯一实物、购买凭证、普通商品码和无结果。</p><div><button data-code-example="valid">可信 SN</button><button data-code-example="alternate">逐件溯源码</button><button data-code-example="credential">购买凭证码</button><button data-code-example="model">普通商品码</button><button data-code-example="not-found">无法识别</button></div></details>`;
 
   const productNames = ctx => {
     const chosen = field(ctx, 'installProducts', [item(ctx).id]);
@@ -80,7 +79,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
     const next=confirmed?(remote?'请在确认时段保持电话畅通，便于沟通使用问题。':'请留意来电，并在确认时段做好产品现场准备。'):'我们将与您核对需求并确认安排，您暂时无需重复申请。';
     return `${header}${switcher}<section class="c-hub-overview" aria-label="当前服务"><div class="c-hub-status"><span>${e(types[order.serviceType] || '售后服务')}</span><h2>${currentTitle}</h2></div>${serviceProductSummary(ctx,order)}${stages}${arrangement}<div class="c-hub-next"><span>接下来</span><p>${next}</p></div><div class="c-hub-actions"><button class="secondary" data-action="本次只演示客服联系入口，未发起真实通话。">联系客服</button><button class="primary" data-product="${e(order.productId)}" data-go="c-progress">查看完整进度</button></div></section>${help}`;
   };
-  const welcome = ctx => `<div class="c-welcome"><div class="c-welcome-brand">TOTO</div><h2>让家的每一份舒适<br>都有照顾</h2><p>登记您的 TOTO 产品，<br>安装、维修与使用指导，随时找到我们。</p><div class="c-welcome-image"><img src="${e(item(ctx).image)}" alt="TOTO 智能坐便器产品示意"></div><button class="primary" data-go="c-register">登记我的产品</button><button class="c-text-button" data-go="c-service">先了解售后服务</button></div>`;
+  const welcome = ctx => `<div class="c-welcome"><div class="c-welcome-brand">TOTO</div><h2>您的产品<br>我们帮您找回来</h2><p>授权购买时使用的手机号，<br>系统自动同步可确认的购买产品。</p><div class="c-welcome-image"><img src="${e(item(ctx).image)}" alt="TOTO 智能坐便器产品示意"></div><button class="primary" data-go="c-phone-sync">授权手机号并同步产品</button><button class="c-text-button" data-go="c-register">暂不同步，手动添加</button></div>`;
 
   window.TOTO_SCREENS.consumer = {
     name: '消费者小程序',
@@ -110,22 +109,29 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         body: ctx => `<header class="c-profile">${window.TOTO_ACCOUNT.avatarMarkup(ctx.profile?.avatar)}<div><h2>${e((ctx.profile?.userName || '陈女士'))}</h2><p>${e(phoneMask(ctx.profile?.phone || '13800000026'))}</p></div><button class="c-text-button" data-go="c-profile">个人信息 ›</button></header><section class="c-my-products"><div class="c-section-heading"><h3>我的 TOTO</h3><button class="c-text-button" data-go="c-products">全部 ${ctx.hasProducts === false ? 0 : allProducts(ctx).length} 件 ›</button></div><div class="c-product-mini-grid">${ctx.hasProducts === false ? '<button class="c-register-prompt" data-go="c-register">登记第一件产品</button>' : allProducts(ctx).map(p => `<button data-product="${e(p.id)}" data-go="c-product"><img src="${e(p.image)}" alt="${e(p.name)}"><strong>${e(p.name)}</strong><span>${e(p.room)}</span></button>`).join('')}</div></section><section class="c-section"><button class="c-menu-row" data-go="c-service"><span>我的服务</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-registration-record="current" data-go="${ctx.hasProducts === false ? 'c-register' : 'c-register-result'}"><span>登记信息与安装码</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-go="c-purchases"><span>购买记录</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="可查看隐私条款及同意记录，并进入授权撤回与账户注销流程。"><span>隐私与账户</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="暂无需要填写的问卷。"><span>我的问卷</span><span aria-hidden="true">›</span></button></section><p class="c-brand-signoff">TOTO · 舒适，与您长久相伴</p>`,
       },
       {
-        id: 'c-register', title: '登记产品', entry: 'C04 · 选择商品登记',
-        goal: '以手动选择商品为登记主路径；产品标签码只辅助识别商品，安装码仅提供使用说明。',
-        note: '安装码当前用于后台按产品实例查询，尚无消费者身份校验或归属认领契约，本原型不提供输入安装码绑定产品。手选与标签码识别均为虚构数据的原型探索，不表示实物已核验。',
-        body: () => `<p class="c-page-intro">选择登记方式，核对商品后填写购买与使用信息。</p><div class="c-registration-methods"><button class="c-registration-method" data-reg-method="manual"><span class="c-method-number">01</span><span><strong>手动选择商品</strong><small>按分类、系列找到您的商品<br>核对商品外观与信息</small></span><span class="c-method-arrow" aria-hidden="true">›</span></button><button class="c-registration-method" data-reg-method="product-code"><span class="c-method-number">02</span><span><strong>用产品标签码辅助选择</strong><small>识别产品标签上的编码<br>核对商品后继续登记</small></span><span class="c-method-arrow" aria-hidden="true">›</span></button></div><section class="c-section"><button class="c-menu-row" data-go="c-installation-code"><span>拿到安装码，怎么用？</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-go="c-code-guide"><span>安装码和产品标签码的区别</span><span aria-hidden="true">›</span></button></section>`,
+        id: 'c-phone-sync', title: '同步购买产品', entry: 'C03 · 手机号授权与自动同步',
+        goal: '一次授权购买时使用的手机号，自动匹配已经接入售后系统的门店、商城和电商订单。',
+        note: '本页只模拟微信手机号授权后的同步结果，不读取真实微信身份或手机号。正式实现必须由后端解密并验证手机号，以 account_id 建立产品关系；不得由前端上传明文手机号后直接信任。未匹配、虚拟号、退货和归属冲突不自动绑定。',
+        body: ctx => `<header class="c-sync-heading"><span class="c-sync-icon" aria-hidden="true">●</span><h2>${ctx.phoneAuthorized ? '手机号已授权' : '授权手机号，自动找到产品'}</h2><p>${ctx.phoneAuthorized ? `已验证 ${e(phoneMask(ctx.profile?.phone || '13800000026'))}，可重新检查最新购买记录。` : '系统只用于核对本人购买记录和提供售后服务。'}</p></header><section class="c-sync-steps"><div><span>1</span><p><strong>安全验证手机号</strong><small>使用微信手机号授权或验证码验证</small></p></div><div><span>2</span><p><strong>自动匹配购买记录</strong><small>覆盖已接入的门店、官方商城和电商订单</small></p></div><div><span>3</span><p><strong>产品直接出现在“我的产品”</strong><small>同一订单明细不会重复添加</small></p></div></section><p class="c-info-note">找不到的产品仍可返回使用“扫一扫添加”；没有可识别编码时，再手动选择产品和购买日期。</p>`,
+        footer: ctx => `<button class="primary" data-phone-sync>${ctx.phoneAuthorized ? '重新同步购买产品' : '同意并授权手机号'}</button><button class="c-text-button" data-go="c-register">暂不授权，手动添加</button>`,
+      },
+      {
+        id: 'c-register', title: '添加产品', entry: 'C04 · 扫码优先添加产品',
+        goal: '把统一扫码作为手动添加的首选入口；系统识别码类型，用户无需先判断产品码、溯源码、SN 或购买凭证码。',
+        note: '扫码与识别均为虚构原型数据。可信唯一标识可定位产品实例，购买凭证码可关联已有购买，普通商品码只能识别型号；没有码时才进入手动选择与购买日期。产品出现在列表中不等于服务权益已核验。',
+        body: ctx => `<p class="c-page-intro">优先扫描产品或购买资料上的编码，系统自动识别。</p><button class="c-scan-button" data-reg-method="product-code"><span class="c-scan-frame" data-icon="camera" aria-hidden="true"></span><strong>扫一扫添加产品</strong><span>支持产品码、溯源码、SN、安装／购买凭证码</span></button><div class="c-divider-label"><span>没有码或无法识别</span></div><button class="c-menu-row" data-reg-method="manual"><span><strong>手动选择产品和购买日期</strong><small>用于旧产品、无码产品或历史订单未接入</small></span><span aria-hidden="true">›</span></button>${ctx.phoneAuthorized ? '<button class="c-menu-row" data-go="c-phone-sync"><span><strong>重新同步购买产品</strong><small>检查该手机号下新接入的购买记录</small></span><span aria-hidden="true">›</span></button>' : '<button class="c-menu-row" data-go="c-phone-sync"><span><strong>先授权手机号自动同步</strong><small>可能无需手动添加</small></span><span aria-hidden="true">›</span></button>'}`,
       },
       {
         id: 'c-manual-select', title: '选择您的商品', entry: 'C04 · 手动选择分类、系列与商品',
-        goal: '按照分类、系列、商品逐级缩小范围，并用外观与型号确认具体商品；不把目录商品误当作已登记实物。',
-        note: '当前两件目录商品只用于演示分组，分类与系列不作为最终主档。分类变更清空系列及商品，系列变更清空商品；每一级都需明确选择，不因只有一项而自动跳过。',
+        goal: '在扫码不可用时，按照分类、系列、商品逐级缩小范围，再填写购买日期。',
+        note: '这是无码兜底，不是与扫码并列的推荐方式。当前两件目录商品只用于演示；手选结果只能确认型号，创建后标记为用户申报、实物待核验，不自动产生免费权益。',
         body: ctx => {
           const reg = registration(ctx);
           const items = catalog(ctx);
           const categories = [...new Map(items.map(product => [product.categoryId, {id:product.categoryId, name:product.categoryName}])).values()];
           const series = [...new Map(items.filter(product => product.categoryId === reg.categoryId).map(product => [product.seriesId, {id:product.seriesId, name:product.seriesName}])).values()];
           const choices = items.filter(product => product.categoryId === reg.categoryId && product.seriesId === reg.seriesId);
-          return `<div class="c-step-label">第 1 步 / 共 3 步</div><p class="c-page-intro">按分类和系列选择，再核对图片与型号。</p><section class="c-selection-section"><h3><span>1</span>选择分类</h3><div class="c-selection-options">${categories.map(category => `<button data-category="${e(category.id)}" aria-pressed="${category.id === reg.categoryId}">${e(category.name)}</button>`).join('')}</div></section><section class="c-selection-section"><h3><span>2</span>选择系列</h3>${reg.categoryId ? `<div class="c-selection-options">${series.map(group => `<button data-series="${e(group.id)}" aria-pressed="${group.id === reg.seriesId}">${e(group.name)}</button>`).join('')}</div>` : '<p class="c-selection-placeholder">先选择分类，再查看相应系列。</p>'}</section><section class="c-selection-section"><h3><span>3</span>确认商品</h3>${reg.seriesId ? `<div class="c-catalog-options">${choices.map(product => `<button class="c-catalog-product" data-catalog-product="${e(product.id)}" aria-pressed="${product.id === reg.catalogProductId}"><img src="${e(product.image)}" alt="${e(product.name)}"><span><strong>${e(product.name)}</strong><small>${e(product.model)}</small></span><span class="c-selection-indicator" aria-hidden="true">${product.id === reg.catalogProductId ? '已选' : '选择'}</span></button>`).join('')}</div>` : '<p class="c-selection-placeholder">选择系列后，用图片和型号确认商品。</p>'}</section>`;
+          return `<div class="c-step-label">无码添加 · 第 1 步 / 共 3 步</div><p class="c-page-intro">按分类和系列选择，再核对图片与型号。</p><section class="c-selection-section"><h3><span>1</span>选择分类</h3><div class="c-selection-options">${categories.map(category => `<button data-category="${e(category.id)}" aria-pressed="${category.id === reg.categoryId}">${e(category.name)}</button>`).join('')}</div></section><section class="c-selection-section"><h3><span>2</span>选择系列</h3>${reg.categoryId ? `<div class="c-selection-options">${series.map(group => `<button data-series="${e(group.id)}" aria-pressed="${group.id === reg.seriesId}">${e(group.name)}</button>`).join('')}</div>` : '<p class="c-selection-placeholder">先选择分类，再查看相应系列。</p>'}</section><section class="c-selection-section"><h3><span>3</span>确认商品</h3>${reg.seriesId ? `<div class="c-catalog-options">${choices.map(product => `<button class="c-catalog-product" data-catalog-product="${e(product.id)}" aria-pressed="${product.id === reg.catalogProductId}"><img src="${e(product.image)}" alt="${e(product.name)}"><span><strong>${e(product.name)}</strong><small>${e(product.model)}</small></span><span class="c-selection-indicator" aria-hidden="true">${product.id === reg.catalogProductId ? '已选' : '选择'}</span></button>`).join('')}</div>` : '<p class="c-selection-placeholder">选择系列后，用图片和型号确认商品。</p>'}</section>`;
         },
         footer: ctx => `<button class="primary" data-go="c-purchase-date"${registration(ctx).catalogProductId ? '' : ' disabled'}>下一步：购买日期</button>`,
       },
@@ -140,40 +146,42 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         footer: ctx => `<button class="primary" type="submit" form="c-purchase-date-form"${registrationProducts(ctx).length ? '' : ' disabled'}>下一步：个人信息</button>`,
       },
       {
-        id: 'c-installation-code', title: '安装码使用说明', entry: 'C04 · 安装码查询协助',
-        goal: '说明安装码供门店或客服查询记录，避免把查询标识当作消费者登记凭证。',
-        note: '保留旧 hash 为说明页，不再提供输入、识别、购买摘要、个人信息绑定或提交入口。后台安装码关联产品实例；消费者身份与认领接口未形成，当前不开放消费者按码查记录。',
-        body: installationExplanation,
-        footer: '<button class="primary" data-reg-method="manual">选择商品登记</button>',
+        id: 'c-installation-code', title: '编码使用说明', entry: 'C04 · 统一扫码说明',
+        goal: '告诉用户无需预判编码类型，统一进入扫一扫；系统识别后再决定关联购买、定位实物或仅识别型号。',
+        note: '保留旧 hash 兼容既有评审链接。新方案允许安装码在统一扫码入口中作为购买／服务凭证候选，但能否绑定取决于真实发码规则和归属校验，不能仅凭格式成功。',
+        body: () => '<header class="c-page-heading"><h2>看到编码，直接扫一扫</h2><p>产品码、溯源码、SN、安装码或购买凭证码，都从同一个入口识别。</p></header><section class="c-code-explanation"><h3>系统会自动判断</h3><p>可信唯一标识用于定位具体产品；购买凭证码用于查询已有购买；普通商品码只能帮助识别型号。</p><p>扫码成功仍会核对登录身份和已有产品，避免重复添加。</p></section><p class="c-info-note">没有编码或识别失败时，再手动选择产品和购买日期。</p>',
+        footer: '<button class="primary" data-reg-method="product-code">扫一扫添加产品</button><button class="c-text-button" data-reg-method="manual">没有码，手动选择</button>',
       },
       {
-        id: 'c-product-code', title: '产品标签码识别', entry: 'C04 · 辅助识别商品',
-        goal: '通过标签码辅助找到商品，再由消费者核对并补充购买和使用信息。',
-        note: 'DEMO-PRODUCT-003 与 001 仅匹配坐便器目录商品，002 匹配洗面器。演示不使用摄像头；不推断标签码是唯一实物码、不与安装码建立映射、不判断归属或自动合并已登记产品。',
+        id: 'c-product-code', title: '扫一扫添加产品', entry: 'C04 · 一码通扫智能添加',
+        goal: '统一接收产品码、溯源码、SN 和购买凭证码，由系统识别码类型和下一步。',
+        note: '演示不使用摄像头。DEMO-SN-001 和 DEMO-TRACE-002 表示可信逐件标识，DEMO-INSTALL-003 表示可回查购买的凭证码，DEMO-PRODUCT-001/002/003 仅识别型号。正式码格式、发行方与生命周期仍需接口契约。',
         body: codeInput,
-        footer: '<button class="primary" type="submit" form="c-product-code-form">识别商品</button>',
+        footer: '<button class="primary" type="submit" form="c-product-code-form">识别编码</button>',
       },
       {
-        id: 'c-code-result', title: '商品识别结果', entry: 'C04 · 辅助识别与异常反馈',
-        goal: '展示本次识别到的商品供核对，误填安装码时引导查看用途，不转入认领流程。',
-        note: '结果只消费产品标签码辅助识别状态。没有购买摘要、已登记归属判断或安装码认领；同一标签码再次识别仍仅匹配商品，重复登记控制待真实实物身份契约确认。',
+        id: 'c-code-result', title: '编码识别结果', entry: 'C04 · 识别、认领与异常反馈',
+        goal: '按实际码类型分流：可信实物码或购买凭证可确认添加，普通商品码只进入无码补充流程。',
+        note: '同一可信标识再次扫描会复用已有实例并提示已添加。普通商品码不证明具体实物，因此不能直接绑定；冲突、失效和未知码也不得创建关系。',
         body: ctx => {
           const reg = registration(ctx), status = reg.method === 'product-code' ? reg.lookupStatus || 'idle' : 'idle';
-          if (status === 'matched') return `<div class="c-result-heading c-code-result-heading"><span class="c-result-mark" data-icon="check" aria-hidden="true"></span><h2>找到这款商品了</h2><p>请核对商品是否与您购买的一致，<br>再填写购买日期与个人信息。</p></div>${registrationSummary(registrationProducts(ctx), '本次识别的商品')}<dl class="c-details">${row('本次输入的标签码', reg.productCode)}</dl><p class="c-info-note">识别商品不会自动带入购买记录。</p><button class="c-text-button" data-go="c-product-code">商品不符，重新识别</button>`;
-          if (status === 'wrong-type') return '<div class="c-result-heading c-code-result-heading"><h2>您填写的可能是安装码</h2><p>安装码可提供给门店或客服查询记录，<br>不能用于这里的商品识别或产品登记。</p></div><button class="c-menu-row" data-go="c-installation-code"><span>查看安装码使用说明</span><span aria-hidden="true">›</span></button>';
-          return `<div class="c-result-heading c-code-result-heading"><h2>${status === 'not-found' ? '暂时没有找到对应商品' : '先识别商品'}</h2><p>${status === 'not-found' ? '请检查标签码是否完整。<br>也可以手动选择商品继续登记。' : '填写产品标签码后，再核对商品信息。'}</p></div><button class="c-menu-row" data-go="c-code-help"><span>需要门店或客服协助？</span><span aria-hidden="true">›</span></button>`;
+          if (status === 'owned') return `<div class="c-result-heading c-code-result-heading"><span class="c-result-mark" data-icon="check" aria-hidden="true"></span><h2>该产品已在“我的产品”中</h2><p>系统已通过同一可信标识找到原产品，<br>不会重复创建。</p></div>${registrationSummary(registrationProducts(ctx), '已有产品')}<dl class="c-details">${row('识别类型', reg.codeType)}${row('本次编码', reg.productCode)}</dl>`;
+          if (['matched-instance','matched-purchase'].includes(status)) return `<div class="c-result-heading c-code-result-heading"><span class="c-result-mark" data-icon="check" aria-hidden="true"></span><h2>${status === 'matched-purchase' ? '找到对应购买产品' : '已识别具体产品'}</h2><p>请核对产品信息，确认后添加到“我的产品”。</p></div>${registrationSummary(registrationProducts(ctx), '本次识别的产品')}<dl class="c-details">${row('识别类型', reg.codeType)}${row('本次编码', reg.productCode)}</dl><p class="c-info-note">系统会先核对已有产品；确认添加不代表免费服务权益已通过。</p><button class="c-text-button" data-go="c-product-code">产品不符，重新扫描</button>`;
+          if (status === 'matched-model') return `<div class="c-result-heading c-code-result-heading"><h2>已识别产品型号</h2><p>这是普通商品码，不能确认具体实物。<br>核对后请补充购买日期。</p></div>${registrationSummary(registrationProducts(ctx), '识别到的型号')}<dl class="c-details">${row('识别类型', reg.codeType)}${row('本次编码', reg.productCode)}</dl><p class="c-info-note">继续后按用户申报保存，并标记为实物待核验。</p>`;
+          return `<div class="c-result-heading c-code-result-heading"><h2>${status === 'not-found' ? '暂时无法识别这个码' : '先扫描或输入编码'}</h2><p>${status === 'not-found' ? '请检查编码是否完整。<br>没有可用编码时可手动选择产品。' : '系统识别码类型后，再给出安全的添加方式。'}</p></div><button class="c-menu-row" data-go="c-code-help"><span>需要门店或客服协助？</span><span aria-hidden="true">›</span></button>`;
         },
         footer: ctx => {
           const reg = registration(ctx);
-          if (reg.method === 'product-code' && reg.lookupStatus === 'matched' && registrationProducts(ctx).length) return '<button class="primary" data-go="c-purchase-date">确认商品，填写购买日期</button>';
-          return '<button class="secondary" data-reg-method="manual">手动选择商品</button><button class="primary" data-reg-method="product-code">重新识别商品</button>';
+          if (reg.method === 'product-code' && ['matched-instance','matched-purchase','owned'].includes(reg.lookupStatus) && registrationProducts(ctx).length) return `<button class="primary" data-claim-scan>${reg.lookupStatus === 'owned' ? '查看已有产品' : '确认添加到我的产品'}</button>`;
+          if (reg.method === 'product-code' && reg.lookupStatus === 'matched-model' && registrationProducts(ctx).length) return '<button class="primary" data-go="c-purchase-date">确认型号，补充购买日期</button><button class="c-text-button" data-reg-method="manual">型号不符，手动选择</button>';
+          return '<button class="secondary" data-reg-method="manual">没有码，手动选择</button><button class="primary" data-reg-method="product-code">重新扫描</button>';
         },
       },
       {
-        id: 'c-code-guide', title: '认识两种编码', entry: 'C04 · 安装码与产品标签码说明',
-        goal: '区分后台查询标识与辅助商品识别输入，不把任何一种码当作消费者身份或实物归属证明。',
-        note: '安装码关联后台产品实例，目前没有消费者认领接口；产品标签识别仅作商品选择探索，未定义条码格式、唯一实物身份或与安装码的映射。',
-        body: () => `<header class="c-page-heading"><h2>两种码，用在不同的地方</h2><p>先看看手中的编码从哪里来。</p></header><section class="c-code-explanation"><span class="c-tag">购买或服务资料中</span><h3>安装码</h3><p>提供给门店或客服，帮助查询相应商品的购买记录和服务信息。它不能在这里添加产品。</p><button class="c-text-button" data-go="c-installation-code">查看安装码使用说明 ›</button></section><section class="c-code-explanation"><span class="c-tag">产品标签上</span><h3>产品标签码</h3><p>辅助找到商品。核对商品后，还需要填写购买日期与使用信息。</p><button class="c-text-button" data-reg-method="product-code">识别商品 ›</button></section><p class="c-info-note">登记产品与申请安装服务是不同步骤。安装安排需要后续联系确认。</p><button class="c-text-button" data-reg-method="manual">手动选择商品登记</button>`,
+        id: 'c-code-guide', title: '无法扫码怎么办', entry: 'C04 · 扫码失败与无码兜底',
+        goal: '扫码失败时给出最短降级路径，不要求消费者学习编码体系。',
+        note: '普通商品码仅确认型号；可信实物码、购买凭证码和未知码由后端解析。用户无需在前端选择码类型。无码手选只保存用户申报产品。',
+        body: () => `<header class="c-page-heading"><h2>无需分辨是哪一种码</h2><p>对准产品标签、包装或购买资料上的完整编码扫描即可。</p></header><section class="c-code-explanation"><h3>识别失败时</h3><p>先确认编码完整、清晰；仍无法识别，可以手动输入编码重试。</p><button class="c-text-button" data-reg-method="product-code">重新扫描或输入 ›</button></section><section class="c-code-explanation"><h3>产品没有任何编码</h3><p>按分类、系列和型号选择产品，再补充购买日期。系统会标记为待核验。</p><button class="c-text-button" data-reg-method="manual">手动选择产品 ›</button></section><p class="c-info-note">添加产品与申请安装、维修等服务是不同步骤，服务权益会在申请时另行核验。</p>`,
       },
       {
         id: 'c-code-help', title: '联系门店与客服', entry: 'C04 · 购买与安装码查询协助',
@@ -184,19 +192,20 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
       },
       {
         id: 'c-purchase', title: '填写个人信息', entry: 'C05 · 共用个人与使用信息',
-        goal: '核对本次所选商品和自行填写的购买日期，只补充所需的姓名、手机号、使用方式和地址。',
-        note: '个人信息只写入本次选定商品的本地演示资料，不核验实物身份或归属。手选与辅助识别分别保留草稿；不提供安装码登记。手机号与隐私勾选仅用于原型演示。',
-        body: ctx => !registrationProducts(ctx).length ? '<div class="c-info-note">请先选择商品并填写购买日期。</div>' : `<div class="c-step-label">第 3 步 / 共 3 步</div>${registrationSummary(registrationProducts(ctx))}<dl class="c-details c-registration-purchase-meta">${row('登记方式', registrationMethods[registration(ctx).method] || '尚未选择')}${row('购买日期', registrationField(ctx, 'purchaseDate') || '尚未填写')}</dl><form id="c-purchase-form" class="c-form" data-submit-go="c-register-result"><label class="field"><span>姓名 <em>必填</em></span><input name="userName" value="${e(registrationField(ctx, 'userName'))}" maxlength="30" autocomplete="off" placeholder="请输入姓名" required></label><label class="field"><span>手机号 <em>必填</em></span><input name="phone" type="tel" inputmode="numeric" value="${e(registrationField(ctx, 'phone'))}" pattern="1[0-9]{10}" maxlength="11" placeholder="请输入联系手机号" required></label><label class="field"><span>使用方式 <em>必填</em></span><select name="useType" required><option value="self"${registrationField(ctx, 'useType', 'self') === 'self' ? ' selected' : ''}>自己使用</option><option value="friend"${registrationField(ctx, 'useType') === 'friend' ? ' selected' : ''}>为亲友购买</option></select></label><label class="field"><span>使用地区 <em>必填</em></span><select name="region" required><option value="">请选择地区</option><option value="示例省 / 示例市 / 示例区"${['demo', '示例省 / 示例市 / 示例区'].includes(registrationField(ctx, 'region')) ? ' selected' : ''}>示例省 / 示例市 / 示例区</option></select></label><label class="field"><span>详细地址 <em>必填</em></span><input name="address" value="${e(registrationField(ctx, 'address'))}" maxlength="200" placeholder="请输入产品使用地址" required></label><label class="c-consent"><input type="checkbox" name="privacyConsent"${registrationField(ctx, 'privacyConsent') ? ' checked' : ''} required><span>我已阅读并同意将以上信息用于本次产品登记与服务联系。</span></label><button class="c-text-button" type="button" data-action="隐私条款说明登记信息用途，以及查询、撤回授权和注销入口。本次为原型说明。">查看隐私条款</button></form>`,
+        goal: '沿用已验证手机号和账户资料，仅补充无码产品必要的使用方式与地址。',
+        note: '这是无码／普通商品码兜底。手机号由已验证账户带入，原型仍以只读样式展示；产品保存为用户申报、实物待核验，后续服务资格单独判断。',
+        body: ctx => !registrationProducts(ctx).length ? '<div class="c-info-note">请先选择商品并填写购买日期。</div>' : `<div class="c-step-label">无码添加 · 第 3 步 / 共 3 步</div>${registrationSummary(registrationProducts(ctx))}<dl class="c-details c-registration-purchase-meta">${row('添加方式', registrationMethods[registration(ctx).method] || '尚未选择')}${row('购买日期', registrationField(ctx, 'purchaseDate') || '尚未填写')}${row('已验证手机号', phoneMask(registrationField(ctx, 'phone')) || '尚未授权')}</dl><form id="c-purchase-form" class="c-form" data-submit-go="c-register-result"><label class="field"><span>姓名 <em>必填</em></span><input name="userName" value="${e(registrationField(ctx, 'userName'))}" maxlength="30" autocomplete="off" placeholder="请输入姓名" required></label><label class="field"><span>使用方式 <em>必填</em></span><select name="useType" required><option value="self"${registrationField(ctx, 'useType', 'self') === 'self' ? ' selected' : ''}>自己使用</option><option value="friend"${registrationField(ctx, 'useType') === 'friend' ? ' selected' : ''}>为亲友购买</option></select></label><label class="field"><span>使用地区 <em>必填</em></span><select name="region" required><option value="">请选择地区</option><option value="示例省 / 示例市 / 示例区"${['demo', '示例省 / 示例市 / 示例区'].includes(registrationField(ctx, 'region')) ? ' selected' : ''}>示例省 / 示例市 / 示例区</option></select></label><label class="field"><span>详细地址 <em>必填</em></span><input name="address" value="${e(registrationField(ctx, 'address'))}" maxlength="200" placeholder="请输入产品使用地址" required></label><label class="c-consent"><input type="checkbox" name="privacyConsent"${registrationField(ctx, 'privacyConsent') ? ' checked' : ''} required><span>我确认以上为本人申报信息，并同意用于产品档案与服务联系。</span></label><button class="c-text-button" type="button" data-action="隐私条款说明信息用途，以及查询、撤回授权和注销入口。本次为原型说明。">查看隐私条款</button></form>`,
         footer: ctx => `<button class="primary" type="submit" form="c-purchase-form"${registrationProducts(ctx).length ? '' : ' disabled'}>完成产品登记</button>`,
       },
       {
         id: 'c-register-result', title: '登记信息', entry: 'C06 · 登记回执与已有记录',
         goal: '只展示本次真实演示登记或当前产品已有的信息，保持商品数量、购买日期、来源与个人资料一致。',
-        note: '本次手选或辅助识别回执始终不含安装码。仅既有已关联的虚构产品记录只读显示安装码，用于向门店或客服查询；旧安装码登记回执不展示成功信息。消费者身份与归属接入仍待确认。',
+        note: '手机号同步、可信扫码和无码申报使用同一产品实例列表。可信标识重复扫描复用原实例；无码申报标记待核验。安装码只有在记录确实携带时展示，产品已添加不等于服务权益已通过。',
         body: ctx => {
           const record = registrationResult(ctx);
           if (!record) return '<div class="c-result-heading"><h2>先登记您的 TOTO 产品</h2><p>完成登记后，即可查看这件产品的登记信息。</p></div>';
-          return `<div class="c-result-heading"><span class="c-result-mark" data-icon="check" aria-hidden="true"></span><h2>${ctx.registrationReceipt ? '登记完成，产品已添加' : '这件产品的登记信息'}</h2><p>${ctx.registrationReceipt ? '可以回到产品中心，查看资料或申请服务。' : '购买与使用信息，集中在这里查看。'}</p></div>${registrationSummary(record.products || [], '本次登记的产品')}${record.installationCode ? `<section class="c-install-code"><span>已关联的安装码</span><strong>${e(record.installationCode)}</strong><p>联系门店或客服时，可提供此码查询相应记录。</p><button class="c-text-button" data-go="c-installation-code">安装码使用说明</button></section>` : '<p class="c-info-note">这次登记未关联安装码。您仍可从产品中心发起服务申请。</p>'}<section class="c-section"><h3>购买与使用信息</h3><dl class="c-details">${row('登记方式', registrationMethods[record.method] || '已有登记')}${row('购买日期', record.purchaseDate || '未提供')}${row('姓名', record.userName || '未提供')}${row('手机号', phoneMask(record.phone) || '未提供')}${row('使用方式', record.useType === 'friend' ? '为亲友购买' : '自己使用')}${row('使用地区', record.region === 'demo' ? '示例省 / 示例市 / 示例区' : record.region || '未提供')}${row('详细地址', record.address || '未提供')}</dl></section>`;
+          const added = Boolean(ctx.registrationReceipt), already = Boolean(record.alreadyOwned), pending = record.method === 'manual' || record.method === 'product-code';
+          return `<div class="c-result-heading"><span class="c-result-mark" data-icon="check" aria-hidden="true"></span><h2>${already ? '该产品已在“我的产品”中' : added ? '产品已添加' : '这件产品的信息'}</h2><p>${pending ? '产品资料已保存，实物与服务权益仍待核验。' : '可以从产品中心查看资料或申请服务。'}</p></div>${registrationSummary(record.products || [], added ? '本次处理的产品' : '当前产品')}${record.installationCode ? `<section class="c-install-code"><span>已关联的安装码</span><strong>${e(record.installationCode)}</strong><p>该码来自已有购买记录；具体用途仍按服务规则核验。</p><button class="c-text-button" data-go="c-installation-code">编码使用说明</button></section>` : `<p class="c-info-note">${pending ? '用户申报产品 · 实物待核验 · 服务权益未核验。' : '产品已建立关联；服务权益将在申请时独立核验。'}</p>`}<section class="c-section"><h3>产品与购买信息</h3><dl class="c-details">${row('添加来源', registrationMethods[record.method] || '已有记录')}${record.codeType ? row('识别类型', record.codeType) : ''}${row('购买日期', record.purchaseDate || '未提供')}${row('姓名', record.userName || '未提供')}${row('手机号', phoneMask(record.phone) || '未提供')}${row('使用方式', record.useType === 'friend' ? '为亲友购买' : '自己使用')}${row('使用地区', record.region === 'demo' ? '示例省 / 示例市 / 示例区' : record.region || '未提供')}${row('详细地址', record.address || '未提供')}</dl></section>`;
         },
         footer: ctx => {
           const record = registrationResult(ctx), first = record?.products?.[0];
@@ -207,17 +216,17 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
       {
         id: 'c-products', title: '我的产品', entry: 'C10 · 产品展厅',
         goal: '用可以辨认的产品图帮助消费者切换到正确产品，避免把不同产品的服务申请与进度混在一起。',
-        note: '仅显示当前演示账户实际已登记的产品实例。目录商品不计入已登记数量，新增登记按本次选择建立实例；产品选择、资料与服务按实例隔离。',
-        body: ctx => ctx.hasProducts === false ? welcome(ctx) : `<p class="c-list-summary">已登记 ${allProducts(ctx).length} 件产品</p><p class="c-page-intro">选择产品，查看资料或申请服务。</p><div class="c-gallery">${allProducts(ctx).map(p => `<button class="c-gallery-product${p.id === item(ctx).id ? ' is-selected' : ''}" data-product="${e(p.id)}" data-go="c-home" aria-label="切换到${e(p.name)}"><div><span class="c-tag">${e(p.room)}</span>${p.id === item(ctx).id ? '<span class="c-current-label">当前产品</span>' : ''}</div><img src="${e(p.image)}" alt="${e(p.name)} ${e(p.model)}"><div class="c-gallery-caption"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small></span><span aria-hidden="true">›</span></div></button>`).join('')}</div>`,
-        footer: '<button class="secondary" data-go="c-register">登记其他产品</button>',
+        note: '仅显示当前演示账户实际关联的产品实例。来源明确区分手机号同步、扫码添加和手动添加；同一可信标识或购买明细不重复创建。待核验产品可显示，但不暗示免费权益。',
+        body: ctx => ctx.hasProducts === false ? welcome(ctx) : `<p class="c-list-summary">我的产品 · 共 ${allProducts(ctx).length} 件</p><p class="c-page-intro">购买记录自动同步，其他产品也可扫码添加。</p><div class="c-gallery">${allProducts(ctx).map(p => `<button class="c-gallery-product${p.id === item(ctx).id ? ' is-selected' : ''}" data-product="${e(p.id)}" data-go="c-home" aria-label="切换到${e(p.name)}"><div><span class="c-tag">${e(p.sourceLabel || '已有产品')}</span>${p.ownershipStatus === 'pending-verification' ? '<span class="c-pending-label">待核验</span>' : p.id === item(ctx).id ? '<span class="c-current-label">当前产品</span>' : ''}</div><img src="${e(p.image)}" alt="${e(p.name)} ${e(p.model)}"><div class="c-gallery-caption"><span><strong>${e(p.name)}</strong><small>${e(p.model)} · ${e(p.room)}</small></span><span aria-hidden="true">›</span></div></button>`).join('')}</div>`,
+        footer: '<button class="primary" data-go="c-register">扫一扫添加其他产品</button>',
       },
       {
         id: 'c-product', title: '产品资料', entry: 'C10 · 产品详情',
         goal: '把产品外观与身份信息放在一起，让产品资料、购买信息和关联服务容易确认。',
-        note: '不展示未经确认的保修期限、免费服务、转赠或解绑承诺。已有安装码仅按明确示例关联只读展示；辅助标签码输入不是实物身份字段。资料和服务跟随本地演示产品，真实身份、归属和重复申请规则仍待确认。',
+        note: '明确展示关联来源和核验层级，不把“我的产品”等同于保修或免费服务。普通商品码与手选只有型号级身份；可信 SN、逐件溯源码或可验证购买凭证才可形成更高可信关联。',
         body: ctx => {
           const product = item(ctx), info = product.registration || ctx.registered || {};
-          return `<div class="c-product-heading"><p>${e(product.room || '我的产品')} · 我的 TOTO</p><h2>${e(product.name)}</h2><span>${e(product.model)}</span></div>${hero(ctx, true)}<section class="c-section"><h3>产品信息</h3><dl class="c-details">${row('型号', product.model)}${info.recognizedProductCode ? row('选商品时输入的标签码', info.recognizedProductCode) : ''}${row('购买日期', info.purchaseDate || '未提供')}${row('登记方式', registrationMethods[info.method] || '已有登记')}${linkedInstallationCode(product) ? row('关联安装码', linkedInstallationCode(product)) : ''}${row('姓名', info.userName || '未提供')}${row('手机号', phoneMask(info.phone) || '未提供')}${row('使用方式', info.useType === 'friend' ? '为亲友购买' : '自己使用')}</dl>${linkedInstallationCode(product) ? '<p class="c-info-note">联系门店或客服时，可提供安装码协助查询记录。</p>' : ''}<button class="c-menu-row" data-registration-record="current" data-go="${ctx.hasProducts === false ? 'c-register' : 'c-register-result'}"><span>查看完整登记信息</span><span aria-hidden="true">›</span></button></section>${ctx.order ? `<section class="c-section"><h3>当前服务</h3>${orderSummary(ctx)}</section>` : '<p class="c-quiet-empty">这件产品暂无进行中的服务。</p>'}`;
+          return `<div class="c-product-heading"><p>${e(product.room || '我的产品')} · ${e(product.sourceLabel || '我的 TOTO')}</p><h2>${e(product.name)}</h2><span>${e(product.model)}</span></div>${hero(ctx, true)}<section class="c-section"><h3>产品信息</h3><dl class="c-details">${row('型号', product.model)}${info.recognizedProductCode ? row('识别编码', info.recognizedProductCode) : ''}${row('购买日期', info.purchaseDate || '未提供')}${row('添加来源', registrationMethods[info.method] || product.sourceLabel || '已有记录')}${row('实物识别', product.identityLevel === 'trusted-identifier' ? '可信标识已识别' : product.identityLevel === 'model-only' ? '仅确认型号' : '系统产品实例')}${row('用户关系', product.ownershipStatus === 'pending-verification' ? '已添加 · 待核验' : '已关联')}${linkedInstallationCode(product) ? row('关联安装码', linkedInstallationCode(product)) : ''}${row('姓名', info.userName || '未提供')}${row('手机号', phoneMask(info.phone) || '未提供')}${row('使用方式', info.useType === 'friend' ? '为亲友购买' : '自己使用')}</dl><p class="c-info-note">产品关系与服务权益分别判断；申请服务时仍需核验本次资格。</p><button class="c-menu-row" data-registration-record="current" data-go="${ctx.hasProducts === false ? 'c-register' : 'c-register-result'}"><span>查看完整产品信息</span><span aria-hidden="true">›</span></button></section>${ctx.order ? `<section class="c-section"><h3>当前服务</h3>${orderSummary(ctx)}</section>` : '<p class="c-quiet-empty">这件产品暂无进行中的服务。</p>'}`;
         },
         footer: '<button class="secondary" data-service-type="remote-guidance" data-go="c-repair">使用指导</button><button class="primary" data-service-type="repair" data-go="c-repair">申请维修</button>',
       },

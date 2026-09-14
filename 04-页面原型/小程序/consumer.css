@@ -234,6 +234,17 @@
 .consumer-phone .c-product-mini-grid strong { display: block; font-size: 12px; margin-top: 7px; font-weight: 600; }
 .consumer-phone .c-product-mini-grid span { display: block; font-size: 10px; color: var(--c-muted); margin-top: 4px; }
 .consumer-phone .c-brand-signoff { text-align: center; color: #97a4ae; font-size: 10px; letter-spacing: .04em; padding: 20px 0 5px; }
+.consumer-phone .c-sync-heading { text-align: center; padding: 20px 5px 25px; }
+.consumer-phone .c-sync-icon { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 21px; border-radius: 50%; background: #eaf4fb; color: var(--c-blue); font-size: 15px; box-shadow: inset 0 0 0 13px #f5f9fc; }
+.consumer-phone .c-sync-heading h2 { margin: 0 0 10px; font-size: 23px; line-height: 1.5; font-weight: 650; }
+.consumer-phone .c-sync-heading p { color: var(--c-muted); font-size: 12px; line-height: 1.8; }
+.consumer-phone .c-sync-steps { display: grid; gap: 4px; padding: 6px 0 10px; }
+.consumer-phone .c-sync-steps > div { display: flex; align-items: flex-start; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--c-line); }
+.consumer-phone .c-sync-steps > div > span { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 24px; border-radius: 50%; background: #edf5fb; color: var(--c-blue); font-size: 10px; }
+.consumer-phone .c-sync-steps p { margin: 0; }
+.consumer-phone .c-sync-steps strong { display: block; font-size: 13px; font-weight: 600; line-height: 1.6; }
+.consumer-phone .c-sync-steps small { display: block; margin-top: 3px; color: var(--c-muted); font-size: 10px; line-height: 1.7; }
+.consumer-phone .c-pending-label { color: #9a6c22; font-size: 10px; }
 
 /* Review and progress keep status readable without pretending a request is booked. */
 .consumer-phone .c-details { margin: 13px 0 0; }
