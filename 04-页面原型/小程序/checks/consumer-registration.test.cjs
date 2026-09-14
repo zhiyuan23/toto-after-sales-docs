@@ -99,7 +99,7 @@ test('phone changes require both verification steps and bind the new code to its
   assert.equal(f.account.profile().phone,'13800000026');
 });
 
-test('purchase records group only explicit record IDs and distinguish self reported purchases without invented codes', () => {
+test('purchase records group explicit synced orders and distinguish user reported products', () => {
   const f=fixture({hash:'#c-purchases'});
   assert.equal(f.account.records(f.consumerContext()).length,1);
   assert.equal(f.account.records(f.consumerContext())[0].products.length,2);
@@ -110,13 +110,28 @@ test('purchase records group only explicit record IDs and distinguish self repor
   assert.equal(f.consumer.productId,'b02');
   f.resetConsumer('welcome');chooseManual(f);finish(f);
   f.click({go:'c-purchases'});
-  assert.match(f.get('#phone-body').innerHTML,/自行填写/);
+  assert.match(f.get('#phone-body').innerHTML,/用户申报/);
   assert.match(f.get('#phone-body').innerHTML,/购买门店未提供/);
   f.click({account:'record',recordId:f.consumer.ownedProducts[0].id});
   assert.match(f.get('#phone-body').innerHTML,/暂无关联安装码/);
   assert.doesNotMatch(f.get('#phone-body').innerHTML,/DEMO-INSTALL/);
   f.resetConsumer('welcome');f.showScreen('c-purchases');
-  assert.match(f.get('#phone-body').innerHTML,/还没有购买记录/);
+  assert.match(f.get('#phone-body').innerHTML,/还没有同步到购买记录/);
+});
+
+test('verified mobile authorization syncs purchase products automatically and remains idempotent', () => {
+  const f=fixture({hash:'#c-welcome'});
+  f.resetConsumer('welcome');f.showScreen('c-phone-sync');
+  assert.equal(f.consumer.phoneAuthorized,false);
+  assert.equal(f.consumer.ownedProducts.length,0);
+  f.click({phoneSync:''});
+  assert.equal(f.current().id,'c-products');
+  assert.equal(f.consumer.phoneAuthorized,true);
+  assert.equal(f.consumer.phoneSyncStatus,'synced');
+  assert.equal(f.consumer.ownedProducts.length,2);
+  assert.ok(f.consumer.ownedProducts.every(product=>product.sourceLabel==='手机号同步'));
+  f.showScreen('c-phone-sync');f.click({phoneSync:''});
+  assert.equal(f.consumer.ownedProducts.length,2);
 });
 function chooseManual(f) {
   f.click({ regMethod: 'manual' });
@@ -153,13 +168,13 @@ test('manual registration retains its selected product and never creates or borr
   assert.equal(f.consumer.ownedProducts.length, seededCount + 1);
 });
 
-test('product label examples only select catalog goods; prior labels and installation codes never imply ownership', () => {
+test('ordinary product codes only identify a model and create user-reported pending instances', () => {
   const f = fixture();
   f.click({ regMethod: 'product-code' });
   f.fields({ productCode: 'DEMO-PRODUCT-001' });
   f.submit('c-product-code-form', 'c-register-result'); // Target is ignored in favor of the permitted transition.
   assert.equal(f.current().id, 'c-code-result');
-  assert.equal(f.registrationDraft().lookupStatus, 'matched');
+  assert.equal(f.registrationDraft().lookupStatus, 'matched-model');
   assert.equal(f.registrationContext().selectedProducts.length, 1);
   assert.doesNotMatch(f.get('#phone-body').innerHTML, /已经登记过|<dt>购买日期|DEMO-INSTALL/);
   f.click({ go: 'c-purchase-date' });
@@ -172,7 +187,7 @@ test('product label examples only select catalog goods; prior labels and install
   f.click({ regMethod: 'product-code' });
   f.fields({ productCode: 'DEMO-PRODUCT-001' });
   f.submit('c-product-code-form', 'c-code-result');
-  assert.equal(f.registrationDraft().lookupStatus, 'matched');
+  assert.equal(f.registrationDraft().lookupStatus, 'matched-model');
   assert.equal(f.consumer.ownedProducts.length, count);
   assert.doesNotMatch(f.get('#phone-body').innerHTML, /已经登记过/);
   f.click({ go: 'c-purchase-date' });
@@ -188,29 +203,56 @@ test('product label examples only select catalog goods; prior labels and install
   assert.equal(added.installationCode, '');
   assert.equal(second.installationCode, '');
   assert.equal(second.registration.installationCode, '');
+  assert.equal(added.identityLevel, 'model-only');
+  assert.equal(second.ownershipStatus, 'pending-verification');
 });
 
-test('misentered installation codes cannot reach purchase details or registration by hash, form target or stale method', () => {
-  for (const value of ['DEMO-INSTALL-003', 'TOTO-9007199254740993']) {
-    const f = fixture();
-    f.resetConsumer('welcome');
-    f.click({ regMethod: 'product-code' });
-    f.fields({ productCode: value });
-    f.submit('c-product-code-form', 'c-register-result');
-    assert.equal(f.current().id, 'c-code-result');
-    assert.equal(f.registrationDraft().lookupStatus, 'wrong-type');
-    assert.equal(f.registrationContext().selectedProducts.length, 0);
-    assert.doesNotMatch(f.get('#phone-footer').innerHTML, /data-go="c-purchase/);
-    f.showScreen('c-purchase');
-    assert.equal(f.current().id, 'c-product-code');
-    assert.equal(f.completeRegistration(), false);
-    assert.equal(f.consumer.ownedProducts.length, 0);
-    assert.equal(f.consumer.registrationReceipt, null);
+test('trusted product identifiers and purchase credential codes add directly and deduplicate by identifier', () => {
+  for (const value of ['DEMO-SN-001', 'DEMO-INSTALL-003']) {
+    const f = fixture();f.resetConsumer('welcome');f.click({regMethod:'product-code'});
+    f.fields({productCode:value});f.submit('c-product-code-form','c-code-result');
+    assert.ok(['matched-instance','matched-purchase'].includes(f.registrationDraft().lookupStatus));
+    assert.equal(f.registrationContext().selectedProducts.length,1);
+    f.click({claimScan:''});
+    assert.equal(f.current().id,'c-register-result');
+    assert.equal(f.consumer.ownedProducts.length,1);
+    assert.equal(f.consumer.ownedProducts[0].identityLevel,'trusted-identifier');
+    assert.equal(f.account.records(f.consumerContext()).length,value==='DEMO-INSTALL-003'?1:0);
+    const id=f.consumer.ownedProducts[0].id;
+    f.click({regMethod:'product-code'});f.fields({productCode:value});f.submit('c-product-code-form','c-code-result');
+    assert.equal(f.registrationDraft().lookupStatus,'owned');
+    f.click({claimScan:''});
+    assert.equal(f.consumer.ownedProducts.length,1);
+    assert.equal(f.consumer.productId,id);
   }
+});
+
+test('phone sync and trusted scan converge on the same known product instance in either order', () => {
+  const syncedFirst=fixture();
+  const original=syncedFirst.consumer.ownedProducts.find(product=>product.id==='t01');
+  syncedFirst.click({regMethod:'product-code'});syncedFirst.fields({productCode:'DEMO-SN-001'});syncedFirst.submit('c-product-code-form','c-code-result');
+  assert.equal(syncedFirst.registrationDraft().lookupStatus,'owned');syncedFirst.click({claimScan:''});
+  assert.equal(syncedFirst.consumer.ownedProducts.length,2);
+  assert.ok(original.identifierKeys.includes('sn:DEMO-SN-001'));
+
+  const scanFirst=fixture();scanFirst.resetConsumer('welcome');scanFirst.click({regMethod:'product-code'});
+  scanFirst.fields({productCode:'DEMO-SN-001'});scanFirst.submit('c-product-code-form','c-code-result');scanFirst.click({claimScan:''});
+  const scanned=scanFirst.consumer.ownedProducts[0];scanFirst.showScreen('c-phone-sync');scanFirst.click({phoneSync:''});
+  assert.equal(scanFirst.consumer.ownedProducts.length,2);
+  assert.equal(scanFirst.consumer.ownedProducts.find(product=>product.catalogId==='t01').id,scanned.id);
+  assert.equal(scanned.sourceLabel,'手机号同步 + 扫码');
+});
+
+test('unknown codes cannot create products and the retired standalone installation method remains blocked', () => {
+  const unknown=fixture();unknown.resetConsumer('welcome');unknown.click({regMethod:'product-code'});
+  unknown.fields({productCode:'TOTO-9007199254740993'});unknown.submit('c-product-code-form','c-code-result');
+  assert.equal(unknown.registrationDraft().lookupStatus,'not-found');
+  assert.equal(unknown.registrationContext().selectedProducts.length,0);
+  unknown.click({claimScan:''});assert.equal(unknown.consumer.ownedProducts.length,0);
   const f = fixture();
   f.resetConsumer('welcome');
   f.consumer.registrationMethod = 'installation-code';
-  Object.assign(f.registrationDraft(), personal, { catalogProductId: 't01', purchaseDate: '2026-09-01', lookupStatus: 'matched', installationCode: 'DEMO-INSTALL-003' });
+  Object.assign(f.registrationDraft(), personal, { catalogProductId: 't01', purchaseDate: '2026-09-01', lookupStatus: 'matched-purchase', installationCode: 'DEMO-INSTALL-003' });
   assert.equal(f.registrationContext().selectedProducts.length, 0);
   assert.equal(f.lookupRegistrationCode(), false);
   assert.equal(f.completeRegistration(), false);
@@ -221,7 +263,7 @@ test('misentered installation codes cannot reach purchase details or registratio
   assert.equal(f.consumer.registrationReceipt, null);
 });
 
-test('legacy hash, capture URL and registration method resolve to a non-submitting installation explanation', () => {
+test('legacy installation help links resolve to unified scan guidance without a submit form', () => {
   for (const options of [{ hash: '#c-installation-code' }, { search: '?capture=c-installation-code' }]) {
     const f = fixture(options);
     assert.equal(f.current().id, 'c-installation-code');
@@ -232,7 +274,7 @@ test('legacy hash, capture URL and registration method resolve to a non-submitti
     assert.equal(f.consumer.registrationReceipt, null);
   }
   const f = fixture({ hash: '#c-code-result' });
-  assert.equal(f.current().id, 'c-product-code');
+  assert.equal(f.current().id, 'c-code-result');
   f.click({ regMethod: 'installation-code' });
   assert.equal(f.current().id, 'c-installation-code');
   f.showScreen('c-code-help');
@@ -242,13 +284,13 @@ test('legacy hash, capture URL and registration method resolve to a non-submitti
   assert.equal(f.current().id, 'c-installation-code');
 });
 
-test('old installation registration receipts cannot render a false success and only linked seed records display codes', () => {
+test('synced records display their linked codes while stale retired receipts cannot render success', () => {
   const f = fixture();
   const result = f.apps.consumer.screens.find(screen => screen.id === 'c-register-result');
   const context = f.consumerContext();
   assert.match(result.body(context), /DEMO-INSTALL-001/);
-  assert.match(result.body(context), /已有购买登记/);
-  assert.doesNotMatch(result.body(context), /登记完成，产品已添加/);
+  assert.match(result.body(context), /手机号自动同步/);
+  assert.doesNotMatch(result.body(context), /产品已添加/);
   assert.doesNotMatch(result.body({ ...context, product: { ...context.product, installationCodeLinked: false } }), /DEMO-INSTALL/);
   const stale = { method: 'installation-code', installationCode: 'DEMO-INSTALL-003', products: context.products };
   assert.doesNotMatch(result.body({ ...context, registrationReceipt: stale }), /登记完成，产品已添加|DEMO-INSTALL-003/);
@@ -256,12 +298,12 @@ test('old installation registration receipts cannot render a false success and o
   assert.doesNotMatch(purchase.body({ ...context, registration: { method: 'installation-code', lookupStatus: 'matched', selectedProducts: context.products } }), /<form/);
 });
 
-test('required personal info and purchase dates still gate manual and label registration', () => {
+test('required account, usage info and purchase dates gate manual and model-only registration', () => {
   for (const method of ['manual', 'product-code']) {
     const f = fixture();
     f.resetConsumer('welcome');
     if (method === 'manual') chooseManual(f);
-    else { f.click({ regMethod: method }); f.click({ codeExample: 'valid' }); }
+    else { f.click({ regMethod: method }); f.click({ codeExample: 'model' }); }
     f.showScreen('c-purchase');
     assert.equal(f.current().id, 'c-purchase-date');
     Object.assign(f.registrationDraft(), personal, { purchaseDate: '2999-01-01' });
@@ -276,15 +318,15 @@ test('all templates render across consumer scenarios, registration methods, code
   const f = fixture();
   const screens = [...f.apps.consumer.screens, ...f.apps.worker.screens];
   const ids = new Set(screens.map(screen => screen.id));
-  assert.equal(f.apps.consumer.screens.length, 29);
+  assert.equal(f.apps.consumer.screens.length, 30);
   assert.equal(f.apps.worker.screens.length, 28);
-  assert.equal(ids.size, 57);
+  assert.equal(ids.size, 58);
   let combinations = 0;
   for (const scenario of ['welcome', 'registered', 'confirmed']) {
     f.resetConsumer(scenario);
     for (const method of ['manual', 'product-code', 'installation-code']) {
       f.consumer.registrationMethod = method;
-      for (const status of ['idle', 'matched', 'not-found', 'wrong-type', 'owned']) {
+      for (const status of ['idle', 'matched-instance', 'matched-purchase', 'matched-model', 'not-found', 'owned']) {
         Object.assign(f.registrationDraft(), { lookupStatus: status, catalogProductId: 't01', productCode: 'DEMO-PRODUCT-003', installationCode: 'DEMO-INSTALL-003', purchaseDate: '2026-09-01' });
         for (const serviceType of ['install', 'repair', 'remote-guidance', 'onsite-guidance']) {
           f.consumer.serviceType = serviceType;
@@ -302,13 +344,13 @@ test('all templates render across consumer scenarios, registration methods, code
       }
     }
   }
-  assert.equal(combinations, 10260);
+  assert.equal(combinations, 12528);
   f.consumer.registrationMethod = 'manual';
   f.showScreen('c-home');
   f.renderFlows();
   assert.equal((f.get('#flows-view').innerHTML.match(/class="flow-card"/g) || []).length, 8);
   f.renderAtlas();
-  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 29);
+  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 30);
 });
 
 test('service request exploration still follows the newly registered product without creating an installation code', () => {
@@ -329,7 +371,7 @@ test('service request exploration still follows the newly registered product wit
   assert.equal(f.consumer.ownedProducts.at(-1).installationCode, '');
 });
 
-test('misentered installation code and its retired method do not discard a manual registration draft', () => {
+test('switching from a scan attempt or retired method does not discard a manual registration draft', () => {
   const f = fixture();
   f.resetConsumer('welcome');
   chooseManual(f);
@@ -337,8 +379,8 @@ test('misentered installation code and its retired method do not discard a manua
   f.submit('c-purchase-date-form', 'c-purchase');
   f.fields(personal);
   f.click({ regMethod: 'product-code' });
-  f.click({ codeExample: 'wrong-type' });
-  assert.equal(f.registrationDraft().lookupStatus, 'wrong-type');
+  f.click({ codeExample: 'valid' });
+  assert.equal(f.registrationDraft().lookupStatus, 'matched-instance');
   f.click({ regMethod: 'installation-code' });
   assert.equal(f.current().id, 'c-installation-code');
   f.click({ regMethod: 'manual' });
@@ -364,7 +406,7 @@ test('switching between existing and newly registered products never carries ins
   assert.doesNotMatch(f.get('#phone-body').innerHTML, /DEMO-INSTALL/);
   f.click({ registrationRecord: 'current', go: 'c-register-result' });
   assert.doesNotMatch(f.get('#phone-body').innerHTML, /DEMO-INSTALL/);
-  assert.match(f.get('#phone-body').innerHTML, /这次登记未关联安装码/);
+  assert.match(f.get('#phone-body').innerHTML, /用户申报产品/);
 });
 
 

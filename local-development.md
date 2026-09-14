@@ -209,7 +209,7 @@ Gaia/
 │   └── gaia-ui/                    # apps/after-sales Web 子系统
 └── mobile/
     ├── gaia-after-sales-uni/       # 消费者小程序与 H5
-    └── gaia-customer-service-uni/  # 尚未建仓，当前不自动创建
+    └── gaia-customer-service-uni/  # 本地仓库已初始化，仅有说明文件
 ```
 
 同事首次准备工作区时，先拉取本仓库，再运行安全、可重复执行的初始化脚本：
@@ -221,7 +221,7 @@ cd Gaia/docs/toto
 bash scripts/bootstrap-workspace.sh
 ```
 
-脚本只拉取缺失仓库，不会对已有仓库执行 `pull`、切换分支或覆盖本地修改。默认使用当前 TOTO 业务开发分支；需要更换时通过 `TOTO_WORK_BRANCH` 指定。`gaia-after-sales-uni` 当前没有已确认的远程地址，拿到地址后按以下方式补充：
+脚本只拉取缺失仓库，不会对已有仓库执行 `pull`、切换分支或覆盖本地修改。默认使用当前 TOTO 业务开发分支；需要更换时通过 `TOTO_WORK_BRANCH` 指定。两个小程序仓库当前均仅使用本地 Git，不配置远程；客服助手仓库仅有说明文件。后续确认消费者仓库远程地址后，可按以下方式补充：
 
 ```bash
 TOTO_AFTER_SALES_UNI_REPO_URL='<仓库地址>' bash scripts/bootstrap-workspace.sh
@@ -235,6 +235,6 @@ TOTO_AFTER_SALES_UNI_REPO_URL='<仓库地址>' bash scripts/bootstrap-workspace.
 | `gaia-after-sales-uni` | 原 TOTO 售后小程序与 H5 | [README](../../mobile/gaia-after-sales-uni/README.md) |
 | `gaia-ui` | 同仓的售后独立子系统 `apps/after-sales`，复用 Gaia 认证、菜单、权限与租户体系；主系统旧售后页面仅作 legacy 保留 | [子系统 README](../../frontend/gaia-ui/apps/after-sales/README.md) |
 | `gaia-saas-proj` | 聚合并运行售后 API | [POM](../../backend/gaia-saas-proj/pom.xml) |
-| `gaia-customer-service-uni` | “TOTO客服助手”独立小程序 | 待创建，功能与技术基线待 Spec 确认 |
+| `gaia-customer-service-uni` | “TOTO客服助手”独立小程序 | 本地仓库已初始化，功能与技术基线待 Spec 确认 |
 
 `gaia-ui/src/views/common` 是受保护的公共子仓库，未经单独明确授权不得修改或提交。`gaia-saas-proj` 可按已确认 Spec 修改，但不得自动提交。菜单、权限和租户平台按需复用 `gaia-sys`、`gaia-tenant`；售后业务主数据自有，出库与追溯只按另行确认的外部接口契约接入，不直接引用主系统业务表或默认同步。

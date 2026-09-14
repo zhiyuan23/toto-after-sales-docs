@@ -6,9 +6,9 @@
   <meta name="color-scheme" content="light">
   <title>TOTO · 两端小程序设计原型</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="consumer.css?v=0.10.3">
+  <link rel="stylesheet" href="consumer.css?v=0.11.0">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
-  <script src="consumer.js?v=0.10.3" defer></script>
+  <script src="consumer.js?v=0.11.0" defer></script>
   <link rel="stylesheet" href="worker.css?v=0.5.0">
   <script src="worker.js?v=0.5.0" defer></script>
   <link rel="stylesheet" href="worker-map.css?v=0.3.0">
@@ -16,8 +16,8 @@
   <script src="worker-schedule.js?v=0.5.0" defer></script>
   <script src="worker-map.js?v=0.5.0" defer></script>
   <script src="consumer-outlets.js?v=0.6.0" defer></script>
-  <script src="consumer-account.js?v=0.10.3" defer></script>
-  <script src="app.js?v=0.10.3" defer></script>
+  <script src="consumer-account.js?v=0.11.0" defer></script>
+  <script src="app.js?v=0.11.0" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -35,7 +35,7 @@
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer">消费者 v0.10.3 · 恢复资料表单<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，确认后再做视觉定稿。</div>
+      <div class="sidebar-footer">消费者 v0.11 · 手机号自动同步与扫码优先<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，确认后再做视觉定稿。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
@@ -95,7 +95,7 @@
           <div id="consumer-controls">
             <div class="review-divider"></div>
             <label class="review-field" for="consumer-scenario">消费者使用场景</label>
-            <select id="consumer-scenario"><option value="registered">已登记产品 · 申请服务</option><option value="welcome">首次使用 · 添加产品</option><option value="pending">申请已收到 · 等待联系</option><option value="confirmed">服务进行中 · 查看进度</option><option value="multiple">多项服务 · 切换进度</option></select>
+            <select id="consumer-scenario"><option value="registered">手机号已同步 · 申请服务</option><option value="welcome">首次使用 · 授权与添加</option><option value="pending">申请已收到 · 等待联系</option><option value="confirmed">服务进行中 · 查看进度</option><option value="multiple">多项服务 · 切换进度</option></select>
             <p class="fine-print">切换场景会重置消费者端的演示数据。</p>
           </div>
           <div class="review-divider"></div>
@@ -110,7 +110,7 @@
           </div>
           <div class="review-divider"></div>
           <p class="eyebrow">操作方式</p>
-          <p class="fine-print">点击手机内按钮体验流程。表单支持填写和必填校验，数据仅保留在本次页面会话；头像支持选择本地图片预览，不上传服务器；拨号、扫码、定位及故障媒体上传仍为模拟反馈。</p>
+          <p class="fine-print">点击手机内按钮体验流程。手机号授权、订单同步、扫码、拨号、定位及媒体上传均为本地模拟，不访问真实身份或业务数据；表单和产品状态只保留在本次页面会话。</p>
           <button id="reset-demo" class="reset-button">重置本次演示</button>
         </aside>
       </div>
