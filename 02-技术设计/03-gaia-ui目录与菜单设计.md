@@ -217,10 +217,9 @@
 | 商品分类 | `afsProductCategory` | `afterSales/catalog/category` | A08 | 管理员、总部 |
 | 商品档案 | `afsProduct` | `afterSales/catalog/product` | A09、A11 | 管理员、总部、客服主管、客服专员 |
 | 商品系列 | `afsProductSeries` | `afterSales/catalog/series` | A10 | 管理员、总部 |
-| 配套品管理 | `afsProductBundle` | `afterSales/catalog/bundle` | A12 | 管理员、总部 |
 | 配件档案 | `afsPart` | `afterSales/catalog/part` | A29 | 管理员、总部、服务站管理员 |
 
-A11 商品图片并入“商品档案”的详情/编辑页，不再单列“商品图上传”菜单；上传仍保留文件类型、大小、病毒和权限校验要求。
+A11 商品图片并入“商品档案”的详情/编辑页，不再单列“商品图上传”菜单；上传仍保留文件类型、大小、病毒和权限校验要求。A12 配套品管理已于 2026-09-15 退役，安装配件与故障配件改由商品档案维护，见[配套品迁移记录](../specs/2026-09-15-配套品迁移安装配件与故障配件.md)。
 
 ### 4.6 服务资源
 
