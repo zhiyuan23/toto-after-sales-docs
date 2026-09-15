@@ -6,6 +6,8 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 function fixture(){const window={};vm.runInNewContext(readFileSync(resolve(__dirname,'../worker.js'),'utf8'),{window});return window.TOTO_WORKER;}
 const current=w=>w.snapshot().tasks.find(t=>t.id===w.snapshot().taskId);
+const req=(w,extra={})=>w.submitAction('requisition',{workOrder:w.snapshot().taskId,note:'维修领料',...extra});
+const ret=(w,extra={})=>w.submitAction('return',{workOrder:w.snapshot().taskId,quantity:1,note:'剩余未使用',...extra});
 const photo=(w,k)=>{w.simulate('upload-fail');w.actAction('media',k);assert.equal(current(w).media[k],'failed');w.actAction('media',k);assert.equal(current(w).media[k],'ready');};
 function complete(w,usage='none'){
   w.actAction('sign');w.submitAction('service',{diagnosis:'演示检测',result:'已处理并试运行',usage,quantity:1});
@@ -45,19 +47,19 @@ test('approval ends technician work without another submission and closure remai
   assert.equal(current(w).versions.length,1);assert.throws(()=>w.submitAction('handover',{note:'重复单据',confirmed:true}),/无需再次/);assert.throws(()=>w.simulate('approved'),/先提交/);w.simulate('closed');assert.equal(current(w).queue,'closed');
 });
 test('parts retain quantities and task association, submit/approval/receipt affect stock at distinct stages',()=>{
-  const w=fixture();w.actAction('task-parts');w.actAction('basket-plus','P001');w.actAction('basket-plus','P001');w.actAction('basket-plus','P002');w.submitAction('requisition',{note:'维修领料'});
+  const w=fixture();w.actAction('task-parts');w.actAction('basket-plus','P001');w.actAction('basket-plus','P001');w.actAction('basket-plus','P002');req(w);
   let s=w.snapshot(),r=s.records[0];assert.equal(r.items[0].quantity,2);assert.equal(r.taskId,s.taskId);assert.equal(s.inventory.P001,2);
-  w.simulate('part-approved');assert.equal(w.snapshot().inventory.P001,2);w.actAction('receive',r.id);assert.equal(w.snapshot().inventory.P001,4);assert.equal(w.snapshot().inventory.P002,2);
-  assert.throws(()=>w.actAction('receive',r.id),/再次确认/);assert.equal(w.snapshot().inventory.P001,4);
+  w.simulate('part-approved');assert.equal(w.snapshot().inventory.P001,4);assert.equal(w.snapshot().inventory.P002,2);assert.equal(w.snapshot().stationInventory.P001,6);
+  assert.throws(()=>w.actAction('receive',r.id),/无需确认/);assert.equal(w.snapshot().inventory.P001,4);
 });
 test('empty/zero-stock requisitions, returns above stock and duplicate pending returns are blocked',()=>{
-  const w=fixture();assert.throws(()=>w.submitAction('requisition',{}),/至少/);w.actAction('basket-plus','P003');assert.throws(()=>w.submitAction('requisition',{}),/至少/);
-  assert.throws(()=>w.submitAction('return',{quantity:3,note:'退回'}),/数量/);w.submitAction('return',{quantity:1,note:'剩余未使用'});assert.equal(w.snapshot().inventory.P001,2);
-  assert.throws(()=>w.submitAction('return',{quantity:1,note:'重复'}),/已有/);w.simulate('part-approved');assert.equal(w.snapshot().inventory.P001,1);assert.throws(()=>w.simulate('part-approved'),/处理中/);
+  const w=fixture();assert.throws(()=>w.submitAction('requisition',{}),/工单号/);w.actAction('basket-plus','P003');assert.throws(()=>req(w),/至少/);
+  assert.throws(()=>ret(w,{quantity:3}),/数量/);ret(w);assert.equal(w.snapshot().inventory.P001,2);
+  assert.throws(()=>ret(w),/已有/);w.simulate('part-approved');assert.equal(w.snapshot().inventory.P001,1);assert.equal(w.snapshot().stationInventory.P001,9);assert.throws(()=>w.simulate('part-approved'),/处理中/);
 });
 test('rejection, cancellation and transfer receipts do not conflate inventory operations',()=>{
-  const w=fixture();w.actAction('basket-plus','P001');w.submitAction('requisition',{});w.simulate('part-rejected');assert.equal(w.snapshot().inventory.P001,2);
-  w.actAction('basket-plus','P001');w.submitAction('requisition',{});const id=w.snapshot().recordId;w.actAction('confirm-cancel',id);assert.equal(w.snapshot().inventory.P001,2);assert.equal(w.snapshot().records[1].status,'已撤销');
+  const w=fixture();w.actAction('basket-plus','P001');req(w);w.simulate('part-rejected');assert.equal(w.snapshot().inventory.P001,2);
+  w.actAction('basket-plus','P001');req(w);const id=w.snapshot().recordId;w.actAction('confirm-cancel',id);assert.equal(w.snapshot().inventory.P001,2);assert.equal(w.snapshot().records[1].status,'已撤销');
   w.simulate('transfer');w.actAction('receive',w.snapshot().recordId);assert.equal(w.snapshot().inventory.P002,2);
 });
 test('cancellation recovery remains a request and does not invent a target queue',()=>{
@@ -68,7 +70,7 @@ test('remote guidance skips arrival and onsite evidence but requires service and
   w.submitAction('completion',{serial:'DEMO-REMOTE',noRfidReason:'远程无法读取'});w.submitAction('completion',{result:'指导完成',confirmation:'confirmed',confirmationNote:'电话确认'});w.submitAction('completion',{submitChecked:true});assert.equal(current(w).queue,'review');assert.equal(current(w).signed,false);
 });
 test('company switching and logout clear tenant context and block historical deep links',()=>{
-  const w=fixture();w.actAction('task-parts');w.actAction('basket-plus','P001');w.submitAction('requisition',{});
+  const w=fixture();w.actAction('task-parts');w.actAction('basket-plus','P001');req(w);
   w.submitAction('company',{company:'苏州示例服务企业',confirmed:true});assert.equal(w.snapshot().tasks.length,0);assert.equal(w.snapshot().records.length,0);assert.equal(w.snapshot().linkTask,null);assert.equal(w.snapshot().inventory.P001,0);assert.throws(()=>w.submitAction('requisition',{}),/暂无授权/);
   w.actAction('logout');assert.equal(w.guard('w-detail'),'w-login');assert.equal(w.guard('c-home'),'c-home');w.actAction('login');assert.equal(w.guard('w-apps'),'w-mine');
 });
