@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TOTO 售后服务｜服务站管理卡片样式原型</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --primary: #2b6fb3;
+      --primary-dark: #1f5d99;
+      --primary-soft: #edf5fc;
+      --success: #67c23a;
+      --warning: #e6a23c;
+      --danger: #f56c6c;
+      --text: #303133;
+      --text-regular: #606266;
+      --text-secondary: #6f7782;
+      --text-placeholder: #7f8792;
+      --border: #dcdfe6;
+      --border-light: #e4e7ed;
+      --border-lighter: #ebeef5;
+      --fill: #f0f2f5;
+      --fill-light: #f5f7fa;
+      --fill-extra-light: #fafafa;
+      --surface: #ffffff;
+      --page: #f3f5f8;
+      --sidebar: #17233d;
+      --sidebar-hover: #223252;
+      --sidebar-text: #aeb8ca;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-width: 1120px; min-height: 100%; margin: 0; background: var(--page); color: var(--text); }
+    body { min-height: 100vh; font-size: 14px; }
+    button, input, select { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .app-shell { display: grid; min-height: 100vh; grid-template-columns: 218px minmax(0, 1fr); grid-template-rows: 54px minmax(0, 1fr); }
+    .topbar { grid-column: 1 / -1; display: flex; align-items: center; border-bottom: 1px solid var(--border-lighter); background: var(--surface); }
+    .brand { display: flex; width: 218px; height: 54px; align-items: center; gap: 10px; padding: 0 18px; background: var(--sidebar); color: #fff; }
+    .brand-mark { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 8px; background: var(--primary); font-weight: 800; letter-spacing: -.04em; }
+    .brand strong { font-size: 14px; font-weight: 650; }
+    .brand small { display: block; margin-top: 2px; color: #8390aa; font-size: 9px; }
+    .topbar-main { display: flex; min-width: 0; flex: 1; align-items: center; justify-content: space-between; padding: 0 20px; }
+    .crumbs { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 13px; }
+    .crumbs strong { color: var(--text); font-weight: 550; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .header-icon { display: grid; width: 32px; height: 32px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--text-regular); cursor: pointer; }
+    .header-icon:hover { background: var(--fill-light); color: var(--primary); }
+    .avatar { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: #d9ecff; color: var(--primary-dark); font-size: 12px; font-weight: 700; }
+    .user-copy { line-height: 1.15; }
+    .user-copy strong { display: block; font-size: 12px; font-weight: 600; }
+    .user-copy span { color: var(--text-secondary); font-size: 10px; }
+
+    .sidebar { grid-row: 2; padding: 14px 10px; background: var(--sidebar); color: var(--sidebar-text); }
+    .nav-group { margin-bottom: 14px; }
+    .nav-group-label { padding: 7px 12px; color: #6f7d97; font-size: 10px; letter-spacing: .08em; }
+    .nav-item { display: flex; height: 39px; align-items: center; gap: 10px; margin: 2px 0; padding: 0 12px; border-radius: 7px; color: inherit; font-size: 13px; }
+    .nav-item svg { width: 16px; height: 16px; flex: 0 0 16px; }
+    .nav-item.is-active { background: #2a4777; color: #fff; box-shadow: inset 3px 0 0 var(--primary); }
+    .nav-item.is-child { padding-left: 38px; }
+    .nav-item:not(.is-active):hover { background: var(--sidebar-hover); color: #e5eaf3; }
+
+    .workspace { min-width: 0; overflow: hidden; padding: 16px 18px 72px; }
+    .page { display: flex; min-height: calc(100vh - 86px); flex-direction: column; border-radius: 8px; background: var(--surface); box-shadow: 0 1px 3px rgba(31, 45, 61, .05); }
+    .page-head { display: flex; min-height: 64px; align-items: center; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid var(--border-lighter); }
+    .page-title h1 { margin: 0; font-size: 18px; line-height: 1.3; font-weight: 650; }
+    .page-title p { margin: 5px 0 0; color: var(--text-secondary); font-size: 11px; }
+    .direction-note { display: flex; align-items: center; border-radius: 999px; background: var(--fill-light); padding: 6px 10px; color: var(--text-regular); font-size: 11px; }
+
+    .search-panel { display: grid; grid-template-columns: minmax(250px, 1fr) 190px auto; align-items: end; gap: 16px; padding: 15px 18px 13px; border-bottom: 1px dashed var(--border); }
+    .field { display: grid; gap: 6px; }
+    .field label { color: var(--text-regular); font-size: 12px; }
+    .control { height: 32px; border: 1px solid var(--border); border-radius: 4px; background: #fff; color: var(--text); outline: none; transition: border-color .15s ease-out, box-shadow .15s ease-out; }
+    input.control { width: 100%; padding: 0 10px; }
+    select.control { width: 100%; padding: 0 30px 0 10px; }
+    .control:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(64,158,255,.12); }
+    .search-actions { display: flex; gap: 8px; }
+    .btn { display: inline-flex; height: 32px; flex-shrink: 0; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--border); border-radius: 4px; background: #fff; padding: 0 13px; color: var(--text-regular); cursor: pointer; white-space: nowrap; transition: border-color .15s ease-out, color .15s ease-out, background .15s ease-out, transform .12s ease-out; }
+    .btn:hover { border-color: #a0cfff; color: var(--primary); }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .btn-primary:hover { border-color: #79bbff; background: #79bbff; color: #fff; }
+    .btn-plain { border-color: #b3d8ff; background: var(--primary-soft); color: var(--primary); }
+    .btn-text { height: 28px; border-color: transparent; background: transparent; padding: 0 6px; color: var(--primary); }
+    .btn-text:hover { border-color: transparent; background: var(--primary-soft); }
+
+    .toolbar { display: flex; min-height: 48px; align-items: center; justify-content: space-between; padding: 8px 18px; }
+    .toolbar-meta { color: var(--text-secondary); font-size: 12px; }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+    .segmented { display: flex; align-items: center; gap: 2px; border: 1px solid var(--border); border-radius: 5px; padding: 2px; }
+    .segmented span { display: grid; width: 26px; height: 24px; place-items: center; border-radius: 3px; color: var(--text-placeholder); }
+    .segmented span.is-active { background: var(--fill); color: var(--primary); }
+    .info-alert { display: flex; min-height: 38px; align-items: center; gap: 9px; margin: 0 18px 14px; border: 1px solid #a0cfff; border-radius: 5px; background: var(--primary-soft); padding: 8px 12px; color: #337ecc; font-size: 12px; }
+    .info-alert svg { flex: 0 0 16px; }
+
+    .card-viewport { min-height: 0; flex: 1; overflow: auto; padding: 2px 18px 18px; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 18px; align-items: stretch; }
+    .empty-state { display: grid; min-height: 320px; place-items: center; color: var(--text-secondary); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 7px; color: var(--text); }
+    .pagination { display: flex; min-height: 52px; align-items: center; justify-content: space-between; padding: 8px 18px; border-top: 1px solid var(--border-lighter); color: var(--text-secondary); font-size: 12px; }
+    .page-numbers { display: flex; align-items: center; gap: 6px; }
+    .page-number { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 4px; background: var(--fill-light); color: var(--text-regular); }
+    .page-number.is-active { background: var(--primary); color: #fff; }
+
+    .station-card { height: 100%; overflow: hidden; border: 1px solid var(--border-light); border-radius: 10px; background: var(--surface); color: var(--text); transition: border-color .15s ease-out, box-shadow .15s ease-out, transform .15s ease-out; }
+    .station-card:hover { border-color: #c0c4cc; }
+    .card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-heading h2, .heading-copy h2 { min-width: 0; margin: 0; overflow: hidden; font-size: 16px; font-weight: 600; line-height: 24px; text-overflow: ellipsis; white-space: nowrap; }
+    .status { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; color: var(--text-regular); font-size: 12px; line-height: 25px; }
+    .status i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-placeholder); }
+    .status.is-enabled i { background: var(--success); }
+    .code { margin: 6px 0 12px; overflow: hidden; color: var(--text-regular); font-size: 13px; font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
+    .code span { margin-right: 5px; color: var(--text-secondary); }
+    .icon-box { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 7px; background: var(--fill-light); color: var(--text-secondary); }
+    .icon-box.is-primary { background: var(--primary-soft); color: var(--primary); }
+    .icon-box svg { width: 15px; height: 15px; }
+    .service-tags { display: flex; min-width: 0; flex-wrap: wrap; gap: 6px; }
+    .service-tag { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-lighter); border-radius: 999px; background: var(--fill-extra-light); padding: 1px 8px; color: var(--text-regular); font-size: 12px; line-height: 20px; }
+    .service-tag::before { display: none; }
+    .card-footer { display: flex; min-height: 48px; align-items: center; justify-content: flex-end; gap: 4px; border-top: 1px solid var(--border-lighter); padding: 6px 12px; }
+
+    .location-status { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; border-radius: 5px; background: var(--fill-light); padding: 2px 7px; color: var(--text-secondary); font-size: 11px; line-height: 20px; }
+    .location-status i { width: 5px; height: 5px; border-radius: 50%; background: var(--text-placeholder); }
+    .location-status.is-located i { background: var(--success); }
+
+    .station-symbol { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border-radius: 9px; background: var(--primary-soft); color: var(--primary); }
+    .station-symbol svg { width: 19px; height: 19px; }
+    .heading-main { display: flex; min-width: 0; align-items: center; gap: 11px; }
+    .heading-copy { min-width: 0; }
+    .heading-copy .code { margin: 2px 0 0; color: var(--text-secondary); font-size: 12px; }
+    .status { border: 1px solid #c8e7ba; border-radius: 5px; background: #f0f9eb; padding: 0 8px; color: #3f7f25; line-height: 23px; }
+    .status:not(.is-enabled) { border-color: var(--border-light); background: var(--fill-light); color: var(--text-secondary); }
+    .card-label { display: block; color: var(--text-secondary); font-size: 11px; line-height: 18px; }
+    .card-value { display: block; min-width: 0; margin-top: 4px; overflow: hidden; color: var(--text); font-size: 13px; font-weight: 550; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+    .card-footer { justify-content: space-between; padding-inline: 16px; }
+    .footer-summary { color: var(--text-secondary); font-size: 11px; }
+    .footer-actions { display: flex; align-items: center; gap: 2px; }
+
+    /* 结构名片：用稳定的三段式层级帮助用户先识别、再判断、最后操作。 */
+    .variant-structured .cards-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 470px), 1fr)); gap: 16px; }
+    .variant-structured .station-card { display: flex; min-height: 304px; flex-direction: column; border-color: #dfe5ec; box-shadow: 0 2px 7px rgba(44, 62, 80, .045); }
+    .variant-structured .station-card:hover { border-color: #a9cdf5; box-shadow: 0 7px 20px rgba(52, 98, 145, .09); transform: translateY(-1px); }
+    .variant-structured .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 18px 18px 15px; }
+    .variant-structured .heading-copy h2 { font-size: 17px; font-weight: 650; }
+    .variant-structured .location-block { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: 10px; margin: 0 18px; border-radius: 8px; background: #f4f8fd; padding: 11px 12px; }
+    .variant-structured .location-block > svg { width: 17px; height: 17px; color: var(--primary); }
+    .variant-structured .location-copy { min-width: 0; }
+    .variant-structured .location-copy .card-value { margin-top: 1px; }
+    .variant-structured .capability-row { display: grid; grid-template-columns: 94px minmax(0, 1fr); align-items: start; gap: 10px; padding: 15px 18px 13px; }
+    .variant-structured .capability-label { display: flex; align-items: center; gap: 7px; color: var(--text-secondary); font-size: 12px; line-height: 24px; }
+    .variant-structured .capability-label svg { width: 14px; height: 14px; color: var(--primary); }
+    .variant-structured .facts-row { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(100px, .65fr) minmax(110px, .75fr); gap: 15px; margin: 0 18px; border-top: 1px solid var(--border-lighter); padding: 13px 0 15px; }
+    .variant-structured .fact { min-width: 0; }
+    .variant-structured .card-footer { margin-top: auto; }
+
+    /* 业务分栏：把覆盖与能力放在主列，把联系人和资源放到清淡侧栏。 */
+    .variant-split .cards-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 16px; }
+    .variant-split .station-card { display: grid; min-height: 292px; grid-template-rows: auto 1fr auto; border-color: #dfe5ec; box-shadow: 0 2px 8px rgba(44, 62, 80, .04); }
+    .variant-split .station-card:hover { border-color: #9fc8f5; box-shadow: 0 6px 18px rgba(52, 98, 145, .08); }
+    .variant-split .card-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 18px 15px; }
+    .variant-split .heading-copy h2 { font-size: 17px; font-weight: 650; }
+    .variant-split .split-body { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(184px, .8fr); border-top: 1px solid var(--border-lighter); }
+    .variant-split .split-main { display: grid; align-content: start; gap: 16px; min-width: 0; padding: 16px 18px; }
+    .variant-split .split-section { min-width: 0; }
+    .variant-split .split-location { display: flex; min-width: 0; align-items: center; gap: 8px; }
+    .variant-split .split-location > svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--primary); }
+    .variant-split .split-location .card-value { margin: 0; }
+    .variant-split .split-location .location-status { margin-left: auto; }
+    .variant-split .service-tags { margin-top: 6px; gap: 8px; }
+    .variant-split .service-tag { border-color: #a8cdf2; border-radius: 6px; background: #edf6ff; padding: 1px 10px; color: #205f9f; font-weight: 600; line-height: 22px; }
+    .variant-split .coverage { border-left: 2px solid #b9dcff; padding-left: 10px; }
+    .variant-split .coverage-head { display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
+    .variant-split .area-count { color: var(--text-secondary); font-size: 10px; line-height: 18px; }
+    .variant-split .area-list { display: flex; min-width: 0; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+    .variant-split .area-chip { display: inline-flex; max-width: 100%; align-items: center; gap: 6px; border: 1px solid #d8e1eb; border-radius: 6px; background: #f8fafc; padding: 3px 9px 3px 4px; color: #3f4b59; font-size: 12px; line-height: 20px; }
+    .variant-split .area-index { display: grid; width: 18px; height: 18px; flex: 0 0 18px; place-items: center; border-radius: 4px; background: #e7eef6; color: #526b84; font-size: 10px; font-variant-numeric: tabular-nums; font-weight: 650; }
+    .variant-split .area-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .variant-split .split-aside { display: grid; align-content: start; gap: 13px; border-left: 1px solid var(--border-lighter); background: #f8fafc; padding: 16px; }
+    .variant-split .aside-fact { display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: center; gap: 8px; min-width: 0; }
+    .variant-split .aside-fact > svg { width: 15px; height: 15px; color: var(--text-secondary); }
+    .variant-split .aside-fact .card-value { margin-top: 1px; font-size: 12px; }
+
+    /* 清爽横排：弱化容器嵌套，用一条清晰的信息带完成高频扫读。 */
+    .variant-scan .cards-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 640px), 1fr)); gap: 12px; }
+    .variant-scan .station-card { display: grid; min-height: 226px; grid-template-rows: auto auto 1fr auto; border-radius: 9px; border-color: #dfe5ec; }
+    .variant-scan .station-card:hover { border-color: #92c3f7; box-shadow: inset 3px 0 0 var(--primary); }
+    .variant-scan .scan-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 15px 17px 12px; }
+    .variant-scan .scan-title { display: flex; min-width: 0; align-items: center; gap: 10px; }
+    .variant-scan .station-symbol { width: 34px; height: 34px; flex-basis: 34px; border-radius: 7px; }
+    .variant-scan .station-symbol svg { width: 17px; height: 17px; }
+    .variant-scan .heading-copy h2 { font-size: 15px; }
+    .variant-scan .heading-copy .code { font-size: 11px; }
+    .variant-scan .scan-location { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; align-items: center; gap: 8px; margin: 0 17px; border-top: 1px solid var(--border-lighter); border-bottom: 1px solid var(--border-lighter); padding: 10px 0; }
+    .variant-scan .scan-location > svg { width: 15px; height: 15px; color: var(--primary); }
+    .variant-scan .scan-location .card-value { margin: 0; }
+    .variant-scan .scan-body { display: grid; grid-template-columns: minmax(210px, 1.4fr) repeat(3, minmax(92px, .55fr)); align-items: start; gap: 15px; padding: 13px 17px 14px; }
+    .variant-scan .scan-cell { min-width: 0; }
+    .variant-scan .service-tags { margin-top: 6px; gap: 5px; }
+    .variant-scan .service-tag { border: 0; border-radius: 4px; background: var(--primary-soft); padding: 1px 7px; color: var(--primary-dark); line-height: 20px; }
+    .variant-scan .service-tag::before { display: none; }
+    .variant-scan .card-footer { min-height: 42px; padding-block: 4px; }
+    .variant-scan .btn-text { height: 27px; font-size: 12px; }
+
+    .scrim { position: fixed; z-index: 3000; inset: 0; background: rgba(20, 32, 51, .36); opacity: 0; animation: fade-in 160ms ease-out forwards; }
+    .drawer { position: fixed; z-index: 3001; top: 0; right: 0; display: flex; width: 420px; height: 100vh; flex-direction: column; background: #fff; box-shadow: -18px 0 48px rgba(20, 32, 51, .18); transform: translateX(24px); opacity: 0; animation: drawer-in 220ms ease-out forwards; }
+    .drawer header, .dialog header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px; border-bottom: 1px solid var(--border-lighter); }
+    .drawer h2, .dialog h2 { margin: 0; font-size: 18px; }
+    .drawer header p, .dialog header p { margin: 5px 0 0; color: var(--text-secondary); font-size: 12px; }
+    .close-btn { display: grid; width: 30px; height: 30px; place-items: center; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+    .close-btn:hover { background: var(--fill-light); color: var(--text); }
+    .drawer-body { display: grid; gap: 20px; padding: 20px; overflow: auto; }
+    .detail-hero { border-radius: 9px; background: var(--primary-soft); padding: 15px; }
+    .detail-hero span { color: var(--primary-dark); font-size: 11px; }
+    .detail-hero strong { display: block; margin-top: 7px; font-size: 15px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+    .detail-field span { display: block; color: var(--text-secondary); font-size: 11px; }
+    .detail-field strong { display: block; margin-top: 5px; font-size: 13px; font-weight: 550; }
+    .drawer footer, .dialog footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; padding: 14px 20px; border-top: 1px solid var(--border-lighter); }
+    .dialog-wrap { position: fixed; z-index: 3002; inset: 0; display: grid; place-items: center; pointer-events: none; }
+    .dialog { display: flex; width: 520px; max-height: calc(100vh - 80px); flex-direction: column; border-radius: 10px; background: #fff; box-shadow: 0 24px 70px rgba(20, 32, 51, .24); opacity: 0; transform: scale(.98) translateY(8px); animation: dialog-in 180ms ease-out forwards; pointer-events: auto; }
+    .dialog-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px; overflow: auto; }
+    .dialog-body .field.is-wide { grid-column: 1 / -1; }
+    .toast { position: fixed; z-index: 4000; top: 74px; left: 50%; border: 1px solid var(--border-light); border-radius: 7px; background: #fff; box-shadow: 0 8px 30px rgba(20, 32, 51, .16); padding: 10px 14px; color: var(--text-regular); font-size: 12px; opacity: 0; transform: translate(-50%, -8px); animation: toast-in 180ms ease-out forwards; }
+
+    @keyframes fade-in { to { opacity: 1; } }
+    @keyframes drawer-in { to { opacity: 1; transform: translateX(0); } }
+    @keyframes dialog-in { to { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes toast-in { to { opacity: 1; transform: translate(-50%, 0); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .station-card, .scrim, .drawer, .dialog, .toast { animation: none; opacity: 1; transform: none; transition: none; }
+    }
+
+    .proto-picker {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(10, 10, 10, 0.82);
+      -webkit-backdrop-filter: blur(12px) saturate(1.4);
+      backdrop-filter: blur(12px) saturate(1.4);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 8px 24px rgba(0, 0, 0, 0.24),
+        0 2px 6px rgba(0, 0, 0, 0.12);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .proto-picker-highlight {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      height: 28px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      will-change: transform;
+    }
+
+    /* The slide is enabled only after first paint (data-ready), so load doesn't animate. */
+    .proto-picker[data-ready] .proto-picker-highlight {
+      transition:
+        transform 250ms cubic-bezier(0.23, 1, 0.32, 1),
+        width 250ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .proto-picker[data-ready] .proto-picker-highlight { transition: none; }
+    }
+
+    .proto-picker-item {
+      position: relative; /* sits above the highlight */
+      display: flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      font: inherit;
+      cursor: pointer;
+      transition: color 150ms ease-out;
+    }
+
+    .proto-picker-item:hover {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .proto-picker-item:active {
+      transform: scale(0.97);
+    }
+
+    .proto-picker-item:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.4);
+      outline-offset: 2px;
+    }
+
+    .proto-picker-item[data-active] {
+      color: #fff;
+    }
+
+    .proto-picker-divider {
+      width: 1px;
+      height: 16px;
+      margin: 0 4px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .proto-picker[data-position="top"] {
+      bottom: auto;
+      top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div id="overlay-root"></div>
+
+  <nav class="proto-picker" aria-label="Prototype variants">
+    <span class="proto-picker-highlight" aria-hidden="true"></span>
+    <button class="proto-picker-item" data-active aria-current="true">结构名片</button>
+    <button class="proto-picker-item">业务分栏</button>
+    <button class="proto-picker-item">清爽横排</button>
+  </nav>
+
+  <script>
+    const stations = [
+      { id: '1', name: '上海浦东服务站', code: 'SH-PD-001', enabled: true, region: '上海市 / 浦东新区 / 花木街道', located: true, address: '海桐路 118 号', services: ['安装', '维修', '清洗'], areas: '浦东新区（1）、奉贤区（2）', areaCount: 2, manager: '张伟', hotline: '400-820-1234', personnel: 18 },
+      { id: '2', name: '上海闵行服务站', code: 'SH-MH-002', enabled: true, region: '上海市 / 闵行区 / 莘庄镇', located: false, address: '莘松路 399 号', services: ['安装', '维修'], areas: '闵行区（1）、松江区（2）', areaCount: 2, manager: '刘敏', hotline: '021-6123 8850', personnel: 12 },
+      { id: '3', name: '苏州工业园区服务站', code: 'JS-SZ-006', enabled: true, region: '江苏省 / 苏州市 / 工业园区', located: true, address: '苏虹中路 225 号', services: ['维修', '清洗'], areas: '苏州工业园区（1）、吴中区（2）', areaCount: 2, manager: '陈磊', hotline: '0512-6288 1630', personnel: 9 },
+      { id: '4', name: '南京江宁服务站', code: 'JS-NJ-009', enabled: false, region: '江苏省 / 南京市 / 江宁区', located: false, address: '天元东路 188 号', services: ['安装', '维修'], areas: '江宁区（1）', areaCount: 1, manager: '周航', hotline: '025-5210 7788', personnel: 7 }
+    ];
+
+    const iconPaths = {
+      bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>',
+      grid: '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+      network: '<rect width="6" height="6" x="9" y="2" rx="1"/><rect width="6" height="6" x="2" y="16" rx="1"/><rect width="6" height="6" x="16" y="16" rx="1"/><path d="M12 8v4m-7 4v-2h14v2"/>',
+      users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+      box: '<path d="m21 8-9-5-9 5 9 5 9-5Z"/><path d="m3 8 9 5v10M21 8l-9 5M21 12v6l-9 5-9-5v-6"/>',
+      chart: '<path d="M3 3v18h18"/><path d="m7 16 4-5 4 3 5-7"/>',
+      settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1 1.55V21h-4v-.08a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3v-4h.08a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3h4v.08a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.14.61.68 1.03 1.31 1.03H21v4h-.08A1.7 1.7 0 0 0 19.4 15Z"/>',
+      pin: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+      wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9l-3.8 3.8Z"/>',
+      map: '<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/>',
+      user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+      phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z"/>',
+      warehouse: '<path d="M3 21V8l9-5 9 5v13"/><path d="M3 10h18M8 21v-7h8v7"/>',
+      info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+      plus: '<path d="M12 5v14M5 12h14"/>',
+      search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
+      close: '<path d="M18 6 6 18M6 6l12 12"/>'
+    };
+
+    const icon = (name, className = '') => `<svg class="${className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconPaths[name]}</svg>`;
+    const tags = station => `<span class="service-tags">${station.services.map(item => `<span class="service-tag">${item}</span>`).join('')}</span>`;
+    const status = station => `<span class="status ${station.enabled ? 'is-enabled' : ''}"><i aria-hidden="true"></i>${station.enabled ? '启用' : '停用'}</span>`;
+
+    function areaTags(station) {
+      const areas = station.areas.split('、').map(item => item.replace(/[（(]\d+[）)]$/, '').trim()).filter(Boolean);
+      return `<div class="area-list" aria-label="${areas.join('、')}">${areas.map((item, index) => `<span class="area-chip"><span class="area-index">${index + 1}</span><span class="area-name">${item}</span></span>`).join('')}</div>`;
+    }
+
+    let filters = { keyword: '', status: '' };
+    let draft = { ...filters };
+
+    function locationState(station, full = false) {
+      return `<small class="location-status ${station.located ? 'is-located' : ''}"><i></i>${station.located ? (full ? '地图定位已完成' : '已定位') : (full ? '坐标待补充' : '未定位')}</small>`;
+    }
+
+    function structuredCard(station) {
+      return `<article class="station-card" aria-label="${station.name}">
+        <div class="card-top"><div class="heading-main"><span class="station-symbol">${icon('warehouse')}</span><div class="heading-copy"><h2>${station.name}</h2><p class="code">${station.code}</p></div></div>${status(station)}</div>
+        <div class="location-block">${icon('pin')}<div class="location-copy"><span class="card-label">服务站位置</span><strong class="card-value" title="${station.region}">${station.region}</strong></div>${locationState(station, true)}</div>
+        <div class="capability-row"><span class="capability-label">${icon('wrench')}服务项目</span>${tags(station)}</div>
+        <div class="facts-row"><div class="fact"><span class="card-label">服务区域</span><strong class="card-value" title="${station.areas}">${station.areas}</strong></div><div class="fact"><span class="card-label">负责人</span><strong class="card-value">${station.manager}</strong></div><div class="fact"><span class="card-label">师傅数量</span><strong class="card-value">${station.personnel} 人</strong></div></div>
+        ${cardFooter(station)}
+      </article>`;
+    }
+
+    function splitCard(station) {
+      return `<article class="station-card" aria-label="${station.name}">
+        <div class="card-top"><div class="heading-main"><span class="station-symbol">${icon('warehouse')}</span><div class="heading-copy"><h2>${station.name}</h2><p class="code">服务站编码 ${station.code}</p></div></div>${status(station)}</div>
+        <div class="split-body"><div class="split-main"><div class="split-section"><span class="card-label">服务站位置</span><div class="split-location">${icon('pin')}<strong class="card-value" title="${station.region}">${station.region}</strong>${locationState(station)}</div></div><div class="split-section"><span class="card-label">服务项目</span>${tags(station)}</div><div class="split-section coverage"><div class="coverage-head"><span class="card-label">服务区域</span><span class="area-count">${station.areaCount} 个</span></div>${areaTags(station)}</div></div><aside class="split-aside"><div class="aside-fact">${icon('user')}<div><span class="card-label">负责人</span><strong class="card-value">${station.manager}</strong></div></div><div class="aside-fact">${icon('phone')}<div><span class="card-label">服务热线</span><strong class="card-value">${station.hotline}</strong></div></div><div class="aside-fact">${icon('users')}<div><span class="card-label">本站师傅</span><strong class="card-value">${station.personnel} 人</strong></div></div></aside></div>
+        ${cardFooter(station)}
+      </article>`;
+    }
+
+    function scanCard(station) {
+      return `<article class="station-card" aria-label="${station.name}">
+        <div class="scan-head"><div class="scan-title"><span class="station-symbol">${icon('warehouse')}</span><div class="heading-copy"><h2>${station.name}</h2><p class="code">${station.code}</p></div></div>${status(station)}</div>
+        <div class="scan-location">${icon('pin')}<strong class="card-value" title="${station.region}">${station.region}</strong>${locationState(station)}</div>
+        <div class="scan-body"><div class="scan-cell"><span class="card-label">服务项目</span>${tags(station)}</div><div class="scan-cell"><span class="card-label">覆盖区域</span><strong class="card-value" title="${station.areas}">${station.areaCount} 个区域</strong></div><div class="scan-cell"><span class="card-label">负责人</span><strong class="card-value">${station.manager}</strong></div><div class="scan-cell"><span class="card-label">师傅数量</span><strong class="card-value">${station.personnel} 人</strong></div></div>
+        ${cardFooter(station)}
+      </article>`;
+    }
+
+    function cardFooter(station) {
+      return `<footer class="card-footer"><span class="footer-summary">${station.areaCount} 个服务区域，热线 ${station.hotline}</span><span class="footer-actions"><button class="btn btn-text" data-action="detail" data-id="${station.id}">查看详情</button><button class="btn btn-text" data-action="edit" data-id="${station.id}">编辑</button><button class="btn btn-text" data-action="manager" data-id="${station.id}">配置负责人</button></span></footer>`;
+    }
+
+    const directionData = [
+      { className: 'variant-structured', name: '结构名片', note: '三段式层级，识别与判断路径最稳定', render: structuredCard },
+      { className: 'variant-split', name: '业务分栏', note: '业务信息与联系人资源分列呈现', render: splitCard },
+      { className: 'variant-scan', name: '清爽横排', note: '减少容器嵌套，提升批量扫读效率', render: scanCard }
+    ];
+
+    function filteredStations() {
+      const keyword = filters.keyword.trim().toLowerCase();
+      return stations.filter(station => {
+        const matchesKeyword = !keyword || [station.name, station.code, station.region, station.manager].join(' ').toLowerCase().includes(keyword);
+        const matchesStatus = filters.status === '' || String(station.enabled) === filters.status;
+        return matchesKeyword && matchesStatus;
+      });
+    }
+
+    function shell(direction) {
+      const visible = filteredStations();
+      const cards = visible.length ? `<div class="cards-grid">${visible.map(direction.render).join('')}</div>` : `<div class="empty-state"><div><strong>暂无匹配的服务站</strong><span>请调整筛选条件后重试</span></div></div>`;
+      return `<div class="app-shell ${direction.className}">
+        <header class="topbar"><div class="brand"><span class="brand-mark">T</span><div><strong>TOTO 售后服务</strong><small>AFTER-SALES</small></div></div><div class="topbar-main"><div class="crumbs"><span>网点管理</span><span>/</span><strong>服务站管理</strong></div><div class="topbar-actions"><button class="header-icon" data-action="notice" aria-label="通知">${icon('bell')}</button><span class="avatar">管</span><span class="user-copy"><strong>系统管理员</strong><span>总部运营</span></span></div></div></header>
+        <aside class="sidebar"><div class="nav-group"><div class="nav-group-label">工作台</div><div class="nav-item">${icon('grid')}首页</div></div><div class="nav-group"><div class="nav-group-label">业务管理</div><div class="nav-item">${icon('box')}商品档案</div><div class="nav-item">${icon('users')}客户服务</div><div class="nav-item">${icon('network')}服务资源</div></div><div class="nav-group"><div class="nav-group-label">网点管理</div><div class="nav-item is-child">代理商管理</div><div class="nav-item is-child">门店管理</div><div class="nav-item is-child is-active">服务站管理</div><div class="nav-item is-child">服务区域管理</div></div><div class="nav-group"><div class="nav-group-label">分析与配置</div><div class="nav-item">${icon('chart')}运营报表</div><div class="nav-item">${icon('settings')}系统设置</div></div></aside>
+        <main class="workspace"><section class="page"><header class="page-head"><div class="page-title"><h1>服务站管理</h1><p>维护服务站基础资料、覆盖区域与服务能力</p></div><span class="direction-note">${direction.name} · ${direction.note}</span></header>
+          <form class="search-panel" id="search-form"><div class="field"><label for="keyword">服务站</label><input id="keyword" class="control" name="keyword" value="${escapeHtml(draft.keyword)}" placeholder="服务站编码或名称"></div><div class="field"><label for="status">服务站状态</label><select id="status" class="control" name="status"><option value="" ${draft.status === '' ? 'selected' : ''}>全部</option><option value="true" ${draft.status === 'true' ? 'selected' : ''}>启用</option><option value="false" ${draft.status === 'false' ? 'selected' : ''}>停用</option></select></div><div class="search-actions"><button class="btn btn-primary" type="submit">${icon('search')}查询</button><button class="btn" type="button" data-action="reset">重置</button></div></form>
+          <div class="toolbar"><button class="btn btn-plain" data-action="create">${icon('plus')}新增服务站</button><div class="toolbar-right"><span class="toolbar-meta">卡片视图 · 共 ${visible.length} 条</span><span class="segmented" aria-label="卡片视图"><span>${icon('grid')}</span><span class="is-active">${icon('network')}</span></span></div></div>
+          <div class="info-alert">${icon('info')}<span>服务站、服务区域及优先级均由售后系统独立维护；关联人员在服务人员档案中维护。</span></div>
+          <div class="card-viewport">${cards}</div>
+          <footer class="pagination"><span>共 ${visible.length} 条，每页 15 条</span><span class="page-numbers"><span class="page-number">‹</span><span class="page-number is-active">1</span><span class="page-number">›</span></span></footer>
+        </section></main>
+      </div>`;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+    }
+
+    function showDrawer(station) {
+      const root = document.getElementById('overlay-root');
+      root.innerHTML = `<div class="scrim" data-action="close-overlay"></div><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title"><header><div><h2 id="drawer-title">${station.name}</h2><p>${station.code} · 服务站档案</p></div><button class="close-btn" data-action="close-overlay" aria-label="关闭">${icon('close')}</button></header><div class="drawer-body"><div class="detail-hero"><span>行政区域</span><strong>${station.region}</strong></div><div class="detail-grid"><div class="detail-field"><span>状态</span><strong>${station.enabled ? '启用' : '停用'}</strong></div><div class="detail-field"><span>地图定位</span><strong>${station.located ? '已完成' : '暂未标注'}</strong></div><div class="detail-field"><span>负责人</span><strong>${station.manager}</strong></div><div class="detail-field"><span>服务热线</span><strong>${station.hotline}</strong></div><div class="detail-field"><span>师傅数量</span><strong>${station.personnel} 人</strong></div><div class="detail-field"><span>详细地址</span><strong>${station.address}</strong></div></div><div class="detail-field"><span>服务项目</span><strong>${station.services.join('、')}</strong></div><div class="detail-field"><span>服务区域</span><strong>${station.areas}</strong></div></div><footer><button class="btn" data-action="close-overlay">关闭</button><button class="btn btn-primary" data-action="edit" data-id="${station.id}">编辑服务站</button></footer></aside>`;
+    }
+
+    function showDialog(station, mode = 'edit') {
+      const root = document.getElementById('overlay-root');
+      const item = station || { name: '', code: '', manager: '', hotline: '', region: '', services: [] };
+      const title = mode === 'manager' ? '配置负责人' : station ? '编辑服务站' : '新增服务站';
+      root.innerHTML = `<div class="scrim" data-action="close-overlay"></div><div class="dialog-wrap"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><header><div><h2 id="dialog-title">${title}</h2><p>原型交互仅演示视觉和操作反馈，不写入真实数据</p></div><button class="close-btn" data-action="close-overlay" aria-label="关闭">${icon('close')}</button></header><form id="station-form" class="dialog-body"><div class="field"><label>服务站编码</label><input class="control" name="code" value="${item.code}"></div><div class="field"><label>服务站名称</label><input class="control" name="name" value="${item.name}"></div><div class="field"><label>负责人</label><input class="control" name="manager" value="${item.manager}"></div><div class="field"><label>服务热线</label><input class="control" name="hotline" value="${item.hotline}"></div><div class="field is-wide"><label>行政区域</label><input class="control" name="region" value="${item.region}"></div></form><footer><button class="btn" data-action="close-overlay">取消</button><button class="btn btn-primary" type="submit" form="station-form">保存</button></footer></section></div>`;
+    }
+
+    let toastTimer;
+    function showToast(message) {
+      document.querySelector('.toast')?.remove();
+      const toast = document.createElement('div');
+      toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast);
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.remove(), 1800);
+    }
+
+    function closeOverlay() { document.getElementById('overlay-root').innerHTML = ''; }
+
+    const stage = document.getElementById('stage');
+    const picker = document.querySelector('.proto-picker');
+    const highlight = picker.querySelector('.proto-picker-highlight');
+    const items = [...picker.querySelectorAll('.proto-picker-item')];
+    let current = 0;
+
+    function moveHighlight() {
+      const el = items[current];
+      highlight.style.width = el.offsetWidth + 'px';
+      highlight.style.transform = `translateX(${el.offsetLeft}px)`;
+    }
+
+    function mount(i) {
+      stage.innerHTML = '';
+      closeOverlay();
+      requestAnimationFrame(() => { stage.innerHTML = shell(directionData[i]); });
+    }
+
+    function setActive(i) {
+      if (i < 0 || i >= directionData.length) return;
+      current = i;
+      items.forEach((el, j) => {
+        el.toggleAttribute('data-active', j === i);
+        if (j === i) el.setAttribute('aria-current', 'true');
+        else el.removeAttribute('aria-current');
+      });
+      moveHighlight();
+      const url = new URL(location);
+      url.searchParams.set('v', i + 1);
+      history.replaceState(null, '', url);
+      mount(i);
+    }
+
+    items.forEach((el, i) => el.addEventListener('click', () => setActive(i)));
+    window.addEventListener('resize', moveHighlight);
+
+    document.addEventListener('click', event => {
+      const target = event.target.closest('[data-action]');
+      if (!target) return;
+      const action = target.dataset.action;
+      const station = stations.find(item => item.id === target.dataset.id);
+      if (action === 'detail' && station) showDrawer(station);
+      else if (action === 'edit' && station) showDialog(station);
+      else if (action === 'manager' && station) showDialog(station, 'manager');
+      else if (action === 'create') showDialog();
+      else if (action === 'close-overlay') closeOverlay();
+      else if (action === 'notice') showToast('当前没有新的系统通知');
+      else if (action === 'reset') { filters = { keyword: '', status: '' }; draft = { ...filters }; mount(current); }
+    });
+
+    document.addEventListener('input', event => {
+      if (event.target.name === 'keyword') draft.keyword = event.target.value;
+      if (event.target.name === 'status') draft.status = event.target.value;
+    });
+
+    document.addEventListener('change', event => {
+      if (event.target.name === 'status') draft.status = event.target.value;
+    });
+
+    document.addEventListener('submit', event => {
+      if (event.target.id === 'search-form') {
+        event.preventDefault(); filters = { ...draft }; mount(current);
+      } else if (event.target.id === 'station-form') {
+        event.preventDefault(); closeOverlay(); showToast('原型已模拟保存；真实数据未改变');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const num = parseInt(e.key, 10);
+      if (num >= 1 && num <= directionData.length) setActive(num - 1);
+      else if (e.key === 'ArrowRight') setActive((current + 1) % directionData.length);
+      else if (e.key === 'ArrowLeft') setActive((current - 1 + directionData.length) % directionData.length);
+      else if (e.key === 'Escape') closeOverlay();
+    });
+
+    const requestedVariant = parseInt(new URLSearchParams(location.search).get('v'), 10);
+    setActive(requestedVariant >= 1 && requestedVariant <= directionData.length ? requestedVariant - 1 : 0);
+    requestAnimationFrame(() => requestAnimationFrame(() => picker.setAttribute('data-ready', '')));
+  </script>
+</body>
+</html>
