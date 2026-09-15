@@ -71,7 +71,7 @@ const configs={
     number:'03',perspective:'服务站作业',title:'服务站工作台',scope:'上海浦东授权服务站',user:'站点管理员',avatar:'站',icon:'wrench',
     subtitle:'围绕今日到站任务安排师傅、跟进履约并处理配件阻塞。',primary:'打开派单调度',primaryAction:'派单调度',
     modules:['本站工单','人员与资料','配件管理'],
-    groups:[['本站工单',['服务站工作台','服务工单','派单调度','异常工单']],['人员与资料',['服务人员','排班管理','服务知识库']],['配件管理',['配件档案','库存台账','领料管理','工单耗用','退料管理','调拨管理','盘点管理']],['服务分析',['服务质量','运营报表']]],
+    groups:[['本站工单',['服务站工作台','服务工单','派单调度','异常工单']],['人员与资料',['服务人员','排班管理','服务知识库']],['配件管理',['配件档案','配件入库','库存台账','领料管理','工单耗用','退料管理','调拨管理','盘点管理']],['服务分析',['服务质量','运营报表']]],
     metrics:[
       {key:'dispatch',label:'待派单',value:9,caption:'当前状态 PENDING_DISPATCH',icon:'users',tone:''},
       {key:'today',label:'今日期望服务',value:14,caption:'按期望服务日期，包含各状态',icon:'clock',tone:'is-cyan'},
@@ -306,7 +306,11 @@ function bindEvents(){
   document.querySelectorAll('[data-queue]').forEach(button=>button.addEventListener('click',()=>selectQueue(button.dataset.queue)))
   document.querySelectorAll('[data-queue-jump]').forEach(button=>button.addEventListener('click',()=>selectQueue(button.dataset.queueJump)))
   document.querySelectorAll('[data-work-action]').forEach(button=>button.addEventListener('click',()=>openWork(button.dataset.workAction)))
-  document.querySelectorAll('[data-preview-link]').forEach(button=>button.addEventListener('click',()=>showToast(`${button.dataset.previewLink}：专业页面入口已保留，本轮聚焦工作台`)))
+  document.querySelectorAll('[data-preview-link]').forEach(button=>button.addEventListener('click',()=>{
+    const partsRoutes={'配件入库':'inbound','库存台账':'inventory','领料管理':'requisition','退料管理':'return'}
+    if(view==='station'&&partsRoutes[button.dataset.previewLink]){window.location.href=`parts-management.html#${partsRoutes[button.dataset.previewLink]}`;return}
+    showToast(`${button.dataset.previewLink}：专业页面入口已保留，本轮聚焦工作台`)
+  }))
   document.querySelectorAll('.menu-group-title').forEach(button=>button.addEventListener('click',()=>{const group=button.closest('.menu-group');group.classList.toggle('is-open');button.setAttribute('aria-expanded',String(group.classList.contains('is-open')))}))
   $('recordSearch').addEventListener('input',renderRows)
   $('prototypeFab').addEventListener('click',()=>openOverlay($('prototypePanel')))
