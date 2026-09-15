@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>TOTO · 两端小程序设计原型</title>
+  <script>
+    window.TOTO_CONSUMER_VERSION = new URLSearchParams(location.search).get('consumerVersion') === '0.11' ? '0.11' : '0.12';
+    document.documentElement.dataset.consumerVersion = window.TOTO_CONSUMER_VERSION;
+  </script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="consumer.css?v=0.11.0">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
+  <link rel="stylesheet" href="consumer-v012.css?v=0.12.0">
   <script src="consumer.js?v=0.11.0" defer></script>
   <link rel="stylesheet" href="worker.css?v=0.5.0">
   <script src="worker.js?v=0.5.0" defer></script>
@@ -17,7 +22,8 @@
   <script src="worker-map.js?v=0.5.0" defer></script>
   <script src="consumer-outlets.js?v=0.6.0" defer></script>
   <script src="consumer-account.js?v=0.11.0" defer></script>
-  <script src="app.js?v=0.11.0" defer></script>
+  <script src="consumer-v012.js?v=0.12.0" defer></script>
+  <script src="app.js?v=0.12.0" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -33,9 +39,14 @@
         <button data-app="worker">服务人员端</button>
       </div>
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
+      <p class="eyebrow version-heading">消费者原型版本</p>
+      <nav class="version-switch" aria-label="切换消费者原型版本">
+        <a href="?consumerVersion=0.12#c-home" data-consumer-version-link="0.12">优化版 v0.12</a>
+        <a href="?consumerVersion=0.11#c-home" data-consumer-version-link="0.11">原版 v0.11</a>
+      </nav>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer">消费者 v0.11 · 手机号自动同步与扫码优先<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，确认后再做视觉定稿。</div>
+      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.12 · 流程合并与信息减量<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，不代表真实业务已实现。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">

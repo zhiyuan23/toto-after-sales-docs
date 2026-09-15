@@ -8,7 +8,7 @@ const test = require('node:test');
 const vm = require('node:vm');
 const root = resolve(__dirname, '..');
 
-function fixture({ hash = '', search = '' } = {}) {
+function fixture({ hash = '', search = '', version = '0.11' } = {}) {
   const elements = new Map(), events = new Map(), windowEvents = new Map(), readers = [], images = [];
   const element = () => ({
     dataset: {}, fields: [], style: {}, hidden: false, value: '', textContent: '', disabled: false,
@@ -28,9 +28,9 @@ function fixture({ hash = '', search = '' } = {}) {
     Image: class { set src(value) { this.value=value;images.push(this); } },
     history: { replaceState(_state, _title, next) { location.hash = next; } },
     setTimeout: () => 1, clearTimeout() {},
-    window: { addEventListener: (type, fn) => windowEvents.set(type, fn) },
+    window: { TOTO_CONSUMER_VERSION:version, addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  for (const file of ['consumer.js', 'worker.js', 'worker-schedule.js', 'worker-map.js', 'consumer-outlets.js', 'consumer-account.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
+  for (const file of ['consumer.js', 'worker.js', 'worker-schedule.js', 'worker-map.js', 'consumer-outlets.js', 'consumer-account.js', 'consumer-v012.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
   const source = readFileSync(resolve(root, 'app.js'), 'utf8');
   // Expose closure state only in this VM copy, keeping the prototype's production global surface unchanged.
   const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,current:()=>current};';
@@ -599,4 +599,58 @@ test('calendar deep links and old capture links resolve to an independent screen
 test('worker list return positions cannot cross changed filters or companies',()=>{
   const f=fixture({hash:'#w-tasks'}),body=f.get('#phone-body');body.scrollTop=260;f.showScreen('w-map');f.worker.setSort('time');f.get('#phone-back').click();assert.equal(body.scrollTop,0);
   body.scrollTop=180;f.showScreen('w-schedule');f.worker.submitAction('company',{company:'苏州示例服务企业',confirmed:true});f.get('#phone-back').click();assert.equal(body.scrollTop,0);assert.equal(f.worker.snapshot().listPosition,null);assert.equal(f.worker.snapshot().tasks.length,0);
+});
+
+test('consumer v0.12 keeps v0.11 available while reducing the active screen set',()=>{
+  const before=fixture(),after=fixture({version:'0.12'});
+  assert.equal(before.apps.consumer.screens.length,30);
+  assert.equal(after.apps.consumer.screens.length,20);
+  assert.deepEqual(copy(after.apps.consumer.screens.slice(0,3).map(screen=>screen.id)),['c-home','c-service','c-mine']);
+  for(const retired of ['c-welcome','c-phone-sync','c-product-code','c-code-result','c-code-guide','c-code-help','c-purchase-date','c-register-result','c-confirm','c-install','c-outlet-region']) {
+    assert.equal(after.apps.consumer.screens.some(screen=>screen.id===retired),false);
+  }
+});
+
+test('consumer v0.12 handles scanning and its result on the unified add-product route',()=>{
+  const f=fixture({version:'0.12',hash:'#c-register'});f.resetConsumer('welcome');f.showScreen('c-register');
+  f.fields({productCode:'DEMO-INSTALL-003'});f.submit('c-product-code-form','c-register');
+  assert.equal(f.current().id,'c-register');
+  assert.equal(f.registrationDraft().lookupStatus,'matched-purchase');
+  assert.match(f.get('#phone-body').innerHTML,/找到产品/);
+  f.click({claimScan:''});
+  assert.equal(f.current().id,'c-product');
+  assert.match(f.get('#phone-body').innerHTML,/产品已添加/);
+});
+
+test('consumer v0.12 completes manual registration in two screens and lands on product detail',()=>{
+  const f=fixture({version:'0.12'});f.resetConsumer('welcome');
+  f.click({regMethod:'manual'});f.click({category:'toilet'});f.click({series:'neorest'});f.click({catalogProduct:'t01'});f.click({go:'c-purchase'});
+  assert.equal(f.current().id,'c-purchase');
+  assert.match(f.get('#phone-body').innerHTML,/第 2 步 \/ 共 2 步/);
+  f.fields({purchaseDate:'2026-09-01',...personal});f.submit('c-purchase-form','c-product');
+  assert.equal(f.current().id,'c-product');
+  assert.equal(f.consumer.ownedProducts.length,1);
+  assert.match(f.get('#phone-body').innerHTML,/产品已添加/);
+});
+
+test('consumer v0.12 submits a service request in two steps without a separate confirmation screen',()=>{
+  const f=fixture({version:'0.12'});
+  f.click({serviceType:'repair',go:'c-repair'});f.fields({description:'冲洗功能偶尔无法启动'});f.submit('c-repair-form','c-contact');
+  assert.equal(f.current().id,'c-contact');
+  assert.match(f.get('#phone-body').innerHTML,/第 2 步 \/ 共 2 步/);
+  f.fields({contactName:'陈女士',phone:'13800000026',address:'示例地址',preferredDate:'2026-09-15',preferredTime:'afternoon',privacyConsent:true});
+  f.submit('c-contact-form','c-submit-result');
+  assert.equal(f.current().id,'c-submit-result');
+  assert.equal(f.consumer.lastSubmitted.status,'pending');
+});
+
+test('every consumer v0.12 screen renders across the five review scenarios',()=>{
+  const f=fixture({version:'0.12'}),ids=f.apps.consumer.screens.map(screen=>screen.id);
+  for(const scenario of ['registered','welcome','pending','confirmed','multiple']) {
+    f.resetConsumer(scenario);
+    for(const id of ids) {
+      f.showScreen(id,false,true);
+      assert.ok(f.get('#phone-body').innerHTML.length>0,`${scenario}:${id}`);
+    }
+  }
 });

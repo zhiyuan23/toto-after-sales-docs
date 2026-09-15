@@ -108,3 +108,9 @@
 .consumer-phone .o-native-location-icon .o-icon { width:26px; height:26px; }
 .consumer-phone .o-native-dialog .primary { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; }
 .consumer-phone .o-native-close { display:block; width:100%; min-height:54px; font-size:13px; color:#607682; }
+.consumer-phone .o-region-panel { min-height:100%; padding:22px 20px 28px; background:#f7f7f5; }
+.consumer-phone .o-region-panel > header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }
+.consumer-phone .o-region-panel > header h2 { margin:0; font-size:25px; letter-spacing:-.03em; }
+.consumer-phone .o-region-panel > header p { margin:5px 0 0; color:#74746f; font-size:13px; }
+.consumer-phone .o-region-panel .o-location-button { margin-bottom:14px; }
+.consumer-phone .o-region-confirm { width:100%; margin-top:22px; }

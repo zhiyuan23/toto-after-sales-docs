@@ -6,6 +6,7 @@
   const worker = window.TOTO_WORKER;
   const workerMap = window.TOTO_WORKER_MAP;
   const workerSchedule = window.TOTO_WORKER_SCHEDULE;
+  const consumerV12 = window.TOTO_CONSUMER_VERSION === '0.12';
   const $ = (selector) => document.querySelector(selector);
   const escape = (text) => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const all = Object.entries(apps).flatMap(([app, value]) => value.screens.map(screen => ({...screen, app})));
@@ -16,10 +17,15 @@
   const drafts = new Map();
   const namedDrafts = new Map();
   const submitted = new Set();
-  const servicePages = new Set(['c-repair','c-install','c-contact','c-confirm']);
-  const registrationPages = new Set(['c-manual-select','c-purchase-date','c-product-code','c-code-result','c-purchase']);
-  const registrationStarts = {manual:'c-manual-select','product-code':'c-product-code'};
-  const registrationSubmits = {'c-product-code': ['c-product-code-form','c-code-result'], 'c-purchase-date': ['c-purchase-date-form','c-purchase'], 'c-purchase': ['c-purchase-form','c-register-result']};
+  const servicePages = new Set(consumerV12 ? ['c-repair','c-contact'] : ['c-repair','c-install','c-contact','c-confirm']);
+  const registrationPages = new Set(consumerV12 ? ['c-register','c-manual-select','c-purchase'] : ['c-manual-select','c-purchase-date','c-product-code','c-code-result','c-purchase']);
+  const registrationStarts = consumerV12 ? {manual:'c-manual-select','product-code':'c-register'} : {manual:'c-manual-select','product-code':'c-product-code'};
+  const registrationSubmits = consumerV12 ? {'c-register':['c-product-code-form','c-register'],'c-purchase':['c-purchase-form','c-product']} : {'c-product-code': ['c-product-code-form','c-code-result'], 'c-purchase-date': ['c-purchase-date-form','c-purchase'], 'c-purchase': ['c-purchase-form','c-register-result']};
+  const consumerAliases = consumerV12 ? {
+    'c-welcome':'c-home','c-phone-sync':'c-home','c-product-code':'c-register','c-code-result':'c-register',
+    'c-installation-code':'c-register','c-code-guide':'c-register','c-code-help':'c-support','c-purchase-date':'c-purchase',
+    'c-register-result':'c-product','c-confirm':'c-contact','c-install':'c-repair','c-outlet-region':'c-outlets'
+  } : {};
   const registrationAllowed = () => Object.hasOwn(registrationStarts, consumer.registrationMethod);
   const consumer = {productId:'t01',serviceType:'repair',hasProducts:true,phoneAuthorized:true,phoneSyncStatus:'synced',registered:{},orders:new Map(),forms:new Map(),media:new Map(),lastSubmitted:null,
     ownedProducts:[],registrationMethod:'product-code',registrationDrafts:new Map(),registrationReceipt:null,nextInstance:3};
@@ -106,18 +112,19 @@
     const previousId=current?.id;
     if(previousId==='w-tasks'&&id!=='w-tasks'&&renderedState==='normal')worker?.saveListPosition($('#phone-body'));
     id=worker?.guard(id)||id;
+    id=consumerAliases[id] || id;
     worker?.onNavigate(id);
     if (['c-outlet-contact','c-outlet-navigation'].includes(id)) id='c-outlet-detail';
     outlets?.clearOverlay();
-    if (id === 'c-home' && !consumer.hasProducts) id = 'c-welcome';
+    if (!consumerV12 && id === 'c-home' && !consumer.hasProducts) id = 'c-welcome';
     const registrationEntry=Object.entries(registrationStarts).find(([,page])=>page===id);
     if (registrationEntry) consumer.registrationMethod=registrationEntry[0];
-    if (registrationPages.has(id) && !registrationAllowed()) id='c-installation-code';
-    if (['c-manual-select','c-purchase-date','c-purchase'].includes(id) && registrationDraft().completedInstanceId) id='c-register-result';
-    if (id==='c-code-result' && consumer.registrationMethod!=='product-code') id='c-product-code';
-    if (id==='c-product-code') consumer.registrationMethod='product-code';
-    if (['c-purchase-date','c-purchase'].includes(id) && !registrationContext().selectedProducts.length) id=registrationStarts[consumer.registrationMethod];
-    if (id==='c-purchase' && !validPurchaseDate(registrationDraft().purchaseDate)) id='c-purchase-date';
+    if (registrationPages.has(id) && !registrationAllowed()) id=consumerV12?'c-register':'c-installation-code';
+    if (!consumerV12 && ['c-manual-select','c-purchase-date','c-purchase'].includes(id) && registrationDraft().completedInstanceId) id='c-register-result';
+    if (!consumerV12 && id==='c-code-result' && consumer.registrationMethod!=='product-code') id='c-product-code';
+    if ((!consumerV12 && id==='c-product-code') || (consumerV12 && id==='c-register')) consumer.registrationMethod='product-code';
+    if ((!consumerV12 && ['c-purchase-date','c-purchase'].includes(id) || consumerV12 && id==='c-purchase') && !registrationContext().selectedProducts.length) id=registrationStarts[consumer.registrationMethod];
+    if (!consumerV12 && id==='c-purchase' && !validPurchaseDate(registrationDraft().purchaseDate)) id='c-purchase-date';
     if (id==='c-product' && !consumer.hasProducts) id='c-register';
     if ((id === 'c-install' && consumer.serviceType !== 'install') || (id === 'c-repair' && consumer.serviceType === 'install')) {
       consumer.serviceType = id === 'c-install' ? 'install' : 'repair';
@@ -199,7 +206,14 @@
   }
   function renderFlows() {
     const c = current.app === 'consumer';
-    const definitions = c ? [
+    const definitions = c && consumerV12 ? [
+      ['首次使用：自动找回或添加产品','首页直接同步购买产品；扫码、输入编码、识别结果和失败重试都在同一添加页完成。',['c-home','c-register','c-product']],
+      ['无码产品：两步手动添加','先选择产品，再一次确认购买日期和必要信息；完成后直接进入产品详情。',['c-register','c-manual-select','c-purchase','c-product']],
+      ['申请服务：两步提交','第一步说明问题，第二步确认联系、时间与同意项，不再经过独立复核页。',['c-home','c-repair','c-contact','c-submit-result','c-progress']],
+      ['跟进服务','服务 Tab 只展示状态摘要和下一步，完整节点在独立进度页查看。',['c-service','c-progress','c-evaluation']],
+      ['查找网点与联系帮助','网点默认列表展示，地区在同页层中选择；编码帮助与客服共用一个支持面。',['c-service','c-outlets','c-outlet-detail','c-support']],
+      ['管理个人与隐私信息','我的 Tab 不再复制产品和服务，只保留个人资料、购买记录、隐私和帮助。',['c-mine','c-profile','c-preferences','c-purchases','c-privacy']]
+    ] : c ? [
       ['手机号授权：自动同步购买产品','验证手机号后匹配各可信订单来源；同一购买明细只建立一次关系，产品直接出现在“我的产品”。',['c-welcome','c-phone-sync','c-products','c-home']],
       ['扫一扫：系统识别编码并添加','统一扫描产品码、溯源码、SN 或购买凭证码；可信唯一标识直接关联，普通商品码只识别型号。',['c-register','c-product-code','c-code-result','c-register-result','c-home']],
       ['无码产品：手动选择作为兜底','无法扫码时再按分类、系列选择商品并填写购买日期；创建待核验产品，不自动获得服务权益。',['c-register','c-manual-select','c-purchase-date','c-purchase','c-register-result']],
@@ -315,14 +329,14 @@
     $('#consumer-scenario').value=consumer.hasProducts?'registered':'welcome';
   }
   function completeRegistration() {
-    if (!registrationAllowed()) {consumer.registrationReceipt=null;showScreen('c-installation-code');showToast('安装码用于向门店或客服查询记录，不能在这里登记产品。');return false;}
+    if (!registrationAllowed()) {consumer.registrationReceipt=null;showScreen(consumerV12?'c-register':'c-installation-code');showToast('安装码用于向门店或客服查询记录，不能在这里登记产品。');return false;}
     const reg=registrationDraft(),ctx=registrationContext();
     if (reg.completedInstanceId) {
       const existing=consumer.ownedProducts.find(p=>p.id===reg.completedInstanceId);
       if (existing) {consumer.productId=existing.id;consumer.registrationReceipt={...existing.registration,products:[existing]};return true;}
     }
     if (!ctx.selectedProducts.length) {showScreen(registrationStarts[consumer.registrationMethod]);showToast('请先选择商品或完成码识别。');return false;}
-    if (!validPurchaseDate(reg.purchaseDate)) {showScreen('c-purchase-date');showToast('请先填写有效的购买日期。');return false;}
+    if (!validPurchaseDate(reg.purchaseDate)) {showScreen(consumerV12?'c-purchase':'c-purchase-date');showToast('请先填写有效的购买日期。');return false;}
     if (!reg.userName?.trim() || !/^1\d{10}$/.test(reg.phone || '') || !reg.address?.trim() || !reg.region || !reg.privacyConsent) {
       showToast('请核对姓名、手机号、使用地址和隐私同意项。');return false;
     }
@@ -376,7 +390,7 @@
     if (account?.owns(current.id) && account.handle(el,{root:$('#phone-body'),context:consumerContext(),render,showToast})) {event.preventDefault();return;}
     if (el.dataset.regMethod) {
       event.preventDefault();
-      if (el.dataset.regMethod==='installation-code') {showScreen('c-installation-code');return;}
+      if (el.dataset.regMethod==='installation-code') {showScreen(consumerV12?'c-support':'c-installation-code');return;}
       if (!Object.hasOwn(registrationStarts,el.dataset.regMethod)) return;
       saveDraft();
       consumer.registrationMethod=el.dataset.regMethod;
@@ -392,7 +406,7 @@
     else if ('claimScan' in el.dataset) {
       event.preventDefault();
       if (!completeScanClaim()) {showToast('请先扫描并核对可认领的产品编码。');return;}
-      showScreen('c-register-result',true,true);showToast(consumer.registrationReceipt?.alreadyOwned?'该产品已在“我的产品”中。':'产品已添加到“我的产品”。');
+      showScreen(consumerV12?'c-product':'c-register-result',true,true);showToast(consumer.registrationReceipt?.alreadyOwned?'该产品已在“我的产品”中。':'产品已添加到“我的产品”。');
     }
     else if (el.dataset.category || el.dataset.series || el.dataset.catalogProduct) {
       event.preventDefault();saveDraft();
@@ -406,10 +420,17 @@
     }
     else if (el.dataset.codeExample) {
       event.preventDefault();saveDraft();
-      if (current.id!=='c-product-code' || consumer.registrationMethod!=='product-code') {showScreen('c-installation-code');return;}
+      if (current.id!==(consumerV12?'c-register':'c-product-code') || consumer.registrationMethod!=='product-code') {showScreen(consumerV12?'c-register':'c-installation-code');return;}
       const example=el.dataset.codeExample;
       registrationDraft().productCode=example==='not-found'?'NOT-FOUND':example==='credential'?'DEMO-INSTALL-003':example==='model'?'DEMO-PRODUCT-001':example==='alternate'?'DEMO-TRACE-002':'DEMO-SN-001';
-      drafts.delete(draftKey());lookupRegistrationCode();showScreen('c-code-result',true,true);
+      drafts.delete(draftKey());lookupRegistrationCode();showScreen(consumerV12?'c-register':'c-code-result',true,true);
+    }
+    else if ('scanReset' in el.dataset) {
+      event.preventDefault();
+      const draft=registrationDraft();
+      Object.assign(draft,{productCode:'',lookupStatus:'idle',catalogProductId:'',codeType:'',identifierKey:'',knownInstanceId:''});
+      delete draft.completedInstanceId;
+      drafts.delete(draftKey());render();
     }
     else if (el.dataset.product) {
       event.preventDefault();
@@ -420,7 +441,7 @@
     else if (el.dataset.serviceType) {
       event.preventDefault();
       if (!serviceNames[el.dataset.serviceType]) return;
-      if (!consumer.hasProducts) {showScreen('c-register');showToast('先登记产品，让服务准确找到需要帮助的产品。');return;}
+      if (!consumer.hasProducts) {showScreen(consumerV12?'c-support':'c-register');showToast('还没有可选的产品，可先添加产品或联系客服。');return;}
       saveDraft();consumer.serviceType=el.dataset.serviceType;
       const order=consumer.orders.get(consumer.productId);
       if (order) {showScreen('c-progress',true,true);showToast('已有服务进行中，可以先查看进度或联系客服。');return;}
@@ -448,7 +469,7 @@
     if (!form) return;
     event.preventDefault();
     if (current.app==='consumer') {
-      if (form.id==='c-installation-code-form' || current.id==='c-installation-code' || (registrationPages.has(current.id) && !registrationAllowed())) {
+      if (!consumerV12 && (form.id==='c-installation-code-form' || current.id==='c-installation-code' || (registrationPages.has(current.id) && !registrationAllowed()))) {
         consumer.registrationReceipt=null;showScreen('c-installation-code');return;
       }
       if (registrationPages.has(current.id) && (!registrationSubmits[current.id] || registrationSubmits[current.id][0]!==form.id)) return;
@@ -460,13 +481,14 @@
         if (!error) {error=document.createElement('p');error.className='field-error';error.dataset.installError='';error.setAttribute('role','alert');form.prepend(error);}
         error.textContent='请至少选择一件需要安装的产品。';error.scrollIntoView({block:'center'});return;
       }
-      if (current.id==='c-confirm' && !completeConsumerRequest()) return;
-      if (current.id==='c-product-code' && !lookupRegistrationCode()) return;
+      if ((current.id==='c-confirm' || consumerV12 && current.id==='c-contact') && !completeConsumerRequest()) return;
+      if ((current.id==='c-product-code' || consumerV12 && current.id==='c-register') && !lookupRegistrationCode()) return;
       if (current.id==='c-purchase-date' && !validPurchaseDate(registrationDraft().purchaseDate)) {showToast('请选择不晚于今天的购买日期。');return;}
+      if (consumerV12 && current.id==='c-purchase' && !validPurchaseDate(registrationDraft().purchaseDate)) {showToast('请选择不晚于今天的购买日期。');return;}
       if (current.id==='c-purchase' && !completeRegistration()) return;
       const evaluated=current.id==='c-evaluation';
       const registeredNow=current.id==='c-purchase';
-      const requestSubmitted=['c-confirm','c-purchase'].includes(current.id);
+      const requestSubmitted=[consumerV12?'c-contact':'c-confirm','c-purchase'].includes(current.id);
       const target=registrationSubmits[current.id]?.[1] || form.dataset.submitGo;
       submitted.add(current.id);showScreen(target,true,requestSubmitted);
       if (registeredNow) routeHistory=[];
@@ -502,6 +524,7 @@
     if(current.id==='w-map' && workerMap?.back()){render();return;}
     if(worker?.owns(current.id) && worker.overlay()){worker.actAction('dismiss');renderOutletOverlay();return;}
     if(outlets?.dismiss()){renderOutletOverlay();return;}
+    if(outlets?.back()){render();return;}
     showScreen(routeHistory.pop() || current.parent || current.tab || apps[current.app].screens[0].id,false);
   });
   document.addEventListener('keydown',event=>{
@@ -516,12 +539,15 @@
   });
   $('#prev-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)-1].id);});
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
-  $('#consumer-scenario').addEventListener('change',event=>{const keepPage=current.id==='c-service' || account?.owns(current.id) ? current.id : null;resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (consumer.hasProducts?'c-home':'c-welcome'),false,true);});
+  $('#consumer-scenario').addEventListener('change',event=>{const keepPage=current.id==='c-service' || account?.owns(current.id) ? current.id : null;resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (consumer.hasProducts||consumerV12?'c-home':'c-welcome'),false,true);});
   $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
   $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
   if(captureId==='w-map'&&workerMap){const demo=new URLSearchParams(location.search).get('map-demo');if(['single','today'].includes(demo)){workerMap.open();workerMap.act(demo);workerMap.act('origin','station');workerMap.act('calculate');}}
   if(['w-tasks','w-schedule'].includes(captureId)&&workerSchedule){const date=new URLSearchParams(location.search).get('schedule-date');if(date&&workerSchedule.validDate(date))workerSchedule.setDate(date);}
   const initialId=captureId==='w-tasks'&&new URLSearchParams(location.search).has('schedule-date')?'w-schedule':captureId;
+  document.querySelectorAll?.('[data-consumer-version-link]').forEach(link=>link.setAttribute('aria-current',link.dataset.consumerVersionLink===(consumerV12?'0.12':'0.11')?'page':'false'));
+  const versionNote=$('#prototype-version-note');
+  if(versionNote)versionNote.innerHTML=`消费者 ${consumerV12?'v0.12 · 流程合并与信息减量':'v0.11 · 优化前原版'}<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，不代表真实业务已实现。`;
   if(all.length) showScreen(initialId || location.hash.slice(1) || all[0].id,false);
 })();
