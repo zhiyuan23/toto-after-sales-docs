@@ -17,7 +17,7 @@ function complete(w,usage='none'){
   return w.submitAction('completion',{submitChecked:true});
 }
 test('queue, substatus, search and counts use the same tasks',()=>{
-  const w=fixture();assert.equal(w.filteredTasks().length,7);w.actAction('filter','returned');assert.equal(w.filteredTasks().length,1);assert.equal(w.filteredTasks()[0].queue,'pending');
+  const w=fixture();assert.equal(w.filteredTasks().length,7);w.actAction('queue','returned');assert.equal(w.filteredTasks().length,1);assert.equal(w.filteredTasks()[0].queue,'pending');
   w.actAction('clear-filter');w.actAction('queue','pending');w.submitAction('task-search',{search:'云锦'});assert.equal(w.filteredTasks().length,1);assert.equal(w.filteredTasks()[0].name,'陈女士');
   w.submitAction('task-search',{search:'no-match'});assert.equal(w.filteredTasks().length,0);
 });

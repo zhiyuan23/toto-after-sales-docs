@@ -9,7 +9,7 @@ function fixture(){const window={};for(const f of ['worker.js','worker-map.js'])
 const ids=list=>Array.from(list,t=>t.id);
 test('map shares task filtering, excludes remote and missing coordinates from markers',()=>{
   const {m,w}=fixture();m.open();assert.equal(m.rows().length,7);assert.equal(m.groups().length,5);assert.equal(m.snapshot().selected,CHEN);assert.equal(m.point(m.rows().find(t=>t.id===ZHOU)),null);
-  w.actAction('filter','returned');m.render();assert.equal(m.rows().length,1);assert.equal(m.groups().length,1);
+  w.actAction('queue','returned');m.render();assert.equal(m.rows().length,1);assert.equal(m.groups().length,1);
   w.submitAction('task-search',{search:'no-match'});m.render();assert.equal(m.groups().length,0);assert.equal(m.snapshot().selected,null);
 });
 test('selected marker and detail navigation refer to the same task without implicit business mutation',()=>{

@@ -3,3 +3,12 @@
 .ws-event-card footer .ws-link{min-height:26px;padding:3px 1px}.ws-calendar-toolbar{margin-top:2px}
 
 .ws-followup.amber{padding:8px 10px;margin-bottom:10px}.ws-event-card footer .ws-link{min-height:24px}
+
+/* Schedule selections use the same deeper service blue. */
+.ws-link{color:var(--w-blue)}
+.ws-week .selected,.ws-month-grid button.selected{background:var(--w-blue)}
+.ws-week .selected{box-shadow:0 4px 10px #2b74aa24}
+.ws-unplanned-entry{background:var(--w-blue-soft);color:var(--w-blue-deep)}
+.ws-unplanned-entry b,.ws-badge{color:var(--w-blue);background:#fff}
+.ws-event-card{border-left-color:#77a9c9}
+.ws-page button:focus-visible{outline-color:var(--w-blue)}

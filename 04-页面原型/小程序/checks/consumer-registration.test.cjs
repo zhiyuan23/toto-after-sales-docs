@@ -39,11 +39,19 @@ function fixture({ hash = '', search = '' } = {}) {
   vm.runInContext(source.slice(0, index) + hook + source.slice(index), context, { filename: 'app.js' });
   const api = context.window.testController;
   const fields = values => { get('#phone-body').fields = Object.entries(values).map(([name, value]) => ({ name, type: typeof value === 'boolean' ? 'checkbox' : 'text', value: typeof value === 'boolean' ? '' : value, checked: value === true })); };
-  const click = dataset => events.get('click')({ preventDefault() {}, target: { closest: () => ({ dataset, disabled: false, hasAttribute: () => false }) } });
+  const click = dataset => events.get('click')({ preventDefault() {}, target: { closest: () => ({
+    dataset, disabled: false,
+    hasAttribute(name) {
+      if (!name.startsWith('data-')) return false;
+      const key=name.slice(5).replace(/-([a-z])/g,(_match,letter)=>letter.toUpperCase());
+      return Object.hasOwn(dataset,key);
+    },
+  }) } });
+  const change = (name, value) => events.get('change')({ target: { name, value, id: '', dataset: {}, hasAttribute: () => false } });
   const submit = (id, target, valid = true) => {
     const form = {
       id, dataset: { submitGo: target }, checkValidity: () => valid,
-      hasAttribute: name => name === 'id' || name === 'data-submit-go' || (name === 'data-account-form' && ['c-profile-form','c-phone-form','c-preferences-form'].includes(id)),
+      hasAttribute: name => name === 'id' || name === 'data-submit-go' || (name === 'data-account-form' && id==='c-preferences-form'),
       matches(selector) {
         const match = /^form(?:\[([a-z-]+)\])?$/.exec(selector);
         return Boolean(match && (!match[1] || this.hasAttribute(match[1])));
@@ -53,7 +61,7 @@ function fixture({ hash = '', search = '' } = {}) {
     // A submit event targets its form; distinguish normal submissions from outlet search forms.
     events.get('submit')({ preventDefault() {}, target: form });
   };
-  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, worker:context.window.TOTO_WORKER, schedule:context.window.TOTO_WORKER_SCHEDULE, apps: context.window.TOTO_SCREENS, get, fields, click, submit, location, windowEvents };
+  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, worker:context.window.TOTO_WORKER, schedule:context.window.TOTO_WORKER_SCHEDULE, apps: context.window.TOTO_SCREENS, get, fields, click, change, submit, location, windowEvents };
 }
 const copy = value => JSON.parse(JSON.stringify(value));
 const personal = { userName: '虚构顾客', phone: '13800000000', useType: 'self', region: '示例省 / 示例市 / 示例区', address: '虚构地址一号', privacyConsent: true };
@@ -65,46 +73,37 @@ test('v0.11 and v0.13 expose the same consumer screens and differ only by visual
   assert.match(index,/consumer-v011-legacy\.css/);
   assert.doesNotMatch(index,/consumer-v012\.(?:js|css)/);
   assert.ok(existsSync(resolve(root,'consumer-v011-legacy.css')));
-  assert.equal(fixture().apps.consumer.screens.length,30);
+  assert.equal(fixture().apps.consumer.screens.length,29);
+  assert.ok(!fixture().apps.consumer.screens.some(screen=>screen.id==='c-phone-sync'));
 });
 
-test('profile edits retain drafts, require complete optional address, and never rewrite historical registration', () => {
+test('profile fields are optional, update independently, and never rewrite historical registration', () => {
   const f=fixture({hash:'#c-profile'}), before=copy(f.consumer.ownedProducts);
-  f.fields({userName:'新示例姓名',region:'',address:'',serviceNotice:false});
-  f.click({go:'c-mine'});
-  assert.equal(f.account.profile().userName,'陈女士');
-  f.click({go:'c-profile'});
-  assert.match(f.get('#phone-body').innerHTML,/新示例姓名/);
-  f.fields({userName:'新示例姓名',region:'',address:'只填一半',serviceNotice:false});
-  f.submit('c-profile-form');
-  assert.equal(f.account.profile().userName,'陈女士');
-  f.fields({userName:'  ',region:'',address:'',serviceNotice:false});
-  f.submit('c-profile-form');
-  assert.equal(f.account.profile().userName,'陈女士');
-  f.fields({userName:'新示例姓名',region:'',address:'',serviceNotice:false});
-  f.submit('c-profile-form');
+  assert.doesNotMatch(f.get('#phone-body').innerHTML,/必填|选填|保存个人信息|服务进度提醒/);
+  f.change('userName','新示例姓名');
   assert.equal(f.account.profile().userName,'新示例姓名');
-  assert.equal(f.account.profile().serviceNotice,false);
+  f.change('region','');
+  f.change('address','只填写详细地址');
+  assert.equal(f.account.profile().region,'');
+  assert.equal(f.account.profile().address,'只填写详细地址');
+  f.change('userName','');
+  assert.equal(f.account.profile().userName,'');
   assert.deepEqual(copy(f.consumer.ownedProducts),before);
   f.click({go:'c-mine'});
-  assert.match(f.get('#phone-body').innerHTML,/新示例姓名/);
+  assert.match(f.get('#phone-body').innerHTML,/TOTO 用户/);
 });
 
-test('phone changes require both verification steps and bind the new code to its requested number', () => {
+test('phone changes use a WeChat authorization dialog without SMS verification', () => {
   const f=fixture({hash:'#c-profile'});
   f.click({account:'change-phone'});
-  f.fields({oldCode:'123456'});f.submit('c-phone-form');
-  assert.match(f.get('#phone-body').innerHTML,/验证原手机号/);
-  f.click({account:'send-old'});
-  f.fields({oldCode:'000000'});f.submit('c-phone-form');
+  assert.match(f.get('#outlet-overlay').innerHTML,/微信绑定号码/);
+  assert.doesNotMatch(f.get('#outlet-overlay').innerHTML,/验证码|短信/);
+  f.click({account:'dismiss-phone-auth'});
   assert.equal(f.account.profile().phone,'13800000026');
-  f.fields({oldCode:'123456'});f.submit('c-phone-form');
-  assert.match(f.get('#phone-body').innerHTML,/验证新手机号/);
-  f.fields({newPhone:'13900000000',newCode:''});f.click({account:'send-new'});
-  f.fields({newPhone:'13900000001',newCode:'654321'});f.submit('c-phone-form');
-  assert.equal(f.account.profile().phone,'13800000026');
-  f.fields({newPhone:'13900000000',newCode:'654321'});f.submit('c-phone-form');
+  f.click({account:'change-phone'});
+  f.click({account:'confirm-phone-auth'});
   assert.equal(f.account.profile().phone,'13900000000');
+  assert.equal(f.get('#outlet-overlay').innerHTML,'');
   f.resetConsumer();
   assert.equal(f.account.profile().phone,'13800000026');
 });
@@ -112,36 +111,39 @@ test('phone changes require both verification steps and bind the new code to its
 test('purchase records group explicit synced orders and distinguish user reported products', () => {
   const f=fixture({hash:'#c-purchases'});
   assert.equal(f.account.records(f.consumerContext()).length,1);
-  assert.equal(f.account.records(f.consumerContext())[0].products.length,2);
-  f.click({account:'record',recordId:'DEMO-PURCHASE-001'});
-  assert.match(f.get('#phone-body').innerHTML,/DEMO-INSTALL-001/);
-  assert.match(f.get('#phone-body').innerHTML,/DEMO-INSTALL-002/);
+  assert.equal(f.account.records(f.consumerContext())[0].products.length,3);
+  assert.doesNotMatch(f.get('#phone-body').innerHTML,/来源与产品信息|DEMO-INSTALL|data-record-id/);
   f.click({product:'b02',go:'c-product'});
   assert.equal(f.consumer.productId,'b02');
+  assert.doesNotMatch(f.get('#phone-body').innerHTML,/DEMO-INSTALL-002/);
+  f.click({productInfo:''});
+  assert.match(f.get('#phone-body').innerHTML,/DEMO-INSTALL-002/);
   f.resetConsumer('welcome');chooseManual(f);finish(f);
   f.click({go:'c-purchases'});
   assert.match(f.get('#phone-body').innerHTML,/用户申报/);
   assert.match(f.get('#phone-body').innerHTML,/购买门店未提供/);
-  f.click({account:'record',recordId:f.consumer.ownedProducts[0].id});
-  assert.match(f.get('#phone-body').innerHTML,/暂无关联安装码/);
   assert.doesNotMatch(f.get('#phone-body').innerHTML,/DEMO-INSTALL/);
   f.resetConsumer('welcome');f.showScreen('c-purchases');
-  assert.match(f.get('#phone-body').innerHTML,/还没有同步到购买记录/);
+  assert.match(f.get('#phone-body').innerHTML,/还没有购买记录/);
 });
 
 test('verified mobile authorization syncs purchase products automatically and remains idempotent', () => {
   const f=fixture({hash:'#c-welcome'});
-  f.resetConsumer('welcome');f.showScreen('c-phone-sync');
+  f.resetConsumer('welcome');f.showScreen('c-welcome');
   assert.equal(f.consumer.phoneAuthorized,false);
   assert.equal(f.consumer.ownedProducts.length,0);
   f.click({phoneSync:''});
+  assert.equal(f.current().id,'c-welcome');
+  assert.match(f.get('#outlet-overlay').innerHTML,/授权手机号/);
+  f.click({account:'confirm-phone-auth'});
   assert.equal(f.current().id,'c-products');
   assert.equal(f.consumer.phoneAuthorized,true);
   assert.equal(f.consumer.phoneSyncStatus,'synced');
-  assert.equal(f.consumer.ownedProducts.length,2);
+  assert.equal(f.consumer.ownedProducts.length,3);
   assert.ok(f.consumer.ownedProducts.every(product=>product.sourceLabel==='手机号同步'));
-  f.showScreen('c-phone-sync');f.click({phoneSync:''});
-  assert.equal(f.consumer.ownedProducts.length,2);
+  f.showScreen('c-purchases');f.click({phoneSync:''});
+  assert.equal(f.current().id,'c-purchases');
+  assert.equal(f.consumer.ownedProducts.length,3);
 });
 function chooseManual(f) {
   f.click({ regMethod: 'manual' });
@@ -242,13 +244,13 @@ test('phone sync and trusted scan converge on the same known product instance in
   const original=syncedFirst.consumer.ownedProducts.find(product=>product.id==='t01');
   syncedFirst.click({regMethod:'product-code'});syncedFirst.fields({productCode:'DEMO-SN-001'});syncedFirst.submit('c-product-code-form','c-code-result');
   assert.equal(syncedFirst.registrationDraft().lookupStatus,'owned');syncedFirst.click({claimScan:''});
-  assert.equal(syncedFirst.consumer.ownedProducts.length,2);
+  assert.equal(syncedFirst.consumer.ownedProducts.length,3);
   assert.ok(original.identifierKeys.includes('sn:DEMO-SN-001'));
 
   const scanFirst=fixture();scanFirst.resetConsumer('welcome');scanFirst.click({regMethod:'product-code'});
   scanFirst.fields({productCode:'DEMO-SN-001'});scanFirst.submit('c-product-code-form','c-code-result');scanFirst.click({claimScan:''});
-  const scanned=scanFirst.consumer.ownedProducts[0];scanFirst.showScreen('c-phone-sync');scanFirst.click({phoneSync:''});
-  assert.equal(scanFirst.consumer.ownedProducts.length,2);
+  const scanned=scanFirst.consumer.ownedProducts[0];scanFirst.click({phoneSync:''});scanFirst.click({account:'confirm-phone-auth'});
+  assert.equal(scanFirst.consumer.ownedProducts.length,3);
   assert.equal(scanFirst.consumer.ownedProducts.find(product=>product.catalogId==='t01').id,scanned.id);
   assert.equal(scanned.sourceLabel,'手机号同步 + 扫码');
 });
@@ -328,9 +330,9 @@ test('all templates render across consumer scenarios, registration methods, code
   const f = fixture();
   const screens = [...f.apps.consumer.screens, ...f.apps.worker.screens];
   const ids = new Set(screens.map(screen => screen.id));
-  assert.equal(f.apps.consumer.screens.length, 30);
+  assert.equal(f.apps.consumer.screens.length, 29);
   assert.equal(f.apps.worker.screens.length, 28);
-  assert.equal(ids.size, 58);
+  assert.equal(ids.size, 57);
   let combinations = 0;
   for (const scenario of ['welcome', 'registered', 'confirmed']) {
     f.resetConsumer(scenario);
@@ -354,13 +356,13 @@ test('all templates render across consumer scenarios, registration methods, code
       }
     }
   }
-  assert.equal(combinations, 12528);
+  assert.equal(combinations, 12312);
   f.consumer.registrationMethod = 'manual';
   f.showScreen('c-home');
   f.renderFlows();
   assert.equal((f.get('#flows-view').innerHTML.match(/class="flow-card"/g) || []).length, 8);
   f.renderAtlas();
-  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 30);
+  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 29);
 });
 
 test('service request exploration still follows the newly registered product without creating an installation code', () => {
@@ -409,14 +411,18 @@ test('switching between existing and newly registered products never carries ins
   finish(f);
   const id = f.consumer.productId;
   f.click({ product: 't01', go: 'c-product' });
+  assert.doesNotMatch(f.get('#phone-body').innerHTML, /DEMO-INSTALL-001/);
+  f.click({ productInfo: '' });
   assert.match(f.get('#phone-body').innerHTML, /DEMO-INSTALL-001/);
   f.click({ registrationRecord: 'current', go: 'c-register-result' });
   assert.match(f.get('#phone-body').innerHTML, /DEMO-INSTALL-001/);
   f.click({ product: id, go: 'c-product' });
   assert.doesNotMatch(f.get('#phone-body').innerHTML, /DEMO-INSTALL/);
+  f.click({ productInfo: '' });
+  assert.doesNotMatch(f.get('#phone-body').innerHTML, /DEMO-INSTALL/);
   f.click({ registrationRecord: 'current', go: 'c-register-result' });
   assert.doesNotMatch(f.get('#phone-body').innerHTML, /DEMO-INSTALL/);
-  assert.match(f.get('#phone-body').innerHTML, /用户申报产品/);
+  assert.match(f.get('#phone-body').innerHTML, /无码辅助添加/);
 });
 
 
@@ -522,15 +528,15 @@ test('an empty service hub does not imply active service or offer a progress act
 const preferenceFields = (f, selected) => {
   f.get('#phone-body').fields = [['interests','smart-toilet'],['interests','bathtub'],['contentPreferences','care'],['contentPreferences','offers']].map(([name,value])=>({name,value,type:'checkbox',checked:selected.includes(value)}));
 };
-test('preference drafts survive navigation and save independently from profile, purchases and notifications', () => {
+test('preference drafts survive navigation and save independently from profile and purchases', () => {
   const f=fixture({hash:'#c-profile'}), purchases=copy(f.consumer.ownedProducts);
-  f.fields({userName:'资料草稿',region:'',address:'',serviceNotice:false});
+  f.change('userName','资料更新');
   f.click({go:'c-preferences'});
   assert.equal(f.account.profile().preferencesSaved,false);
   assert.deepEqual(copy(f.account.profile().interests),[]);
   preferenceFields(f,['smart-toilet','care','offers']);
   f.click({go:'c-profile'});
-  assert.match(f.get('#phone-body').innerHTML,/资料草稿/);
+  assert.match(f.get('#phone-body').innerHTML,/资料更新/);
   assert.equal(f.account.profile().preferencesSaved,false);
   f.click({go:'c-preferences'});
   assert.match(f.get('#phone-body').innerHTML,/value="care" checked/);
@@ -538,11 +544,9 @@ test('preference drafts survive navigation and save independently from profile, 
   f.submit('c-preferences-form');
   assert.deepEqual(copy(f.account.profile().interests),['smart-toilet']);
   assert.deepEqual(copy(f.account.profile().contentPreferences),['care','offers']);
-  assert.equal(f.account.profile().userName,'陈女士');
-  assert.equal(f.account.profile().serviceNotice,true);
+  assert.equal(f.account.profile().userName,'资料更新');
   f.click({go:'c-profile'});
-  f.fields({userName:'资料草稿',region:'',address:'',serviceNotice:false});
-  f.submit('c-profile-form');
+  f.change('address','单项更新地址');
   assert.deepEqual(copy(f.account.profile().contentPreferences),['care','offers']);
   assert.deepEqual(copy(f.consumer.ownedProducts),purchases);
 });
@@ -559,30 +563,28 @@ test('preferences can be cleared and empty saved selections differ from an untou
   assert.equal(f.account.profile().preferencesSaved,false);
 });
 const avatarFile = {type:'image/png',size:256,data:'data:image/png;base64,DEMO'};
-test('avatar preview needs saving, validates files, preserves the saved image on failure, and allows replacing it', () => {
+test('avatar updates independently, validates files, preserves the saved image on failure, and allows replacing it', () => {
   const f=fixture({hash:'#c-profile'});
   f.upload(null);assert.equal(f.readers.length,0);
   f.upload({type:'image/svg+xml',size:50});assert.equal(f.readers.length,0);
   f.upload({...avatarFile,size:6*1024*1024});assert.equal(f.readers.length,0);
   f.upload(avatarFile);
-  f.submit('c-profile-form');assert.equal(f.account.profile().avatar,'');
-  f.readers[0].onload();f.images[0].onload();
   assert.equal(f.account.profile().avatar,'');
+  f.readers[0].onload();f.images[0].onload();
+  assert.equal(f.account.profile().avatar,avatarFile.data);
   assert.match(f.get('#phone-body').innerHTML,/data:image\/png;base64,DEMO/);
-  f.submit('c-profile-form');assert.equal(f.account.profile().avatar,avatarFile.data);
   f.click({go:'c-mine'});assert.match(f.get('#phone-body').innerHTML,/data:image\/png;base64,DEMO/);
   f.click({go:'c-profile'});f.upload(avatarFile);f.readers[1].onload();f.images[1].onerror();
   assert.equal(f.account.profile().avatar,avatarFile.data);
   f.upload({...avatarFile,data:'data:image/png;base64,REPLACED'});f.readers[2].onload();f.images[2].onload();
-  assert.equal(f.account.profile().avatar,avatarFile.data);
-  f.submit('c-profile-form');assert.equal(f.account.profile().avatar,'data:image/png;base64,REPLACED');
+  assert.equal(f.account.profile().avatar,'data:image/png;base64,REPLACED');
   f.resetConsumer();f.showScreen('c-mine');assert.match(f.get('#phone-body').innerHTML,/default-avatar.svg/);
 });
 test('late avatar reads cannot overwrite a newer choice or revive a reset profile', () => {
   const f=fixture({hash:'#c-profile'});
   f.upload(avatarFile);f.readers[0].onload();
   f.upload({...avatarFile,data:'data:image/png;base64,NEW'});f.readers[1].onload();f.images[1].onload();
-  f.images[0].onload();f.submit('c-profile-form');
+  f.images[0].onload();
   assert.equal(f.account.profile().avatar,'data:image/png;base64,NEW');
   f.upload(avatarFile);f.readers[2].onload();f.resetConsumer();f.images[2].onload();
   assert.equal(f.account.profile().avatar,'');
@@ -591,19 +593,19 @@ test('late avatar reads cannot overwrite a newer choice or revive a reset profil
 
 test('worker home stays a list; calendar is a child page and returning restores applied filters, scroll and query draft',()=>{
   const f=fixture({hash:'#w-tasks'}),body=f.get('#phone-body');
-  assert.match(body.innerHTML,/任务快捷入口/);assert.doesNotMatch(body.innerHTML,/任务查看方式/);
+  assert.match(body.innerHTML,/今日工作快捷入口/);assert.doesNotMatch(body.innerHTML,/任务查看方式/);
   f.worker.submitAction('task-search',{search:'示例'});f.showScreen('w-tasks');
   const input={value:'尚未查询的文字'};body.querySelector=selector=>selector==='[name="search"]'?input:null;body.scrollTop=320;
   f.click({wsched:'day'});assert.equal(f.current().id,'w-schedule');assert.equal(f.get('#phone-tabs').innerHTML,'');
   assert.equal(f.get('#phone-back').style.visibility,'visible');assert.match(body.innerHTML,/一周日程/);
   f.click({wsched:'date',value:'2026-09-14'});input.value='';f.get('#phone-back').click();
-  assert.equal(f.current().id,'w-tasks');assert.match(body.innerHTML,/任务快捷入口/);assert.equal(body.scrollTop,320);assert.equal(input.value,'尚未查询的文字');assert.equal(f.worker.snapshot().search,'示例');
+  assert.equal(f.current().id,'w-tasks');assert.match(body.innerHTML,/今日工作快捷入口/);assert.equal(body.scrollTop,320);assert.equal(input.value,'尚未查询的文字');assert.equal(f.worker.snapshot().search,'示例');
   assert.equal(f.schedule.snapshot().date,'2026-09-14');f.click({wsched:'today'});assert.equal(f.current().id,'w-schedule');assert.equal(f.schedule.snapshot().date,'2026-09-13');assert.equal(f.worker.snapshot().search,'示例');
 });
 test('calendar deep links and old capture links resolve to an independent screen; back returns to list home',()=>{
   for(const options of [{hash:'#w-schedule'},{search:'?capture=w-tasks&schedule-date=2026-09-14'},{search:'?capture=w-schedule&schedule-date=2026-09-14'}]){
     const f=fixture(options);assert.equal(f.current().id,'w-schedule');assert.equal(f.get('#phone-tabs').innerHTML,'');
-    f.get('#phone-back').click();assert.equal(f.current().id,'w-tasks');assert.match(f.get('#phone-tabs').innerHTML,/配件/);assert.match(f.get('#phone-body').innerHTML,/任务快捷入口/);
+    f.get('#phone-back').click();assert.equal(f.current().id,'w-tasks');assert.match(f.get('#phone-tabs').innerHTML,/配件/);assert.match(f.get('#phone-body').innerHTML,/今日工作快捷入口/);
   }
 });
 test('worker list return positions cannot cross changed filters or companies',()=>{

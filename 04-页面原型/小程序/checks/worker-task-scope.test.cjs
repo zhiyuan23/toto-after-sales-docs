@@ -19,6 +19,18 @@ test('task groups include disconnected follow-up and primary actions open the co
   assert.equal(w.actAction('task-next',HUANG),'w-review');assert.equal(w.actAction('task-next',SUN),'w-review');
   w.actAction('queue','history');assert.equal(w.filteredTasks().length,2);w.actAction('history-filter','closed');assert.equal(w.filteredTasks().length,0);
 });
+test('task home overview exposes explicit schedule and parts destinations without coupling secondary filters',()=>{
+  const {w,s,page}=fixture();let html=page('w-tasks').body();
+  assert.match(html,/class="w-task-tools"/);assert.match(html,/data-wmap="open"/);assert.doesNotMatch(html,/data-wsched="day"/);
+  assert.match(html,/class="w-focus-actions"/);assert.match(html,/data-wsched="today"[^>]+查看今日日程，共 2 单预约/);assert.match(html,/data-worker="dashboard-filter" data-value="parts"[^>]+查看等配件任务，共 1 单/);
+  assert.doesNotMatch(html,/class="w-task-nav"|快捷筛选/);assert.match(html,/待处理任务筛选/);assert.equal(s.act('today'),'w-schedule');
+  assert.ok(html.indexOf('class="w-focus"')<html.indexOf('w-task-queues'));
+  assert.equal(w.actAction('filter','today'),'w-tasks');assert.equal(w.filteredTasks().length,2);assert.equal(w.snapshot().queue,'pending');
+  html=page('w-tasks').body();assert.match(html,/class="selected" data-worker="filter" data-value="today"/);
+  w.actAction('queue','returned');w.actAction('filter','parts');assert.equal(w.snapshot().queue,'returned');assert.equal(w.snapshot().filter,'all');
+  assert.doesNotMatch(page('w-tasks').body(),/待处理任务筛选/);
+  w.actAction('dashboard-filter','parts');assert.equal(w.snapshot().queue,'pending');assert.equal(w.snapshot().filter,'parts');assert.equal(w.filteredTasks().length,1);
+});
 test('review and returned-material tasks cannot be modified through stale scheduling or service links',()=>{
   const {w,page}=fixture();for(const id of [HUANG,ZHAO]){w.actAction('task',id);assert.doesNotMatch(page('w-detail').body(),/联系 \/ 改约|编辑补充信息|去这单/);assert.equal(w.guard('w-appointment'),'w-detail');assert.equal(w.guard('w-service'),'w-detail');assert.throws(()=>w.submitAction('appointment',{result:'lost',note:'不应更改'}),/不可/);assert.throws(()=>w.submitAction('edit',{note:'不应更改'}),/仅可查看/);assert.throws(()=>w.submitAction('exception',{flag:'已取消',reason:'不应更改'}),/不可/);}
 });
@@ -44,7 +56,7 @@ test('four task groups are disjoint, cover authorized tasks and track review ret
   const ids=groups.flatMap(key=>Array.from(w.filteredTasks(key),t=>t.id));
   assert.equal(ids.length,w.visibleTasks().length);assert.equal(new Set(ids).size,ids.length);
   assert.ok(!w.filteredTasks('pending').some(t=>t.id===ZHAO));
-  w.actAction('filter','returned');assert.equal(w.snapshot().queue,'returned');m.open();assert.equal(m.rows()[0].id,ZHAO);
+  w.actAction('queue','returned');assert.equal(w.snapshot().queue,'returned');m.open();assert.equal(m.rows()[0].id,ZHAO);
   w.actAction('task',HUANG);w.simulate('returned');assert.equal(w.filteredTasks().length,2);
   w.actAction('media','replacement');w.submitAction('resubmit',{note:'已补清晰材料',confirmed:true});assert.equal(w.filteredTasks().length,1);assert.equal(w.filteredTasks('review').length,1);
 });

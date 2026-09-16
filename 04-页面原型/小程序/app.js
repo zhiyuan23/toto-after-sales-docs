@@ -22,7 +22,7 @@
   const registrationStarts = {manual:'c-manual-select','product-code':'c-product-code'};
   const registrationSubmits = {'c-product-code': ['c-product-code-form','c-code-result'], 'c-purchase-date': ['c-purchase-date-form','c-purchase'], 'c-purchase': ['c-purchase-form','c-register-result']};
   const registrationAllowed = () => Object.hasOwn(registrationStarts, consumer.registrationMethod);
-  const consumer = {productId:'t01',serviceType:'repair',hasProducts:true,phoneAuthorized:true,phoneSyncStatus:'synced',registered:{},orders:new Map(),forms:new Map(),media:new Map(),lastSubmitted:null,
+  const consumer = {productId:'t01',serviceType:'repair',hasProducts:true,phoneAuthorized:true,phoneSyncStatus:'synced',productInfoExpanded:false,registered:{},orders:new Map(),forms:new Map(),media:new Map(),lastSubmitted:null,
     ownedProducts:[],registrationMethod:'product-code',registrationDrafts:new Map(),registrationReceipt:null,nextInstance:3};
   const registrationDraft = () => {
     if (!consumer.registrationDrafts.has(consumer.registrationMethod)) consumer.registrationDrafts.set(consumer.registrationMethod, {
@@ -61,7 +61,7 @@
       serviceOrders:[...new Map([...consumer.orders.values()].map(order=>[order.id,order])).values()],
       form:consumer.forms.get(serviceKey()) || {},registered:product?.registration || consumer.registered,
       mediaStatus:consumer.media.get(serviceKey()) || 'none',hasProducts:consumer.hasProducts,
-      phoneAuthorized:consumer.phoneAuthorized,phoneSyncStatus:consumer.phoneSyncStatus};
+      phoneAuthorized:consumer.phoneAuthorized,phoneSyncStatus:consumer.phoneSyncStatus,productInfoExpanded:consumer.productInfoExpanded};
   };
   const markup = (value) => typeof value === 'function' ? value(consumerContext()) : value || '';
   function hydrateIcons(scope) {
@@ -109,7 +109,9 @@
     id=worker?.guard(id)||id;
     worker?.onNavigate(id);
     if (['c-outlet-contact','c-outlet-navigation'].includes(id)) id='c-outlet-detail';
+    if (id==='c-phone-sync') id=consumer.hasProducts?'c-purchases':'c-welcome';
     outlets?.clearOverlay();
+    account?.clearOverlay();
     if (id === 'c-home' && !consumer.hasProducts) id = 'c-welcome';
     const registrationEntry=Object.entries(registrationStarts).find(([,page])=>page===id);
     if (registrationEntry) consumer.registrationMethod=registrationEntry[0];
@@ -135,7 +137,7 @@
   }
   function renderOutletOverlay() {
     const overlay=$('#outlet-overlay');
-    overlay.innerHTML=worker?.owns(current.id) ? (current.id==='w-map'&&workerMap?.overlay() || worker.overlay()) : outlets?.owns(current.id) ? outlets.overlay() : '';
+    overlay.innerHTML=worker?.owns(current.id) ? (current.id==='w-map'&&workerMap?.overlay() || worker.overlay()) : account?.overlay() || (outlets?.owns(current.id) ? outlets.overlay() : '');
     overlay.hidden=!overlay.innerHTML;
     ['#phone-body','#phone-footer','#phone-tabs'].forEach(selector=>{$(selector).inert=!overlay.hidden;});
     const target=outlets?.takeFocus();
@@ -155,6 +157,7 @@
     $('#consumer-controls').hidden = current.app !== 'consumer';
     $('#outlet-controls').hidden = !outlets?.owns(current.id);
     if (outlets?.owns(current.id)) $('#outlet-location-outcome').value=outlets.locationOutcome();
+    $('#phone').dataset.nav = current.app === 'consumer' ? (current.nav || 'compact') : 'default';
     document.title = `${current.title} · TOTO 小程序设计原型`;
     $('[data-app="consumer"]').classList.toggle('selected', current.app === 'consumer');
     $('[data-app="worker"]').classList.toggle('selected', current.app === 'worker');
@@ -201,7 +204,7 @@
   function renderFlows() {
     const c = current.app === 'consumer';
     const definitions = c ? [
-      ['手机号授权：自动同步购买产品','验证手机号后匹配各可信订单来源；同一购买明细只建立一次关系，产品直接出现在“我的产品”。',['c-welcome','c-phone-sync','c-products','c-home']],
+      ['微信手机号授权与购买同步','首次同步调起微信手机号授权；已授权时在当前页直接刷新购买记录。',['c-welcome','c-products','c-purchases']],
       ['扫一扫：系统识别编码并添加','统一扫描产品码、溯源码、SN 或购买凭证码；可信唯一标识直接关联，普通商品码只识别型号。',['c-register','c-product-code','c-code-result','c-register-result','c-home']],
       ['无码产品：手动选择作为兜底','无法扫码时再按分类、系列选择商品并填写购买日期；创建待核验产品，不自动获得服务权益。',['c-register','c-manual-select','c-purchase-date','c-purchase','c-register-result']],
       ['产品需要维修或指导','带入当前产品，分步说明问题、确认联系方式和期望时间，再复核提交。同一笔申请可从产品页继续跟进。',['c-home','c-repair','c-contact','c-confirm','c-submit-result','c-progress']],
@@ -213,7 +216,7 @@
     $('#flows-view').innerHTML = `<h1>${apps[current.app].name} · 核心流程</h1><p class="muted">点击任意节点进入对应页面。连接表示设计中的用户路径，不替代后端状态机与权限契约。</p>` + definitions.map(([title,desc,ids]) => `<article class="flow-card"><h2>${escape(title)}</h2><p class="muted">${escape(desc)}</p><div class="flow-stops">${ids.filter(id => all.some(s => s.id === id)).map(id => {const s=all.find(s=>s.id===id);return `<button data-go="${id}">${escape(s.title)}</button>`;}).join('<span>→</span>')}</div></article>`).join('');
   }
   function renderAtlas() {
-    $('#atlas-view').innerHTML = `<h1>${apps[current.app].name} · 页面总览</h1><p class="muted">点击页面名称进入交互走查；缩略图用于检查跨页面结构一致性。</p><div class="screen-grid">${apps[current.app].screens.map(s => `<article class="screen-tile"><button data-go="${escape(s.id)}"><strong>${escape(s.title)}</strong><span>${escape(s.entry)}</span></button><div class="thumb-shell" inert aria-hidden="true"><div class="phone ${current.app==='consumer'?'consumer-phone':'worker-phone'}" data-screen="${escape(s.id)}"><div class="phone-nav"><strong>${escape(s.title)}</strong></div><div class="phone-body">${markup(s.body).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><div class="phone-footer">${markup(s.footer).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><nav class="phone-tabs">${apps[current.app].tabs.some(t=>t.go===s.id) ? apps[current.app].tabs.map(t=>`<button class="${t.go===s.id?'selected':''}">${escape(t.label)}</button>`).join(''):''}</nav></div></div><p>${escape(s.goal)}</p></article>`).join('')}</div>`;
+    $('#atlas-view').innerHTML = `<h1>${apps[current.app].name} · 页面总览</h1><p class="muted">点击页面名称进入交互走查；缩略图用于检查跨页面结构一致性。</p><div class="screen-grid">${apps[current.app].screens.map(s => `<article class="screen-tile"><button data-go="${escape(s.id)}"><strong>${escape(s.title)}</strong><span>${escape(s.entry)}</span></button><div class="thumb-shell" inert aria-hidden="true"><div class="phone ${current.app==='consumer'?'consumer-phone':'worker-phone'}" data-screen="${escape(s.id)}" data-nav="${current.app==='consumer' ? escape(s.nav || 'compact') : 'default'}"><div class="phone-nav"><strong>${escape(s.title)}</strong></div><div class="phone-body">${markup(s.body).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><div class="phone-footer">${markup(s.footer).replace(/\s(?:id|form)="[^"]*"/g,'')}</div><nav class="phone-tabs">${apps[current.app].tabs.some(t=>t.go===s.id) ? apps[current.app].tabs.map(t=>`<button class="${t.go===s.id?'selected':''}">${escape(t.label)}</button>`).join(''):''}</nav></div></div><p>${escape(s.goal)}</p></article>`).join('')}</div>`;
     hydrateIcons($('#atlas-view'));
   }
   function renderState(value) {
@@ -233,7 +236,7 @@
   function resetConsumer(scenario = 'registered') {
     outlets?.reset();
     account?.reset();
-    consumer.productId='t01'; consumer.serviceType='repair'; consumer.hasProducts=scenario!=='welcome';consumer.phoneAuthorized=scenario!=='welcome';consumer.phoneSyncStatus=scenario==='welcome'?'idle':'synced';
+    consumer.productId='t01'; consumer.serviceType='repair'; consumer.hasProducts=scenario!=='welcome';consumer.phoneAuthorized=scenario!=='welcome';consumer.phoneSyncStatus=scenario==='welcome'?'idle':'synced';consumer.productInfoExpanded=false;
     consumer.registered={}; seedProducts(scenario); consumer.registrationMethod='product-code'; consumer.registrationDrafts.clear(); consumer.registrationReceipt=null;consumer.nextInstance=3;consumer.orders.clear(); consumer.forms.clear(); consumer.media.clear(); consumer.lastSubmitted=null;
     [...drafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>drafts.delete(key));
     [...namedDrafts.keys()].filter(key=>key.startsWith('c-')).forEach(key=>namedDrafts.delete(key));
@@ -315,6 +318,12 @@
     if (consumer.hasProducts && !consumer.ownedProducts.some(product=>product.id===consumer.productId)) consumer.productId=consumer.ownedProducts[0].id;
     $('#consumer-scenario').value=consumer.hasProducts?'registered':'welcome';
   }
+  function refreshPurchases() {
+    syncProductsByPhone();
+    if (current.id==='c-welcome') showScreen('c-products',true,true);
+    else render();
+    showToast('购买记录已刷新。');
+  }
   function completeRegistration() {
     if (!registrationAllowed()) {consumer.registrationReceipt=null;showScreen('c-installation-code');showToast('安装码用于向门店或客服查询记录，不能在这里登记产品。');return false;}
     const reg=registrationDraft(),ctx=registrationContext();
@@ -373,8 +382,8 @@
     if (worker?.owns(current.id) && workerSchedule?.handle(el,{render,showScreen,showToast})) {event.preventDefault();return;}
     if (worker?.owns(current.id) && workerMap?.handle(el,{render,showScreen,showToast})) {event.preventDefault();return;}
     if (worker?.owns(current.id) && worker.handle(el,{root:$('#phone-body'),page:current.id,render,showScreen,showToast})) {event.preventDefault();return;}
+    if (account?.handle(el,{root:$('#phone-body'),context:consumerContext(),render,renderOverlay:renderOutletOverlay,authorizePhone:refreshPurchases,showToast})) {event.preventDefault();return;}
     if (outlets?.handle(el,{render:()=>{$('#ui-state').value='normal';render();},renderOverlay:renderOutletOverlay,showScreen,showToast,returnTo:id=>{const index=routeHistory.lastIndexOf(id);if(index>=0)routeHistory.length=index;showScreen(id,false);}})) {event.preventDefault();return;}
-    if (account?.owns(current.id) && account.handle(el,{root:$('#phone-body'),context:consumerContext(),render,showToast})) {event.preventDefault();return;}
     if (el.dataset.regMethod) {
       event.preventDefault();
       if (el.dataset.regMethod==='installation-code') {showScreen('c-installation-code');return;}
@@ -388,7 +397,9 @@
       showScreen(registrationStarts[consumer.registrationMethod],true,true);
     }
     else if ('phoneSync' in el.dataset) {
-      event.preventDefault();syncProductsByPhone();showScreen('c-products',true,true);showToast('已按授权手机号同步 2 件购买产品。');
+      event.preventDefault();
+      if (!consumer.phoneAuthorized) account.requestPhoneAuthorization({renderOverlay:renderOutletOverlay});
+      else refreshPurchases();
     }
     else if ('claimScan' in el.dataset) {
       event.preventDefault();
@@ -419,10 +430,13 @@
       delete draft.completedInstanceId;
       drafts.delete(draftKey());render();
     }
+    else if (el.hasAttribute('data-product-info')) {
+      event.preventDefault();consumer.productInfoExpanded=!consumer.productInfoExpanded;render();
+    }
     else if (el.dataset.product) {
       event.preventDefault();
       if (!consumer.ownedProducts.some(p=>p.id===el.dataset.product)) return;
-      saveDraft();consumer.productId=el.dataset.product;
+      saveDraft();consumer.productId=el.dataset.product;consumer.productInfoExpanded=false;
       showScreen(el.dataset.go || current.id,true,true);
     }
     else if (el.dataset.serviceType) {
@@ -502,6 +516,7 @@
     if(current.id==='w-map' && event.target.dataset.wmapSim){workerMap.simulate(event.target.dataset.wmapSim,event.target.value);render();}
     if(worker?.owns(current.id) && event.target.hasAttribute('data-worker-sort')){worker.setSort(event.target.value);render();}
     if (current.id==='c-profile' && event.target.id==='c-avatar-file') account.changeAvatar(event.target,{root:$('#phone-body'),render,showToast});
+    else if (current.id==='c-profile') account.updateProfileField(event.target,{showToast});
   });
   $('#ui-state').addEventListener('change',event=>{saveDraft();renderState(event.target.value);});
   $('#outlet-location-outcome').addEventListener('change',event=>outlets?.setLocationOutcome(event.target.value));
@@ -509,13 +524,14 @@
     if(current.id==='w-schedule'&&workerSchedule?.back()){render();return;}
     if(current.id==='w-map' && workerMap?.back()){render();return;}
     if(worker?.owns(current.id) && worker.overlay()){worker.actAction('dismiss');renderOutletOverlay();return;}
+    if(account?.dismiss()){renderOutletOverlay();return;}
     if(outlets?.dismiss()){renderOutletOverlay();return;}
     if(outlets?.back()){render();return;}
     showScreen(routeHistory.pop() || current.parent || current.tab || apps[current.app].screens[0].id,false);
   });
   document.addEventListener('keydown',event=>{
     if($('#outlet-overlay').hidden)return;
-    if(event.key==='Escape'){event.preventDefault();if(current.id==='w-map'&&workerMap?.overlay())workerMap.act('dismiss');else if(worker?.owns(current.id))worker.actAction('dismiss');else outlets.dismiss();renderOutletOverlay();}
+    if(event.key==='Escape'){event.preventDefault();if(current.id==='w-map'&&workerMap?.overlay())workerMap.act('dismiss');else if(worker?.owns(current.id))worker.actAction('dismiss');else if(!account?.dismiss())outlets.dismiss();renderOutletOverlay();}
     if(event.key==='Tab'){
       const buttons=Array.from($('#outlet-overlay').querySelectorAll('[role="dialog"] button,[role="dialog"] input,[role="dialog"] textarea'));
       const first=buttons[0],last=buttons[buttons.length-1];
