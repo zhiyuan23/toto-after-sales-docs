@@ -163,7 +163,7 @@
 | 分组／顾客与预约（存储名保留） | `afsCustomer` | `afterSales/customer` | 运行导航按各视角放入“业务查询”或“业务办理”；共享购买记录与安装申请能力 |
 | 分组／渠道与网点 | `afsNetwork` | `afterSales/network` | 代理商、门店、服务站和区域 |
 | 分组／商品与服务（存储名保留） | `afsCatalog` | `afterSales/catalog` | 运行导航按视角放入“商品资料”“业务查询”或“配件管理” |
-| 分组／服务资源 | `afsServiceResource` | `afterSales/serviceResource` | 服务人员、排班和质量 |
+| 分组／服务资源 | `afsServiceResource` | `afterSales/serviceResource` | 服务人员、排班、质量和服务站工单分配 |
 | 分组／配件库存 | `afsInventory` | `afterSales/inventory` | 多级库存和单据闭环 |
 | 分组／防窜货 | `afsAntiDiversion` | `afterSales/antiDiversion` | 码查询、异常和规则 |
 | 分组／会员运营 | `afsMemberOperation` | `afterSales/memberOperation` | 会员、标签、推送、评价和问卷 |
@@ -184,7 +184,8 @@
 | --- | --- | --- | --- | --- |
 | 服务受理 | `afsServiceIntake` | `afterSales/customerService/intake` | A17 | 管理员、客服主管、客服专员 |
 | 服务工单 | `afsWorkOrder` | `afterSales/customerService/workOrder` | A18 | 管理员、总部、客服主管、客服专员、服务站管理员 |
-| 派单调度 | `afsDispatch` | `afterSales/customerService/dispatch` | A19 | 管理员、客服主管、服务站管理员 |
+| 派单调度 | `afsDispatch` | `afterSales/customerService/dispatch` | A19 | 管理员、客服主管；仅投影到客服作业／工单处理，负责将工单分配至服务站 |
+| 工单分配 | `afsWorkOrderAssignment` | `afterSales/serviceResource/workOrderAssignment` | — | 管理员、服务站管理员；仅投影到服务站作业／本站工单，当前为待开发入口 |
 | 异常工单 | `afsWorkOrderException` | `afterSales/customerService/exception` | A20 | 管理员、客服主管、客服专员、服务站管理员 |
 | 完工审核 | `afsCompletionReview` | `afterSales/customerService/completionReview` | A21 | 管理员、客服主管；当前只进入客服作业视角 |
 | 回访管理 | `afsFollowUp` | `afterSales/customerService/followUp` | A22 | 管理员、客服主管、客服专员 |
