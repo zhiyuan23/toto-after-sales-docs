@@ -1,7 +1,6 @@
 /* C08: local, fictional outlet discovery. No location, telephone or map API calls. */
 (() => {
   const app = window.TOTO_SCREENS.consumer;
-  const consumerV12 = window.TOTO_CONSUMER_VERSION === '0.12';
   const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icons = {
     pin: '<path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
@@ -25,7 +24,7 @@
     {id:'r-hz',kind:'repair',city:'杭州市',district:'上城区',name:'上城维修服务点',address:'示例路 36 号服务中心',hours:'周一至周六 09:00–18:00',phone:'0571-0000-0101',services:['卫浴产品维修','使用咨询'],coverage:'上城区、拱墅区',visit:'到访前请先电话联系确认。',distance:null,x:48,y:46},
     {id:'s-hz',kind:'store',city:'杭州市',district:'拱墅区',name:'拱墅产品体验店',address:'样板大道 28 号家居中心',hours:'周一至周日 10:00–19:00',phone:'0571-0000-0201',services:['产品体验','选购咨询'],coverage:'',visit:'出发前可先咨询产品展示情况。',distance:null,x:40,y:39},
   ];
-  const initial = () => ({kind:'repair',city:'上海市',district:'全部区县',query:'',searchDraft:'',view:consumerV12?'list':'map',selectedId:'r-xh',location:'idle',locationOutcome:'success',failed:false,pickCity:'上海市',pickDistrict:'全部区县',overlay:''});
+  const initial = () => ({kind:'repair',city:'上海市',district:'全部区县',query:'',searchDraft:'',view:'map',selectedId:'r-xh',location:'idle',locationOutcome:'success',failed:false,pickCity:'上海市',pickDistrict:'全部区县',overlay:''});
   let state = initial(), focusTarget = '';
   const results = () => outlets.filter(o => o.kind===state.kind && o.city===state.city && (state.district==='全部区县' || o.district===state.district) && `${o.name} ${o.city}${o.district}${o.address} ${o.services.join(' ')}`.includes(state.query.trim()));
   const selected = () => results().find(o=>o.id===state.selectedId) || results()[0];
@@ -46,17 +45,13 @@
     return `<div class="o-location-note" role="status"><span>${state.location==='denied'?'定位未开启，可手动选地区':'定位暂不可用，可手动选地区'}</span>${inRegion && state.location==='denied'?'':`<button data-outlet="${state.location==='denied'?'region':inRegion?'locate-region':'locate'}">${state.location==='denied'?'选择地区':'重试'}</button>`}</div>`;
   }
   function result(o, compact=false) {
-    if (compact) return `<button class="o-list-item${o.id===selected()?.id?' is-selected':''}" data-outlet="${consumerV12?'detail':'select'}" data-outlet-id="${o.id}"><span><strong>${e(o.name)}</strong><span>${e(address(o))}</span></span><small>${e(distance(o))}<span>查看 ›</span></small></button>`;
+    if (compact) return `<button class="o-list-item${o.id===selected()?.id?' is-selected':''}" data-outlet="select" data-outlet-id="${o.id}"><span><strong>${e(o.name)}</strong><span>${e(address(o))}</span></span><small>${e(distance(o))}<span>查看 ›</span></small></button>`;
     return `<article class="o-selected"><button class="o-result-title" data-outlet="detail" data-outlet-id="${o.id}" aria-label="查看${e(o.name)}详情"><strong>${e(o.name)}</strong><span>详情 ›</span></button><p class="o-address">${e(address(o))}</p>${state.location==='ready' && o.city==='上海市'?`<p class="o-distance">${icon('pin')}${e(distance(o))} · 示例距离</p>`:''}${actions(o)}</article>`;
   }
   function directory() {
-    if (consumerV12 && state.view==='region') return regionPanel();
     const list=results(), o=selected();
     const empty = `<div class="o-empty">${icon('search')}<h3>这里暂未找到${kinds[state.kind].name}</h3><p>试试其他地区或关键词</p><button class="primary" data-outlet="${state.query || state.district!=='全部区县'?'clear':'region'}">${state.query || state.district!=='全部区县'?'清除筛选':'更换城市'}</button><button class="c-text-button" data-action="客服渠道待配置；本次原型不连接真实客服。">联系 TOTO 客服</button></div>`;
     return `<section class="o-discovery${state.view==='list'?' is-list':''}">${map(state.failed?[]:list)}${controls()}<div class="o-map-tools" ${state.view==='list'?'hidden':''}><span>示意地图</span><button data-outlet="locate" aria-label="使用当前位置">${icon('locate')}</button></div><section class="o-sheet" aria-label="网点查询结果">${locationNotice()}<header class="o-sheet-bar"><span>${state.failed?'暂时无法获取网点':`${e(state.city)}${state.district==='全部区县'?'':` · ${e(state.district)}`} · ${list.length} 个网点`}</span><button data-outlet="view" aria-expanded="${state.view==='list'}">${icon(state.view==='map'?'list':'map')}${state.view==='map'?'查看列表':'收起列表'}</button></header>${state.failed?'<div class="o-empty" role="alert"><h3>网点暂时加载不出来</h3><p>筛选条件已保留，请稍后重试</p><button class="primary" data-outlet="retry">重新加载</button></div>':!list.length?empty:state.view==='list'?`<div class="o-result-list">${list.map(o=>result(o,true)).join('')}</div>`:result(o)}</section></section>`;
-  }
-  function regionPanel() {
-    return `<section class="o-region-panel"><header><div><h2>选择地区</h2><p>定位不可用时，仍可以手动选择。</p></div><button class="c-text-button" data-outlet="cancel-region">取消</button></header><button class="o-location-button" data-outlet="locate-region">${icon('locate')}使用当前位置<span>›</span></button>${locationNotice(true)}<section class="o-region-section"><h3>城市 <span>示例地区</span></h3><div class="o-region-options">${Object.keys(cities).map(city=>`<button data-outlet="pick-city" data-value="${city}" aria-pressed="${state.pickCity===city}">${city}</button>`).join('')}</div></section><section class="o-region-section"><h3>区县</h3><div class="o-region-options">${['全部区县',...cities[state.pickCity]].map(district=>`<button data-outlet="pick-district" data-value="${district}" aria-pressed="${state.pickDistrict===district}">${district}</button>`).join('')}</div></section><button class="primary o-region-confirm" data-outlet="apply-region">查看该地区网点</button></section>`;
   }
   const missing = () => '<div class="o-empty"><h3>请先选择一个网点</h3><button class="primary" data-go="c-outlets">查找网点</button></div>';
   app.screens.push(
@@ -83,7 +78,7 @@
   window.TOTO_OUTLETS = {
     reset:()=>{state=initial();focusTarget='';},
     owns:id=>id==='c-outlets' || id.startsWith('c-outlet-'),
-    back:()=>{if(consumerV12 && state.view==='region'){state.view='list';return true;}return false;},
+    back:()=>false,
     input:el=>{if(el.name==='outletKeyword') state.searchDraft=el.value;},
     setLocationOutcome:value=>{if(['success','denied','failed'].includes(value))state.locationOutcome=value;},
     locationOutcome:()=>state.locationOutcome,
@@ -99,12 +94,11 @@
       if(action==='kind' && kinds[value]) {state.kind=value;state.selectedId='';state.query=state.searchDraft.trim();}
       else if(action==='view')state.view=state.view==='map'?'list':'map';
       else if(action==='select')state.view='map';
-      else if(action==='region'){state.pickCity=state.city;state.pickDistrict=state.district;if(consumerV12)state.view='region';else{api.showScreen('c-outlet-region');return true;}}
-      else if(action==='cancel-region')state.view='list';
+      else if(action==='region'){state.pickCity=state.city;state.pickDistrict=state.district;api.showScreen('c-outlet-region');return true;}
       else if(action==='pick-city' && cities[value]){state.pickCity=value;state.pickDistrict='全部区县';}
       else if(action==='pick-district' && ['全部区县',...cities[state.pickCity]].includes(value))state.pickDistrict=value;
-      else if(action==='apply-region'){state.city=state.pickCity;state.district=state.pickDistrict;state.selectedId='';state.failed=false;state.location='idle';if(consumerV12)state.view='list';else{api.returnTo('c-outlets');return true;}}
-      else if(action==='locate' || action==='locate-region'){locate();if(action==='locate-region' && state.location==='ready'){if(consumerV12)state.view='list';else{api.returnTo('c-outlets');api.showToast('已使用上海徐汇的示例位置。');return true;}}}
+      else if(action==='apply-region'){state.city=state.pickCity;state.district=state.pickDistrict;state.selectedId='';state.failed=false;state.location='idle';api.returnTo('c-outlets');return true;}
+      else if(action==='locate' || action==='locate-region'){locate();if(action==='locate-region' && state.location==='ready'){api.returnTo('c-outlets');api.showToast('已使用上海徐汇的示例位置。');return true;}}
       else if(action==='clear'){state.query='';state.searchDraft='';state.district='全部区县';state.selectedId='';}
       else if(action==='retry')state.failed=false;
       else if(action==='detail'){api.showScreen('c-outlet-detail');return true;}

@@ -10,4 +10,4 @@
 
 .thumb-shell>.phone{transform:scale(.56);transform-origin:top left;box-shadow:none}.thumb-shell .phone-body{scrollbar-width:none}
 
-.version-heading{margin:0 9px 9px}.sidebar .version-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 25px;padding:4px;background:#f0f0ed;border-radius:9px}.version-switch a{padding:9px 6px;border-radius:6px;text-align:center;font-size:11px;color:#666}.version-switch a[aria-current=page]{background:#fff;color:#222;font-weight:600;box-shadow:0 1px 3px #0000000d}
+.version-heading{margin:0 9px 9px}.sidebar .version-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 25px;padding:4px;background:#f0f0ed;border-radius:9px}.version-switch a{padding:9px 6px;border-radius:6px;text-align:center;font-size:11px;color:#666}.version-switch a[aria-current=page]{background:#fff;color:#1769aa;font-weight:600;box-shadow:0 1px 3px #0000000d}

@@ -6,13 +6,13 @@
   <meta name="color-scheme" content="light">
   <title>TOTO · 两端小程序设计原型</title>
   <script>
-    window.TOTO_CONSUMER_VERSION = new URLSearchParams(location.search).get('consumerVersion') === '0.11' ? '0.11' : '0.12';
+    window.TOTO_CONSUMER_VERSION = new URLSearchParams(location.search).get('consumerVersion') === '0.11' ? '0.11' : '0.13';
     document.documentElement.dataset.consumerVersion = window.TOTO_CONSUMER_VERSION;
   </script>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="consumer.css?v=0.11.0">
+  <link rel="stylesheet" href="consumer.css?v=0.13.0">
+  <link rel="stylesheet" href="consumer-v011-legacy.css?v=0.11.0">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
-  <link rel="stylesheet" href="consumer-v012.css?v=0.12.0">
   <script src="consumer.js?v=0.11.0" defer></script>
   <link rel="stylesheet" href="worker.css?v=0.5.0">
   <script src="worker.js?v=0.5.0" defer></script>
@@ -22,13 +22,12 @@
   <script src="worker-map.js?v=0.5.0" defer></script>
   <script src="consumer-outlets.js?v=0.6.0" defer></script>
   <script src="consumer-account.js?v=0.11.0" defer></script>
-  <script src="consumer-v012.js?v=0.12.0" defer></script>
-  <script src="app.js?v=0.12.0" defer></script>
+  <script src="app.js?v=0.13.0" defer></script>
 </head>
 <body>
   <header class="workspace-header">
     <a class="workspace-brand" href="#c-home"><strong>TOTO</strong><span>售后服务 · 产品设计</span></a>
-    <span class="phase-label">01 需求与结构原型</span>
+    <span class="phase-label" id="consumer-phase-label">02 v0.13 视觉设计原型</span>
     <a class="brief-link" href="01-两端小程序设计说明.md">设计说明 ↗</a>
   </header>
   <div class="workspace">
@@ -41,12 +40,12 @@
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
       <p class="eyebrow version-heading">消费者原型版本</p>
       <nav class="version-switch" aria-label="切换消费者原型版本">
-        <a href="?consumerVersion=0.12#c-home" data-consumer-version-link="0.12">优化版 v0.12</a>
-        <a href="?consumerVersion=0.11#c-home" data-consumer-version-link="0.11">原版 v0.11</a>
+        <a href="?consumerVersion=0.13#c-home" data-consumer-version-link="0.13">新样式 v0.13</a>
+        <a href="?consumerVersion=0.11#c-home" data-consumer-version-link="0.11">旧样式 v0.11</a>
       </nav>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.12 · 流程合并与信息减量<br>服务人员 v0.8 · 当前服务置顶与待补资料<br>本轮评审原型，不代表真实业务已实现。</div>
+      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.13 · 新样式设计<br>服务人员 v0.9 · 领退料详细契约<br>本轮评审原型，不代表真实业务已实现。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
