@@ -183,7 +183,7 @@
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
 | 服务受理 | `afsServiceIntake` | `afterSales/customerService/intake` | A17 | 管理员、客服主管、客服专员 |
-| 服务工单 | `afsWorkOrder` | `afterSales/customerService/workOrder` | A18 | 管理员、总部、客服主管、客服专员、服务站管理员 |
+| 服务工单 | `afsWorkOrder` | `afterSales/customerService/workOrder` | A18 | 管理员、总部、客服主管、客服专员、服务站管理员、代理商管理员、门店店员 |
 | 派单调度 | `afsDispatch` | `afterSales/customerService/dispatch` | A19 | 管理员、客服主管、服务站管理员 |
 | 异常工单 | `afsWorkOrderException` | `afterSales/customerService/exception` | A20 | 管理员、客服主管、客服专员、服务站管理员 |
 | 完工审核 | `afsCompletionReview` | `afterSales/customerService/completionReview` | A21 | 管理员、客服主管；当前只进入客服作业视角 |
@@ -198,7 +198,7 @@
 | --- | --- | --- | --- | --- |
 | 顾客购买记录 | `afsCustomerArchive` | `afterSales/customer/customerArchive` | A15 | 管理员、总部、客服主管、客服专员 |
 | 安装申请查询（上下文） | `afsAppointment` | `afterSales/customer/appointment` | A16 | 管理员、客服主管、客服专员、服务站管理员 |
-| 购买登记 | `afsDealerRegistration` | `afterSales/customer/dealerRegistration` | D03、D04 | 管理员、代理商管理员、门店店员 |
+| 购买登记 | `afsDealerRegistration` | `afterSales/customer/dealerRegistration` | D03、D04 | 管理员、总部、代理商管理员、门店店员 |
 | 顾客购买记录 | `afsDealerCustomer` | `afterSales/customer/dealerCustomer` | D07 | 管理员、代理商管理员、门店店员 |
 
 “购买登记”页面内选择线下门店或虚拟门店登记类型。D05 顾客扫码填写和 D06 隐私签名属于该流程的隐藏页面；D01 沿用 Gaia 登录，并将授权门店选择实现为登录后业务上下文。门店在顾客购买记录内通过统一“发起服务”动作选择安装或维修，不提供 D08 独立预约／报修管理，也不提供脱离购买记录的快捷报修；安装与维修分别按原操作权限调用对应接口，维修创建待客服受理的门店来源工单。A16 仅供客服／服务站通过服务工单关联跳转或历史直达访问。
@@ -392,11 +392,11 @@ src/views/afterSales/
 | 角色 | 工作视角 | 默认首页 | 功能数 |
 | --- | --- | --- | ---: |
 | 系统管理员 | 已有业务授权对应的视角 | 当前视角工作台；页头可切换视角 | 当前 41 个去重侧栏注册＋1 个上下文功能，实际业务逐项授权 |
-| 总部管理／运营 | 总部运营 | 运营工作台 | 当前目录 28 个去重注册；其中服务结算仅供另授的管理员待启用查看 |
+| 总部管理／运营 | 总部运营 | 运营工作台 | 当前目录 29 个侧栏功能；其中购买登记写操作及服务结算分别按实际职责另授 |
 | 客服主管 | 客服作业 | 客服工作台 | 最多 13 个侧栏功能＋1 个上下文入口 |
 | 客服专员 | 客服作业 | 客服工作台 | 默认最多 11 个侧栏功能＋1 个上下文入口 |
-| 服务站管理员 | 服务站作业 | 服务站工作台 | 最多 16 个侧栏功能＋1 个上下文入口 |
-| 代理商管理员、店员 | 门店业务 | 门店工作台 | 各 3 个侧栏功能 |
+| 服务站管理员 | 服务站作业 | 服务站工作台 | 最多 17 个侧栏功能＋1 个上下文入口 |
+| 代理商管理员、店员 | 门店业务 | 门店工作台 | 各 4 个侧栏功能；服务工单只开放授权范围内的查看与另授动作 |
 
 正式导航取新鲜 `/api/sys/Module/tree` 的功能授权与隐藏视角授权项的交集，不读取登录页写死的 `roles: ['admin']` 推断管理员。5 个导航授权项见配置清单：`afsNavigationAdministrator` 与四个 `afsWorkspace*`；管理员授权使页头出现四视角切换器，四个岗位授权决定普通账号的视角，均不包含业务接口或按钮授权。前端不会凭管理员标记补出后端未授权的功能。
 
