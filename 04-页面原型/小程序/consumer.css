@@ -1,9 +1,9 @@
 /* Consumer prototype only. The service-worker prototype retains its existing UI. */
-.consumer-phone .c-account-phone { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px; background: var(--c-surface); border-radius: 14px; margin-bottom: 12px; }
+.consumer-phone .c-account-phone { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: var(--c-card-padding); background: var(--c-surface); border-radius: 14px; margin-bottom: var(--c-card-gap); }
 .consumer-phone .c-account-phone span { display: block; color: var(--c-muted); font-size: 11px; margin-bottom: 6px; }
 .consumer-phone .c-account-phone strong { font-size: 18px; font-weight: 600; letter-spacing: .04em; }
-.consumer-phone .c-purchase-list { display: grid; gap: 12px; }
-.consumer-phone .c-purchase-card { padding: 16px; border: 0; background: var(--c-surface); border-radius: 14px; }
+.consumer-phone .c-purchase-list { display: grid; gap: var(--c-card-gap); }
+.consumer-phone .c-purchase-card { padding: var(--c-card-padding); border: 0; background: var(--c-surface); border-radius: 14px; }
 .consumer-phone .c-purchase-card > header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 13px; }
 .consumer-phone .c-purchase-card > header div > span { color: var(--c-muted); font-size: 10px; }
 .consumer-phone .c-purchase-card h3 { margin: 4px 0 0; font-size: 18px; font-weight: 600; }
@@ -19,7 +19,7 @@
 .consumer-phone .c-record-quantity span { margin-left: 8px; font-size: 20px; }
 .consumer-phone .c-record-code { display: block; margin-top: 7px; font-size: 12px; overflow-wrap: anywhere; }
 .consumer-phone .c-purchase-card .c-purchase-products { margin-top: 0; }
-.consumer-phone .c-purchase-refresh { margin-top: 12px; }
+.consumer-phone[data-screen="c-purchases"] .c-purchase-refresh { margin-top: var(--c-card-gap); }
 .consumer-phone .c-account-empty { padding: 65px 14px 30px; text-align: center; }
 .consumer-phone .c-empty-mark { display: inline-flex; padding: 18px; background: var(--c-soft); border-radius: 50%; }
 .consumer-phone .c-account-empty h2 { font-size: 21px; margin: 23px 0 12px; }
@@ -41,6 +41,8 @@
   --c-accent-deep: #2d536d;
   --c-line-soft: rgba(23, 39, 51, .075);
   --c-shadow: 0 6px 18px rgba(43, 116, 170, .07);
+  --c-card-gap: 12px;
+  --c-card-padding: 16px;
   color: var(--c-ink);
   background: var(--c-canvas);
   font-size: 14px;
@@ -69,7 +71,7 @@
 .consumer-phone textarea:focus-visible,
 .consumer-phone select:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 3px; }
 .consumer-phone .primary,
-.consumer-phone .secondary { border-radius: 10px; min-height: 48px; font-size: 14px; padding: 13px 15px; font-weight: 600; }
+.consumer-phone .secondary { border-radius: 14px; min-height: 48px; font-size: 14px; padding: 13px 15px; font-weight: 600; }
 .consumer-phone .primary { background: var(--c-blue); color: #fff; box-shadow: 0 7px 16px rgba(43, 116, 170, .17); }
 .consumer-phone .primary:hover { background: var(--c-blue-dark); }
 .consumer-phone .secondary { border: 1px solid #c9d9e4; background: #fff; color: var(--c-blue); }
@@ -81,7 +83,7 @@
 .consumer-phone .c-secondary-text { color: var(--c-muted); font-size: 12px; }
 .consumer-phone .c-hint { color: var(--c-muted); font-size: 12px; line-height: 1.8; margin: 12px 0 20px; }
 .consumer-phone .c-tag { display: inline-flex; align-items: center; background: var(--c-brand-soft); color: var(--c-blue); padding: 4px 8px; border-radius: 5px; font-size: 10px; line-height: 1.6; font-weight: 600; }
-.consumer-phone .c-section { padding: 18px; border: 0; border-radius: 14px; background: var(--c-surface); margin: 0 0 12px; }
+.consumer-phone .c-section { padding: var(--c-card-padding); border: 0; border-radius: 14px; background: var(--c-surface); margin: 0 0 var(--c-card-gap); }
 .consumer-phone .c-section h3,
 .consumer-phone .c-section-heading h3,
 .consumer-phone .c-form h3 { font-size: 15px; margin: 0; color: var(--c-ink); font-weight: 650; line-height: 1.6; }
@@ -92,7 +94,7 @@
 .consumer-phone .c-page-heading p { font-size: 12px; color: var(--c-muted); line-height: 1.8; }
 .consumer-phone .c-page-heading .c-kicker { font-size: 10px; color: var(--c-blue); margin-bottom: 10px; }
 .consumer-phone .c-page-intro { font-size: 12px; line-height: 1.8; color: var(--c-muted); margin: 0 0 20px; }
-.consumer-phone .c-list-summary { font-size: 12px; line-height: 1.8; color: var(--c-muted); padding: 4px 0; margin: 0 0 16px; }
+.consumer-phone .c-list-summary { font-size: 12px; line-height: 1.8; color: var(--c-muted); padding: 4px 0; margin: 0 0 var(--c-card-gap); }
 .consumer-phone .c-list-summary + .c-page-intro { margin-top: -8px; }
 .consumer-phone .c-step-label { font-size: 11px; color: var(--c-blue); margin: 3px 0 14px; letter-spacing: .03em; font-weight: 600; }
 .consumer-phone .c-menu-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; border: 0; border-radius: 12px; background: var(--c-surface); text-align: left; padding: 12px 14px; margin: 0 0 8px; font-size: 13px; }
@@ -102,12 +104,18 @@
 .consumer-phone .c-section > .c-menu-row:last-child,
 .consumer-phone .c-hub-help > .c-menu-row:last-child { border-bottom: 0; margin-bottom: 0; }
 .consumer-phone .c-menu-row > span:last-child { color: var(--c-muted); }
+.consumer-phone[data-screen="c-mine"] .c-section { padding-top: 0; padding-bottom: 0; }
+.consumer-phone[data-screen="c-mine"] .c-profile { padding-bottom: var(--c-card-gap); }
 
 /* Product stage and the three primary service choices. */
-.consumer-phone .c-product-switcher { display: flex; gap: 7px; align-items: center; margin-bottom: 17px; }
-.consumer-phone .c-product-switcher button { min-height: 44px; padding: 7px 12px; border-radius: 24px; font-size: 11px; color: var(--c-muted); white-space: nowrap; }
-.consumer-phone .c-product-switcher button.is-selected { color: var(--c-blue); background: var(--c-brand-soft); font-weight: 600; }
-.consumer-phone .c-product-switcher .c-add-product { display: flex; align-items: center; justify-content: center; margin-left: auto; padding: 0; width: 44px; min-width: 44px; font-size: 22px; color: var(--c-blue); background: #fff; border: 1px solid var(--c-line); }
+.consumer-phone .c-product-switcher { display:flex; gap:6px; align-items:center; margin:0 0 20px; padding:0; border:0; border-radius:0; background:transparent; }
+.consumer-phone .c-product-switcher button { position:relative; flex:0 0 auto; min-height:38px; padding:0 12px; border:1px solid transparent; border-radius:999px; color:#425966; background:transparent; font-size:11px; font-weight:550; white-space:nowrap; scroll-snap-align:start; transition:color .15s,border-color .15s,transform .1s; }
+.consumer-phone .c-product-switcher button.is-selected { color:#205f90; border-color:#74a8cf; background:transparent; box-shadow:none; font-weight:650; }
+.consumer-phone .c-product-switcher button.is-selected::after { content:none; }
+.consumer-phone .c-product-switcher button:active { transform:scale(.98); }
+.consumer-phone .c-product-switcher .c-add-product { display:flex; align-items:center; justify-content:center; gap:3px; margin-left:auto; padding:0 9px; color:#205f90; border:0; background:transparent; font-weight:600; }
+.consumer-phone .c-product-switcher .c-add-product .c-inline-icon { width:15px; height:15px; }
+.consumer-phone .c-product-switcher .c-add-product .c-inline-icon img { width:15px; height:15px; }
 .consumer-phone .c-product-heading { text-align: center; }
 .consumer-phone .c-product-heading p { color: var(--c-muted); font-size: 11px; margin: 0 0 6px; letter-spacing: .06em; }
 .consumer-phone .c-product-heading h2 { font-size: 26px; margin: 0; line-height: 1.4; font-weight: 650; letter-spacing: -.03em; }
@@ -117,22 +125,31 @@
 .consumer-phone .c-product-stage { height: 220px; position: relative; margin: 2px -4px 13px; padding: 4px 28px 22px; background: linear-gradient(180deg, #fff 0%, #f1f5f8 100%); border: 0; border-radius: 16px; box-shadow: none; overflow: hidden; }
 .consumer-phone .c-product-stage:before { display: none; }
 .consumer-phone .c-product-stage img { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; }
+.consumer-phone .c-product-stage.is-scene { padding:0; background:#dfe5e8; }
+.consumer-phone .c-product-stage.is-scene img { object-fit:cover; object-position:center; mix-blend-mode:normal; }
 .consumer-phone .c-product-stage.is-small { height: 220px; margin-bottom: 12px; }
+html[data-consumer-version="0.13"] .consumer-phone img.c-product-image[data-image-background="scene"] { object-fit:cover; object-position:center; mix-blend-mode:normal; border-radius:9px; background:#dfe5e8; }
+html[data-consumer-version="0.13"] .consumer-phone .c-gallery-product > img.c-product-image[data-image-background="scene"] { border-radius:12px; }
 .consumer-phone .c-product-information { padding-bottom: 6px; }
 .consumer-phone .c-product-details-toggle { display:flex; align-items:center; justify-content:space-between; width:100%; min-height:54px; margin-top:6px; border-top:1px solid var(--c-line-soft); border-radius:0; padding:10px 0; text-align:left; color:var(--c-blue); font-size:12px; }
 .consumer-phone .c-product-details-toggle span:first-child { color:var(--c-ink); font-size:13px; font-weight:600; }
 .consumer-phone .c-product-purchase-details { padding:2px 0 10px; }
 .consumer-phone .c-product-purchase-details .c-details { margin:0; }
 .consumer-phone .c-stage-caption { position: absolute; left: 0; right: 0; bottom: 5px; text-align: center; color: var(--c-muted); font-size: 11px; }
-.consumer-phone .c-service-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 8px 0 18px; padding: 6px 0; border: 1px solid var(--c-line-soft); border-radius: 14px; background: var(--c-surface); overflow: hidden; }
-.consumer-phone .c-service-actions > button { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 78px; padding: 10px 6px 9px; border: 0; border-radius: 0; background: transparent; color: var(--c-ink); text-align: center; gap: 7px; }
-.consumer-phone .c-service-actions > button + button { border-left: 1px solid var(--c-line-soft); }
-.consumer-phone .c-service-icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; color: var(--c-blue); background: var(--c-brand-soft); flex-shrink: 0; }
+.consumer-phone .c-service-actions { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:7px 8px 20px; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; overflow:visible; }
+.consumer-phone .c-service-actions > button { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:88px; padding:4px 2px 6px; border:0; border-radius:0; background:transparent; color:#294353; text-align:center; gap:8px; transition:transform .1s; }
+.consumer-phone .c-service-actions > button + button { border-left:0; border-radius:0; }
+.consumer-phone .c-service-actions > button:active { transform:scale(.98); }
+.consumer-phone .c-service-actions > button:hover,
+.consumer-phone .c-service-actions > button:active { background:transparent; }
+.consumer-phone .c-service-icon { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border:1px solid #d8eaf5; border-radius:50%; color:var(--c-blue); background:#edf7fd; box-shadow:0 5px 14px rgba(43,116,170,.09); flex-shrink:0; transition:background-color .15s,border-color .15s,transform .1s; }
+.consumer-phone .c-service-actions > button:hover .c-service-icon { border-color:#bad8ec; background:#e2f2fb; }
+.consumer-phone .c-service-actions > button:active .c-service-icon { transform:scale(.96); }
 .consumer-phone .c-service-icon svg { display: block; width: 20px; height: 20px; fill: currentColor; }
-.consumer-phone .c-service-icon img { display: block; width: 20px; height: 20px; }
-.consumer-phone .c-service-actions .c-service-primary { min-height: 78px; padding: 10px 6px 9px; border-color: var(--c-line-soft); background: transparent; color: var(--c-ink); text-align: center; }
-.consumer-phone .c-service-actions .c-service-primary .c-service-icon { width: 34px; height: 34px; margin-bottom: 0; background: var(--c-brand-soft); color: var(--c-blue); box-shadow: none; }
-.consumer-phone .c-service-primary .c-service-icon img { filter: none; }
+.consumer-phone .c-service-icon img { display:block; width:20px; height:20px; filter:brightness(0) saturate(100%) invert(36%) sepia(24%) saturate(1820%) hue-rotate(161deg) brightness(91%) contrast(90%); opacity:1; }
+.consumer-phone .c-service-actions .c-service-primary { min-height:88px; padding:4px 2px 6px; border:0; background:transparent; color:#294353; text-align:center; }
+.consumer-phone .c-service-actions .c-service-primary .c-service-icon { width:56px; height:56px; margin-bottom:0; background:#edf7fd; color:var(--c-blue); box-shadow:0 5px 14px rgba(43,116,170,.09); }
+.consumer-phone .c-service-primary .c-service-icon img { filter:brightness(0) saturate(100%) invert(36%) sepia(24%) saturate(1820%) hue-rotate(161deg) brightness(91%) contrast(90%); opacity:1; }
 .consumer-phone .c-service-actions strong { font-size: 13px; font-weight: 650; line-height: 1.4; }
 .consumer-phone .c-service-actions button > span:last-child { display: none; }
 .consumer-phone .c-order-strip { width: 100%; min-height: 71px; display: flex; align-items: center; gap: 11px; background: var(--c-surface); border: 0; border-radius: 12px; text-align: left; padding: 14px; box-shadow: none; }
@@ -219,7 +236,7 @@
 .consumer-phone .c-result-heading .c-kicker { margin-bottom: 11px; }
 .consumer-phone .c-result-heading h2 { font-size: 22px; line-height: 1.55; letter-spacing: -.03em; margin: 0 0 12px; font-weight: 650; }
 .consumer-phone .c-result-heading > p:last-child { font-size: 12px; line-height: 1.8; color: var(--c-muted); }
-.consumer-phone .c-install-code { background: var(--c-brand-soft); padding: 22px 16px 12px; border-radius: 14px; text-align: center; margin-bottom: 24px; }
+.consumer-phone .c-install-code { background: var(--c-brand-soft); padding: var(--c-card-padding); border-radius: 14px; text-align: center; margin-bottom: var(--c-card-gap); }
 .consumer-phone .c-install-code > span { display: block; font-size: 11px; color: var(--c-muted); }
 .consumer-phone .c-install-code > strong { display: block; font-size: 20px; color: var(--c-blue); letter-spacing: .025em; padding: 11px 0; }
 .consumer-phone .c-install-code > p { font-size: 10px; color: var(--c-muted); }
@@ -228,9 +245,7 @@
 /* Product gallery and account area. */
 .consumer-phone .c-gallery { display: grid; gap: 18px; }
 .consumer-phone .c-gallery-product { padding: 18px; width: 100%; min-height: 263px; border-radius: 14px; background: linear-gradient(180deg, #fff 0%, #f1f5f8 100%); text-align: left; border: 1px solid var(--c-line); }
-.consumer-phone .c-gallery-product.is-selected { border-color: var(--c-accent-line); }
 .consumer-phone .c-gallery-product > div:first-child { display: flex; align-items: center; justify-content: space-between; }
-.consumer-phone .c-current-label { color: var(--c-blue); font-size: 10px; }
 .consumer-phone .c-gallery-product > img { width: 100%; height: 166px; object-fit: contain; mix-blend-mode: multiply; display: block; margin: 4px 0 8px; }
 .consumer-phone .c-gallery-caption { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
 .consumer-phone .c-gallery-caption strong { display: block; font-size: 16px; line-height: 1.6; font-weight: 600; }
@@ -241,12 +256,15 @@
 .consumer-phone .c-profile h2 { font-size: 19px; margin: 0 0 2px; font-weight: 600; }
 .consumer-phone .c-profile p { font-size: 11px; color: var(--c-muted); }
 .consumer-phone .c-profile > button { margin-left: auto; font-size: 11px; }
-.consumer-phone .c-my-products { padding: 18px; margin: 0 0 12px; border: 0; border-radius: 16px; background: var(--c-surface); }
-.consumer-phone .c-product-mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.consumer-phone .c-product-mini-grid button { min-height: 164px; padding: 11px; text-align: center; background: #f4f6f6; border: 0; border-radius: 12px; }
-.consumer-phone .c-product-mini-grid img { width: 100%; height: 104px; object-fit: contain; mix-blend-mode: multiply; display: block; }
-.consumer-phone .c-product-mini-grid strong { display: block; font-size: 12px; margin-top: 7px; font-weight: 600; }
-.consumer-phone .c-product-mini-grid span { display: block; font-size: 11px; color: var(--c-muted); margin-top: 4px; }
+.consumer-phone .c-my-products { margin: 0 0 var(--c-card-gap); }
+.consumer-phone .c-my-products-summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 100%; min-height: 72px; padding: 13px 17px; border: 0; border-radius: 15px; background: var(--c-surface); text-align: left; }
+.consumer-phone .c-my-products-summary > span { min-width: 0; }
+.consumer-phone .c-my-products-summary small,
+.consumer-phone .c-my-products-summary strong { display: block; }
+.consumer-phone .c-my-products-summary small { margin-bottom: 4px; color: var(--c-muted); font-size: 10px; font-style: normal; }
+.consumer-phone .c-my-products-summary strong { color: var(--c-ink); font-size: 15px; font-weight: 650; line-height: 1.5; }
+.consumer-phone .c-my-products-summary > b { flex-shrink: 0; color: var(--c-blue); font-size: 11px; font-weight: 600; white-space: nowrap; }
+.consumer-phone .c-my-products-summary > b i { margin-left: 3px; font-size: 18px; font-style: normal; font-weight: 400; vertical-align: -1px; }
 .consumer-phone .c-brand-signoff { text-align: center; color: #71808d; font-size: 11px; letter-spacing: .035em; padding: 20px 0 5px; }
 .consumer-phone button.c-account-backdrop,
 .consumer-phone button.c-account-backdrop:hover { position:absolute; inset:0; border-radius:0; background:rgba(12,31,43,.42); }
@@ -267,7 +285,7 @@
 .consumer-phone .c-detail-row { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; padding: 10px 0; font-size: 12px; line-height: 1.85; }
 .consumer-phone .c-detail-row dt { color: var(--c-muted); }
 .consumer-phone .c-detail-row dd { margin: 0; color: #304957; overflow-wrap: anywhere; white-space: pre-line; }
-.consumer-phone .c-review-section { padding: 17px 18px; margin: 0 0 12px; border: 0; border-radius: 14px; background: var(--c-surface); }
+.consumer-phone .c-review-section { padding: var(--c-card-padding); margin: 0 0 var(--c-card-gap); border: 0; border-radius: 14px; background: var(--c-surface); }
 .consumer-phone .c-review-section .c-section-heading { margin-bottom: 3px; }
 .consumer-phone .c-review-section .c-details { margin-top: 1px; }
 .consumer-phone .c-receipt-status { display: flex; gap: 9px; align-items: center; background: var(--c-brand-soft); border-radius: 10px; padding: 15px; margin-bottom: 26px; }
@@ -341,7 +359,7 @@
 .consumer-phone .c-method-arrow { margin: auto 0 auto auto; color: var(--c-blue); font-size: 24px; }
 .consumer-phone .c-menu-row > span > strong { display: block; font-size: 13px; font-weight: 600; line-height: 1.7; }
 .consumer-phone .c-menu-row > span > small { display: block; font-size: 10px; color: var(--c-muted); margin-top: 4px; line-height: 1.8; }
-.consumer-phone .c-selection-section { padding: 17px 18px 19px; margin-bottom: 12px; border: 0; border-radius: 14px; background: var(--c-surface); }
+.consumer-phone .c-selection-section { padding: var(--c-card-padding); margin-bottom: var(--c-card-gap); border: 0; border-radius: 14px; background: var(--c-surface); }
 .consumer-phone .c-selection-section:last-child { border: 0; }
 .consumer-phone .c-selection-section h3 { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; margin: 0 0 16px; }
 .consumer-phone .c-selection-section h3 > span { display: inline-flex; align-items: center; justify-content: center; width: 21px; height: 21px; border-radius: 50%; background: var(--c-brand-soft); color: var(--c-blue); font-size: 10px; }
@@ -360,9 +378,9 @@
 .consumer-phone .c-date-product img { display: block; width: 100%; height: 230px; object-fit: contain; background: linear-gradient(#fff, #f6f9fc, #fff); mix-blend-mode: multiply; }
 .consumer-phone .c-date-product h3 { font-size: 18px; line-height: 1.6; margin: 10px 0 3px; font-weight: 600; }
 .consumer-phone .c-date-product > p { font-size: 11px; color: var(--c-muted); line-height: 1.7; }
-.consumer-phone .c-registration-summary { margin: 0 0 18px; }
+.consumer-phone .c-registration-summary { margin: 0 0 var(--c-card-gap); }
 .consumer-phone .c-registration-caption { display: block; color: var(--c-muted); font-size: 11px; margin: 0 0 10px; line-height: 1.7; }
-.consumer-phone .c-registration-summary .c-product-context { margin: 0 0 9px; }
+.consumer-phone .c-registration-summary .c-product-context { margin: 0; }
 .consumer-phone .c-registration-purchase-meta { padding: 0 0 8px; margin-top: 0; border-bottom: 0; }
 .consumer-phone .c-scan-button.c-scan-compact { min-height: 157px; }
 .consumer-phone .c-code-examples { border-top: 1px solid var(--c-line); margin: 17px 0 0; padding: 15px 0 0; font-size: 11px; color: var(--c-muted); }
@@ -371,7 +389,7 @@
 .consumer-phone .c-code-examples > div { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .consumer-phone .c-code-examples button { min-height: 41px; color: #57788f; border: 1px solid #e1e9ef; border-radius: 8px; font-size: 10px; padding: 9px; }
 .consumer-phone .c-code-result-heading { padding-top: 31px; padding-bottom: 29px; }
-.consumer-phone .c-code-explanation { padding: 18px; margin: 12px 0; border: 0; border-radius: 14px; background: var(--c-surface); }
+.consumer-phone .c-code-explanation { padding: var(--c-card-padding); margin: var(--c-card-gap) 0; border: 0; border-radius: 14px; background: var(--c-surface); }
 .consumer-phone .c-code-explanation > h3 { font-size: 18px; line-height: 1.6; font-weight: 600; margin: 12px 0 9px; }
 .consumer-phone .c-code-explanation > strong { font-size: 15px; line-height: 1.7; font-weight: 600; display: block; margin-bottom: 9px; }
 .consumer-phone .c-code-explanation > p { font-size: 12px; line-height: 1.9; color: var(--c-muted); margin: 0 0 12px; }
@@ -379,8 +397,8 @@
 .consumer-phone .c-code-explanation > .c-text-button { display: block; margin-top: 9px; }
 .consumer-phone .c-code-explanation > .field { margin-top: 21px; }
 .consumer-phone .c-code-explanation > .secondary { width: 100%; }
-.consumer-phone .c-product-switcher { overflow-x: auto; scrollbar-width: none; }
-.consumer-phone .c-product-switcher > button { flex-shrink: 0; }
+.consumer-phone .c-product-switcher { overflow-x:auto; scrollbar-width:none; scroll-snap-type:x proximity; }
+.consumer-phone .c-product-switcher::-webkit-scrollbar { display:none; }
 
 /* Service hub: track existing requests; product actions remain on the home screen. */
 .consumer-phone .c-hub-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:4px 0 23px; }
@@ -442,7 +460,7 @@
 .consumer-phone .c-avatar-editor .c-avatar { width: 44px; height: 44px; }
 .consumer-phone .c-avatar-arrow { color: var(--c-muted); font-size: 20px; font-weight: 400; }
 .consumer-phone .c-avatar-row:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 3px; }
-.consumer-phone[data-screen="c-profile"] .c-account-phone { padding: 16px; margin-bottom: 8px; }
+.consumer-phone[data-screen="c-profile"] .c-account-phone { margin-bottom: var(--c-card-gap); }
 .consumer-phone[data-screen="c-profile"] .c-profile-form { display: grid; gap: 12px; margin: 0; }
 .consumer-phone .c-profile-card { padding: 0 16px; border-radius: 14px; background: var(--c-surface); }
 .consumer-phone .c-profile-details .c-avatar-editor { border-bottom: 1px solid var(--c-line-soft); }
@@ -452,9 +470,9 @@
 .consumer-phone .c-profile-field-row > input,
 .consumer-phone .c-profile-field-row > select { width: 100%; min-width: 0; min-height: 56px; padding: 10px 0; border: 0; border-radius: 8px; background: transparent; box-shadow: none; color: var(--c-ink); font-size: 13px; text-align: right; text-align-last: right; }
 .consumer-phone .c-profile-field-row > input::placeholder { color: #9aa7b1; }
-.consumer-phone .c-preference-entry { margin-top: 6px; border-top: 0; }
+.consumer-phone[data-screen="c-profile"] .c-preference-entry { margin-top: var(--c-card-gap); border-top: 0; }
 .consumer-phone .c-preferences-intro { margin: 4px 0 26px; color: var(--c-muted); font-size: 12px; line-height: 1.8; }
-.consumer-phone .c-preference-group { padding: 18px; margin: 0 0 12px; border: 0; border-radius: 14px; background: var(--c-surface); min-width: 0; }
+.consumer-phone .c-preference-group { padding: var(--c-card-padding); margin: 0 0 var(--c-card-gap); border: 0; border-radius: 14px; background: var(--c-surface); min-width: 0; }
 .consumer-phone .c-preference-group legend { padding: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600; }
 .consumer-phone .c-preference-group legend > span { margin-left: 6px; color: var(--c-muted); font-size: 11px; font-weight: 400; }
 .consumer-phone .c-preference-options { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -467,6 +485,37 @@
 .consumer-phone .c-preference-option input:focus-visible + span { outline: 2px solid var(--c-blue); outline-offset: 3px; }
 .consumer-phone .c-preference-tools { display: flex; justify-content: flex-end; margin-top: -12px; }
 .consumer-phone .c-preference-tools button { min-height: 44px; }
+
+/* C09 · configured phone service and native WeChat customer service entry. */
+.consumer-phone .c-customer-service-heading { margin-bottom: 18px; }
+.consumer-phone .c-customer-service-context { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 12px 14px; border-radius: 12px; background: var(--c-brand-soft); color: var(--c-blue); }
+.consumer-phone .c-customer-service-context strong { font-size: 12px; }
+.consumer-phone .c-customer-service-context span { color: #527a94; font-size: 10px; text-align: right; line-height: 1.6; }
+.consumer-phone .c-customer-service-list { display: grid; gap: 12px; }
+.consumer-phone .c-customer-service-list article { display: grid; grid-template-columns: 46px minmax(0,1fr); gap: 13px; align-items: start; padding: 17px; border-radius: 15px; background: var(--c-surface); }
+.consumer-phone .c-customer-service-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--c-brand-soft); color: var(--c-blue); font-size: 20px; font-weight: 700; }
+.consumer-phone .c-customer-service-icon.is-wechat { background: #eaf7ee; color: #258b4b; font-size: 15px; }
+.consumer-phone .c-customer-service-list p { margin: 0 0 3px; color: var(--c-muted); font-size: 10px; }
+.consumer-phone .c-customer-service-list h3 { margin: 0 0 5px; font-size: 15px; font-weight: 650; line-height: 1.5; }
+.consumer-phone .c-customer-service-list small { display: block; color: var(--c-muted); font-size: 10px; line-height: 1.7; }
+.consumer-phone .c-customer-service-list button { grid-column: 1 / -1; width: 100%; min-height: 44px; margin-top: 4px; }
+
+/* C09 opens in context as a native-feeling bottom drawer. */
+.consumer-phone #outlet-overlay:has(.c-service-drawer) { align-items:flex-end; justify-content:stretch; padding:0; }
+.consumer-phone button.c-service-drawer-backdrop,
+.consumer-phone button.c-service-drawer-backdrop:hover { position:absolute; inset:0; border-radius:0; background:rgba(12,31,43,.46); }
+.consumer-phone .c-service-drawer { position:relative; width:100%; padding:10px 20px max(22px,env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; background:#fff; box-shadow:0 -12px 35px rgba(20,52,75,.16); }
+.consumer-phone .c-service-drawer-handle { width:38px; height:4px; margin:0 auto 15px; border-radius:3px; background:#d9e1e6; }
+.consumer-phone .c-service-drawer header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px; }
+.consumer-phone .c-service-drawer h2 { margin:0; font-size:21px; font-weight:650; letter-spacing:-.025em; }
+.consumer-phone .c-service-drawer-close { flex:0 0 auto; display:grid; place-items:center; width:38px; height:38px; border-radius:50%; background:var(--c-soft); color:#61717c; font-size:24px; font-weight:300; line-height:1; }
+.consumer-phone .c-service-drawer-context { margin:-5px 0 12px; color:#52758d; font-size:10px; }
+.consumer-phone .c-service-drawer-options { display:grid; gap:9px; }
+.consumer-phone .c-service-drawer-options > button { display:grid; grid-template-columns:44px minmax(0,1fr) auto; align-items:center; gap:12px; width:100%; min-height:68px; padding:11px 12px; border:1px solid #dfe8ed; border-radius:14px; background:#fff; text-align:left; }
+.consumer-phone .c-service-drawer-icon { display:grid; place-items:center; width:44px; height:44px; border-radius:13px; background:var(--c-brand-soft); color:var(--c-blue); font-size:19px; font-weight:700; }
+.consumer-phone .c-service-drawer-icon.is-wechat { background:#eaf7ee; color:#258b4b; font-size:14px; }
+.consumer-phone .c-service-drawer-options strong { display:block; color:var(--c-ink); font-size:14px; font-weight:650; }
+.consumer-phone .c-service-drawer-options i { color:#8ca0ad; font-size:24px; font-style:normal; font-weight:300; }
 
 @media (prefers-reduced-motion: reduce) {
   .consumer-phone button { transition: none; }

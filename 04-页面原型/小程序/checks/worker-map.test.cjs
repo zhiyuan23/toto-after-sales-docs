@@ -8,7 +8,7 @@ const CHEN='WX202609130018',LIN='AZ202609130021',ZHOU='WX202609120007';
 function fixture(){const window={};for(const f of ['worker.js','worker-map.js'])vm.runInNewContext(readFileSync(resolve(__dirname,'../'+f),'utf8'),{window});return {w:window.TOTO_WORKER,m:window.TOTO_WORKER_MAP};}
 const ids=list=>Array.from(list,t=>t.id);
 test('map shares task filtering, excludes remote and missing coordinates from markers',()=>{
-  const {m,w}=fixture();m.open();assert.equal(m.rows().length,7);assert.equal(m.groups().length,5);assert.equal(m.snapshot().selected,CHEN);assert.equal(m.point(m.rows().find(t=>t.id===ZHOU)),null);
+  const {m,w}=fixture();m.open();const html=m.render();assert.doesNotMatch(html,/跟随任务页的队列与筛选|把下一站，看清楚/);assert.match(html,/class="wm-sheet-heading">.*data-wmap="list"/);assert.equal(m.rows().length,7);assert.equal(m.groups().length,5);assert.equal(m.snapshot().selected,CHEN);assert.equal(m.point(m.rows().find(t=>t.id===ZHOU)),null);
   w.actAction('queue','returned');m.render();assert.equal(m.rows().length,1);assert.equal(m.groups().length,1);
   w.submitAction('task-search',{search:'no-match'});m.render();assert.equal(m.groups().length,0);assert.equal(m.snapshot().selected,null);
 });

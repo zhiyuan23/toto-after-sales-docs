@@ -9,7 +9,19 @@
 .worker-phone .w-task-heading{gap:10px;align-items:center}.worker-phone .w-task-heading h2{font-size:21px;letter-spacing:-.6px}.worker-phone .w-task-tools{display:flex;gap:7px;flex-shrink:0}.worker-phone .w-task-tools button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:43px;min-height:47px;padding:5px 6px;border:1px solid #e0e8f1;border-radius:10px;background:#fff;color:#577596;font-size:10px}.worker-phone .w-task-tools img{width:19px;height:19px}.worker-phone .w-task-tools button:focus-visible{outline:3px solid #80ade3;outline-offset:2px}
 
 /* Worker task groups follow responsibility, not every backend status. */
-.worker-phone .w-task-queues{display:flex;gap:0;overflow:visible}.worker-phone .w-task-queues>button{flex:1;min-width:0;padding:12px 2px;font-size:12px;white-space:nowrap}.worker-phone .w-task-queues small{margin-left:3px;font-size:10px}.worker-phone .w-history-caption{font-size:11px;color:var(--w-muted);margin:-7px 0 14px}.worker-phone .w-ticket-bottom .w-text-button{min-height:42px}.worker-phone .w-ticket-bottom .w-text-button:first-child{color:var(--w-muted);font-weight:400}.worker-phone .w-time>strong{font-size:22px}
+.worker-phone .w-task-queues{display:flex;gap:0;overflow:visible}.worker-phone .w-task-queues>button{flex:1;min-width:0;padding:12px 2px;font-size:12px;white-space:nowrap}.worker-phone .w-task-queues small{margin-left:3px;font-size:10px}.worker-phone .w-history-caption{font-size:11px;color:var(--w-muted);margin:-7px 0 14px}.worker-phone .w-ticket-bottom .w-text-button{min-height:42px}.worker-phone .w-time>strong{font-size:22px}
+
+/* Task cards keep list separation while the whole surface opens details. */
+.worker-phone .w-ticket{position:relative;box-shadow:none;transition:border-color .15s,background-color .15s}
+.worker-phone .w-ticket:hover{border-color:#cddae8;background:#fbfdff}
+.worker-phone .w-ticket-hitarea{position:absolute;inset:0;z-index:1;width:100%;height:100%;border:0;border-radius:14px;background:transparent;cursor:pointer}
+.worker-phone .w-ticket-hitarea:focus-visible{outline:2px solid var(--w-blue);outline-offset:-3px}
+.worker-phone .w-ticket-bottom{position:relative;z-index:2;gap:10px;pointer-events:none}
+.worker-phone .w-ticket-bottom.is-cue-only,.worker-phone .w-ticket-bottom.has-action{justify-content:flex-end}
+.worker-phone .w-ticket-cue{display:inline-flex;align-items:center;gap:4px;min-height:42px;color:var(--w-blue);font-size:11px;font-weight:600}
+.worker-phone .w-ticket-cue b{font-size:17px;font-weight:400;line-height:1}
+.worker-phone .w-ticket-bottom .w-text-button{position:relative;z-index:3;display:inline-flex;align-items:center;gap:4px;color:var(--w-blue);font-weight:600;pointer-events:auto}
+.worker-phone .w-ticket-bottom .w-text-button b{font-size:17px;font-weight:400;line-height:1}
 
 /* Current service stays visible across task groups; list counts still include promoted tasks. */
 .worker-phone .w-serving{background:#174b78;color:#fff;border-radius:16px;padding:16px 18px;margin-bottom:12px;box-shadow:0 5px 16px #173e6912}
@@ -26,6 +38,8 @@
 .worker-phone .w-serving-actions .w-text-button{color:#e3f0fb;min-width:44px;min-height:44px;font-size:12px}
 .worker-phone .w-serving button:focus-visible{outline:3px solid #8be8cb;outline-offset:3px}
 .worker-phone .w-serving-count,.worker-phone .w-promoted-note{font-size:11px;line-height:1.6;color:#456587;margin:0 0 12px}
+.worker-phone .w-serving-group{padding-bottom:6px}.worker-phone .w-serving-group .w-serving-head{margin-bottom:4px}.worker-phone .w-serving-item{padding:13px 0 11px;border-top:1px solid #ffffff26}.worker-phone .w-serving-item-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.worker-phone .w-serving-item-title h3{margin-bottom:6px}.worker-phone .w-serving-item>p{color:#e2edf5;font-size:12px;line-height:1.6;margin:0}.worker-phone .w-serving-item .w-serving-progress{margin-top:11px}
+.worker-phone .w-serving-shortcuts{display:flex;align-items:center;margin:-1px 0 10px;border-bottom:1px solid #dfe7ef}.worker-phone .w-serving-shortcuts button{display:flex;align-items:center;gap:7px;flex:1;min-width:0;min-height:44px;padding:5px 9px;border-radius:0;background:transparent;color:var(--w-blue-deep);text-align:left}.worker-phone .w-serving-shortcuts button+button{border-left:1px solid #dfe7ef}.worker-phone .w-serving-shortcuts button:hover{background:var(--w-blue-soft)}.worker-phone .w-serving-shortcuts img{width:17px;height:17px;opacity:.78}.worker-phone .w-serving-shortcuts span{font-size:11px;white-space:nowrap}.worker-phone .w-serving-shortcuts strong{margin-left:auto;font-size:17px;font-weight:650}.worker-phone .w-serving-shortcuts small{color:var(--w-muted);font-size:9px;font-weight:400}
 .worker-phone[data-screen="w-tasks"] .w-focus-compact{background:transparent;box-shadow:none;border-radius:0;margin:0 0 8px}
 .worker-phone[data-screen="w-tasks"] .w-focus-compact .w-focus-metrics{padding:0;gap:8px}
 .worker-phone .w-focus-compact .w-focus-metrics button{border:0;background:#e7eef6;border-radius:9px;color:#335879}
@@ -39,6 +53,9 @@
 .worker-phone .primary:hover{background:var(--w-blue-strong)}
 .worker-phone .secondary{color:var(--w-blue-deep)}
 .worker-phone .secondary:hover{background:var(--w-blue-soft)}
+.worker-phone .primary,.worker-phone .secondary{border-radius:14px}
+.worker-phone .w-focus-metrics button.secondary{border-radius:10px}
+.worker-phone .w-shortcuts .secondary{border-radius:13px}
 .worker-phone .phone-tabs button.selected,.worker-phone .w-text-button,.w-search button,.w-queue button.selected{color:var(--w-blue)}
 .worker-phone .phone-tabs button.selected [data-icon],.w-tag,.w-status,.w-chip-row button.selected{background:var(--w-blue-soft);color:var(--w-blue)}
 .w-queue button.selected:after{background:var(--w-blue)}
@@ -53,10 +70,18 @@
 .worker-phone .w-focus-compact .w-focus-metrics button{background:#e8f0f5;color:#315c79}
 .worker-phone .w-focus-compact .w-focus-metrics strong{color:var(--w-blue-deep)}
 
-/* Keep page navigation separate from queue and list filters on the task home. */
-.worker-phone[data-screen="w-tasks"] .w-task-heading{margin-bottom:10px}
-.worker-phone .w-task-tools button{border-color:#dce7ed;color:var(--w-blue-deep)}
-.worker-phone .w-task-tools button:hover{background:var(--w-blue-soft)}
+/* Root tabs use an immersive custom navigation while preserving the menu capsule safe area. */
+.worker-phone[data-nav="root"] .phone-nav{height:92px;min-height:92px;padding:0 18px 10px;align-items:flex-end}
+.worker-phone[data-nav="root"] .phone-nav>button{display:none}
+.worker-phone[data-nav="root"] .phone-nav>strong{position:static;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex:1;min-width:0;overflow:visible;text-align:left;white-space:normal}
+.worker-phone[data-nav="root"] .miniapp-menu{position:absolute;top:10px;right:15px;margin:0}
+.worker-phone[data-nav="root"] .phone-body{padding-top:10px}
+.worker-phone .w-root-nav-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+.worker-phone .w-root-nav-copy small{color:var(--w-muted);font-size:11px;font-weight:500;letter-spacing:.03em;line-height:1.5}
+.worker-phone .w-root-nav-title{color:var(--w-ink);font-size:23px;font-weight:700;letter-spacing:-.55px;line-height:1.3;white-space:nowrap}
+.worker-phone .w-root-nav-action{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;min-width:58px;min-height:36px;padding:7px 9px;border:1px solid #d6e3eb;border-radius:10px;background:#fff;color:var(--w-blue-deep);font-size:11px;font-weight:600}
+.worker-phone .w-root-nav-action:hover{background:var(--w-blue-soft)}
+.worker-phone .w-root-nav-action img{width:16px;height:16px;opacity:.78}
 .worker-phone .w-focus-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 12px 13px}
 .worker-phone .w-focus-actions button{display:flex;align-items:center;gap:11px;min-height:68px;padding:10px 12px;border:1px solid #ffffff24;border-radius:11px;background:#ffffff12;color:#fff;text-align:left}
 .worker-phone .w-focus-actions button:hover{background:#ffffff20}
@@ -68,3 +93,148 @@
 .worker-phone .w-pending-filters{margin:-3px 0 13px;gap:7px}
 .worker-phone .w-pending-filters button{min-height:34px;padding:7px 13px;background:#fff;border:1px solid #dce6ec;color:#557083}
 .worker-phone .w-pending-filters button.selected{border-color:var(--w-blue-soft-strong);background:var(--w-blue-soft);color:var(--w-blue-deep);font-weight:650}
+
+/* Parts home: keep inventory distinct from the blue task overview and make records compact. */
+.worker-phone .w-stock-summary{display:block;padding:15px;background:#fff;color:var(--w-ink);border:1px solid #cfdee8;border-radius:16px;box-shadow:none;margin-bottom:13px;overflow:hidden}
+.worker-phone .w-stock-overview{display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:16px}
+.worker-phone .w-stock-total{display:grid;grid-template-columns:auto 1fr;align-items:end;gap:0 10px;min-width:0}
+.worker-phone .w-stock-total>small{grid-column:1 / -1;color:var(--w-muted);font-size:11px;font-weight:500;line-height:1.4}
+.worker-phone .w-stock-total>strong{color:var(--w-blue-deep);font-size:36px;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1.12}
+.worker-phone .w-stock-total>strong span{color:var(--w-muted);font-size:12px;font-weight:500;letter-spacing:0}
+.worker-phone .w-stock-total>p{color:var(--w-muted);font-size:10px;line-height:1.4;margin:0 0 4px}
+.worker-phone .w-stock-records{display:flex;align-items:center;justify-content:flex-end;gap:3px;min-height:44px;padding:5px 1px 5px 8px;background:transparent;border:0;border-radius:9px;color:var(--w-blue-deep);flex-shrink:0;white-space:nowrap}
+.worker-phone .w-stock-records:hover{background:var(--w-blue-soft)}
+.worker-phone .w-stock-records strong{font-size:11px;font-weight:650;letter-spacing:0;line-height:1.2}
+.worker-phone .w-stock-records span{font-size:19px;font-weight:400;line-height:1}
+.worker-phone .w-stock-actions{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:8px;padding-top:12px;margin-top:11px;border-top:1px solid #edf1f5}
+.worker-phone .w-stock-actions button{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:44px;padding:9px 8px;font-size:13px;white-space:nowrap;transition:transform 100ms ease-out,background-color 100ms ease-out,color 100ms ease-out}
+.worker-phone .w-stock-actions button strong{font-size:13px;font-weight:650;letter-spacing:0;line-height:1.2}
+.worker-phone .w-stock-actions button [data-icon] img{width:17px;height:17px}
+.worker-phone .w-stock-actions .primary{background:var(--w-blue);border-color:var(--w-blue);color:#fff}
+.worker-phone .w-stock-actions .primary:hover{background:var(--w-blue-strong)}
+.worker-phone .w-stock-actions .primary [data-icon] img{filter:brightness(0) invert(1)}
+.worker-phone .w-stock-actions .secondary{background:#fff;border-color:#cfdae3;color:var(--w-blue-deep)}
+.worker-phone .w-stock-actions .secondary:hover{background:var(--w-blue-soft)}
+.worker-phone .w-stock-actions .secondary [data-icon] img{filter:invert(34%) sepia(31%) saturate(1129%) hue-rotate(164deg) brightness(92%)}
+.worker-phone .w-stock-actions button:active,.worker-phone .w-stock-records:active{transform:scale(.98)}
+@media(prefers-reduced-motion:reduce){.worker-phone .w-stock-actions button,.worker-phone .w-stock-records{transition:none}.worker-phone .w-stock-actions button:active,.worker-phone .w-stock-records:active{transform:none}}
+
+/* Align the technician shell and account hub with the current consumer visual language. */
+.worker-phone .phone-nav{height:52px;min-height:52px;border:0;background:var(--w-canvas);color:var(--w-ink);box-shadow:none}
+.worker-phone .phone-nav strong{font-size:16px;font-weight:650;letter-spacing:.01em}
+.worker-phone .miniapp-menu{border-color:#dce5eb;background:#fffffff0}
+.worker-phone .w-profile{display:flex;align-items:center;gap:14px;padding:8px 2px 12px;margin:0;border:0}
+.worker-phone .w-profile>img{width:50px;height:50px;flex-shrink:0;background:var(--w-blue-soft);border-radius:50%;padding:8px;object-fit:cover}
+.worker-phone .w-profile>div{flex:1;min-width:0}
+.worker-phone .w-profile h2{font-size:19px!important;margin:0 0 2px!important;font-weight:600!important;letter-spacing:0!important}
+.worker-phone .w-profile p{color:var(--w-muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.worker-phone .w-profile>.w-text-button{margin-left:auto;font-size:11px}
+.worker-phone .w-resource-section{margin:8px 0 20px}
+.worker-phone .w-mine-label{margin:0 0 10px!important;color:#4f6478;font-size:12px;font-weight:600;letter-spacing:.02em}
+.worker-phone .w-resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.worker-phone .w-resource-grid.is-single{grid-template-columns:1fr}
+.worker-phone .w-resource-card{display:grid;grid-template-columns:36px minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;gap:10px;width:100%;min-height:82px;padding:14px 12px;border:0;border-radius:14px;background:#fff;text-align:left;box-shadow:none}
+.worker-phone .w-resource-card>[data-icon]{width:36px;height:36px;border-radius:11px;background:var(--w-blue-soft)}
+.worker-phone .w-resource-card>[data-icon] img{width:19px;height:19px}
+.worker-phone .w-resource-card>span:nth-child(2){min-width:0}
+.worker-phone .w-resource-card strong,.worker-phone .w-resource-card small{display:block}
+.worker-phone .w-resource-card strong{color:var(--w-ink);font-size:13px;font-weight:650;white-space:nowrap}
+.worker-phone .w-resource-card small{margin-top:4px;color:var(--w-muted);font-size:10px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.worker-phone .w-resource-card>b{color:#8194a7;font-size:18px;font-weight:400}
+.worker-phone .w-resource-card:hover{background:#fafdff}
+.worker-phone .w-mine-section{padding:0 16px;border:0;border-radius:14px;background:#fff;margin:0 0 12px}
+.worker-phone .w-mine-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:58px;padding:12px 0;border-radius:0;border-bottom:1px solid #182d4613;background:transparent;text-align:left;font-size:13px}
+.worker-phone .w-mine-row:last-child{border-bottom:0}
+.worker-phone .w-mine-row>span:last-child{color:var(--w-muted);font-size:20px;font-weight:400}
+.worker-phone .w-brand-note{text-align:center;color:#71808d;font-size:11px!important;letter-spacing:.035em;padding:20px 0 5px;margin:0}
+
+/* Compact document and warranty resource pages. */
+.worker-phone .w-resource-search{padding:12px 14px;margin:0 0 18px;border-radius:14px;background:#fff}
+.worker-phone .w-resource-search-main{display:flex;align-items:center;gap:8px}
+.worker-phone .w-resource-search-main input{flex:1;min-width:0;min-height:44px;padding:10px 12px;border:1px solid #dce4ee;border-radius:10px;background:#fbfcfe;color:var(--w-ink);font-size:13px}
+.worker-phone .w-resource-search-main button{min-width:58px;min-height:44px;padding:9px 12px;border-radius:10px;background:var(--w-blue);color:#fff;font-size:12px;font-weight:650}
+.worker-phone .w-resource-filter{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:42px;padding-top:9px;margin-top:9px;border-top:1px solid #edf1f5;color:#53697f;font-size:11px}
+.worker-phone .w-resource-filter select{min-width:108px;min-height:34px;padding:6px 26px 6px 8px;border:0;border-radius:8px;background:#f5f8fb;color:#315575;font-size:11px;text-align:right;text-align-last:right}
+.worker-phone .w-resource-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 9px;color:#53697f;font-size:12px;font-weight:600}
+.worker-phone .w-resource-list-head small{font-size:10px;font-weight:400}
+.worker-phone .w-document-list{padding:0 14px;border-radius:14px;background:#fff;overflow:hidden}
+.worker-phone .w-document-list .w-document{display:flex;align-items:center;gap:12px;width:100%;min-height:82px;padding:14px 0;margin:0;border:0;border-bottom:1px solid #e8edf3;border-radius:0;background:transparent;text-align:left}
+.worker-phone .w-document-list .w-document:last-child{border-bottom:0}
+.worker-phone .w-document-icon{display:grid;place-items:center;width:38px;height:38px;flex-shrink:0;border-radius:11px;background:var(--w-blue-soft)}
+.worker-phone .w-document-icon [data-icon] img{width:19px;height:19px}
+.worker-phone .w-document-list .w-document>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.worker-phone .w-document-list .w-document strong{font-size:13px;line-height:1.55;font-weight:650}
+.worker-phone .w-document-list .w-document small{font-size:10px;line-height:1.5}
+.worker-phone .w-document-list .w-document>b{color:#879bad;font-size:20px;font-weight:400}
+.worker-phone .w-warranty-card{display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;width:100%;padding:16px;border:1px solid #e0e8ef;border-radius:15px;background:#fff;text-align:left}
+.worker-phone .w-warranty-card-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--w-blue-soft)}
+.worker-phone .w-warranty-card-icon [data-icon] img{width:21px;height:21px}
+.worker-phone .w-warranty-card-main{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:4px}
+.worker-phone .w-warranty-card-main strong{margin:3px 0 2px;color:var(--w-ink);font-size:14px;line-height:1.55;font-weight:650}
+.worker-phone .w-warranty-card-main small{font-size:10px;line-height:1.5}
+.worker-phone .w-warranty-card-link{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;min-height:38px;padding:9px 0 0;margin-top:2px;border-top:1px solid #edf1f5;color:var(--w-blue-deep);font-size:11px;font-weight:600}
+.worker-phone .w-warranty-card-link b{font-size:19px;font-weight:400}
+.worker-phone .w-resource-detail-hero{display:flex;align-items:flex-start;gap:14px;padding:17px;margin-bottom:12px;border-radius:15px;background:#fff}
+.worker-phone .w-resource-detail-icon{display:grid;place-items:center;width:46px;height:46px;flex-shrink:0;border-radius:13px;background:var(--w-blue-soft)}
+.worker-phone .w-resource-detail-icon [data-icon] img{width:23px;height:23px}
+.worker-phone .w-resource-detail-hero>div{min-width:0}
+.worker-phone .w-resource-detail-hero h2{margin:8px 0 4px!important;font-size:18px!important;line-height:1.55;letter-spacing:-.15px}
+.worker-phone .w-resource-detail-hero p{margin:0 0 3px;color:#536b82;font-size:11px}
+.worker-phone .w-resource-detail-hero small{font-size:10px}
+.worker-phone .w-resource-detail-body{padding:17px;margin-bottom:12px;border-radius:15px;background:#fff}
+.worker-phone .w-resource-detail-body h3{margin-bottom:10px}
+.worker-phone .w-resource-detail-body>p{margin-top:7px;color:#536b82;font-size:12px;line-height:1.75}
+.worker-phone .w-resource-detail-body .w-notice{margin-bottom:0}
+.worker-phone .w-warranty-scope .w-section-head{margin:0 0 8px}
+.worker-phone .w-warranty-scope .w-section-head small{display:block;margin-bottom:3px}
+.worker-phone .w-warranty-scope .w-kv{margin:6px 0 0}
+.worker-phone .w-warranty-scope .w-kv>div:last-child{border-bottom:0}
+
+/* Progress detail keeps task identity compact and makes the workflow, rather than the repeated task status, the page focus. */
+.worker-phone .w-review-overview{overflow:hidden;margin-bottom:14px;border:1px solid var(--w-line);border-radius:16px;background:#fff}
+.worker-phone .w-review-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 16px 12px;border-bottom:1px solid #edf1f5}
+.worker-phone .w-review-meta>div{display:flex;align-items:center;gap:8px;min-width:0}
+.worker-phone .w-review-meta strong{overflow:hidden;font-size:13px;text-overflow:ellipsis;white-space:nowrap}
+.worker-phone .w-review-meta>small{flex-shrink:0;color:var(--w-muted);font-size:9px;text-align:right}
+.worker-phone .w-review-meta .w-tag{padding:4px 7px;font-size:9px}
+.worker-phone .w-review-current{padding:16px 16px 13px}
+.worker-phone .w-review-current>small{color:var(--w-muted);font-size:10px;font-weight:600;letter-spacing:.3px}
+.worker-phone .w-review-current h2{margin:3px 0 6px!important;color:var(--w-blue-deep);font-size:20px;letter-spacing:-.3px}
+.worker-phone .w-review-current p{margin:0;color:#5c7187;font-size:11px;line-height:1.65}
+.worker-phone .w-review-overview.red .w-review-current h2{color:#a94436}
+.worker-phone .w-review-overview.green .w-review-current h2{color:#21725e}
+.worker-phone .w-review-steps{display:flex;margin:0;padding:0 13px 16px;list-style:none}
+.worker-phone .w-review-steps li{position:relative;display:flex;flex:1;flex-direction:column;align-items:center;gap:7px;color:#8a98a8;font-size:10px;text-align:center}
+.worker-phone .w-review-steps li b{position:relative;z-index:1;display:grid;width:25px;height:25px;place-items:center;border:2px solid #dfe6ed;border-radius:50%;background:#fff;color:#7d8c9d;font-size:10px}
+.worker-phone .w-review-steps li:not(:last-child):after{content:'';position:absolute;top:12px;left:50%;right:-50%;height:2px;background:#e3e8ee}
+.worker-phone .w-review-steps li.done{color:#456987}
+.worker-phone .w-review-steps li.done b{border-color:var(--w-blue-soft-strong);background:var(--w-blue-soft-strong);color:var(--w-blue-deep);font-weight:700}
+.worker-phone .w-review-steps li.done:not(:last-child):after{background:var(--w-blue-soft-strong)}
+.worker-phone .w-review-steps li.active{color:var(--w-blue-deep);font-weight:650}
+.worker-phone .w-review-steps li.active b{border-color:var(--w-blue);background:var(--w-blue);color:#fff;box-shadow:0 0 0 4px var(--w-blue-soft)}
+.worker-phone .w-review-steps li.issue{color:#a94436;font-weight:650}
+.worker-phone .w-review-steps li.issue b{border-color:#d96b59;background:#fff0ea;color:#a94436;box-shadow:0 0 0 4px #fff0ea}
+
+/* The task flow uses one autosaved draft across service, evidence and final review. */
+.worker-phone .w-autosave{display:flex;align-items:center;gap:7px;margin:-10px 0 14px;color:#60758a;font-size:10px;line-height:1.5}
+.worker-phone .w-autosave:before{content:'✓';display:grid;width:17px;height:17px;flex:0 0 17px;place-items:center;border-radius:50%;background:var(--w-blue-soft);color:var(--w-blue-deep);font-size:10px;font-weight:700}
+.worker-phone .w-source-info{margin:0 0 14px;padding:2px 12px;border-radius:10px;background:#f5f8fb}
+.worker-phone .w-source-info>div:last-child{border-bottom:0}
+.worker-phone .w-confirm-card{padding:17px 18px 16px}
+.worker-phone .w-confirm-card-title{padding-bottom:14px;border-bottom:1px solid #edf1f5}
+.worker-phone .w-confirm-card-title h3{margin-bottom:4px}
+.worker-phone .w-confirm-card-title p{margin:0;color:var(--w-muted);font-size:11px;line-height:1.65}
+.worker-phone .w-confirm-section{padding-top:15px}
+.worker-phone .w-confirm-section+.w-confirm-section{margin-top:16px;border-top:1px solid #e7edf3}
+.worker-phone .w-confirm-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.worker-phone .w-confirm-section-head>div{min-width:0}
+.worker-phone .w-confirm-section-head h4{margin:0 0 2px;color:var(--w-ink);font-size:13px;font-weight:650;line-height:1.5}
+.worker-phone .w-confirm-section-head small{display:block;color:#75879a;font-size:10px;line-height:1.55}
+.worker-phone .w-confirm-section-head .w-scan-action{flex:0 0 auto;min-height:34px;padding:6px 9px;border-radius:9px;background:var(--w-blue-soft);font-size:11px}
+.worker-phone .w-confirm-section-head .w-scan-action:hover{background:var(--w-blue-soft-strong)}
+.worker-phone .w-confirm-card .w-source-info>div{gap:14px;padding:8px 0}
+.worker-phone .w-confirm-card .w-source-info dd{max-width:190px}
+.worker-phone .w-confirm-fields .field{margin-bottom:12px}
+.worker-phone .w-confirm-fields .field:last-child{margin-bottom:0}
+.worker-phone .w-confirm-fields textarea{min-height:76px}
+.worker-phone .w-confirm-section>.w-evidence{margin-top:12px;padding:12px 0 0;border-top:1px solid #edf1f5;border-bottom:0}
