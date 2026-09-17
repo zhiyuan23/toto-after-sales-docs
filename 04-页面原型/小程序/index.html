@@ -10,19 +10,21 @@
     document.documentElement.dataset.consumerVersion = window.TOTO_CONSUMER_VERSION;
   </script>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="consumer.css?v=0.13.0">
-  <link rel="stylesheet" href="consumer-v011-legacy.css?v=0.11.0">
-  <link rel="stylesheet" href="consumer-outlets.css?v=0.6.0">
-  <script src="consumer.js?v=0.11.0" defer></script>
-  <link rel="stylesheet" href="worker.css?v=0.9.6">
-  <script src="worker.js?v=0.9.6" defer></script>
+  <link rel="stylesheet" href="consumer.css?v=0.13.14">
+  <link rel="stylesheet" href="consumer-ai.css?v=0.3.0">
+  <link rel="stylesheet" href="consumer-v011-legacy.css?v=0.11.3">
+  <link rel="stylesheet" href="consumer-outlets.css?v=0.6.2">
+  <script src="consumer.js?v=0.11.6" defer></script>
+  <link rel="stylesheet" href="worker.css?v=0.10.1">
+  <script src="worker.js?v=0.10.2" defer></script>
   <link rel="stylesheet" href="worker-map.css?v=0.9.1">
   <link rel="stylesheet" href="worker-schedule.css?v=0.9.1">
-  <script src="worker-schedule.js?v=0.5.0" defer></script>
-  <script src="worker-map.js?v=0.5.0" defer></script>
-  <script src="consumer-outlets.js?v=0.6.0" defer></script>
-  <script src="consumer-account.js?v=0.11.0" defer></script>
-  <script src="app.js?v=0.13.0" defer></script>
+  <script src="worker-schedule.js?v=0.5.1" defer></script>
+  <script src="worker-map.js?v=0.5.1" defer></script>
+  <script src="consumer-outlets.js?v=0.6.2" defer></script>
+  <script src="consumer-account.js?v=0.11.1" defer></script>
+  <script src="consumer-ai.js?v=0.3.0" defer></script>
+  <script src="app.js?v=0.14.9" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -45,7 +47,7 @@
       </nav>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.13 · 新样式设计<br>服务人员 v0.9 · 领退料详细契约<br>本轮评审原型，不代表真实业务已实现。</div>
+      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.13 · 新样式设计<br>服务人员 v0.10 · 处理任务收敛版<br>本轮评审原型，不代表真实业务已实现。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
@@ -62,6 +64,7 @@
           <div id="phone" class="phone">
             <div class="phone-nav"><button id="phone-back" aria-label="返回上一页">‹</button><strong id="phone-title"></strong><span class="miniapp-menu" aria-label="小程序菜单">···</span></div>
             <div id="phone-body" class="phone-body"></div>
+            <div id="phone-floating" class="phone-floating"></div>
             <div id="phone-footer" class="phone-footer"></div>
             <nav id="phone-tabs" class="phone-tabs" aria-label="小程序底部导航"></nav>
             <div id="outlet-overlay" hidden></div>
@@ -86,7 +89,6 @@
               <option value="closed">当前工单：完成回访及后续办结</option>
               <option value="part-approved">当前配件单：库房处理 / 实物退回</option>
               <option value="part-rejected">当前配件单：拒绝申请</option>
-              <option value="transfer">新增授权调拨待收件示例</option>
               <option value="upload-fail">下一次添加材料：模拟上传失败</option>
             </select>
             <button id="worker-simulate" class="reset-button">应用后台结果</button>
@@ -110,7 +112,7 @@
           </div>
           <div class="review-divider"></div>
           <label class="review-field" for="ui-state">查看通用状态</label>
-          <select id="ui-state"><option value="normal">正常内容</option><option value="empty">暂无数据</option><option value="error">加载失败与重试</option><option value="upload">上传失败与重试</option></select>
+          <select id="ui-state"><option value="normal">正常内容</option><option value="loading">加载中</option><option value="empty">暂无数据</option><option value="error">加载失败与重试</option><option value="upload">上传失败与重试</option></select>
           <p class="fine-print">通用状态用于讨论反馈方式。实际适用页面、必填项和权限以功能契约为准。</p>
           <div id="outlet-controls" hidden>
             <div class="review-divider"></div>

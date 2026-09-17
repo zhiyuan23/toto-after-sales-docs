@@ -30,10 +30,10 @@ function fixture({ hash = '', search = '' } = {}) {
     setTimeout: () => 1, clearTimeout() {},
     window: { addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  for (const file of ['consumer.js', 'worker.js', 'worker-schedule.js', 'worker-map.js', 'consumer-outlets.js', 'consumer-account.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
+  for (const file of ['consumer.js', 'worker.js', 'worker-schedule.js', 'worker-map.js', 'consumer-outlets.js', 'consumer-account.js', 'consumer-ai.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
   const source = readFileSync(resolve(root, 'app.js'), 'utf8');
   // Expose closure state only in this VM copy, keeping the prototype's production global surface unchanged.
-  const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,current:()=>current};';
+  const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,prepareAssistantRequest,current:()=>current};';
   const index = source.lastIndexOf('})();');
   assert.ok(index > 0);
   vm.runInContext(source.slice(0, index) + hook + source.slice(index), context, { filename: 'app.js' });
@@ -61,7 +61,7 @@ function fixture({ hash = '', search = '' } = {}) {
     // A submit event targets its form; distinguish normal submissions from outlet search forms.
     events.get('submit')({ preventDefault() {}, target: form });
   };
-  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, worker:context.window.TOTO_WORKER, schedule:context.window.TOTO_WORKER_SCHEDULE, apps: context.window.TOTO_SCREENS, get, fields, click, change, submit, location, windowEvents };
+  return { ...api, api, readers, images, upload:file=>events.get('change')({target:{id:'c-avatar-file',files:file?[file]:[],value:'selected'}}), account: context.window.TOTO_ACCOUNT, assistant:context.window.TOTO_AI_ASSISTANT, worker:context.window.TOTO_WORKER, schedule:context.window.TOTO_WORKER_SCHEDULE, apps: context.window.TOTO_SCREENS, get, fields, click, change, submit, location, windowEvents };
 }
 const copy = value => JSON.parse(JSON.stringify(value));
 const personal = { userName: '虚构顾客', phone: '13800000000', useType: 'self', region: '示例省 / 示例市 / 示例区', address: '虚构地址一号', privacyConsent: true };
@@ -73,7 +73,7 @@ test('v0.11 and v0.13 expose the same consumer screens and differ only by visual
   assert.match(index,/consumer-v011-legacy\.css/);
   assert.doesNotMatch(index,/consumer-v012\.(?:js|css)/);
   assert.ok(existsSync(resolve(root,'consumer-v011-legacy.css')));
-  assert.equal(fixture().apps.consumer.screens.length,29);
+  assert.equal(fixture().apps.consumer.screens.length,32);
   assert.ok(!fixture().apps.consumer.screens.some(screen=>screen.id==='c-phone-sync'));
 });
 
@@ -91,6 +91,87 @@ test('profile fields are optional, update independently, and never rewrite histo
   assert.deepEqual(copy(f.consumer.ownedProducts),before);
   f.click({go:'c-mine'});
   assert.match(f.get('#phone-body').innerHTML,/TOTO 用户/);
+});
+
+test('mine page uses one compact product summary instead of repeating product cards', () => {
+  const f=fixture({hash:'#c-mine'}), html=f.get('#phone-body').innerHTML;
+  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  assert.match(html,/c-my-products-summary/);
+  assert.match(html,/3 件产品/);
+  assert.doesNotMatch(html,/当前：|智能坐便器 · CES8G820GCN|我的服务/);
+  assert.doesNotMatch(html,/c-product-mini-grid|<img[^>]+product-/);
+  assert.match(css,/data-screen="c-mine"\] \.c-section \{ padding-top: 0; padding-bottom: 0; \}/);
+  f.click({go:'c-products'});
+  assert.equal(f.current().id,'c-products');
+
+  f.resetConsumer('welcome');
+  f.showScreen('c-mine');
+  assert.match(f.get('#phone-body').innerHTML,/还没有登记产品/);
+  assert.match(f.get('#phone-body').innerHTML,/data-go="c-register"/);
+});
+
+test('account and registration cards share one spacing rhythm', () => {
+  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  assert.match(css,/--c-card-gap: 12px;/);
+  assert.match(css,/--c-card-padding: 16px;/);
+  assert.match(css,/data-screen="c-profile"\] \.c-account-phone \{ margin-bottom: var\(--c-card-gap\); \}/);
+  assert.match(css,/data-screen="c-profile"\] \.c-preference-entry \{ margin-top: var\(--c-card-gap\);/);
+  assert.match(css,/data-screen="c-purchases"\] \.c-purchase-refresh \{ margin-top: var\(--c-card-gap\); \}/);
+  assert.match(css,/\.c-registration-summary \{ margin: 0 0 var\(--c-card-gap\); \}/);
+  assert.match(css,/\.c-registration-summary \.c-product-context \{ margin: 0; \}/);
+  assert.match(css,/\.c-install-code \{[^}]*padding: var\(--c-card-padding\);[^}]*margin-bottom: var\(--c-card-gap\);/);
+  assert.match(css,/\.c-list-summary \{[^}]*margin: 0 0 var\(--c-card-gap\);/);
+});
+
+test('product gallery stays focused on selecting a product without duplicate acquisition actions', () => {
+  const f=fixture({hash:'#c-products'}), html=f.get('#phone-body').innerHTML;
+  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  assert.match(html,/我的产品 · 共 3 件/);
+  assert.match(html,/class="c-product-image" data-image-background="scene" src="assets\/product-bathtub-scene\.jpg"/);
+  assert.match(html,/class="c-product-image" data-image-background="solid" src="assets\/product-toilet\.jpg"/);
+  assert.match(css,/img\.c-product-image\[data-image-background="scene"\] \{[^}]*object-fit:cover;[^}]*mix-blend-mode:normal;[^}]*border-radius:9px;/);
+  assert.doesNotMatch(html,/当前产品|购买记录自动同步|扫一扫添加其他产品|data-go="c-register"/);
+  f.showScreen('c-purchases');
+  assert.match(f.get('#phone-body').innerHTML,/class="c-product-image" data-image-background="scene" src="assets\/product-bathtub-scene\.jpg"/);
+});
+
+test('home uses outlined pill product tabs and equal clear service actions', () => {
+  const f=fixture({hash:'#c-home'}), html=f.get('#phone-body').innerHTML;
+  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  assert.match(html,/class="c-product-switcher"/);
+  assert.match(html,/class="c-add-product"[^>]*aria-label="添加产品"[^>]*>.*<span>添加<\/span>/);
+  assert.match(html,/data-product="t01"[^>]*aria-pressed="true"[^>]*class="is-selected"/);
+  assert.match(css,/\.c-product-switcher \{[^}]*border:0;[^}]*background:transparent;/);
+  assert.match(css,/\.c-product-switcher button \{[^}]*border-radius:999px;[^}]*color:#425966;[^}]*background:transparent;/);
+  assert.match(css,/\.c-product-switcher button\.is-selected \{[^}]*color:#205f90;[^}]*border-color:#74a8cf;[^}]*background:transparent;/);
+  assert.match(css,/\.c-product-switcher button\.is-selected::after \{[^}]*content:none;/);
+  assert.match(css,/\.c-product-switcher \.c-add-product \{[^}]*margin-left:auto;[^}]*border:0;[^}]*background:transparent;/);
+  assert.match(css,/\.c-service-actions \{[^}]*grid-template-columns:repeat\(3,1fr\);[^}]*border:0;[^}]*background:transparent;[^}]*box-shadow:none;/);
+  assert.match(css,/\.c-service-actions > button \{[^}]*min-height:88px;[^}]*border:0;[^}]*background:transparent;[^}]*color:#294353;/);
+  assert.doesNotMatch(css,/\.c-service-actions > button::(?:before|after)/);
+  assert.match(css,/\.c-service-icon \{[^}]*width:56px;[^}]*height:56px;[^}]*border-radius:50%;[^}]*background:#edf7fd;/);
+  assert.match(css,/\.c-service-actions \.c-service-primary \{[^}]*min-height:88px;[^}]*border:0;[^}]*background:transparent;[^}]*color:#294353;/);
+  f.click({product:'b02',go:'c-home'});
+  assert.match(f.get('#phone-body').innerHTML,/data-product="b02"[^>]*aria-pressed="true"[^>]*class="is-selected"/);
+  assert.match(f.get('#phone-body').innerHTML,/台下式洗面器/);
+  f.click({product:'bath03',go:'c-home'});
+  assert.equal(f.consumerContext().product.imageBackgroundType,'scene');
+  assert.match(f.get('#phone-body').innerHTML,/class="c-product-stage is-scene" data-image-background="scene"/);
+  assert.match(css,/\.c-product-stage\.is-scene \{[^}]*padding:0;[^}]*background:#dfe5e8;/);
+  assert.match(css,/\.c-product-stage\.is-scene img \{[^}]*object-fit:cover;[^}]*mix-blend-mode:normal;/);
+});
+
+test('outlet page keeps only the compact type switch in its top controls', () => {
+  const f=fixture({hash:'#c-outlets'}), html=f.get('#phone-body').innerHTML;
+  const css=readFileSync(resolve(root,'consumer-outlets.css'),'utf8');
+  assert.match(html,/class="o-top-controls"><div class="o-type-switch"/);
+  assert.match(html,/class="o-type-switch"/);
+  assert.match(html,/>维修网点<\/button>.*>授权门店<\/button>/);
+  assert.doesNotMatch(html,/o-search|outletKeyword|data-outlet="region"/);
+  assert.match(css,/\.o-top-controls \{[^}]*left:50%;[^}]*width:230px;[^}]*translateX\(-50%\)/);
+  assert.match(css,/\.o-discovery\.is-list \.o-sheet \{ top:78px;/);
+  f.click({outlet:'kind',value:'store'});
+  assert.match(f.get('#phone-body').innerHTML,/徐汇产品体验店/);
 });
 
 test('phone changes use a WeChat authorization dialog without SMS verification', () => {
@@ -330,9 +411,9 @@ test('all templates render across consumer scenarios, registration methods, code
   const f = fixture();
   const screens = [...f.apps.consumer.screens, ...f.apps.worker.screens];
   const ids = new Set(screens.map(screen => screen.id));
-  assert.equal(f.apps.consumer.screens.length, 29);
-  assert.equal(f.apps.worker.screens.length, 28);
-  assert.equal(ids.size, 57);
+  assert.equal(f.apps.consumer.screens.length, 32);
+  assert.equal(f.apps.worker.screens.length, 27);
+  assert.equal(ids.size, 59);
   let combinations = 0;
   for (const scenario of ['welcome', 'registered', 'confirmed']) {
     f.resetConsumer(scenario);
@@ -356,13 +437,116 @@ test('all templates render across consumer scenarios, registration methods, code
       }
     }
   }
-  assert.equal(combinations, 12312);
+  assert.equal(combinations, 12744);
   f.consumer.registrationMethod = 'manual';
   f.showScreen('c-home');
   f.renderFlows();
-  assert.equal((f.get('#flows-view').innerHTML.match(/class="flow-card"/g) || []).length, 8);
+  assert.equal((f.get('#flows-view').innerHTML.match(/class="flow-card"/g) || []).length, 9);
   f.renderAtlas();
-  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 29);
+  assert.equal((f.get('#atlas-view').innerHTML.match(/class="screen-tile"/g) || []).length, 32);
+});
+
+test('AI assistant starts from the current product and a resolved answer never creates a service order', () => {
+  const f=fixture({hash:'#c-home'});
+  assert.doesNotMatch(f.get('#phone-body').innerHTML,/智能售后助手/);
+  assert.match(f.get('#phone-floating').innerHTML,/c-ai-fab/);
+  f.click({ai:'start'});
+  assert.equal(f.current().id,'c-ai-assistant');
+  assert.match(f.get('#phone-body').innerHTML,/CES8G820GCN/);
+  f.click({ai:'quick',value:'喷嘴无法伸出或出水'});
+  assert.equal(f.assistant.snapshot().stage,'answered');
+  assert.match(f.get('#phone-body').innerHTML,/KB-CES8G820GCN-WASH-07/);
+  f.click({ai:'resolved'});
+  assert.equal(f.assistant.snapshot().stage,'resolved');
+  assert.equal(f.consumer.orders.size,0);
+  assert.match(f.get('#phone-body').innerHTML,/没有创建服务单/);
+});
+
+test('an unresolved AI conversation prefills the existing repair request without creating an order', () => {
+  const f=fixture({hash:'#c-home'});
+  f.click({ai:'start'});f.click({ai:'quick',value:'冲洗功能按下后无反应'});f.click({ai:'unresolved'});
+  assert.equal(f.current().id,'c-ai-handoff');
+  assert.match(f.get('#phone-body').innerHTML,/AI 已整理/);
+  assert.match(f.get('#phone-body').innerHTML,/可修改后继续/);
+  f.fields({summaryIssue:'冲洗按键持续无响应',summaryRequest:'希望安排维修人员检查'});
+  f.click({ai:'continue-request'});
+  assert.equal(f.current().id,'c-repair');
+  assert.equal(f.consumer.orders.size,0);
+  const draft=f.consumer.forms.get('t01:repair');
+  assert.match(draft.description,/冲洗按键持续无响应/);
+  assert.match(draft.description,/希望安排维修人员检查/);
+  assert.match(draft.description,/KB-CES8G820GCN-POWER-04/);
+  assert.equal(draft.assistantSummary.knowledgeId,'KB-CES8G820GCN-POWER-04');
+  assert.match(f.get('#phone-body').innerHTML,/冲洗按键持续无响应/);
+});
+
+test('AI human-service path copies the summary without claiming a live handoff or creating an order', () => {
+  const f=fixture({hash:'#c-home'});
+  f.click({ai:'start'});f.click({ai:'quick',value:'喷嘴无法伸出或出水'});f.click({ai:'unresolved'});f.click({ai:'copy-summary'});
+  assert.equal(f.assistant.snapshot().summaryCopied,true);
+  assert.equal(f.consumer.orders.size,0);
+  assert.equal(f.current().id,'c-ai-handoff');
+  assert.equal(f.consumer.customerServiceOpen,true);
+  assert.match(f.get('#outlet-overlay').innerHTML,/问题摘要已复制/);
+  assert.match(f.consumer.lastCopiedText,/喷嘴无法伸出/);
+  assert.match(f.get('#outlet-overlay').innerHTML,/data-customer-channel="phone"/);
+  assert.match(f.get('#outlet-overlay').innerHTML,/open-type="contact"[^>]*data-customer-channel="online"/);
+  assert.doesNotMatch(f.get('#outlet-overlay').innerHTML,/已转人工|已将问题摘要发给人工客服/);
+});
+
+test('AI remains available without products and exposes direct human and failure fallbacks', () => {
+  const f=fixture();
+  f.resetConsumer('welcome');f.showScreen('c-home');
+  assert.equal(f.current().id,'c-welcome');
+  assert.match(f.get('#phone-floating').innerHTML,/c-ai-fab/);
+  f.click({ai:'start'});
+  assert.equal(f.assistant.snapshot().stage,'no-product');
+  assert.match(f.get('#phone-body').innerHTML,/微信授权并同步产品/);
+  f.click({ai:'contact-human'});
+  assert.equal(f.current().id,'c-ai-assistant');
+  assert.equal(f.consumer.customerServiceOpen,true);
+  assert.equal(f.consumer.lastCopiedText,'');
+  f.showScreen('c-ai-assistant');
+  f.get('#ui-state').change({target:{value:'error'}});
+  assert.match(f.get('#phone-body').innerHTML,/智能服务暂时不可用/);
+  assert.match(f.get('#phone-body').innerHTML,/data-ai="contact-human"/);
+});
+
+test('service and code-help customer links open the C09 phone and native WeChat drawer', () => {
+  const f=fixture({hash:'#c-service'});
+  assert.match(f.get('#phone-body').innerHTML,/data-go="c-customer-service"/);
+  f.click({go:'c-customer-service'});
+  assert.equal(f.current().id,'c-service');
+  assert.equal(f.consumer.customerServiceOpen,true);
+  assert.match(f.get('#outlet-overlay').innerHTML,/电话客服/);
+  assert.match(f.get('#outlet-overlay').innerHTML,/open-type="contact"/);
+  assert.doesNotMatch(f.get('#outlet-overlay').innerHTML,/选择后将直接|后台配置的客服热线|原型不会真实/);
+  f.click({customerServiceDismiss:''});
+  assert.equal(f.consumer.customerServiceOpen,false);
+  assert.equal(f.get('#outlet-overlay').innerHTML,'');
+  f.showScreen('c-code-help');
+  assert.match(f.get('#phone-body').innerHTML,/电话或微信在线客服/);
+  f.click({go:'c-customer-service'});
+  f.click({customerChannel:'online'});
+  assert.equal(f.consumer.customerServiceOpen,false);
+});
+
+test('safety and unmatched-product questions do not invent self-repair guidance, and active orders block continuation', () => {
+  const f=fixture({hash:'#c-home'});
+  f.click({ai:'start'});f.click({ai:'quick',value:'产品底部出现漏水'});
+  assert.equal(f.assistant.snapshot().answer.kind,'safety');
+  assert.match(f.get('#phone-body').innerHTML,/停止使用并隔离风险/);
+  assert.doesNotMatch(f.get('#phone-footer').innerHTML,/已经解决/);
+  f.click({ai:'unresolved'});
+  f.consumer.orders.set('t01',{id:'DEMO-SR-ACTIVE',productId:'t01',serviceType:'repair',status:'pending'});
+  f.click({ai:'continue-request'});
+  assert.equal(f.current().id,'c-service');
+  assert.equal(f.consumer.orders.size,1);
+  assert.equal(f.consumer.orders.get('t01').id,'DEMO-SR-ACTIVE');
+  f.showScreen('c-home');f.click({ai:'start'});f.click({ai:'product',value:'b02'});f.fields({question:'台盆排水异常'});f.submit('c-ai-question-form','');
+  assert.equal(f.assistant.snapshot().answer.kind,'no-match');
+  assert.match(f.get('#phone-body').innerHTML,/不会套用其他型号的维修知识/);
+  assert.doesNotMatch(f.get('#phone-footer').innerHTML,/已经解决/);
 });
 
 test('service request exploration still follows the newly registered product without creating an installation code', () => {

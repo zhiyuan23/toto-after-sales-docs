@@ -3,6 +3,7 @@
 (() => {
   const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const mask = value => String(value).replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2');
+  const productImageAttrs = product => `class="c-product-image" data-image-background="${product?.imageBackgroundType === 'scene' ? 'scene' : 'solid'}"`;
   const initial = () => ({userName:'陈女士',phone:'13800000026',region:'示例省 / 示例市 / 示例区',address:'样板路88号1栋101室（虚构）',serviceNotice:true,avatar:'',interests:[],contentPreferences:[],preferencesSaved:false});
   let profile = initial(), draft = {...profile}, phoneAuthorization = '';
   const interestOptions = [['smart-toilet','智能一体型座便器'],['washlet','智能座便盖'],['toilet','普通座便器'],['faucet-shower','龙头与淋浴'],['bathtub','浴缸'],['bathroom-heater','浴室暖风设备'],['bathroom-space','整体卫浴']];
@@ -83,7 +84,7 @@
   const purchaseBody = ctx => {
     const list=records(ctx);
     if (!list.length) return empty();
-    return `<p class="c-list-summary">共 ${list.length} 条记录 · ${list.reduce((sum,r)=>sum+r.products.length,0)} 件产品</p><div class="c-purchase-list">${list.map(record=>`<article class="c-purchase-card"><header><div><span>购买日期</span><h3>${e(record.date || '尚未提供')}</h3><p class="c-purchase-store">${e(record.store || '购买门店未提供')}</p></div><span class="c-tag">${e(record.source)}</span></header><div class="c-purchase-products">${record.products.map(p=>`<button class="c-record-product" data-product="${e(p.id)}" data-go="c-product"><img src="${e(p.image)}" alt="${e(p.name)}"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small></span><span class="c-record-quantity">1 件<span aria-hidden="true"> ›</span></span></button>`).join('')}</div></article>`).join('')}</div><button class="c-menu-row c-purchase-refresh" data-phone-sync data-sync-target="purchases"><span>同步购买记录</span><span aria-hidden="true">↻</span></button>`;
+    return `<p class="c-list-summary">共 ${list.length} 条记录 · ${list.reduce((sum,r)=>sum+r.products.length,0)} 件产品</p><div class="c-purchase-list">${list.map(record=>`<article class="c-purchase-card"><header><div><span>购买日期</span><h3>${e(record.date || '尚未提供')}</h3><p class="c-purchase-store">${e(record.store || '购买门店未提供')}</p></div><span class="c-tag">${e(record.source)}</span></header><div class="c-purchase-products">${record.products.map(p=>`<button class="c-record-product" data-product="${e(p.id)}" data-go="c-product"><img ${productImageAttrs(p)} src="${e(p.image)}" alt="${e(p.name)}"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small></span><span class="c-record-quantity">1 件<span aria-hidden="true"> ›</span></span></button>`).join('')}</div></article>`).join('')}</div><button class="c-menu-row c-purchase-refresh" data-phone-sync data-sync-target="purchases"><span>同步购买记录</span><span aria-hidden="true">↻</span></button>`;
   };
   function handle(el, api) {
     const action=el.dataset.account;

@@ -3,9 +3,9 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
 (() => {
   const e = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const products = [
-    { id: 't01', categoryId: 'toilet', categoryName: '坐便器', seriesId: 'neorest', seriesName: '诺锐斯特LS', name: '智能坐便器', model: 'CES8G820GCN', room: '主卫', image: 'assets/product-toilet.jpg', code: 'DEMO-TOTO-001' },
-    { id: 'b02', categoryId: 'basin', categoryName: '洗面器', seriesId: 'unassigned', seriesName: '未分系列', name: '台下式洗面器', model: 'LW1535B', room: '客卫', image: 'assets/product-basin.jpg', code: 'DEMO-TOTO-002' },
-    { id: 'bath03', categoryId: 'bathtub', categoryName: '浴缸', seriesId: 'scene-demo', seriesName: '场景图演示', name: '独立式浴缸', model: '场景图演示', room: '主浴室', image: 'assets/product-bathtub-scene.jpg', code: 'DEMO-SCENE-003' },
+    { id: 't01', categoryId: 'toilet', categoryName: '坐便器', seriesId: 'neorest', seriesName: '诺锐斯特LS', name: '智能坐便器', model: 'CES8G820GCN', room: '主卫', image: 'assets/product-toilet.jpg', imageBackgroundType: 'solid', code: 'DEMO-TOTO-001' },
+    { id: 'b02', categoryId: 'basin', categoryName: '洗面器', seriesId: 'unassigned', seriesName: '未分系列', name: '台下式洗面器', model: 'LW1535B', room: '客卫', image: 'assets/product-basin.jpg', imageBackgroundType: 'solid', code: 'DEMO-TOTO-002' },
+    { id: 'bath03', categoryId: 'bathtub', categoryName: '浴缸', seriesId: 'scene-demo', seriesName: '场景图演示', name: '独立式浴缸', model: '场景图演示', room: '主浴室', image: 'assets/product-bathtub-scene.jpg', imageBackgroundType: 'scene', code: 'DEMO-SCENE-003' },
   ];
   const types = { install: '安装服务', repair: '维修服务', 'remote-guidance': '远程使用指导', 'onsite-guidance': '上门使用指导' };
   const times = { morning: '上午 09:00—12:00', afternoon: '下午 14:00—17:00', any: '时间均可，联系确认' };
@@ -14,6 +14,8 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
   const type = ctx => ctx.serviceType || 'repair';
   const typeName = ctx => types[type(ctx)] || '维修服务';
   const isRemote = ctx => type(ctx) === 'remote-guidance';
+  const imageBackgroundType = product => product?.imageBackgroundType === 'scene' ? 'scene' : 'solid';
+  const productImageAttrs = product => `class="c-product-image" data-image-background="${imageBackgroundType(product)}"`;
   const field = (ctx, name, fallback = '') => ctx.form?.[name] ?? fallback;
   const registered = (ctx, name, fallback = '') => ctx.registered?.[name] ?? fallback;
   const icon = name => `<span class="c-service-icon" data-icon="${name}" aria-hidden="true"></span>`;
@@ -28,10 +30,10 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
     if (!selected.length) return '<div class="c-product-context"><div><span>安装服务</span><strong>尚未选择安装产品</strong><p>请返回上一步选择需要安装的产品。</p></div></div>';
     const first = selected[0];
     const multiple = selected.length > 1;
-    return `<div class="c-product-context"><img src="${e(first.image)}" alt="${e(first.name)}"><div><span>${e(caption)}${multiple ? ` · ${selected.length} 件产品` : ''}</span><strong>${e(selected.map(product => product.name).join('、'))}</strong><p>${multiple ? '同一使用地址' : `${e(first.room)} · ${e(first.model)}`}</p></div></div>`;
+    return `<div class="c-product-context"><img ${productImageAttrs(first)} src="${e(first.image)}" alt="${e(first.name)}"><div><span>${e(caption)}${multiple ? ` · ${selected.length} 件产品` : ''}</span><strong>${e(selected.map(product => product.name).join('、'))}</strong><p>${multiple ? '同一使用地址' : `${e(first.room)} · ${e(first.model)}`}</p></div></div>`;
   };
-  const hero = (ctx, small = false) => `<div class="c-product-stage${small ? ' is-small' : ''}"><img src="${e(item(ctx).image)}" alt="${e(item(ctx).name)} ${e(item(ctx).model)} 产品外观"></div>`;
-  const switcher = ctx => `<div class="c-product-switcher" aria-label="选择当前产品">${allProducts(ctx).map(p => `<button data-product="${e(p.id)}" data-go="c-home" aria-pressed="${p.id === item(ctx).id}" class="${p.id === item(ctx).id ? 'is-selected' : ''}">${e(p.name)}</button>`).join('')}<button class="c-add-product" data-go="c-register" aria-label="登记其他产品"><span class="c-inline-icon" data-icon="plus" aria-hidden="true"></span></button></div>`;
+  const hero = (ctx, small = false) => { const product=item(ctx),backgroundType=imageBackgroundType(product); return `<div class="c-product-stage is-${backgroundType}${small ? ' is-small' : ''}" data-image-background="${backgroundType}"><img ${productImageAttrs(product)} src="${e(product.image)}" alt="${e(product.name)} ${e(product.model)} 产品外观"></div>`; };
+  const switcher = ctx => `<div class="c-product-switcher" aria-label="选择产品">${allProducts(ctx).map(p => `<button data-product="${e(p.id)}" data-go="c-home" aria-pressed="${p.id === item(ctx).id}" class="${p.id === item(ctx).id ? 'is-selected' : ''}">${e(p.name)}</button>`).join('')}<button class="c-add-product" data-go="c-register" aria-label="添加产品"><span class="c-inline-icon" data-icon="plus" aria-hidden="true"></span><span>添加</span></button></div>`;
   const actions = () => `<div class="c-service-actions" aria-label="为当前产品选择服务"><button data-service-type="install" data-go="c-install">${icon('install')}<strong>安装</strong><span>新产品，安心启用</span></button><button class="c-service-primary" data-service-type="repair" data-go="c-repair">${icon('repair')}<strong>维修</strong><span>遇到问题，帮您解决</span></button><button data-service-type="remote-guidance" data-go="c-repair">${icon('guidance')}<strong>使用指导</strong><span>让好体验更简单</span></button></div>`;
   const orderSummary = ctx => ctx.order ? `<button class="c-order-strip" data-go="c-progress"><span class="c-status-dot" aria-hidden="true"></span><span><strong>${e(types[ctx.order.serviceType] || '售后服务')} · ${ctx.order.status === 'confirmed' ? '时间已确认' : '等待联系确认'}</strong><small>${ctx.order.status === 'confirmed' ? '查看本次服务安排与进度' : '申请已收到，后续将与您联系'}</small></span><span aria-hidden="true">›</span></button>` : `<div class="c-assurance"><span class="c-status-dot" aria-hidden="true"></span><span>每一件 TOTO，都有贴心服务相伴</span></div>`;
   const row = (label, value) => `<div class="c-detail-row"><dt>${e(label)}</dt><dd>${e(value)}</dd></div>`;
@@ -43,7 +45,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
   const dateLimit = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; };
   const registrationField = (ctx, name, fallback = '') => registration(ctx)[name] ?? fallback;
   const phoneMask = value => String(value || '').replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2');
-  const registrationSummary = (selected, caption = '本次登记的商品') => selected.length ? `<section class="c-registration-summary"><span class="c-registration-caption">${e(caption)}</span>${selected.map(product => `<div class="c-product-context"><img src="${e(product.image)}" alt="${e(product.name)}"><div><strong>${e(product.name)}</strong><p>${e(product.model)}</p></div></div>`).join('')}</section>` : '<div class="c-info-note">尚未选择或识别商品，请先完成上一项操作。</div>';
+  const registrationSummary = (selected, caption = '本次登记的商品') => selected.length ? `<section class="c-registration-summary"><span class="c-registration-caption">${e(caption)}</span>${selected.map(product => `<div class="c-product-context"><img ${productImageAttrs(product)} src="${e(product.image)}" alt="${e(product.name)}"><div><strong>${e(product.name)}</strong><p>${e(product.model)}</p></div></div>`).join('')}</section>` : '<div class="c-info-note">尚未选择或识别商品，请先完成上一项操作。</div>';
   const registrationResult = ctx => {
     if (ctx.registrationReceipt) {
       if (!['manual', 'product-code', 'scan-unique', 'scan-credential'].includes(ctx.registrationReceipt.method)) return null;
@@ -63,13 +65,18 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
   const serviceProducts = (ctx, order) => allProducts(ctx).filter(p => (order.productIds || [order.productId]).includes(p.id));
   const serviceProductSummary = (ctx, order) => {
     const list=serviceProducts(ctx,order),first=list[0];
-    return `<div class="c-hub-product">${first?`<img src="${e(first.image)}" alt="${e(first.name)}">`:''}<div><strong>${e(list.map(p=>p.name).join('、') || order.productName || '本次服务产品')}</strong><p>${list.length>1?`${list.length} 件产品 · 同一服务申请`:e(first?`${first.room} · ${first.model}`:'产品资料见申请详情')}</p></div></div>`;
+    return `<div class="c-hub-product">${first?`<img ${productImageAttrs(first)} src="${e(first.image)}" alt="${e(first.name)}">`:''}<div><strong>${e(list.map(p=>p.name).join('、') || order.productName || '本次服务产品')}</strong><p>${list.length>1?`${list.length} 件产品 · 同一服务申请`:e(first?`${first.room} · ${first.model}`:'产品资料见申请详情')}</p></div></div>`;
+  };
+  const mineProductSummary = ctx => {
+    const list = ctx.hasProducts === false ? [] : allProducts(ctx);
+    if (!list.length) return '<section class="c-my-products"><button class="c-my-products-summary is-empty" data-go="c-register"><span><small>我的 TOTO</small><strong>还没有登记产品</strong></span><b>去添加 <i aria-hidden="true">›</i></b></button></section>';
+    return `<section class="c-my-products"><button class="c-my-products-summary" data-go="c-products"><span><small>我的 TOTO</small><strong>${list.length} 件产品</strong></span><b>全部产品 <i aria-hidden="true">›</i></b></button></section>`;
   };
   const serviceHub = ctx => {
     const orders=ctx.serviceOrders || (ctx.order?[ctx.order]:[]);
     const order=orders.find(o=>o.id===ctx.order?.id) || orders[0];
     const header=`<header class="c-hub-header"><div><h2>我的服务</h2>${orders.length?`<p>正在跟进 ${orders.length} 项服务</p>`:''}</div>${order?'<button class="c-text-button" data-go="c-products">＋ 申请新服务</button>':''}</header>`;
-    const help=`<section class="c-hub-help"><button class="c-menu-row" data-go="c-evaluation"><span>历史服务与评价</span><span class="c-secondary-text">已完结示例 ›</span></button><div class="c-hub-help-links"><button data-go="c-outlets">查找服务网点 <span aria-hidden="true">›</span></button>${order?'':'<button data-action="可选择电话客服或微信客服；本次仅演示入口。">联系 TOTO 客服 <span aria-hidden="true">›</span></button>'}</div></section>`;
+    const help=`<section class="c-hub-help"><button class="c-menu-row" data-go="c-evaluation"><span>历史服务与评价</span><span class="c-secondary-text">已完结示例 ›</span></button><div class="c-hub-help-links"><button data-go="c-outlets">查找服务网点 <span aria-hidden="true">›</span></button><button data-go="c-customer-service">联系 TOTO 客服 <span aria-hidden="true">›</span></button></div></section>`;
     if (!order) return `${header}<section class="c-hub-empty"><span class="c-hub-empty-symbol" data-icon="service" aria-hidden="true"></span><h3>暂无进行中的服务</h3><p>${ctx.hasProducts===false?'登记产品后，即可申请售后服务。':'提交申请后，可以在这里查看<br>服务进度与联系安排。'}</p><button class="primary" data-go="${ctx.hasProducts===false?'c-register':'c-products'}">${ctx.hasProducts===false?'登记产品':'申请服务'}</button></section>${help}`;
     const confirmed=order.status==='confirmed',remote=order.serviceType==='remote-guidance';
     const switcher=orders.length>1?`<div class="c-hub-switcher" aria-label="选择要跟进的服务">${orders.map(o=>{const list=serviceProducts(ctx,o),first=list[0];return `<button data-product="${e(o.productId)}" data-go="c-service" aria-pressed="${order.id===o.id}"><strong>${e(list.length>1?`${list.length} 件产品`:first?.room || '产品') } · ${e(types[o.serviceType] || '售后服务')}</strong><span>${o.status==='confirmed'?'时间已确认':'等待联系'}</span></button>`;}).join('')}</div>`:'';
@@ -78,9 +85,14 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
     const stages=`<ol class="c-hub-stages" aria-label="服务阶段">${stageLabels.map((label,i)=>`<li class="${i===0?'is-done':i===1?'is-current':'is-next'}" ${i===1?'aria-current="step"':''}><span class="c-hub-stage-dot" aria-hidden="true">${i===0?'✓':i+1}</span><strong>${label}</strong><small>${i===0?'已提交':i===1?(confirmed?'已确认':'待联系'):'待进行'}</small></li>`).join('')}</ol>`;
     const arrangement=confirmed?`<div class="c-hub-arrangement"><span>${remote?'已确认联系时间':'已确认上门时间'}</span><strong>${e(order.confirmedDate || '日期待确认')}</strong><p>${e(times[order.confirmedTime] || order.confirmedTime || '时段待确认')}</p></div>`:`<div class="c-hub-arrangement is-pending"><span>服务安排</span><strong>联系后确认${remote?'指导方式与时间':'服务方式与时间'}</strong><p>申请已收到，请留意来电。</p></div>`;
     const next=confirmed?(remote?'请在确认时段保持电话畅通，便于沟通使用问题。':'请留意来电，并在确认时段做好产品现场准备。'):'我们将与您核对需求并确认安排，您暂时无需重复申请。';
-    return `${header}${switcher}<section class="c-hub-overview" aria-label="当前服务"><div class="c-hub-status"><span>${e(types[order.serviceType] || '售后服务')}</span><h2>${currentTitle}</h2></div>${serviceProductSummary(ctx,order)}${stages}${arrangement}<div class="c-hub-next"><span>接下来</span><p>${next}</p></div><div class="c-hub-actions"><button class="secondary" data-action="本次只演示客服联系入口，未发起真实通话。">联系客服</button><button class="primary" data-product="${e(order.productId)}" data-go="c-progress">查看完整进度</button></div></section>${help}`;
+    return `${header}${switcher}<section class="c-hub-overview" aria-label="当前服务"><div class="c-hub-status"><span>${e(types[order.serviceType] || '售后服务')}</span><h2>${currentTitle}</h2></div>${serviceProductSummary(ctx,order)}${stages}${arrangement}<div class="c-hub-next"><span>接下来</span><p>${next}</p></div><div class="c-hub-actions"><button class="secondary" data-go="c-customer-service">联系客服</button><button class="primary" data-product="${e(order.productId)}" data-go="c-progress">查看完整进度</button></div></section>${help}`;
   };
-  const welcome = ctx => `<div class="c-welcome"><div class="c-welcome-brand">TOTO</div><h2>您的产品<br>我们帮您找回来</h2><p>授权购买时使用的手机号，<br>系统自动同步可确认的购买产品。</p><div class="c-welcome-image"><img src="${e(item(ctx).image)}" alt="TOTO 智能坐便器产品示意"></div><button class="primary" data-phone-sync data-sync-target="products">微信授权并同步产品</button><button class="c-text-button" data-go="c-register">暂不同步，手动添加</button></div>`;
+  const customerService = ctx => {
+    const fromAssistant=ctx.customerServiceContext?.source==='assistant';
+    const copied=Boolean(ctx.customerServiceContext?.summaryCopied);
+    return `<header class="c-page-heading c-customer-service-heading"><p class="c-kicker">TOTO 客户服务</p><h2>选择联系渠道</h2><p>电话客服适合紧急说明与复杂咨询；微信在线客服可在小程序内继续沟通。</p></header>${fromAssistant?`<div class="c-customer-service-context"><strong>${copied?'问题摘要已复制':'已从 AI 助手进入'}</strong><span>${copied?'选择渠道后，可将摘要粘贴给客服。':'您可以直接选择电话或微信在线客服。'}</span></div>`:''}<section class="c-customer-service-list" aria-label="客服渠道"><article><span class="c-customer-service-icon" aria-hidden="true">☎</span><div><p>电话客服</p><h3>客服热线由后台配置</h3><small>配置有效号码后，将通过微信小程序拨号能力联系。</small></div><button class="primary" data-customer-channel="phone">拨打电话客服</button></article><article><span class="c-customer-service-icon is-wechat" aria-hidden="true">微</span><div><p>在线客服</p><h3>微信小程序客服</h3><small>正式小程序使用微信客服会话；是否发送摘要由您确认。</small></div><button class="primary" open-type="contact" data-wechat-open-type="contact" data-customer-channel="online">打开在线客服</button></article></section><p class="c-info-note">原型不会发起真实电话或客服会话。正式上线前需完成客服电话配置、微信客服接入及真机验证。</p>`;
+  };
+  const welcome = ctx => { const product=item(ctx); return `<div class="c-welcome"><div class="c-welcome-brand">TOTO</div><h2>您的产品<br>我们帮您找回来</h2><p>授权购买时使用的手机号，<br>系统自动同步可确认的购买产品。</p><div class="c-welcome-image"><img ${productImageAttrs(product)} src="${e(product.image)}" alt="TOTO 智能坐便器产品示意"></div><button class="primary" data-phone-sync data-sync-target="products">微信授权并同步产品</button><button class="c-text-button" data-go="c-register">暂不同步，手动添加</button></div>`; };
 
   window.TOTO_SCREENS.consumer = {
     name: '消费者小程序',
@@ -100,14 +112,20 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
       {
         id: 'c-service', title: '服务', entry: 'C02 · 服务聚合与进度', tab: 'c-service',
         goal: '优先跟进服务：快速识别当前状态、确认安排和下一步；多产品直接切换服务记录，新申请从轻量入口回到产品选择。',
-        note: '按申请单号汇总活动服务，多商品安装申请只展示一次。待联系和时间已确认沿用原有示例状态，期望时间不冒充确认时间；未来节点为待进行。无活动申请显示空态；历史入口仍为独立已完结评价示例，客服未接真实渠道。',
+        note: '按申请单号汇总活动服务，多商品安装申请只展示一次。待联系和时间已确认沿用原有示例状态，期望时间不冒充确认时间；未来节点为待进行。无活动申请显示空态；历史入口仍为独立已完结评价示例。C09 已补渠道选择页，但未接真实号码或客服会话。',
         body: serviceHub,
       },
       {
+        id: 'c-customer-service', title: '联系 TOTO 客服', entry: 'C09 · 电话与微信客服', parent: 'c-service',
+        goal: '让消费者不离开当前上下文，通过底部抽屉选择电话客服或微信在线客服；从 AI 助手进入时保留“摘要已复制”的接续提示。',
+        note: '实际入口均在当前页打开底部抽屉；本页仅保留两类渠道的独立评审视图。微信在线客服正式实现使用小程序 button open-type="contact"；电话由后台提供有效号码后直接调用 wx.makePhoneCall。原型不写入占位号码，也不代表已经接通或完成转接。',
+        body: customerService,
+      },
+      {
         id: 'c-mine', title: '我的', entry: 'C13 · 个人中心', tab: 'c-mine',
-        goal: '保留清晰的个人产品和服务入口，降低账户、地址与隐私设置对核心服务的干扰。',
-        note: '已登录的虚构演示身份；手机号变更、登录与授权状态仍待正式契约，点击反馈不代表验证已完成。未登记预览入口是评审工具，只跳转空态页面，不清除当前数据。',
-        body: ctx => `<header class="c-profile">${window.TOTO_ACCOUNT.avatarMarkup(ctx.profile?.avatar)}<div><h2>${e((ctx.profile?.userName?.trim() || 'TOTO 用户'))}</h2><p>${e(phoneMask(ctx.profile?.phone || '13800000026'))}</p></div><button class="c-text-button" data-go="c-profile">个人信息 ›</button></header><section class="c-my-products"><div class="c-section-heading"><h3>我的 TOTO</h3><button class="c-text-button" data-go="c-products">全部 ${ctx.hasProducts === false ? 0 : allProducts(ctx).length} 件 ›</button></div><div class="c-product-mini-grid">${ctx.hasProducts === false ? '<button class="c-register-prompt" data-go="c-register">登记第一件产品</button>' : allProducts(ctx).map(p => `<button data-product="${e(p.id)}" data-go="c-product"><img src="${e(p.image)}" alt="${e(p.name)}"><strong>${e(p.name)}</strong><span>${e(p.room)}</span></button>`).join('')}</div></section><section class="c-section"><button class="c-menu-row" data-go="c-service"><span>我的服务</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-registration-record="current" data-go="${ctx.hasProducts === false ? 'c-register' : 'c-register-result'}"><span>登记信息与安装码</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-go="c-purchases"><span>购买记录</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="可查看隐私条款及同意记录，并进入授权撤回与账户注销流程。"><span>隐私与账户</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="暂无需要填写的问卷。"><span>我的问卷</span><span aria-hidden="true">›</span></button></section><p class="c-brand-signoff">TOTO · 舒适，与您长久相伴</p>`,
+        goal: '保留清晰的个人产品和账户入口，不重复首页的产品陈列或底部一级 Tab。',
+        note: '“我的 TOTO”仅显示产品数量，统一进入全部产品；不重复首页的大图、逐件卡片或当前产品信息。服务由底部一级 Tab 承接，本页不设重复入口。',
+        body: ctx => `<header class="c-profile">${window.TOTO_ACCOUNT.avatarMarkup(ctx.profile?.avatar)}<div><h2>${e((ctx.profile?.userName?.trim() || 'TOTO 用户'))}</h2><p>${e(phoneMask(ctx.profile?.phone || '13800000026'))}</p></div><button class="c-text-button" data-go="c-profile">个人信息 ›</button></header>${mineProductSummary(ctx)}<section class="c-section"><button class="c-menu-row" data-registration-record="current" data-go="${ctx.hasProducts === false ? 'c-register' : 'c-register-result'}"><span>登记信息与安装码</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-go="c-purchases"><span>购买记录</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="可查看隐私条款及同意记录，并进入授权撤回与账户注销流程。"><span>隐私与账户</span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-action="暂无需要填写的问卷。"><span>我的问卷</span><span aria-hidden="true">›</span></button></section><p class="c-brand-signoff">TOTO · 舒适，与您长久相伴</p>`,
       },
       {
         id: 'c-register', title: '添加产品', entry: 'C04 · 扫码优先添加产品',
@@ -125,7 +143,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
           const categories = [...new Map(items.map(product => [product.categoryId, {id:product.categoryId, name:product.categoryName}])).values()];
           const series = [...new Map(items.filter(product => product.categoryId === reg.categoryId).map(product => [product.seriesId, {id:product.seriesId, name:product.seriesName}])).values()];
           const choices = items.filter(product => product.categoryId === reg.categoryId && product.seriesId === reg.seriesId);
-          return `<div class="c-step-label">无码添加 · 第 1 步 / 共 3 步</div><p class="c-page-intro">按分类和系列选择，再核对图片与型号。</p><section class="c-selection-section"><h3><span>1</span>选择分类</h3><div class="c-selection-options">${categories.map(category => `<button data-category="${e(category.id)}" aria-pressed="${category.id === reg.categoryId}">${e(category.name)}</button>`).join('')}</div></section><section class="c-selection-section"><h3><span>2</span>选择系列</h3>${reg.categoryId ? `<div class="c-selection-options">${series.map(group => `<button data-series="${e(group.id)}" aria-pressed="${group.id === reg.seriesId}">${e(group.name)}</button>`).join('')}</div>` : '<p class="c-selection-placeholder">先选择分类，再查看相应系列。</p>'}</section><section class="c-selection-section"><h3><span>3</span>确认商品</h3>${reg.seriesId ? `<div class="c-catalog-options">${choices.map(product => `<button class="c-catalog-product" data-catalog-product="${e(product.id)}" aria-pressed="${product.id === reg.catalogProductId}"><img src="${e(product.image)}" alt="${e(product.name)}"><span><strong>${e(product.name)}</strong><small>${e(product.model)}</small></span><span class="c-selection-indicator" aria-hidden="true">${product.id === reg.catalogProductId ? '已选' : '选择'}</span></button>`).join('')}</div>` : '<p class="c-selection-placeholder">选择系列后，用图片和型号确认商品。</p>'}</section>`;
+          return `<div class="c-step-label">无码添加 · 第 1 步 / 共 3 步</div><p class="c-page-intro">按分类和系列选择，再核对图片与型号。</p><section class="c-selection-section"><h3><span>1</span>选择分类</h3><div class="c-selection-options">${categories.map(category => `<button data-category="${e(category.id)}" aria-pressed="${category.id === reg.categoryId}">${e(category.name)}</button>`).join('')}</div></section><section class="c-selection-section"><h3><span>2</span>选择系列</h3>${reg.categoryId ? `<div class="c-selection-options">${series.map(group => `<button data-series="${e(group.id)}" aria-pressed="${group.id === reg.seriesId}">${e(group.name)}</button>`).join('')}</div>` : '<p class="c-selection-placeholder">先选择分类，再查看相应系列。</p>'}</section><section class="c-selection-section"><h3><span>3</span>确认商品</h3>${reg.seriesId ? `<div class="c-catalog-options">${choices.map(product => `<button class="c-catalog-product" data-catalog-product="${e(product.id)}" aria-pressed="${product.id === reg.catalogProductId}"><img ${productImageAttrs(product)} src="${e(product.image)}" alt="${e(product.name)}"><span><strong>${e(product.name)}</strong><small>${e(product.model)}</small></span><span class="c-selection-indicator" aria-hidden="true">${product.id === reg.catalogProductId ? '已选' : '选择'}</span></button>`).join('')}</div>` : '<p class="c-selection-placeholder">选择系列后，用图片和型号确认商品。</p>'}</section>`;
         },
         footer: ctx => `<button class="primary" data-go="c-purchase-date"${registration(ctx).catalogProductId ? '' : ' disabled'}>下一步：购买日期</button>`,
       },
@@ -135,7 +153,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         note: '手选与辅助标签码识别均需填写购买日期，不读取安装码购买摘要。日期为本地演示字段，不能晚于当天。',
         body: ctx => {
           const selected = registrationProducts(ctx);
-          return `<div class="c-step-label">第 2 步 / 共 3 步</div>${selected.length ? `<div class="c-date-product"><img src="${e(selected[0].image)}" alt="${e(selected[0].name)}"><h3>${e(selected[0].name)}</h3><p>${e(selected[0].model)}</p></div>` : registrationSummary([])}<form id="c-purchase-date-form" class="c-form" data-submit-go="c-purchase"><label class="field"><span>购买日期 <em>必填</em></span><input name="purchaseDate" type="date" max="${dateLimit()}" value="${e(registrationField(ctx, 'purchaseDate'))}" required></label><p class="c-hint">请填写购买凭证或订单上的购买日期，请勿填写收货或安装日期。</p></form><button class="c-text-button" data-go="${registration(ctx).method === 'product-code' ? 'c-product-code' : 'c-manual-select'}">重新选择或识别商品</button>`;
+          return `<div class="c-step-label">第 2 步 / 共 3 步</div>${selected.length ? `<div class="c-date-product"><img ${productImageAttrs(selected[0])} src="${e(selected[0].image)}" alt="${e(selected[0].name)}"><h3>${e(selected[0].name)}</h3><p>${e(selected[0].model)}</p></div>` : registrationSummary([])}<form id="c-purchase-date-form" class="c-form" data-submit-go="c-purchase"><label class="field"><span>购买日期 <em>必填</em></span><input name="purchaseDate" type="date" max="${dateLimit()}" value="${e(registrationField(ctx, 'purchaseDate'))}" required></label><p class="c-hint">请填写购买凭证或订单上的购买日期，请勿填写收货或安装日期。</p></form><button class="c-text-button" data-go="${registration(ctx).method === 'product-code' ? 'c-product-code' : 'c-manual-select'}">重新选择或识别商品</button>`;
         },
         footer: ctx => `<button class="primary" type="submit" form="c-purchase-date-form"${registrationProducts(ctx).length ? '' : ' disabled'}>下一步：个人信息</button>`,
       },
@@ -181,7 +199,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         id: 'c-code-help', title: '联系门店与客服', entry: 'C04 · 购买与安装码查询协助',
         goal: '提供人工协助方向，不演示通过手机号查回记录或通过安装码认领产品。',
         note: '只提供联系说明，不收集找回手机号、不验证身份、不查找或绑定购买记录。真实客服和门店联系渠道尚未接入。',
-        body: () => '<header class="c-page-heading"><h2>让门店或客服帮您核对</h2><p>准备好购买凭证、商品信息，<br>有安装码时也可以一起提供。</p></header><section class="c-code-explanation"><h3>联系购买门店</h3><p>可通过购买凭证或订单上的门店联系方式，核对商品与购买记录。</p><h3>联系 TOTO 客服</h3><p>说明您需要查询的内容，请客服协助核实。没有安装码，也可以先说明购买情况。</p></section><button class="c-menu-row" data-action="请从购买凭证、订单或 TOTO 官方渠道查找联系方式，并说明您需要核对的记录。"><span>查看联系指引</span><span aria-hidden="true">›</span></button>',
+        body: () => '<header class="c-page-heading"><h2>让门店或客服帮您核对</h2><p>准备好购买凭证、商品信息，<br>有安装码时也可以一起提供。</p></header><section class="c-code-explanation"><h3>联系购买门店</h3><p>可通过购买凭证或订单上的门店联系方式，核对商品与购买记录。</p><h3>联系 TOTO 客服</h3><p>说明您需要查询的内容，请客服协助核实。没有安装码，也可以先说明购买情况。</p></section><button class="c-menu-row" data-go="c-customer-service"><span>电话或微信在线客服</span><span aria-hidden="true">›</span></button>',
         footer: '<button class="primary" data-reg-method="manual">选择商品登记</button>',
       },
       {
@@ -210,9 +228,8 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
       {
         id: 'c-products', title: '我的产品', entry: 'C10 · 产品展厅',
         goal: '用可以辨认的产品图帮助消费者切换到正确产品，避免把不同产品的服务申请与进度混在一起。',
-        note: '仅显示当前演示账户实际关联的产品实例。来源明确区分手机号同步、扫码添加和手动添加；同一可信标识或购买明细不重复创建。待核验产品可显示，但不暗示免费权益。',
-        body: ctx => ctx.hasProducts === false ? welcome(ctx) : `<p class="c-list-summary">我的产品 · 共 ${allProducts(ctx).length} 件</p><p class="c-page-intro">购买记录自动同步，其他产品也可扫码添加。</p><div class="c-gallery">${allProducts(ctx).map(p => `<button class="c-gallery-product${p.id === item(ctx).id ? ' is-selected' : ''}" data-product="${e(p.id)}" data-go="c-home" aria-label="切换到${e(p.name)}"><div><span class="c-tag">${e(p.sourceLabel || '已有产品')}</span>${p.ownershipStatus === 'pending-verification' ? '<span class="c-pending-label">待核验</span>' : p.id === item(ctx).id ? '<span class="c-current-label">当前产品</span>' : ''}</div><img src="${e(p.image)}" alt="${e(p.name)} ${e(p.model)}"><div class="c-gallery-caption"><span><strong>${e(p.name)}</strong><small>${e(p.model)} · ${e(p.room)}</small></span><span aria-hidden="true">›</span></div></button>`).join('')}</div>`,
-        footer: '<button class="primary" data-go="c-register">扫一扫添加其他产品</button>',
+        note: '仅显示当前演示账户关联的产品实例。本页用于选择产品，不重复购买同步和扫码添加入口，也不标记“当前产品”。待核验产品可显示，但不暗示免费权益。',
+        body: ctx => ctx.hasProducts === false ? welcome(ctx) : `<p class="c-list-summary">我的产品 · 共 ${allProducts(ctx).length} 件</p><div class="c-gallery">${allProducts(ctx).map(p => `<button class="c-gallery-product" data-product="${e(p.id)}" data-go="c-home" aria-label="查看${e(p.name)}"><div><span class="c-tag">${e(p.sourceLabel || '已有产品')}</span>${p.ownershipStatus === 'pending-verification' ? '<span class="c-pending-label">待核验</span>' : ''}</div><img ${productImageAttrs(p)} src="${e(p.image)}" alt="${e(p.name)} ${e(p.model)}"><div class="c-gallery-caption"><span><strong>${e(p.name)}</strong><small>${e(p.model)} · ${e(p.room)}</small></span><span aria-hidden="true">›</span></div></button>`).join('')}</div>`,
       },
       {
         id: 'c-product', title: '产品资料', entry: 'C10 · 产品详情',
@@ -267,7 +284,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
           const confirmed = order.status === 'confirmed';
           return `<header class="c-progress-heading"><span class="c-tag">${e(types[order.serviceType] || '售后服务')}</span><h2>${confirmed ? '服务时间已确认' : '申请已收到，等待联系'}</h2><p>${confirmed ? '请留意来电，具体安排以双方沟通为准。' : '我们会联系您，确认问题与服务安排。'}</p></header>${serviceProductSummary(ctx, order)}<section class="c-section"><ol class="c-timeline"><li class="is-done"><strong>申请已提交</strong><p>您的服务需求已收到。</p></li><li class="${confirmed ? 'is-done' : 'is-current'}"><strong>${confirmed ? '服务安排已确认' : '等待联系确认'}</strong><p>${confirmed ? e(`${order.confirmedDate || '日期待确认'} ${times[order.confirmedTime] || order.confirmedTime || '时段待确认'}`) : '问题、服务方式与时间将在联系后确认。'}</p></li><li class="is-next"><strong>${order.serviceType === 'remote-guidance' ? '提供使用指导' : '服务人员处理'}</strong><p>处理后可查看服务记录。</p></li><li class="is-next"><strong>服务完成</strong><p>处理结果将随进度更新。</p></li></ol></section><section class="c-section"><h3>申请详情</h3><dl class="c-details">${row('申请单号', order.id)}${row(order.serviceType === 'remote-guidance' ? '期望联系时间' : '期望上门时间', `${order.preferredDate || '未填写'} ${times[order.preferredTime] || order.preferredTime || ''}`)}${confirmed ? row('已确认时间', `${order.confirmedDate || '日期待确认'} ${times[order.confirmedTime] || order.confirmedTime || '时段待确认'}`) : ''}${row('问题 / 需求', order.description || '未补充其他说明')}${row('联系人', `${order.contactName || ''} · ${order.phone || ''}`)}${order.serviceType === 'remote-guidance' ? '' : row('使用地址', order.address || '待联系确认')}</dl></section>`;
         },
-        footer: ctx => ctx.order ? '<button class="secondary" data-action="本次只演示客服联系入口，未发起真实通话。">联系客服</button><button class="primary" data-go="c-home">回到产品中心</button>' : '',
+        footer: ctx => ctx.order ? '<button class="secondary" data-go="c-customer-service">联系客服</button><button class="primary" data-go="c-home">回到产品中心</button>' : '',
       },
       {
         id: 'c-evaluation', title: '评价历史服务', entry: 'C15 · 已完结指导评价示例',
@@ -283,7 +300,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         body: ctx => {
           const selected = field(ctx, 'installProducts', [item(ctx).id]);
           const ids = Array.isArray(selected) ? selected : [selected];
-          return `${step(1)}<form id="c-install-form" class="c-form" data-submit-go="c-contact"><fieldset class="c-install-products"><legend>需要安装的产品 <em>至少选择 1 件</em></legend>${allProducts(ctx).map(p => `<label><input type="checkbox" name="installProducts" value="${e(p.id)}"${ids.includes(p.id) ? ' checked' : ''}><img src="${e(p.image)}" alt="${e(p.name)}"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small><small>${e(p.room)}</small></span></label>`).join('')}</fieldset><p class="c-hint">同一使用地址的产品可一起填写安装意向。</p><label class="field"><span>补充安装需求 <em>选填</em></span><textarea name="description" rows="3" maxlength="1000" placeholder="例如：产品是否已到家，现场是否已具备安装条件。">${e(field(ctx, 'description'))}</textarea></label><p class="c-info-note">具体服务安排、现场条件和相关事项，将在联系后确认。</p></form>`;
+          return `${step(1)}<form id="c-install-form" class="c-form" data-submit-go="c-contact"><fieldset class="c-install-products"><legend>需要安装的产品 <em>至少选择 1 件</em></legend>${allProducts(ctx).map(p => `<label><input type="checkbox" name="installProducts" value="${e(p.id)}"${ids.includes(p.id) ? ' checked' : ''}><img ${productImageAttrs(p)} src="${e(p.image)}" alt="${e(p.name)}"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small><small>${e(p.room)}</small></span></label>`).join('')}</fieldset><p class="c-hint">同一使用地址的产品可一起填写安装意向。</p><label class="field"><span>补充安装需求 <em>选填</em></span><textarea name="description" rows="3" maxlength="1000" placeholder="例如：产品是否已到家，现场是否已具备安装条件。">${e(field(ctx, 'description'))}</textarea></label><p class="c-info-note">具体服务安排、现场条件和相关事项，将在联系后确认。</p></form>`;
         },
         footer: '<button class="primary" type="submit" form="c-install-form">下一步：联系与时间</button>',
       },
