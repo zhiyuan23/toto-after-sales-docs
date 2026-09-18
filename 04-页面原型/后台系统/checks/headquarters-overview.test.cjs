@@ -8,7 +8,7 @@ const css=fs.readFileSync(path.join(root,'admin.css'),'utf8')
 const js=fs.readFileSync(path.join(root,'admin.js'),'utf8')
 const design=fs.readFileSync(path.join(root,'01-四视角后台原型设计说明.md'),'utf8')
 
-test('四视角入口和总部运营工作台命名完整',()=>{for(const file of ['customer-service.html','service-station.html','dealer.html'])assert.match(html,new RegExp(`href="${file}"`));assert.match(html,/href="#headquarters"/);assert.match(html,/运营工作台/);assert.doesNotMatch(html,/运营概览/);assert.match(html,/4 \/ 4/)})
+test('四视角入口和总部两个工作台版本命名完整',()=>{for(const file of ['headquarters-map.html','customer-service.html','service-station.html','dealer.html'])assert.match(html,new RegExp(`href="${file}"`));assert.match(html,/href="#headquarters"/);assert.match(html,/运营工作台/);assert.doesNotMatch(html,/运营概览/);assert.match(html,/5 \/ 5/)})
 test('总部首版指标与严格口径都有表达',()=>{for(const copy of ['全部工单','待分配服务站','待完工','缺件工单','按工单创建日期分组','原型演示数据'])assert.match(html,new RegExp(copy));assert.match(design,/失败不显示为 0/);assert.match(design,/不把尚未确认的 SLA/)})
 test('核心交互与完整界面状态已接入',()=>{for(const token of ['selectQueue','renderOrders','openDetail','openCommand','setTableState','requestFullscreen','prefers-reduced-motion'])assert.ok(js.includes(token)||css.includes(token),`missing ${token}`);for(const state of ['data','loading','empty','error'])assert.match(html,new RegExp(`data-table-state="${state}"`))})
 test('页面不包含未标识的实时数据声称',()=>{assert.match(html,/原型演示数据/);assert.doesNotMatch(html,/实时数据/);assert.doesNotMatch(html,/已验收/)})

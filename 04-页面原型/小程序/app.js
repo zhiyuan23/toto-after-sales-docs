@@ -157,7 +157,7 @@
     $('#phone').classList.toggle('worker-phone', current.app === 'worker');
     $('#worker-controls').hidden=current.app!=='worker'||current.id==='w-map';
     $('#worker-map-controls').hidden=current.id!=='w-map';
-    if(current.id==='w-map'&&workerMap){const m=workerMap.snapshot();$('#worker-map-scenario').value=m.scenario;$('#worker-map-location').value=m.locationOutcome;$('#worker-map-route').value=m.routeOutcome;}
+    if(current.id==='w-map'&&workerMap){const m=workerMap.snapshot();$('#worker-map-scenario').value=m.scenario;$('#worker-map-location').value=m.locationOutcome;}
     $('#phone').dataset.screen = current.id;
     $('#consumer-controls').hidden = current.app !== 'consumer';
     $('#outlet-controls').hidden = !outlets?.owns(current.id);
@@ -599,12 +599,12 @@
   $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
   $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
-  if(captureId==='w-map'&&workerMap){const demo=new URLSearchParams(location.search).get('map-demo');if(['single','today'].includes(demo)){workerMap.open();workerMap.act(demo);workerMap.act('origin','station');workerMap.act('calculate');}}
+  if(captureId==='w-map'&&workerMap){const demo=new URLSearchParams(location.search).get('map-demo');workerMap.open();if(demo==='selected')workerMap.act('select','AZ202609130021');if(demo==='list')workerMap.act('list');}
   if(['w-tasks','w-schedule'].includes(captureId)&&workerSchedule){const date=new URLSearchParams(location.search).get('schedule-date');if(date&&workerSchedule.validDate(date))workerSchedule.setDate(date);}
   const initialId=captureId==='w-tasks'&&new URLSearchParams(location.search).has('schedule-date')?'w-schedule':captureId;
   document.querySelectorAll?.('[data-consumer-version-link]').forEach(link=>link.setAttribute('aria-current',link.dataset.consumerVersionLink===consumerVersion?'page':'false'));
   const versionNote=$('#prototype-version-note');
-  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':'v0.13 · 新样式设计'}<br>服务人员 v0.10 · 处理任务收敛版<br>两个消费者版本共用 v0.11 交互与业务状态。`;
+  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':'v0.13 · 新样式设计'}<br>服务人员 v0.11 · 微信地图能力收敛版<br>两个消费者版本共用 v0.11 交互与业务状态。`;
   const phaseLabel=$('#consumer-phase-label');
   if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':'02 v0.13 视觉设计原型';
   if(all.length) showScreen(initialId || location.hash.slice(1) || all[0].id,false);

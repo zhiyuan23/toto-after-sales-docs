@@ -19,13 +19,21 @@ test('task groups include disconnected follow-up and primary actions open the co
   assert.equal(w.actAction('task-next',HUANG),'w-review');assert.equal(w.actAction('task-next',SUN),'w-review');
   w.actAction('queue','history');assert.equal(w.filteredTasks().length,2);w.actAction('history-filter','closed');assert.equal(w.filteredTasks().length,0);
 });
-test('task cards open details as a whole and only keep distinct state actions',()=>{
-  const {page}=fixture();const html=page('w-tasks').body();
+test('task cards open details as a whole and use one vertically centered chevron',()=>{
+  const {w,page}=fixture();let html=page('w-tasks').body();
   assert.match(html,new RegExp(`class="w-ticket-hitarea" data-worker="task" data-value="${CHEN}"`));
-  assert.doesNotMatch(html,/>任务详情<\/button>/);assert.doesNotMatch(html,new RegExp(`data-worker="task-next" data-value="${CHEN}"`));
-  assert.match(html,/class="w-ticket-bottom is-cue-only"><span class="w-ticket-cue">处理任务 <b[^>]*>›<\/b>/);
-  assert.doesNotMatch(html,/查看详情/);assert.match(html,/class="w-ticket-bottom has-action"><button[^>]+>跟进配件 <b[^>]*>›<\/b><\/button>/);
-  assert.match(html,/data-worker="task-next"[^>]+>跟进配件 <b[^>]*>›<\/b><\/button>/);assert.match(html,/data-worker="task-next"[^>]+>联系客户 <b[^>]*>›<\/b><\/button>/);
+  assert.match(html,/class="w-time"><strong>14:00<\/strong><small>至 16:00<\/small><\/div>/);
+  assert.doesNotMatch(html,/class="w-time"><strong>(?:待补|待件|联系|待审|已通过|已取消|已关闭)<\/strong>/);
+  assert.doesNotMatch(html,/>任务详情<\/button>|class="w-ticket-bottom"|class="w-ticket-cue"|data-worker="task-next"/);
+  assert.equal((html.match(/class="w-ticket-chevron" aria-hidden="true">›<\/span>/g)||[]).length,w.filteredTasks().length);
+  w.actAction('queue','history');html=page('w-tasks').body();
+  assert.match(html,/审核通过/);assert.match(html,/已取消/);assert.doesNotMatch(html,/class="w-time"|class="w-ticket-bottom"/);
+  assert.equal((html.match(/class="w-ticket-chevron" aria-hidden="true">›<\/span>/g)||[]).length,w.filteredTasks().length);
+});
+test('task detail groups product documents and work-order part records in one auxiliary action row',()=>{
+  const {w,page}=fixture();w.actAction('task',CHEN);const html=page('w-detail').body();
+  assert.match(html,/class="w-detail-links" aria-label="任务相关资料">[\s\S]*data-worker="task-docs"[\s\S]*查本产品资料[\s\S]*data-worker="task-records"[\s\S]*本单配件记录[\s\S]*<\/div>/);
+  assert.equal((html.match(/class="w-text-button" data-worker="task-(?:docs|records)"/g)||[]).length,2);
 });
 test('task handling combines service and completion in one autosaved three-step flow',()=>{
   const {page}=fixture();const screen=page('w-service'),body=screen.body(),footer=screen.footer();
@@ -138,7 +146,7 @@ test('service focus starts on arrival, stays across queries and tabs and is not 
   const html=page('w-tasks').body();assert.equal((html.match(/陈女士/g)||[]).length,2); // accessible article label + visible heading
   assert.doesNotMatch(html,/class="w-focus"/);assert.equal((html.match(/class="w-serving"/g)||[]).length,1);assert.match(html,/class="w-serving-shortcuts"/);
   assert.match(html,/其中 1 单正在服务/);assert.match(html,/待处理<small>7/);assert.equal(w.filteredTasks().length,7);
-  m.open();assert.match(m.render(),/继续处理任务/);assert.equal(s.status(s.entries().find(r=>r.task.id===CHEN)).label,'正在服务');
+  m.open();assert.match(m.render(),/正在服务/);assert.match(m.render(),/工单详情/);assert.doesNotMatch(m.render(),/继续处理任务/);assert.equal(s.status(s.entries().find(r=>r.task.id===CHEN)).label,'正在服务');
   w.actAction('queue','history');w.submitAction('task-search',{search:'不匹配'});assert.equal(w.filteredTasks().length,0);assert.match(page('w-tasks').body(),/正在服务 · 陈女士/);
 });
 test('continue restores the correct order, completion step and task-scoped draft',()=>{

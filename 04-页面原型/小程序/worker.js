@@ -83,9 +83,8 @@
   }
   function taskCard(t) {
     const next=nextStep(t);
-    const separateAction=next.route!=='w-detail'?act(`${next.action} <b aria-hidden="true">›</b>`,'task-next',t.id,'w-text-button'):'';
-    const detailCue=next.route==='w-detail'?`<span class="w-ticket-cue">${e(next.action)} <b aria-hidden="true">›</b></span>`:'';
-    return `<article class="w-ticket ${tone(t)}"><button type="button" class="w-ticket-hitarea" data-worker="task" data-value="${e(t.id)}" aria-label="查看${e(t.name)}的任务详情"></button><div class="w-ticket-top">${tag(next.label,tone(t))}<small>${e(t.type)} · ${queueName(t)}</small></div><div class="w-ticket-main"><div class="w-time"><strong>${e(next.word)}</strong><small>${t.flag==='已预约'&&canArrange(t)?`至 ${e(t.end)}`:'当前阶段'}</small></div><div class="w-ticket-info"><h3>${e(t.name)}<span>${e(t.product)}</span></h3><p>${e(t.address)}</p></div></div><div class="w-ticket-hint">${e(next.hint)}</div><div class="w-ticket-bottom ${separateAction?'has-action':'is-cue-only'}">${detailCue}${separateAction}</div></article>`;
+    const timing=t.flag==='已预约'&&canArrange(t)?`<div class="w-time"><strong>${e(t.start)}</strong><small>至 ${e(t.end)}</small></div>`:'';
+    return `<article class="w-ticket ${tone(t)}"><button type="button" class="w-ticket-hitarea" data-worker="task" data-value="${e(t.id)}" aria-label="查看${e(t.name)}的任务详情"></button><div class="w-ticket-top">${tag(next.label,tone(t))}<small>${e(t.type)} · ${queueName(t)}</small></div><div class="w-ticket-main">${timing}<div class="w-ticket-info"><h3>${e(t.name)}<span>${e(t.product)}</span></h3><p>${e(t.address)}</p></div><span class="w-ticket-chevron" aria-hidden="true">›</span></div><div class="w-ticket-hint">${e(next.hint)}</div></article>`;
   }
   function summary(t=task()) {return t?`<div class="w-context"><div>${icon(t.type==='安装'?'install':t.type==='远程指导'?'guidance':'repair')}<strong>${e(t.name)} · ${e(t.type)}</strong>${tag(queueName(t),tone(t))}</div><small>${e(t.id)} · ${e(t.model)}</small></div>`:empty('当前没有任务','请返回任务页。');}
   function servingCard(t) {
@@ -120,7 +119,7 @@
     const t=task();if(!t)return summary();
     return `<div class="w-status ${tone(t)}"><small>${queueName(t)}</small><h2>${e(nextStep(t).label)}</h2><p>${e(nextStep(t).hint)}</p></div>${summary(t)}
       ${card(`<div class="w-section-head"><h3>${canArrange(t)?'服务安排':'服务记录'}</h3>${canArrange(t)?go('联系 / 改约','w-appointment','w-text-button'):''}</div><div class="w-appointment-time">${t.date?e(`${t.date} · ${t.start}–${t.end}`):'尚未确认时间'}</div><p>${e(t.address)}</p><small class="muted">${e(t.supplement)}</small>${canArrange(t)?`<div class="w-contact">${act('拨打客户电话','phone',t.id)}${t.type!=='远程指导'?act('去这单','location',t.id):''}${go('编辑补充信息','w-edit','w-text-button')}</div>`:''}`)}
-      ${card(`<div class="w-product">${icon(t.type==='安装'?'install':'repair')}<div><h3>${e(t.product)}</h3><small>${e(t.model)} · ${e(t.type)} × 1</small></div></div><p>${e(t.issue)}</p><p class="muted">${e(t.note||'暂无额外备注')}</p><div class="w-contact">${act('查本产品资料','task-docs','','w-text-button')}${act('本单配件记录','task-records','','w-text-button')}</div>`)}
+      ${card(`<div class="w-product">${icon(t.type==='安装'?'install':'repair')}<div><h3>${e(t.product)}</h3><small>${e(t.model)} · ${e(t.type)} × 1</small></div></div><p>${e(t.issue)}</p><p class="muted">${e(t.note||'暂无额外备注')}</p><div class="w-detail-links" aria-label="任务相关资料">${act('查本产品资料','task-docs','','w-text-button')}${act('本单配件记录','task-records','','w-text-button')}</div>`)}
       ${t.versions.length&&!['review','followup','closed'].includes(t.queue)?go('查看完工材料与审核记录','w-review'):''}
       ${card(`<h3>沟通与处理记录</h3>${history(t)}`)}`;
   }
@@ -187,12 +186,12 @@
   const screens=[];
   function screen(id,title,entry,tab,body,footer,goal,note='',rootNav=null){const scopedBody=()=>state.company!=='上海示例服务企业'&&['w-part-detail','w-requisition','w-return','w-records','w-record-detail','w-technical','w-document','w-warranty','w-warranty-detail'].includes(id)?empty('当前企业暂无授权数据','可在我的页面切换企业。')+go('返回我的','w-mine','primary'):(typeof body==='function'?body():body);screens.push({id,title,entry,tab,body:scopedBody,footer,goal:goal||'在当前业务上下文完成操作，并返回关联记录。',note:[baseNote,note,rootNav?rootNavImplementationNote:''].filter(Boolean).join(' '),rootNav,navigationMode:rootNav?'custom-root':'standard'});}
   screen('w-tasks','任务','W01','w-tasks',renderTasks,null,'用处理优先级、预约时间和下一步识别任务，三个 Tab 保留全部业务入口。','队列与预约／缺件／审核退回标签独立。无正在服务任务时，蓝色概览卡展示待处理总数、今日预约和等配件任务；有正在服务任务时，当前服务主卡替代原概览卡，今日预约和等配件保留为下方轻量快捷行，避免两张主卡重复占用首屏空间。今日预约明确进入今日日程，等配件明确进入对应任务；地图位于首页自定义导航右侧。待处理 Tab 下仍可用二级筛选，不影响其他一级 Tab。搜索、排序、计数使用同一数据集。v0.8 仅展示已下发给当前师傅的任务；待处理合并断联，退回单独归入待补资料；正在服务置顶，计入待处理但不在下方重复展示，继续入口恢复本单填写步骤；尚未约定同时仅能服务一单。审核中只查看进度，审核通过即结束师傅本次处理，进入历史任务，由服务中心回访跟进；无二次交单入口。返回列表恢复同企业、同筛选下的位置。',taskRootNav);
-  screen('w-schedule','任务日程','W01','w-tasks',()=>window.TOTO_WORKER_SCHEDULE?.render()||notice('日程模块待加载'),null,'按确认预约查看今天、未来和过去，再查看当日地图或路线。','v0.5 独立日程页；不额外显示底部 Tab。返回原页面保留日期；未预约任务集中在待安排，历史改约单独留痕。');
+  screen('w-schedule','任务日程','W01','w-tasks',()=>window.TOTO_WORKER_SCHEDULE?.render()||notice('日程模块待加载'),null,'按确认预约查看今天、未来和过去，并查看选定日期的任务地图。','独立日程页；不额外显示底部 Tab。返回原页面保留日期；未预约任务集中在待安排，历史改约单独留痕。');
   screen('w-detail','任务详情','W02','w-tasks',detail,detailFooter);
   screen('w-appointment','联系与预约','W02','w-tasks',appointment);
   screen('w-edit','编辑补充信息','W02','w-tasks',edit);
   screen('w-exception','异常跟进','W02','w-tasks',exception,null,null,'取消恢复仅形成申请，不能擅自定义恢复目标状态。');
-  screen('w-map','任务地图','W03','w-tasks',()=>window.TOTO_WORKER_MAP?.render()||notice('地图模块待加载'),null,'查看授权任务标点，选择工单或安排今日路线，再打开目的地位置。','v0.3 地图交互稿：示意底图、位置和路程，未调用真实地图或定位。支持同址任务、待核地址、定位与算路失败。');
+  screen('w-map','任务地图','W03','w-tasks',()=>window.TOTO_WORKER_MAP?.render()||notice('地图模块待加载'),null,'使用微信小程序 map 组件查看授权任务标点，选择工单并打开目的地位置。','正式实现限于 markers、bindmarkertap、show-location 和 MapContext.includePoints / moveToLocation。路线计算、驾车／步行切换、多站排序、里程与时长不属于内置组件能力，已从当前原型移除。单个目的地可交给 wx.openLocation，不表示小程序已开始导航。');
   screen('w-service','处理任务','W04','w-tasks',service,serviceFooter,'在同一份自动保存草稿中完成服务处理、证据确认与完工提交。','原服务记录与完工资料已合并为三段；购买信息由工单预填并只读，不引入费用确认。现场与远程指导分别采集必要证据。');
   screen('w-review','审核与办结进度','W04','w-tasks',review,()=>go('返回任务列表','w-tasks','primary'));
   screen('w-returned','补充退回资料','W04','w-tasks',returned);
@@ -319,7 +318,7 @@
       case 'sign-failed':state.overlay={title:'无法获取位置',text:'可以重试定位，或登记到达说明供服务中心核验。',kind:'arrival'};return null;
       case 'scan':state.overlay={title:'扫码结果待核对',text:'示例产品编号 DEMO-SERIAL-001。扫描失败时可返回手动填写；未调用相机。'};return null;
       case 'phone':state.overlay={title:'联系客户',text:`${t?.name||''} · ${t?.phone||''}。正式小程序打开系统拨号确认；本原型未拨出电话。`};return null;
-      case 'location':window.TOTO_WORKER_MAP?.open(t?.id);if(window.TOTO_WORKER_MAP?.point(t))window.TOTO_WORKER_MAP.act('single');return 'w-map';
+      case 'location':window.TOTO_WORKER_MAP?.open(t?.id);return 'w-map';
       case 'dismiss':state.overlay=null;return null;
       case 'feedback-media':state.feedbackMedia=!state.feedbackMedia;return null;
       case 'cancel-record':{const r=state.records.find(x=>x.id===value);if(!r||r.status!=='处理中'||!['领料','退料'].includes(r.type))throw new Error('仅处理中的领料或退料申请可撤销。');state.overlay={kind:'cancel',id:value,title:`撤销${r.type}申请？`,text:'本次撤销只更新单据状态，不会改变服务站或个人库存。'};return null;}

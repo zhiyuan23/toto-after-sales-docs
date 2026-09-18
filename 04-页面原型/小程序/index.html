@@ -15,16 +15,16 @@
   <link rel="stylesheet" href="consumer-v011-legacy.css?v=0.11.3">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.2">
   <script src="consumer.js?v=0.11.6" defer></script>
-  <link rel="stylesheet" href="worker.css?v=0.10.1">
-  <script src="worker.js?v=0.10.2" defer></script>
-  <link rel="stylesheet" href="worker-map.css?v=0.9.1">
+  <link rel="stylesheet" href="worker.css?v=0.10.6">
+  <script src="worker.js?v=0.10.7" defer></script>
+  <link rel="stylesheet" href="worker-map.css?v=0.10.0">
   <link rel="stylesheet" href="worker-schedule.css?v=0.9.1">
-  <script src="worker-schedule.js?v=0.5.1" defer></script>
-  <script src="worker-map.js?v=0.5.1" defer></script>
+  <script src="worker-schedule.js?v=0.5.2" defer></script>
+  <script src="worker-map.js?v=0.6.0" defer></script>
   <script src="consumer-outlets.js?v=0.6.2" defer></script>
   <script src="consumer-account.js?v=0.11.1" defer></script>
   <script src="consumer-ai.js?v=0.3.0" defer></script>
-  <script src="app.js?v=0.14.9" defer></script>
+  <script src="app.js?v=0.15.0" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -47,7 +47,7 @@
       </nav>
       <p class="eyebrow list-heading">页面与流程 <span id="screen-count"></span></p>
       <nav id="screen-list" aria-label="原型页面"></nav>
-      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.13 · 新样式设计<br>服务人员 v0.10 · 处理任务收敛版<br>本轮评审原型，不代表真实业务已实现。</div>
+      <div class="sidebar-footer" id="prototype-version-note">消费者 v0.13 · 新样式设计<br>服务人员 v0.11 · 微信地图能力收敛版<br>本轮评审原型，不代表真实业务已实现。</div>
     </aside>
     <main class="main">
       <div class="view-toolbar">
@@ -100,9 +100,7 @@
             <select id="worker-map-scenario" data-wmap-sim="scenario"><option value="normal">标准任务位置</option><option value="overlap">同址多单</option><option value="missing">全部地址待核实</option></select>
             <label class="review-field" for="worker-map-location">下次定位结果</label>
             <select id="worker-map-location" data-wmap-sim="location"><option value="success">模拟定位成功</option><option value="denied">位置权限未开启</option><option value="failed">定位超时 / 不可用</option></select>
-            <label class="review-field" for="worker-map-route">路线服务结果</label>
-            <select id="worker-map-route" data-wmap-sim="route"><option value="success">示例路线</option><option value="failed">请求失败</option><option value="no-route">未找到可用路线</option></select>
-            <p class="fine-print">未调用定位或算路接口，路线及里程为虚构样例。切企业、重置会清空地图上下文。</p>
+            <p class="fine-print">页面只保留微信 map 组件和 MapContext 可直接实现的标点、定位与全览。未接真实定位；切企业、重置会清空地图上下文。</p>
           </div>
           <div id="consumer-controls">
             <div class="review-divider"></div>

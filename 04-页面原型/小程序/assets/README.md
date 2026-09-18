@@ -29,7 +29,7 @@
 
 ## 服务人员地图
 
-`worker-map-base.svg` 复用本项目 `consumer-outlets.js` 的既有示意地图，裁出显示范围并改用“服务区域（示意）”文字；不是真实地理底图。`worker-v03-map-overview.png` 为 [地图与路线并排预览](../worker-map-overview.html) 的浏览器截图，位置、路线与路程全部为虚构样例。
+`worker-map-base.svg` 复用本项目 `consumer-outlets.js` 的既有示意地图，裁出显示范围并改用“服务区域（示意）”文字；不是真实地理底图。`worker-v03-map-overview.png` 是 v0.3 历史版“地图与路线”浏览器截图，位置、路线与路程全部为虚构样例；当前 [任务地图并排预览](../worker-map-overview.html) 已按微信内置地图能力收敛，不再展示路线。
 
 `worker-v04-schedule-overview.png` 为 [今天／未来／过去日程预览](../worker-schedule-overview.html) 的浏览器截图，所有任务、日期及预约历史均为本地原型样例。
 

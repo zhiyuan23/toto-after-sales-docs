@@ -9,19 +9,15 @@
 .worker-phone .w-task-heading{gap:10px;align-items:center}.worker-phone .w-task-heading h2{font-size:21px;letter-spacing:-.6px}.worker-phone .w-task-tools{display:flex;gap:7px;flex-shrink:0}.worker-phone .w-task-tools button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:43px;min-height:47px;padding:5px 6px;border:1px solid #e0e8f1;border-radius:10px;background:#fff;color:#577596;font-size:10px}.worker-phone .w-task-tools img{width:19px;height:19px}.worker-phone .w-task-tools button:focus-visible{outline:3px solid #80ade3;outline-offset:2px}
 
 /* Worker task groups follow responsibility, not every backend status. */
-.worker-phone .w-task-queues{display:flex;gap:0;overflow:visible}.worker-phone .w-task-queues>button{flex:1;min-width:0;padding:12px 2px;font-size:12px;white-space:nowrap}.worker-phone .w-task-queues small{margin-left:3px;font-size:10px}.worker-phone .w-history-caption{font-size:11px;color:var(--w-muted);margin:-7px 0 14px}.worker-phone .w-ticket-bottom .w-text-button{min-height:42px}.worker-phone .w-time>strong{font-size:22px}
+.worker-phone .w-task-queues{display:flex;gap:0;overflow:visible}.worker-phone .w-task-queues>button{flex:1;min-width:0;padding:12px 2px;font-size:12px;white-space:nowrap}.worker-phone .w-task-queues small{margin-left:3px;font-size:10px}.worker-phone .w-history-caption{font-size:11px;color:var(--w-muted);margin:-7px 0 14px}.worker-phone .w-time>strong{font-size:22px}
 
 /* Task cards keep list separation while the whole surface opens details. */
 .worker-phone .w-ticket{position:relative;box-shadow:none;transition:border-color .15s,background-color .15s}
 .worker-phone .w-ticket:hover{border-color:#cddae8;background:#fbfdff}
 .worker-phone .w-ticket-hitarea{position:absolute;inset:0;z-index:1;width:100%;height:100%;border:0;border-radius:14px;background:transparent;cursor:pointer}
 .worker-phone .w-ticket-hitarea:focus-visible{outline:2px solid var(--w-blue);outline-offset:-3px}
-.worker-phone .w-ticket-bottom{position:relative;z-index:2;gap:10px;pointer-events:none}
-.worker-phone .w-ticket-bottom.is-cue-only,.worker-phone .w-ticket-bottom.has-action{justify-content:flex-end}
-.worker-phone .w-ticket-cue{display:inline-flex;align-items:center;gap:4px;min-height:42px;color:var(--w-blue);font-size:11px;font-weight:600}
-.worker-phone .w-ticket-cue b{font-size:17px;font-weight:400;line-height:1}
-.worker-phone .w-ticket-bottom .w-text-button{position:relative;z-index:3;display:inline-flex;align-items:center;gap:4px;color:var(--w-blue);font-weight:600;pointer-events:auto}
-.worker-phone .w-ticket-bottom .w-text-button b{font-size:17px;font-weight:400;line-height:1}
+.worker-phone .w-ticket-hint{margin-bottom:13px}
+.worker-phone .w-ticket-chevron{position:relative;z-index:2;align-self:center;flex:0 0 auto;color:#aab5c1;font-size:25px;font-weight:400;line-height:1;pointer-events:none}
 
 /* Current service stays visible across task groups; list counts still include promoted tasks. */
 .worker-phone .w-serving{background:#174b78;color:#fff;border-radius:16px;padding:16px 18px;margin-bottom:12px;box-shadow:0 5px 16px #173e6912}
@@ -238,3 +234,8 @@
 .worker-phone .w-confirm-fields .field:last-child{margin-bottom:0}
 .worker-phone .w-confirm-fields textarea{min-height:76px}
 .worker-phone .w-confirm-section>.w-evidence{margin-top:12px;padding:12px 0 0;border-top:1px solid #edf1f5;border-bottom:0}
+
+/* Task detail keeps its two auxiliary lookups compact and equal in weight. */
+.worker-phone .w-detail-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid var(--w-line)}
+.worker-phone .w-detail-links .w-text-button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:9px 7px;border:1px solid #d6e3eb;border-radius:10px;background:#fbfdff;color:var(--w-blue-deep);text-align:center;white-space:nowrap}
+.worker-phone .w-detail-links .w-text-button:hover{background:var(--w-blue-soft)}

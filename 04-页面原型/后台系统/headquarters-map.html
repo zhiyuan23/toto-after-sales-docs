@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="TOTO 售后服务总部运营地图工作台原型。">
+  <title>TOTO 售后服务 | 总部地图工作台</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="headquarters-map.css?v=20260918-hq-fluid-layout">
+</head>
+<body>
+  <div class="app-shell map-app" id="appShell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="TOTO 售后服务首页">
+        <span class="brand-mark" aria-hidden="true"><span>T</span></span>
+        <span class="brand-copy"><strong>TOTO 售后服务</strong><small>Blue Whale Digital</small></span>
+      </a>
+      <button class="perspective-switch" type="button" id="perspectiveButton" aria-haspopup="dialog" aria-controls="prototypePanel">
+        <span class="perspective-icon icon" data-icon="building"></span>
+        <span><small>当前工作视角</small><strong>总部运营 · 地图版</strong></span>
+        <span class="icon chevron" data-icon="chevron-down"></span>
+      </button>
+      <nav class="module-nav" aria-label="一级功能">
+        <button type="button" class="module-link is-active"><span class="icon" data-icon="chart"></span>运营管理</button>
+        <button type="button" class="module-link" data-preview-link="业务查询"><span class="icon" data-icon="search"></span>业务查询</button>
+        <button type="button" class="module-link" data-preview-link="基础资料"><span class="icon" data-icon="archive"></span>基础资料</button>
+      </nav>
+      <div class="topbar-actions">
+        <button class="search-trigger" type="button" id="searchButton"><span class="icon" data-icon="search"></span><span>搜索功能</span><kbd>⌘ K</kbd></button>
+        <button class="icon-button" type="button" id="fullscreenButton" aria-label="进入全屏" title="进入全屏"><span class="icon" data-icon="maximize"></span></button>
+        <button class="icon-button" type="button" id="refreshButton" aria-label="刷新数据" title="刷新数据"><span class="icon" data-icon="refresh"></span></button>
+        <button class="icon-button" type="button" id="themeButton" aria-label="切换深浅模式" title="切换深浅模式"><span class="icon" data-icon="moon"></span></button>
+        <button class="user-menu" type="button" data-preview-link="个人菜单"><span class="avatar">雪</span><span>演示用户</span><span class="icon" data-icon="chevron-down"></span></button>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="总部运营功能菜单">
+      <div class="sidebar-scroll">
+        <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>运营管理</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list">
+          <a href="index.html" class="menu-item"><span class="icon" data-icon="gauge"></span><span>运营工作台（现版）</span></a>
+          <a href="headquarters-map.html" class="menu-item is-active"><span class="icon" data-icon="map"></span><span>运营工作台（地图版）</span></a>
+          <a href="service-quality.html" class="menu-item"><span class="icon" data-icon="shield"></span><span>服务质量</span></a>
+          <a href="operations-report.html" class="menu-item"><span class="icon" data-icon="file-chart"></span><span>运营报表</span></a>
+        </div></section>
+        <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>业务查询</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list">
+          <button type="button" class="menu-item" data-preview-link="服务工单"><span class="icon" data-icon="clipboard"></span><span>服务工单</span></button>
+          <button type="button" class="menu-item" data-preview-link="顾客购买记录"><span class="icon" data-icon="receipt"></span><span>顾客购买记录</span></button>
+          <button type="button" class="menu-item" data-preview-link="安装码管理"><span class="icon" data-icon="scan"></span><span>安装码管理</span></button>
+        </div></section>
+        <section class="menu-group"><button class="menu-group-title" type="button" aria-expanded="false"><span>渠道与网点</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list">
+          <button type="button" class="menu-item" data-preview-link="代理商管理"><span class="icon" data-icon="building"></span><span>代理商管理</span></button>
+          <button type="button" class="menu-item" data-preview-link="门店管理"><span class="icon" data-icon="store"></span><span>门店管理</span></button>
+          <button type="button" class="menu-item" data-preview-link="服务站管理"><span class="icon" data-icon="wrench"></span><span>服务站管理</span></button>
+        </div></section>
+        <section class="menu-group"><button class="menu-group-title" type="button" aria-expanded="false"><span>商品与配件</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list">
+          <button type="button" class="menu-item" data-preview-link="商品档案"><span class="icon" data-icon="package"></span><span>商品档案</span></button>
+          <button type="button" class="menu-item" data-preview-link="配件主档"><span class="icon" data-icon="boxes"></span><span>配件主档</span></button>
+        </div></section>
+        <section class="menu-group"><button class="menu-group-title" type="button" aria-expanded="false"><span>数据与结算</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><button type="button" class="menu-item" data-preview-link="数据管理"><span class="icon" data-icon="database"></span><span>数据管理</span></button></div></section>
+      </div>
+      <button class="sidebar-collapse" id="sidebarButton" type="button"><span class="icon" data-icon="panel-left"></span><span>收起菜单</span></button>
+    </aside>
+
+    <main class="workspace map-workspace" id="workspace">
+      <div class="page-heading map-page-heading reveal" style="--delay:0ms">
+        <div>
+          <div class="context-line"><span id="fullDate">2026 年 9 月 17 日</span><i></i><span>授权组织范围</span><button type="button" id="scopeButton">全国总部<span class="icon" data-icon="chevron-down"></span></button></div>
+          <div class="map-title-line"><h1>全国服务运营态势</h1><span class="version-pill">地图版方案</span></div>
+          <p>先看全国分布与异常聚集，再从省份下钻至服务站和业务明细。</p>
+        </div>
+        <div class="heading-actions"><a class="version-link" href="index.html"><span class="icon" data-icon="layout"></span>查看现版工作台</a><span class="sample-badge"><span class="status-dot"></span>原型演示数据</span><span class="last-updated">更新于 <strong id="lastUpdated">09:32</strong></span></div>
+      </div>
+
+      <section class="map-dashboard reveal" style="--delay:60ms">
+        <article class="map-panel" aria-labelledby="mapPanelTitle">
+          <header class="map-toolbar">
+            <div><span class="eyebrow">NATIONAL OVERVIEW</span><h2 id="mapPanelTitle">全国工单分布</h2><p id="mapSubtitle">近 30 天 · 按服务省份分组 · 颜色越深工单数越多</p></div>
+            <div class="map-filters">
+              <button class="layer-trigger" type="button" id="layerButton" aria-haspopup="listbox" aria-expanded="false" aria-controls="layerMenu"><span class="icon" data-icon="layers"></span><span><small>地图图层</small><strong id="activeLayerName">工单态势</strong></span><span class="icon chevron" data-icon="chevron-down"></span></button>
+              <div class="range-switch" role="group" aria-label="统计周期"><button type="button" data-range="7">7 天</button><button type="button" data-range="30" class="is-active">30 天</button><button type="button" data-range="93">93 天</button></div>
+              <button class="filter-button" type="button" id="mapResetButton"><span class="icon" data-icon="rotate-ccw"></span>全国</button>
+            </div>
+          </header>
+
+          <div class="layer-menu" id="layerMenu" role="listbox" aria-label="地图数据图层" hidden>
+            <button type="button" role="option" aria-selected="true" class="is-active" data-layer="orders"><span class="layer-option-icon"><span class="icon" data-icon="file-chart"></span></span><span><strong>工单态势</strong><small>运营报表 · 省份分组</small></span><span class="layer-check">✓</span></button>
+            <button type="button" role="option" aria-selected="false" data-layer="stations"><span class="layer-option-icon is-cyan"><span class="icon" data-icon="building"></span></span><span><strong>服务站网络</strong><small>服务站档案 · 坐标与启停</small></span><span class="layer-check">✓</span></button>
+            <button type="button" role="option" aria-selected="false" data-layer="quality"><span class="layer-option-icon is-amber"><span class="icon" data-icon="shield"></span></span><span><strong>服务质量</strong><small>单个对象 · 单日汇总事实</small></span><span class="layer-check">✓</span></button>
+            <button type="button" role="option" aria-selected="false" data-layer="coverage"><span class="layer-option-icon is-green"><span class="icon" data-icon="map"></span></span><span><strong>服务覆盖</strong><small>已配置服务区域</small></span><span class="layer-check">✓</span></button>
+          </div>
+
+          <div class="map-stage" id="mapStage">
+            <div class="map-grid" aria-hidden="true"></div>
+            <svg id="chinaMap" class="china-map" viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet" role="img" aria-label="中国省级服务运营态势地图">
+              <defs>
+                <filter id="selectedGlow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#377ef0" flood-opacity=".42"/></filter>
+              </defs>
+              <g id="provinceLayer"></g>
+              <g id="markerLayer"></g>
+            </svg>
+            <div class="map-loading" id="mapLoading"><span></span><p>正在载入全国地图…</p></div>
+            <div class="map-tooltip" id="mapTooltip" role="status" aria-live="polite" hidden></div>
+            <div class="map-legend" id="mapLegend"><span>工单数</span><div class="legend-gradient"></div><div><small>低</small><small>高</small></div></div>
+            <div class="map-note"><span class="icon" data-icon="info"></span><p id="mapBoundaryNote">省份颜色来自运营报表；队列数量为全国授权范围，二者不混算。</p></div>
+          </div>
+        </article>
+
+        <aside class="insight-rail" aria-label="区域运营洞察">
+          <section class="region-summary">
+            <header><div><span class="eyebrow">SELECTED REGION</span><h2 id="regionName">全国</h2><p id="regionMeta">34 个省级区域 · 近 30 天</p></div><span class="region-rank" id="regionRank">全局</span></header>
+            <div class="region-main-number" aria-label="当前区域全部工单数"><small>工单数</small><strong id="regionOrders">12,486</strong><span>单</span></div>
+            <div class="region-facts">
+              <div><span>当前已关闭</span><strong id="regionClosed">9,826</strong></div>
+              <div><span>当前已取消</span><strong id="regionCancelled">286</strong></div>
+              <div><span>有投诉工单</span><strong id="regionComplaints">118</strong></div>
+            </div>
+            <p class="fact-caption">报表字段：工单数、当前已关闭、当前已取消、有投诉工单。</p>
+            <div class="queue-summary" aria-label="全国待办与工单流转">
+              <div class="queue-summary-heading"><span><small>WORK ORDER FLOW</small><strong>全国待办与流转</strong></span><em>2 个线性待办可下钻</em></div>
+              <div class="compact-flow" role="group" aria-label="受理中 82，待分配服务站 48，待派人 76，履约中 215，待完工 316，待审核 63">
+                <div class="compact-flow-node"><small>受理中</small><strong>82</strong></div>
+                <button type="button" class="compact-flow-node is-action is-amber" data-queue-button data-queue="station" data-status="PENDING_STATION" aria-pressed="false"><small>待分站</small><strong data-value="48">0</strong></button>
+                <div class="compact-flow-node"><small>待派人</small><strong>76</strong></div>
+                <div class="compact-flow-node"><small>履约中</small><strong>215</strong></div>
+                <button type="button" class="compact-flow-node is-action is-violet" data-queue-button data-queue="completion" data-status="PENDING_COMPLETION" aria-pressed="false"><small>待完工</small><strong data-value="316">0</strong></button>
+                <div class="compact-flow-node"><small>待审核</small><strong>63</strong></div>
+              </div>
+              <div class="risk-summary" aria-labelledby="riskSummaryTitle">
+                <div class="risk-summary-heading"><strong id="riskSummaryTitle">异常关注</strong><span>全国授权范围</span></div>
+                <div class="risk-summary-grid">
+                  <button type="button" class="risk-item is-danger" data-queue-button data-queue="parts" data-status="MISSING_PARTS" aria-pressed="false"><span class="icon" data-icon="triangle-alert"></span><span><small>缺件工单</small><strong data-value="23">0</strong></span></button>
+                  <div class="risk-item is-pending"><span class="icon" data-icon="rotate-ccw"></span><span><small>审核退回</small><strong>待接入</strong></span></div>
+                  <div class="risk-item is-pending"><span class="icon" data-icon="clock"></span><span><small>超时工单</small><strong>口径待确认</strong></span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="rail-card trend-card" aria-labelledby="trendCardTitle">
+            <header><div><h3 id="trendCardTitle">工单趋势</h3><p>近 30 天全国工单，按创建日期分组</p></div><div class="compact-trend-summary"><small>30 天合计</small><strong id="trendTotal">3,735</strong><span>单</span></div></header>
+            <div class="compact-trend-stage">
+              <div class="compact-trend-grid" aria-hidden="true"><i></i><i></i><i></i></div>
+              <svg class="compact-trend-chart" viewBox="0 0 420 104" preserveAspectRatio="none" role="img" aria-label="过去 30 天全国工单量折线图，原型演示数据"><defs><linearGradient id="compactTrendGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#377ef0" stop-opacity=".2"></stop><stop offset="1" stop-color="#377ef0" stop-opacity="0"></stop></linearGradient></defs><path id="compactTrendArea" class="compact-trend-area" d=""></path><path id="compactTrendLine" class="compact-trend-line" d=""></path></svg>
+            </div>
+            <div class="compact-trend-axis" aria-hidden="true"><span>08/15</span><span>08/29</span><span>09/13</span></div>
+            <p class="trend-scope-note">趋势保持全国 30 天口径，不随地图省份或周期切换。</p>
+          </section>
+
+          <section class="rail-card network-card">
+            <header><div><h3>服务网络</h3><p id="networkScope">全国服务站档案</p></div><button type="button" class="plain-icon-button" data-preview-link="服务站管理" aria-label="进入服务站管理"><span class="icon" data-icon="arrow-up-right"></span></button></header>
+            <div class="network-metrics"><div><strong id="stationCount">326</strong><span>服务站</span></div><div><strong id="locatedCount">298</strong><span>已配置坐标</span></div><div><strong id="enabledCount">311</strong><span>已启用</span></div></div>
+            <div class="coordinate-progress"><span style="--progress:91.4%"></span></div>
+            <p>地图点位仅表示服务站档案坐标；启用状态与坐标完整度可直接核查。</p>
+          </section>
+
+          <section class="rail-card daily-fact-card" id="dailyFactCard">
+            <header><div><h3>服务质量</h3><p>当前对象日事实与全国汇总边界</p></div><a class="plain-icon-button" href="service-quality.html" aria-label="进入服务质量"><span class="icon" data-icon="arrow-up-right"></span></a></header>
+            <div class="quality-subheading"><strong>单条质量日事实</strong><span id="qualityObject">华东区域 · 2026-09-16</span></div>
+            <div class="quality-mini-grid"><div><span>服务量</span><strong id="qualityServiceCount">682</strong></div><div><span>及时率</span><strong id="qualityTimeliness">94.72%</strong></div><div><span>一次完工率</span><strong id="qualityFirstTime">91.06%</strong></div><div><span>投诉数</span><strong id="qualityComplaints">8</strong></div></div>
+            <p>仅展示当前对象当日汇总，不对多个对象的百分比再次平均。</p>
+            <div class="quality-rollup-heading"><span><strong>全国 30 天质量汇总</strong><small>需要独立汇总接口</small></span><em>待接入</em></div>
+            <div class="quality-rollup-grid" aria-label="全国质量汇总待接入"><div><span>评价率</span><strong>待接入</strong></div><div><span>满意度</span><strong>待接入</strong></div><div><span>审核退回率</span><strong>待接入</strong></div><div><span>取消率</span><strong>待接入</strong></div></div>
+            <p>未接入前不从单条日事实或当前分页推算全国指标。</p>
+          </section>
+
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <button class="prototype-fab" id="prototypeFab" type="button" aria-haspopup="dialog" aria-controls="prototypePanel"><span class="icon" data-icon="layout"></span><span>原型目录</span><strong>5 / 5</strong></button>
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="prototype-panel" id="prototypePanel" role="dialog" aria-modal="true" aria-labelledby="prototypeTitle" hidden>
+    <header><div><span class="panel-kicker">WEB 管理后台</span><h2 id="prototypeTitle">后台原型目录</h2><p>总部保留现版，并新增全国地图工作台方案。</p></div><button class="icon-button" id="closePrototypePanel" type="button" aria-label="关闭原型目录"><span class="icon" data-icon="x"></span></button></header>
+    <div class="prototype-list"><a href="index.html" class="prototype-card"><span class="prototype-number">01A</span><span class="prototype-copy"><span class="prototype-status is-ready">已保留</span><strong>总部运营</strong><small>运营工作台（现版）</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="headquarters-map.html" class="prototype-card is-current"><span class="prototype-number">01B</span><span class="prototype-copy"><span class="prototype-status is-ready">新方案</span><strong>总部运营</strong><small>全国地图工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="customer-service.html" class="prototype-card"><span class="prototype-number">02</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>客服作业</strong><small>客服工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="service-station.html" class="prototype-card"><span class="prototype-number">03</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>服务站作业</strong><small>服务站工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a><a href="dealer.html" class="prototype-card"><span class="prototype-number">04</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>门店业务</strong><small>门店工作台</small></span><span class="icon" data-icon="arrow-up-right"></span></a></div>
+    <footer><a href="01-四视角后台原型设计说明.md">查看原型设计说明<span class="icon" data-icon="arrow-right"></span></a><a href="../README.md">返回全部页面原型</a></footer>
+  </aside>
+
+  <div class="command-dialog" id="commandDialog" role="dialog" aria-modal="true" aria-labelledby="commandTitle" hidden><label><span class="icon" data-icon="search"></span><span id="commandTitle" class="visually-hidden">搜索功能</span><input id="commandInput" type="search" placeholder="输入功能名称…" autocomplete="off"><kbd>ESC</kbd></label><div class="command-results" id="commandResults"></div></div>
+  <div class="popover scope-popover" id="scopePopover" hidden><span>当前授权范围</span><strong>全国总部</strong><p>工单队列按当前用户的授权组织范围统计；区域地图按服务省份展示。</p></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/china-data.js"></script>
+  <script src="headquarters-map.js?v=20260918-hq-fluid-layout"></script>
+</body>
+</html>
