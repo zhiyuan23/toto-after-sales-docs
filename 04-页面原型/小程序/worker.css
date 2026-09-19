@@ -67,7 +67,7 @@
 .worker-phone .w-focus-compact .w-focus-metrics strong{color:var(--w-blue-deep)}
 
 /* Root tabs use an immersive custom navigation while preserving the menu capsule safe area. */
-.worker-phone[data-nav="root"] .phone-nav{height:92px;min-height:92px;padding:0 18px 10px;align-items:flex-end}
+.worker-phone[data-nav="root"] .phone-nav{height:92px;min-height:92px;padding:0 18px 10px;align-items:flex-end;border-bottom:1px solid transparent;transition:height .18s ease-out,min-height .18s ease-out,padding .18s ease-out,background-color .18s ease-out,border-color .18s ease-out}
 .worker-phone[data-nav="root"] .phone-nav>button{display:none}
 .worker-phone[data-nav="root"] .phone-nav>strong{position:static;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex:1;min-width:0;overflow:visible;text-align:left;white-space:normal}
 .worker-phone[data-nav="root"] .miniapp-menu{position:absolute;top:10px;right:15px;margin:0}
@@ -75,6 +75,12 @@
 .worker-phone .w-root-nav-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
 .worker-phone .w-root-nav-copy small{color:var(--w-muted);font-size:11px;font-weight:500;letter-spacing:.03em;line-height:1.5}
 .worker-phone .w-root-nav-title{color:var(--w-ink);font-size:23px;font-weight:700;letter-spacing:-.55px;line-height:1.3;white-space:nowrap}
+.worker-phone .w-root-nav-compact-title{display:none;color:var(--w-ink);font-size:16px;font-weight:650;line-height:1.4;white-space:nowrap}
+.worker-phone.worker-nav-compact[data-nav="root"] .phone-nav{height:56px;min-height:56px;padding:0 92px 0 18px;align-items:center;background:#fff;border-bottom-color:var(--w-line)}
+.worker-phone.worker-nav-compact[data-nav="root"] .phone-nav>strong{align-items:center}
+.worker-phone.worker-nav-compact[data-nav="root"] .w-root-nav-copy small,.worker-phone.worker-nav-compact[data-nav="root"] .w-root-nav-title{display:none}
+.worker-phone.worker-nav-compact[data-nav="root"] .w-root-nav-compact-title{display:block}
+@media(prefers-reduced-motion:reduce){.worker-phone[data-nav="root"] .phone-nav{transition:none}}
 .worker-phone .w-root-nav-action{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;min-width:58px;min-height:36px;padding:7px 9px;border:1px solid #d6e3eb;border-radius:10px;background:#fff;color:var(--w-blue-deep);font-size:11px;font-weight:600}
 .worker-phone .w-root-nav-action:hover{background:var(--w-blue-soft)}
 .worker-phone .w-root-nav-action img{width:16px;height:16px;opacity:.78}

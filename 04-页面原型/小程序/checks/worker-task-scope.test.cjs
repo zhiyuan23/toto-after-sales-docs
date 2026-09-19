@@ -5,11 +5,11 @@ const vm=require('node:vm');
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const CHEN='WX202609130018',SUN='AZ202609100002',HUANG='WX202609120009',ZHAO='AZ202609110006';
-function fixture(transform=s=>s){const window={};for(const file of ['worker.js','worker-map.js','worker-schedule.js']){const src=readFileSync(resolve(__dirname,'../'+file),'utf8');vm.runInNewContext(file==='worker.js'?transform(src):src,{window});}return {w:window.TOTO_WORKER,m:window.TOTO_WORKER_MAP,s:window.TOTO_WORKER_SCHEDULE,page:id=>window.TOTO_SCREENS.worker.screens.find(p=>p.id===id)};}
-test('unpublished, unassigned and unreleased-status tasks are excluded across list, calendar, map and deep links',()=>{
+function fixture(transform=s=>s){const window={};const src=readFileSync(resolve(__dirname,'../worker.js'),'utf8');vm.runInNewContext(transform(src),{window});return {w:window.TOTO_WORKER,page:id=>window.TOTO_SCREENS.worker.screens.find(p=>p.id===id)};}
+test('unpublished, unassigned and unreleased-status tasks are excluded from the task list and deep links',()=>{
   for(const extra of ["published:false,","assignedTo:null,","assignedTo:'another-worker',","queue:'publish',"]){
-    const {w,m,s,page}=fixture(src=>src.replace("name:'陈女士',type:'维修',queue:'pending',", "name:'陈女士',type:'维修',queue:'pending',"+extra));
-    assert.ok(!w.filteredTasks('all').some(t=>t.id===CHEN));assert.ok(!m.rows().some(t=>t.id===CHEN));assert.ok(!s.entries().some(r=>r.task.id===CHEN));
+    const {w,page}=fixture(src=>src.replace("name:'陈女士',type:'维修',queue:'pending',", "name:'陈女士',type:'维修',queue:'pending',"+extra));
+    assert.ok(!w.filteredTasks('all').some(t=>t.id===CHEN));
     assert.equal(w.actAction('task',CHEN),'w-tasks');assert.equal(w.actAction('task-next',CHEN),'w-tasks');assert.equal(w.guard('w-detail'),'w-tasks');assert.doesNotMatch(page('w-tasks').body(),/陈女士|待发布/);
   }
 });
@@ -63,16 +63,16 @@ test('review progress uses a compact workflow overview instead of repeating the 
   w.actAction('task',ZHAO);html=page('w-review').body();
   assert.match(html,/class="w-review-overview red"/);assert.match(html,/资料退回待补充[\s\S]*class="issue" aria-current="step">[\s\S]*服务审核/);
 });
-test('task home overview exposes explicit schedule and parts destinations without coupling secondary filters',()=>{
-  const {w,s,page}=fixture(),home=page('w-tasks');let html=home.body(),nav=home.rootNav();
-  assert.match(nav,/9 月 13 日 · 星期日/);assert.match(nav,/今天，安排清楚/);assert.match(nav,/data-wmap="open"/);
+test('task home overview switches the list to today and missing-parts filters',()=>{
+  const {w,page}=fixture(),home=page('w-tasks');let html=home.body(),nav=home.rootNav();
+  assert.match(nav,/9 月 13 日 · 星期日/);assert.match(nav,/今天，安排清楚/);assert.doesNotMatch(nav,/data-wmap|地图/);
   assert.equal(home.navigationMode,'custom-root');assert.match(home.note,/navigationStyle: custom[\s\S]*uni\.getWindowInfo\(\)[\s\S]*wx\.getMenuButtonBoundingClientRect\(\)/);
-  assert.equal(page('w-schedule').navigationMode,'standard');assert.doesNotMatch(page('w-schedule').note,/navigationStyle: custom/);
-  assert.doesNotMatch(html,/今天，安排清楚|data-wmap="open"|data-wsched="day"/);
-  assert.match(html,/class="w-focus-actions"/);assert.match(html,/data-wsched="today"[^>]+查看今日日程，共 2 单预约/);assert.match(html,/data-worker="dashboard-filter" data-value="parts"[^>]+查看等配件任务，共 1 单/);
-  assert.doesNotMatch(html,/class="w-task-nav"|快捷筛选/);assert.match(html,/待处理任务筛选/);assert.equal(s.act('today'),'w-schedule');
+  assert.equal(page('w-schedule'),undefined);assert.equal(page('w-map'),undefined);assert.match(home.note,/日程与地图已经延期/);
+  assert.doesNotMatch(html,/今天，安排清楚|data-wmap|data-wsched/);
+  assert.match(html,/class="w-focus-actions"/);assert.match(html,/data-worker="dashboard-filter" data-value="today"[^>]+筛选今日预约任务，共 2 单/);assert.match(html,/data-worker="dashboard-filter" data-value="parts"[^>]+筛选等待配件任务，共 1 单/);
+  assert.doesNotMatch(html,/class="w-task-nav"/);assert.match(html,/待处理任务筛选/);
   assert.ok(html.indexOf('class="w-focus"')<html.indexOf('w-task-queues'));
-  assert.equal(w.actAction('filter','today'),'w-tasks');assert.equal(w.filteredTasks().length,2);assert.equal(w.snapshot().queue,'pending');
+  assert.equal(w.actAction('dashboard-filter','today'),'w-tasks');assert.equal(w.filteredTasks().length,2);assert.equal(w.snapshot().queue,'pending');
   html=page('w-tasks').body();assert.match(html,/class="selected" data-worker="filter" data-value="today"/);
   w.actAction('queue','returned');w.actAction('filter','parts');assert.equal(w.snapshot().queue,'returned');assert.equal(w.snapshot().filter,'all');
   assert.doesNotMatch(page('w-tasks').body(),/待处理任务筛选/);
@@ -90,13 +90,21 @@ test('parts home separates inventory actions from record-only shortcuts and retu
   w.actAction('part','P002');assert.equal(w.actAction('return-part','P002'),'w-return');assert.equal(w.snapshot().returnBasket.P002,1);assert.match(page('w-return').body(),/待提交 · 1 种 \/ 1 件/);
 });
 test('worker mine follows the consumer account-hub structure without duplicating company switching',()=>{
-  const {page}=fixture();const html=page('w-mine').body();
+  const {page}=fixture();const screen=page('w-mine'),html=screen.body(),nav=screen.rootNav();
+  assert.equal(screen.navigationMode,'custom-root');assert.match(nav,/徐汇服务中心[\s\S]*我的工作台[\s\S]*w-root-nav-compact-title">我的/);
   assert.match(html,/<header class="w-profile">[\s\S]*丁师傅[\s\S]*服务人员 · 上海示例服务企业[\s\S]*切换企业 ›[\s\S]*<\/header>/);
   assert.match(html,/<section class="w-resource-section"/);assert.match(html,/class="w-resource-grid is-single"/);assert.equal((html.match(/class="w-resource-card"/g)||[]).length,1);
   assert.match(html,/<section class="w-mine-section">/);assert.equal((html.match(/class="w-mine-row"/g)||[]).length,3);
   for(const label of ['技术资料','问题反馈','修改密码','退出登录'])assert.match(html,new RegExp(label));
   assert.doesNotMatch(html,/延保资料|data-go="w-warranty"/);
   assert.equal((html.match(/data-go="w-company"/g)||[]).length,1);assert.match(html,/资料查询[\s\S]*账号与帮助/);assert.doesNotMatch(html,/w-library|w-menu/);
+});
+test('root-tab navigation switches to a compact white title after content scrolls',()=>{
+  const {page}=fixture();
+  for(const [id,title] of [['w-tasks','任务'],['w-parts','配件'],['w-mine','我的']])assert.match(page(id).rootNav(),new RegExp(`w-root-nav-compact-title">${title}`));
+  const app=readFileSync(resolve(__dirname,'../app.js'),'utf8'),css=readFileSync(resolve(__dirname,'../worker.css'),'utf8');
+  assert.match(app,/phone-body'\)\.scrollTop>16/);assert.match(app,/addEventListener\('scroll',syncWorkerRootNavigation/);
+  assert.match(css,/worker-nav-compact\[data-nav="root"\][\s\S]*background:#fff[\s\S]*w-root-nav-compact-title/);
 });
 test('technical and warranty resources use compact searches and grouped result cards',()=>{
   const {w,page}=fixture();let html=page('w-technical').body();
@@ -114,12 +122,12 @@ test('requisition purpose separates work-order issue from standby stock replenis
 test('review and returned-material tasks cannot be modified through stale scheduling or service links',()=>{
   const {w,page}=fixture();for(const id of [HUANG,ZHAO]){w.actAction('task',id);assert.doesNotMatch(page('w-detail').body(),/联系 \/ 改约|编辑补充信息|去这单/);assert.equal(w.guard('w-appointment'),'w-detail');assert.equal(w.guard('w-service'),'w-detail');assert.throws(()=>w.submitAction('appointment',{result:'lost',note:'不应更改'}),/不可/);assert.throws(()=>w.submitAction('edit',{note:'不应更改'}),/仅可查看/);assert.throws(()=>w.submitAction('exception',{flag:'已取消',reason:'不应更改'}),/不可/);}
 });
-test('approved work is read-only across details, schedule and old handover links',()=>{
-  const {w,page,s}=fixture();w.actAction('task',SUN);
+test('approved work is read-only across details and old handover links',()=>{
+  const {w,page}=fixture();w.actAction('task',SUN);
   assert.equal(w.guard('w-handover'),'w-review');assert.equal(page('w-handover'),undefined);
   assert.doesNotMatch(page('w-tasks').body(),/待交单|data-value="handover"/);assert.match(page('w-review').body(),/无需再次提交/);
   assert.equal(w.guard('w-service'),'w-detail');assert.equal(w.guard('w-appointment'),'w-detail');assert.throws(()=>w.submitAction('appointment',{result:'lost',note:'不应更改'}),/不可/);
-  w.actAction('history-filter','processing');assert.equal(w.filteredTasks()[0].id,SUN);assert.equal(s.status(s.entries('2026-09-10')[0]).label,'已完工 · 待回访');
+  w.actAction('history-filter','processing');assert.equal(w.filteredTasks()[0].id,SUN);assert.match(page('w-review').body(),/后续跟进|等待后续办结/);
 });
 test('review approval updates history counts without resubmission, inventory changes or automatic closure',()=>{
   const {w,page}=fixture();w.actAction('task',HUANG);const before=w.snapshot();w.simulate('approved');
@@ -128,25 +136,21 @@ test('review approval updates history counts without resubmission, inventory cha
   assert.equal(w.snapshot().tasks.find(t=>t.id===HUANG).versions.length,before.tasks.find(t=>t.id===HUANG).versions.length);
   assert.deepEqual(w.snapshot().inventory,before.inventory);assert.throws(()=>w.submitAction('handover',{}),/无需再次/);
 });
-test('map status and primary action follow completion progress instead of suggesting a new visit',()=>{
-  const {w,m}=fixture();w.actAction('queue','review');m.open();assert.match(m.render(),/审核中/);assert.doesNotMatch(m.render(),/去这单 · 看路线/);assert.equal(m.act('next',HUANG),'w-review');
-});
 test('four task groups are disjoint, cover authorized tasks and track review return/resubmit',()=>{
-  const {w,m}=fixture();const groups=['pending','returned','review','history'];
+  const {w}=fixture();const groups=['pending','returned','review','history'];
   const ids=groups.flatMap(key=>Array.from(w.filteredTasks(key),t=>t.id));
   assert.equal(ids.length,w.visibleTasks().length);assert.equal(new Set(ids).size,ids.length);
   assert.ok(!w.filteredTasks('pending').some(t=>t.id===ZHAO));
-  w.actAction('queue','returned');assert.equal(w.snapshot().queue,'returned');m.open();assert.equal(m.rows()[0].id,ZHAO);
+  w.actAction('queue','returned');assert.equal(w.snapshot().queue,'returned');assert.equal(w.filteredTasks()[0].id,ZHAO);
   w.actAction('task',HUANG);w.simulate('returned');assert.equal(w.filteredTasks().length,2);
   w.actAction('media','replacement');w.submitAction('resubmit',{note:'已补清晰材料'});assert.equal(w.filteredTasks().length,1);assert.equal(w.filteredTasks('review').length,1);
 });
 test('service focus starts on arrival, stays across queries and tabs and is not duplicated in the list',()=>{
-  const {w,page,m,s}=fixture();assert.doesNotMatch(page('w-tasks').body(),/class="w-serving"/);
+  const {w,page}=fixture();assert.doesNotMatch(page('w-tasks').body(),/class="w-serving"/);
   page('w-service').body();assert.equal(w.activeTasks().length,0);w.actAction('sign');
   const html=page('w-tasks').body();assert.equal((html.match(/陈女士/g)||[]).length,2); // accessible article label + visible heading
   assert.doesNotMatch(html,/class="w-focus"/);assert.equal((html.match(/class="w-serving"/g)||[]).length,1);assert.match(html,/class="w-serving-shortcuts"/);
   assert.match(html,/其中 1 单正在服务/);assert.match(html,/待处理<small>7/);assert.equal(w.filteredTasks().length,7);
-  m.open();assert.match(m.render(),/正在服务/);assert.match(m.render(),/工单详情/);assert.doesNotMatch(m.render(),/继续处理任务/);assert.equal(s.status(s.entries().find(r=>r.task.id===CHEN)).label,'正在服务');
   w.actAction('queue','history');w.submitAction('task-search',{search:'不匹配'});assert.equal(w.filteredTasks().length,0);assert.match(page('w-tasks').body(),/正在服务 · 陈女士/);
 });
 test('continue restores the correct order, completion step and task-scoped draft',()=>{

@@ -23,17 +23,6 @@
 
 ## 截图
 
-`wireframe-*.jpg` 和 `prototype-preview.jpg` 保留首轮 v0.1 结构截图。后续原型以入口页面为准；截图不随代码自动更新。
+服务人员旧版线框、版本截图、日程与地图示意素材已于 2026-09-18 删除，避免被误作当前开发基线。当前服务人员端只允许参考 [唯一有效原型入口](../index.html?consumerVersion=0.13#w-tasks) 及其实际加载的 `worker.js` / `worker.css`。
 
-`worker-v02-overview.png` 为 2026-09-13 服务人员 v0.2 三 Tab 原型的浏览器截图；对应 [并排预览](../worker-overview.html)，不是 AI 生成图片或真实业务数据。
-
-## 服务人员地图
-
-`worker-map-base.svg` 复用本项目 `consumer-outlets.js` 的既有示意地图，裁出显示范围并改用“服务区域（示意）”文字；不是真实地理底图。`worker-v03-map-overview.png` 是 v0.3 历史版“地图与路线”浏览器截图，位置、路线与路程全部为虚构样例；当前 [任务地图并排预览](../worker-map-overview.html) 已按微信内置地图能力收敛，不再展示路线。
-
-`worker-v04-schedule-overview.png` 为 [今天／未来／过去日程预览](../worker-schedule-overview.html) 的浏览器截图，所有任务、日期及预约历史均为本地原型样例。
-
-## v0.5 快捷入口与截图
-
-- `icons/calendar.svg` 和 `icons/map.svg` 复用本地 `frontend/gaia-ui/apps/after-sales/src/features/navigation/icons.json` 中 Lucide 的 `calendar-days` / `map` 原始图形，仅包装 SVG 与设置颜色，没有重画路径。Lucide 使用 ISC 许可，来源与许可见 [Lucide](https://github.com/lucide-icons/lucide/blob/main/LICENSE)。
-- `worker-v05-entry-overview.png` 为 [列表首页／日程／地图并排预览](../worker-entry-overview.html) 的浏览器截图，展示 v0.5 快捷入口与独立页面，使用本地虚构任务。
+`icons/calendar.svg` 继续用于首页“今日预约”筛选按钮；图形来自 Lucide `calendar-days`，使用 ISC 许可，来源与许可见 [Lucide](https://github.com/lucide-icons/lucide/blob/main/LICENSE)。

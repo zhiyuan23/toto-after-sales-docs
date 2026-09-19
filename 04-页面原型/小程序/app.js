@@ -5,8 +5,6 @@
   const account = window.TOTO_ACCOUNT;
   const assistant = window.TOTO_AI_ASSISTANT;
   const worker = window.TOTO_WORKER;
-  const workerMap = window.TOTO_WORKER_MAP;
-  const workerSchedule = window.TOTO_WORKER_SCHEDULE;
   const consumerVersion = window.TOTO_CONSUMER_VERSION || '0.13';
   const $ = (selector) => document.querySelector(selector);
   const escape = (text) => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -142,22 +140,24 @@
   }
   function renderOutletOverlay() {
     const overlay=$('#outlet-overlay');
-    overlay.innerHTML=worker?.owns(current.id) ? (current.id==='w-map'&&workerMap?.overlay() || worker.overlay()) : customerServiceOverlay() || account?.overlay() || (outlets?.owns(current.id) ? outlets.overlay() : '');
+    overlay.innerHTML=worker?.owns(current.id) ? worker.overlay() : customerServiceOverlay() || account?.overlay() || (outlets?.owns(current.id) ? outlets.overlay() : '');
     overlay.hidden=!overlay.innerHTML;
     ['#phone-body','#phone-floating','#phone-footer','#phone-tabs'].forEach(selector=>{$(selector).inert=!overlay.hidden;});
     const target=outlets?.takeFocus();
     if(target) $('#phone').querySelector(target)?.focus();
-    if(!overlay.hidden&&(current.id==='w-map'||consumer.customerServiceOpen)) overlay.querySelector('[role="dialog"]')?.focus();
+    if(!overlay.hidden&&consumer.customerServiceOpen) overlay.querySelector('[role="dialog"]')?.focus();
     if(!overlay.hidden) overlay.querySelector('[role="dialog"]')?.scrollIntoView({block:'center',inline:'nearest'});
+  }
+  function syncWorkerRootNavigation() {
+    const compact=current?.app==='worker' && current?.rootNav && $('#phone-body').scrollTop>16;
+    $('#phone').classList.toggle('worker-nav-compact',Boolean(compact));
   }
   function render() {
     outlets?.clearOverlay();
     const app = apps[current.app];
     $('#phone').classList.toggle('consumer-phone', current.app === 'consumer');
     $('#phone').classList.toggle('worker-phone', current.app === 'worker');
-    $('#worker-controls').hidden=current.app!=='worker'||current.id==='w-map';
-    $('#worker-map-controls').hidden=current.id!=='w-map';
-    if(current.id==='w-map'&&workerMap){const m=workerMap.snapshot();$('#worker-map-scenario').value=m.scenario;$('#worker-map-location').value=m.locationOutcome;}
+    $('#worker-controls').hidden=current.app!=='worker';
     $('#phone').dataset.screen = current.id;
     $('#consumer-controls').hidden = current.app !== 'consumer';
     $('#outlet-controls').hidden = !outlets?.owns(current.id);
@@ -176,6 +176,7 @@
     $('#phone-floating').innerHTML = current.app === 'consumer' ? assistant?.floating(current.id,consumerContext()) || '' : '';
     renderedState = 'normal';
     $('#phone-body').scrollTop = 0;
+    syncWorkerRootNavigation();
     $('#phone-footer').innerHTML = markup(current.footer);
     renderOutletOverlay();
     const isRoot = app.tabs.some(t => t.go === current.id) || current.id==='c-welcome';
@@ -421,8 +422,6 @@
   document.addEventListener('click', event => {
     const el = event.target.closest('button,[data-go],[data-action]');
     if (!el || el.disabled) return;
-    if (worker?.owns(current.id) && workerSchedule?.handle(el,{render,showScreen,showToast})) {event.preventDefault();return;}
-    if (worker?.owns(current.id) && workerMap?.handle(el,{render,showScreen,showToast})) {event.preventDefault();return;}
     if (worker?.owns(current.id) && worker.handle(el,{root:$('#phone-body'),page:current.id,render,showScreen,showToast})) {event.preventDefault();return;}
     if (assistant?.handle(el,{root:$('#phone-body'),context:consumerContext(),render,showScreen,showToast,selectProduct:id=>{consumer.productId=id;},prepareRequest:prepareAssistantRequest,openCustomerService})) {event.preventDefault();return;}
     if (account?.handle(el,{root:$('#phone-body'),context:consumerContext(),render,renderOverlay:renderOutletOverlay,authorizePhone:refreshPurchases,showToast})) {event.preventDefault();return;}
@@ -513,7 +512,6 @@
     else if (el.dataset.action) {event.preventDefault();showToast(el.dataset.action);}
   });
   document.addEventListener('submit', event => {
-    if (current.id==='w-map' && workerMap?.submit(event.target,{render})) {event.preventDefault();return;}
     if (worker?.owns(current.id) && worker.submit(event.target,{root:$('#phone-body'),page:current.id,showScreen,showToast})) {event.preventDefault();return;}
     if (assistant?.submit(event.target,{root:$('#phone-body'),context:consumerContext(),render,showToast})) {event.preventDefault();return;}
     if (account?.owns(current.id) && account.submit(event.target,{root:$('#phone-body'),render,showToast})) {event.preventDefault();return;}
@@ -565,18 +563,15 @@
     if (event.target.validity?.valid) {event.target.removeAttribute('aria-invalid');event.target.parentElement.querySelector('.field-error')?.remove();}
   });
   document.addEventListener('change',event=>{
-    if(current.id==='w-schedule'&&event.target.hasAttribute('data-wsched-date')){try{workerSchedule.setDate(event.target.value);render();}catch(err){showToast(err.message);}}
-    if(current.id==='w-map' && event.target.dataset.wmapSim){workerMap.simulate(event.target.dataset.wmapSim,event.target.value);render();}
     if(worker?.owns(current.id) && event.target.hasAttribute('data-worker-sort')){worker.setSort(event.target.value);render();}
     if(current.id==='w-requisition' && event.target.hasAttribute('data-worker-purpose')){worker.saveDraft($('#phone-body'),current.id);worker.setRequisitionPurpose(event.target.value);render();}
     if (current.id==='c-profile' && event.target.id==='c-avatar-file') account.changeAvatar(event.target,{root:$('#phone-body'),render,showToast});
     else if (current.id==='c-profile') account.updateProfileField(event.target,{showToast});
   });
   $('#ui-state').addEventListener('change',event=>{saveDraft();renderState(event.target.value);});
+  $('#phone-body').addEventListener('scroll',syncWorkerRootNavigation,{passive:true});
   $('#outlet-location-outcome').addEventListener('change',event=>outlets?.setLocationOutcome(event.target.value));
   $('#phone-back').addEventListener('click',()=>{
-    if(current.id==='w-schedule'&&workerSchedule?.back()){render();return;}
-    if(current.id==='w-map' && workerMap?.back()){render();return;}
     if(worker?.owns(current.id) && worker.overlay()){worker.actAction('dismiss');renderOutletOverlay();return;}
     if(account?.dismiss()){renderOutletOverlay();return;}
     if(outlets?.dismiss()){renderOutletOverlay();return;}
@@ -585,7 +580,7 @@
   });
   document.addEventListener('keydown',event=>{
     if($('#outlet-overlay').hidden)return;
-    if(event.key==='Escape'){event.preventDefault();if(current.id==='w-map'&&workerMap?.overlay())workerMap.act('dismiss');else if(worker?.owns(current.id))worker.actAction('dismiss');else if(!account?.dismiss())outlets.dismiss();renderOutletOverlay();}
+    if(event.key==='Escape'){event.preventDefault();if(worker?.owns(current.id))worker.actAction('dismiss');else if(!account?.dismiss())outlets.dismiss();renderOutletOverlay();}
     if(event.key==='Tab'){
       const buttons=Array.from($('#outlet-overlay').querySelectorAll('[role="dialog"] button,[role="dialog"] input,[role="dialog"] textarea'));
       const first=buttons[0],last=buttons[buttons.length-1];
@@ -599,12 +594,10 @@
   $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer();routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
   $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
-  if(captureId==='w-map'&&workerMap){const demo=new URLSearchParams(location.search).get('map-demo');workerMap.open();if(demo==='selected')workerMap.act('select','AZ202609130021');if(demo==='list')workerMap.act('list');}
-  if(['w-tasks','w-schedule'].includes(captureId)&&workerSchedule){const date=new URLSearchParams(location.search).get('schedule-date');if(date&&workerSchedule.validDate(date))workerSchedule.setDate(date);}
-  const initialId=captureId==='w-tasks'&&new URLSearchParams(location.search).has('schedule-date')?'w-schedule':captureId;
+  const initialId=captureId;
   document.querySelectorAll?.('[data-consumer-version-link]').forEach(link=>link.setAttribute('aria-current',link.dataset.consumerVersionLink===consumerVersion?'page':'false'));
   const versionNote=$('#prototype-version-note');
-  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':'v0.13 · 新样式设计'}<br>服务人员 v0.11 · 微信地图能力收敛版<br>两个消费者版本共用 v0.11 交互与业务状态。`;
+  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>日程与地图已延期，不属于当前原型。`;
   const phaseLabel=$('#consumer-phase-label');
   if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':'02 v0.13 视觉设计原型';
   if(all.length) showScreen(initialId || location.hash.slice(1) || all[0].id,false);

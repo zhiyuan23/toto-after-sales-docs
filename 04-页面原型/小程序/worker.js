@@ -94,16 +94,17 @@
   function servingGroup(tasks) {
     return `<article class="w-serving w-serving-group" aria-label="${tasks.length} 单正在服务"><div class="w-serving-head"><span><i aria-hidden="true"></i>正在服务</span><small>${tasks.length} 单需要继续处理</small></div>${tasks.map(t=>{const step=t.resumeStep||0;return `<section class="w-serving-item" aria-label="正在服务 · ${e(t.name)}"><div class="w-serving-item-title"><h3>${e(t.name)}<span>${e(t.product)}</span></h3><small>${e(t.type)} · ${e(t.id.slice(-6))}</small></div><p>${e(t.address)}</p><div class="w-serving-progress"><span>处理任务 · ${taskSteps[step]}</span><small>${step+1} / 3</small></div><div class="w-serving-actions">${act('继续处理任务','resume-service',t.id,'primary')}${taskButton(t,'详情')}</div></section>`;}).join('')}</article>`;
   }
-  function taskRootNav(){return `<span class="w-root-nav-copy"><small>9 月 13 日 · 星期日</small><span class="w-root-nav-title">今天，安排清楚</span></span><button type="button" class="w-root-nav-action" data-wmap="open"><img src="assets/icons/map.svg" alt="">地图</button>`;}
-  function partsRootNav(){return `<span class="w-root-nav-copy"><small>${e(state.company==='上海示例服务企业'?'徐汇服务中心':state.company)}</small><span class="w-root-nav-title">配件，心中有数</span></span>`;}
+  function taskRootNav(){return `<span class="w-root-nav-copy"><small>9 月 13 日 · 星期日</small><span class="w-root-nav-title">今天，安排清楚</span><span class="w-root-nav-compact-title">任务</span></span>`;}
+  function partsRootNav(){return `<span class="w-root-nav-copy"><small>${e(state.company==='上海示例服务企业'?'徐汇服务中心':state.company)}</small><span class="w-root-nav-title">配件，心中有数</span><span class="w-root-nav-compact-title">配件</span></span>`;}
+  function mineRootNav(){return `<span class="w-root-nav-copy"><small>${e(state.company==='上海示例服务企业'?'徐汇服务中心':state.company)}</small><span class="w-root-nav-title">我的工作台</span><span class="w-root-nav-compact-title">我的</span></span>`;}
   function renderTasks() {
     if(!availableQueues().some(([key])=>key===state.queue)){state.queue='history';state.filter='all';}
     const pending=visibleTasks().filter(t=>inQueue(t,'pending'));
     const active=activeTasks(),matched=filteredTasks(),promoted=matched.filter(isServing).length,list=matched.filter(t=>!isServing(t));
     const todayCount=pending.filter(t=>t.date===TODAY&&t.flag==='已预约').length,partsCount=pending.filter(t=>t.flag==='缺件').length;
     const pendingFilters=`<div class="w-chip-row w-pending-filters" aria-label="待处理任务筛选">${[['all','全部'],['today','今日预约'],['parts','等配件']].map(([key,label])=>act(label,'filter',key,state.filter===key?'selected':'')).join('')}</div>`;
-    const overviewActions=`<div class="w-focus-actions" aria-label="今日工作快捷入口"><button type="button" data-wsched="today" aria-label="查看今日日程，共 ${todayCount} 单预约"><img src="assets/icons/calendar.svg" alt=""><span><b>今日预约</b><strong>${todayCount}<small> 单</small></strong></span></button><button type="button" data-worker="dashboard-filter" data-value="parts" aria-label="查看等配件任务，共 ${partsCount} 单"><img src="assets/icons/repair.svg" alt=""><span><b>等配件任务</b><strong>${partsCount}<small> 单</small></strong></span></button></div>`;
-    const servingShortcuts=`<div class="w-serving-shortcuts" aria-label="今日工作快捷入口"><button type="button" data-wsched="today" aria-label="查看今日日程，共 ${todayCount} 单预约"><img src="assets/icons/calendar.svg" alt=""><span>今日预约</span><strong>${todayCount}<small> 单</small></strong></button><button type="button" data-worker="dashboard-filter" data-value="parts" aria-label="查看等配件任务，共 ${partsCount} 单"><img src="assets/icons/repair.svg" alt=""><span>等配件</span><strong>${partsCount}<small> 单</small></strong></button></div>`;
+    const overviewActions=`<div class="w-focus-actions" aria-label="待处理任务快捷筛选"><button type="button" data-worker="dashboard-filter" data-value="today" aria-label="筛选今日预约任务，共 ${todayCount} 单"><img src="assets/icons/calendar.svg" alt=""><span><b>今日预约</b><strong>${todayCount}<small> 单</small></strong></span></button><button type="button" data-worker="dashboard-filter" data-value="parts" aria-label="筛选等待配件任务，共 ${partsCount} 单"><img src="assets/icons/repair.svg" alt=""><span><b>等待配件</b><strong>${partsCount}<small> 单</small></strong></span></button></div>`;
+    const servingShortcuts=`<div class="w-serving-shortcuts" aria-label="待处理任务快捷筛选"><button type="button" data-worker="dashboard-filter" data-value="today" aria-label="筛选今日预约任务，共 ${todayCount} 单"><img src="assets/icons/calendar.svg" alt=""><span>今日预约</span><strong>${todayCount}<small> 单</small></strong></button><button type="button" data-worker="dashboard-filter" data-value="parts" aria-label="筛选等待配件任务，共 ${partsCount} 单"><img src="assets/icons/repair.svg" alt=""><span>等待配件</span><strong>${partsCount}<small> 单</small></strong></button></div>`;
     const taskFocus=active.length?`<section class="w-serving-area" aria-label="当前服务任务">${active.length===1?servingCard(active[0]):servingGroup(active)}</section>${servingShortcuts}`:`<div class="w-focus"><div class="w-focus-summary"><span>待处理任务</span><strong>${pending.length}<small> 单</small></strong><span class="w-focus-caption">按预约出发，及时处理当前任务</span></div>${overviewActions}</div>`;
     return `${taskFocus}
       <form data-worker-form="task-search" class="w-search"><input name="search" type="search" aria-label="查询任务" placeholder="任务号 / 联系人 / 地址" value="${e(state.search)}"><button type="submit">查询</button></form>
@@ -118,7 +119,7 @@
   function detail() {
     const t=task();if(!t)return summary();
     return `<div class="w-status ${tone(t)}"><small>${queueName(t)}</small><h2>${e(nextStep(t).label)}</h2><p>${e(nextStep(t).hint)}</p></div>${summary(t)}
-      ${card(`<div class="w-section-head"><h3>${canArrange(t)?'服务安排':'服务记录'}</h3>${canArrange(t)?go('联系 / 改约','w-appointment','w-text-button'):''}</div><div class="w-appointment-time">${t.date?e(`${t.date} · ${t.start}–${t.end}`):'尚未确认时间'}</div><p>${e(t.address)}</p><small class="muted">${e(t.supplement)}</small>${canArrange(t)?`<div class="w-contact">${act('拨打客户电话','phone',t.id)}${t.type!=='远程指导'?act('去这单','location',t.id):''}${go('编辑补充信息','w-edit','w-text-button')}</div>`:''}`)}
+      ${card(`<div class="w-section-head"><h3>${canArrange(t)?'服务安排':'服务记录'}</h3>${canArrange(t)?go('联系 / 改约','w-appointment','w-text-button'):''}</div><div class="w-appointment-time">${t.date?e(`${t.date} · ${t.start}–${t.end}`):'尚未确认时间'}</div><p>${e(t.address)}</p><small class="muted">${e(t.supplement)}</small>${canArrange(t)?`<div class="w-contact">${act('拨打客户电话','phone',t.id)}${go('编辑补充信息','w-edit','w-text-button')}</div>`:''}`)}
       ${card(`<div class="w-product">${icon(t.type==='安装'?'install':'repair')}<div><h3>${e(t.product)}</h3><small>${e(t.model)} · ${e(t.type)} × 1</small></div></div><p>${e(t.issue)}</p><p class="muted">${e(t.note||'暂无额外备注')}</p><div class="w-detail-links" aria-label="任务相关资料">${act('查本产品资料','task-docs','','w-text-button')}${act('本单配件记录','task-records','','w-text-button')}</div>`)}
       ${t.versions.length&&!['review','followup','closed'].includes(t.queue)?go('查看完工材料与审核记录','w-review'):''}
       ${card(`<h3>沟通与处理记录</h3>${history(t)}`)}`;
@@ -182,16 +183,14 @@
   function warranty(){const matched=['示例花园','徐汇','DEMO-T01'].some(v=>v.toLowerCase().includes(state.warrantyQuery.toLowerCase()));return resourceSearch('warranty-search',state.warrantyQuery,'项目、区域或品番')+(matched?`<div class="w-resource-list-head"><span>查询结果</span><small>1 个延保项目</small></div><button class="w-warranty-card" data-go="w-warranty-detail"><span class="w-warranty-card-icon">${icon('check')}</span><span class="w-warranty-card-main">${tag('延保资料')}<strong>示例花园 · 卫浴产品延保项目</strong><small>徐汇区 · 上海示例项目企业</small><small>DEMO-WARRANTY-001</small></span><span class="w-warranty-card-link">查看范围与有效期 <b aria-hidden="true">›</b></span></button>`:empty('未找到延保资料','请调整项目、区域或品番后再试。'));}
   function mine(){return `<header class="w-profile"><img src="assets/icons/default-avatar.svg" alt=""><div><h2>丁师傅</h2><p>服务人员 · ${e(state.company)}</p></div>${go('切换企业 ›','w-company','w-text-button')}</header><section class="w-resource-section" aria-labelledby="w-resource-title"><h3 id="w-resource-title" class="w-mine-label">资料查询</h3><div class="w-resource-grid is-single">${resourceCard('技术资料','安装 · 维修 · 使用 · 视频','w-technical','guidance')}</div></section><h3 class="w-mine-label">账号与帮助</h3><section class="w-mine-section">${mineRow('问题反馈','w-feedback')}${mineRow('修改密码','w-password')}${mineRow('退出登录','w-logout')}</section><p class="w-brand-note">TOTO · 专业服务，安心相伴</p>`;}
   const baseNote='v0.10 交互评审稿，全部为会话内虚构数据。按钮授权、状态迁移、库存事务和校验必须以正式 Spec 为准；不接真实接口、位置、扫码、上传、短信或账号。';
-  const rootNavImplementationNote='【小程序开发约束】本页是底部 Tab 根页面，真实小程序需在 pages.json 对本页配置 navigationStyle: custom。顶部不得照搬原型 92px，必须结合 uni.getWindowInfo() 的 statusBarHeight / safeArea 和微信 wx.getMenuButtonBoundingClientRect() 运行时计算导航高度及右侧避让，保留胶囊安全区。任务页的地图入口属于自定义导航；二级页仍使用现有标准导航与返回行为。';
+  const rootNavImplementationNote='【小程序开发约束】本页是底部 Tab 根页面，真实小程序需在 pages.json 对本页配置 navigationStyle: custom。顶部不得照搬原型 92px，必须结合 uni.getWindowInfo() 的 statusBarHeight / safeArea 和微信 wx.getMenuButtonBoundingClientRect() 运行时计算导航高度及右侧避让，保留胶囊安全区。页面在顶部时使用无白底的展开标题，内容上滑后切换为白色表面与紧凑页标题，回到顶部后恢复。日程与地图已经延期，不得从旧原型恢复入口。';
   const screens=[];
   function screen(id,title,entry,tab,body,footer,goal,note='',rootNav=null){const scopedBody=()=>state.company!=='上海示例服务企业'&&['w-part-detail','w-requisition','w-return','w-records','w-record-detail','w-technical','w-document','w-warranty','w-warranty-detail'].includes(id)?empty('当前企业暂无授权数据','可在我的页面切换企业。')+go('返回我的','w-mine','primary'):(typeof body==='function'?body():body);screens.push({id,title,entry,tab,body:scopedBody,footer,goal:goal||'在当前业务上下文完成操作，并返回关联记录。',note:[baseNote,note,rootNav?rootNavImplementationNote:''].filter(Boolean).join(' '),rootNav,navigationMode:rootNav?'custom-root':'standard'});}
-  screen('w-tasks','任务','W01','w-tasks',renderTasks,null,'用处理优先级、预约时间和下一步识别任务，三个 Tab 保留全部业务入口。','队列与预约／缺件／审核退回标签独立。无正在服务任务时，蓝色概览卡展示待处理总数、今日预约和等配件任务；有正在服务任务时，当前服务主卡替代原概览卡，今日预约和等配件保留为下方轻量快捷行，避免两张主卡重复占用首屏空间。今日预约明确进入今日日程，等配件明确进入对应任务；地图位于首页自定义导航右侧。待处理 Tab 下仍可用二级筛选，不影响其他一级 Tab。搜索、排序、计数使用同一数据集。v0.8 仅展示已下发给当前师傅的任务；待处理合并断联，退回单独归入待补资料；正在服务置顶，计入待处理但不在下方重复展示，继续入口恢复本单填写步骤；尚未约定同时仅能服务一单。审核中只查看进度，审核通过即结束师傅本次处理，进入历史任务，由服务中心回访跟进；无二次交单入口。返回列表恢复同企业、同筛选下的位置。',taskRootNav);
-  screen('w-schedule','任务日程','W01','w-tasks',()=>window.TOTO_WORKER_SCHEDULE?.render()||notice('日程模块待加载'),null,'按确认预约查看今天、未来和过去，并查看选定日期的任务地图。','独立日程页；不额外显示底部 Tab。返回原页面保留日期；未预约任务集中在待安排，历史改约单独留痕。');
+  screen('w-tasks','任务','W01','w-tasks',renderTasks,null,'用处理优先级、预约时间和下一步识别任务，三个 Tab 保留全部业务入口。','队列与预约／缺件／审核退回标签独立。蓝色概览卡展示待处理总数，以及今日预约和等待配件数量；两个快捷按钮都直接切换待处理列表的对应筛选，不跳转新页面。待处理 Tab 下仍可用全部／今日预约／等待配件二级筛选，不影响其他一级 Tab。搜索、排序、计数使用同一数据集。仅展示已下发给当前师傅的任务；待处理合并断联，退回单独归入待补资料；正在服务置顶，计入待处理但不在下方重复展示。日程与地图延期，当前定稿不提供入口或页面。',taskRootNav);
   screen('w-detail','任务详情','W02','w-tasks',detail,detailFooter);
   screen('w-appointment','联系与预约','W02','w-tasks',appointment);
   screen('w-edit','编辑补充信息','W02','w-tasks',edit);
   screen('w-exception','异常跟进','W02','w-tasks',exception,null,null,'取消恢复仅形成申请，不能擅自定义恢复目标状态。');
-  screen('w-map','任务地图','W03','w-tasks',()=>window.TOTO_WORKER_MAP?.render()||notice('地图模块待加载'),null,'使用微信小程序 map 组件查看授权任务标点，选择工单并打开目的地位置。','正式实现限于 markers、bindmarkertap、show-location 和 MapContext.includePoints / moveToLocation。路线计算、驾车／步行切换、多站排序、里程与时长不属于内置组件能力，已从当前原型移除。单个目的地可交给 wx.openLocation，不表示小程序已开始导航。');
   screen('w-service','处理任务','W04','w-tasks',service,serviceFooter,'在同一份自动保存草稿中完成服务处理、证据确认与完工提交。','原服务记录与完工资料已合并为三段；购买信息由工单预填并只读，不引入费用确认。现场与远程指导分别采集必要证据。');
   screen('w-review','审核与办结进度','W04','w-tasks',review,()=>go('返回任务列表','w-tasks','primary'));
   screen('w-returned','补充退回资料','W04','w-tasks',returned);
@@ -202,7 +201,7 @@
   screen('w-return','申请退料','W07','w-parts',returnPart);
   screen('w-records','配件记录','W09 / W10','w-parts',records);
   screen('w-record-detail','配件单详情','W09 / W10','w-parts',recordDetail,null,null,'领料、退料共用记录视图；审核由右侧评审控制器模拟，通过即完成。');
-  screen('w-mine','我的','W08 / W14','w-mine',mine);
+  screen('w-mine','我的','W08 / W14','w-mine',mine,null,null,'',mineRootNav);
   screen('w-technical','技术资料','W13','w-mine',technical);
   screen('w-document','资料详情','W13','w-mine',documentDetail);
   screen('w-warranty','延保资料','W12','w-mine',warranty);
@@ -294,7 +293,7 @@
       case 'history-filter':state.queue='history';state.filter=['all','processing','closed','cancelled'].includes(value)?value:'all';return 'w-tasks';
       case 'queue':state.queue=availableQueues().some(([k])=>k===value)?value:'pending';state.filter='all';return 'w-tasks';
       case 'filter':if(state.queue!=='pending')return 'w-tasks';state.filter=['all','today','parts'].includes(value)?value:'all';state.search='';return 'w-tasks';
-      case 'dashboard-filter':state.queue='pending';state.filter=value==='parts'?'parts':'all';state.search='';return 'w-tasks';
+      case 'dashboard-filter':state.queue='pending';state.filter=['today','parts'].includes(value)?value:'all';state.search='';return 'w-tasks';
       case 'clear-filter':state.filter='all';state.search='';return 'w-tasks';
       case 'part':state.partId=value;return 'w-part-detail';
       case 'return-part':{const available=returnAvailable(value);state.returnBasket={};if(available)state.returnBasket[value]=1;return 'w-return';}
@@ -318,7 +317,6 @@
       case 'sign-failed':state.overlay={title:'无法获取位置',text:'可以重试定位，或登记到达说明供服务中心核验。',kind:'arrival'};return null;
       case 'scan':state.overlay={title:'扫码结果待核对',text:'示例产品编号 DEMO-SERIAL-001。扫描失败时可返回手动填写；未调用相机。'};return null;
       case 'phone':state.overlay={title:'联系客户',text:`${t?.name||''} · ${t?.phone||''}。正式小程序打开系统拨号确认；本原型未拨出电话。`};return null;
-      case 'location':window.TOTO_WORKER_MAP?.open(t?.id);return 'w-map';
       case 'dismiss':state.overlay=null;return null;
       case 'feedback-media':state.feedbackMedia=!state.feedbackMedia;return null;
       case 'cancel-record':{const r=state.records.find(x=>x.id===value);if(!r||r.status!=='处理中'||!['领料','退料'].includes(r.type))throw new Error('仅处理中的领料或退料申请可撤销。');state.overlay={kind:'cancel',id:value,title:`撤销${r.type}申请？`,text:'本次撤销只更新单据状态，不会改变服务站或个人库存。'};return null;}
@@ -369,7 +367,7 @@
       catch(err){showToast(err.message);}return true;
     },
     flows:[
-      ['联系、履约与办结','不同工单独立保留资料；处理与完工共用一份草稿，后台审核与办结使用右侧评审控制器。',['w-tasks','w-schedule','w-map','w-detail','w-appointment','w-service','w-review']],
+      ['联系、履约与办结','不同工单独立保留资料；处理与完工共用一份草稿，后台审核与办结使用右侧评审控制器。',['w-tasks','w-detail','w-appointment','w-service','w-review']],
       ['缺件、领料与再次上门','申请时库存不变；服务站管理员通过后双方库存同步更新，再返回原工单预约。',['w-detail','w-exception','w-requisition','w-record-detail','w-appointment','w-service']],
       ['审核退回与新版本','先看退回原因，补充材料；原始提交记录保留。',['w-tasks','w-returned','w-resubmitted','w-review']],
       ['取消与恢复申请','取消时登记原因；恢复先提交申请，等待服务中心确认。',['w-detail','w-exception','w-tasks']],

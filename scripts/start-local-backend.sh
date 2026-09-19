@@ -29,4 +29,6 @@ backend_runtime_jar="$backend_runtime_dir/gaia-web-$(date +%Y%m%d%H%M%S)-$$.jar"
 cp "$backend_build_jar" "$backend_runtime_jar"
 chmod 600 "$backend_runtime_jar"
 cd "$backend_root"
-exec java -jar "$backend_runtime_jar" --spring.config.additional-location=file:.local/
+exec java -jar "$backend_runtime_jar" \
+    --spring.config.additional-location=file:.local/ \
+    --after-sales.mobile.single-tenant-id=1001
