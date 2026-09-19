@@ -96,7 +96,6 @@
   }
   function taskRootNav(){return `<span class="w-root-nav-copy"><small>9 月 13 日 · 星期日</small><span class="w-root-nav-title">今天，安排清楚</span><span class="w-root-nav-compact-title">任务</span></span>`;}
   function partsRootNav(){return `<span class="w-root-nav-copy"><small>${e(state.company==='上海示例服务企业'?'徐汇服务中心':state.company)}</small><span class="w-root-nav-title">配件，心中有数</span><span class="w-root-nav-compact-title">配件</span></span>`;}
-  function mineRootNav(){return `<span class="w-root-nav-copy"><small>${e(state.company==='上海示例服务企业'?'徐汇服务中心':state.company)}</small><span class="w-root-nav-title">我的工作台</span><span class="w-root-nav-compact-title">我的</span></span>`;}
   function renderTasks() {
     if(!availableQueues().some(([key])=>key===state.queue)){state.queue='history';state.filter='all';}
     const pending=visibleTasks().filter(t=>inQueue(t,'pending'));
@@ -201,7 +200,7 @@
   screen('w-return','申请退料','W07','w-parts',returnPart);
   screen('w-records','配件记录','W09 / W10','w-parts',records);
   screen('w-record-detail','配件单详情','W09 / W10','w-parts',recordDetail,null,null,'领料、退料共用记录视图；审核由右侧评审控制器模拟，通过即完成。');
-  screen('w-mine','我的','W08 / W14','w-mine',mine,null,null,'',mineRootNav);
+  screen('w-mine','我的','W08 / W14','w-mine',mine);
   screen('w-technical','技术资料','W13','w-mine',technical);
   screen('w-document','资料详情','W13','w-mine',documentDetail);
   screen('w-warranty','延保资料','W12','w-mine',warranty);

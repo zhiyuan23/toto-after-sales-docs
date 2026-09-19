@@ -1,11 +1,14 @@
-import { spawn } from 'node:child_process'
+import { execFile, spawn } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import {
   closeSync,
   existsSync,
   mkdirSync,
   openSync,
+  readdirSync,
   readFileSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from 'node:fs'
 import { request } from 'node:http'
@@ -25,9 +28,124 @@ const logRoot = resolve(backendRoot, '.local/logs')
 const backendScript = resolve(scriptDirectory, 'start-local-backend.sh')
 const startupLock = resolve(runtimeRoot, 'shared-backend-start.lock')
 const backendLog = resolve(logRoot, 'shared-backend.log')
+const backendStateFile = resolve(runtimeRoot, 'shared-backend-state.json')
 const redisLog = resolve(logRoot, 'shared-redis.log')
 const redisPidFile = resolve(runtimeRoot, 'shared-redis.pid')
 const wait = milliseconds => new Promise(resolveWait => setTimeout(resolveWait, milliseconds))
+const ignoredSourceDirectories = new Set(['.git', '.local', 'node_modules', 'target'])
+
+function commandOutput(command, args, allowEmpty = false) {
+  return new Promise((resolveCommand, reject) => execFile(command, args, { encoding: 'utf8' }, (error, stdout) => {
+    if (error && !(allowEmpty && error.code === 1)) reject(error)
+    else resolveCommand(stdout || '')
+  }))
+}
+
+function collectBackendSourceFiles(root, files = [], baseRoot = root) {
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    if (entry.isSymbolicLink() || (entry.isDirectory() && ignoredSourceDirectories.has(entry.name))) continue
+    const absolutePath = resolve(root, entry.name)
+    if (entry.isDirectory()) collectBackendSourceFiles(absolutePath, files, baseRoot)
+    else {
+      const relativePath = absolutePath.slice(baseRoot.length + 1)
+      if (entry.name === 'pom.xml' || relativePath.includes('/src/main/') || relativePath.startsWith('src/main/')) files.push(absolutePath)
+    }
+  }
+  return files
+}
+
+export function fingerprintBackendFiles(entries) {
+  const hash = createHash('sha256')
+  let latestMtimeMs = 0
+  for (const entry of [...entries].sort((left, right) => left.key.localeCompare(right.key))) {
+    const stat = statSync(entry.path)
+    latestMtimeMs = Math.max(latestMtimeMs, stat.mtimeMs)
+    hash.update(entry.key)
+    hash.update('\0')
+    hash.update(readFileSync(entry.path))
+    hash.update('\0')
+  }
+  return { fingerprint: hash.digest('hex'), latestMtimeMs }
+}
+
+function backendSourceSnapshot() {
+  const afterSalesRoot = resolve(workspaceRoot, 'backend/gaia-after-sales')
+  const repositories = [
+    { label: 'gaia-after-sales', root: afterSalesRoot },
+    { label: 'gaia-saas-proj', root: backendRoot },
+  ]
+  const entries = repositories.flatMap(repository => collectBackendSourceFiles(repository.root).map(path => ({
+    key: `${repository.label}/${path.slice(repository.root.length + 1)}`,
+    path,
+  })))
+  entries.push({ key: 'docs/toto/scripts/start-local-backend.sh', path: backendScript })
+  return fingerprintBackendFiles(entries)
+}
+
+async function processIdsOnPort(port) {
+  const output = await commandOutput('lsof', ['-nP', `-tiTCP:${port}`, '-sTCP:LISTEN'], true)
+  return [...new Set(output.trim().split(/\s+/).filter(Boolean).map(Number))]
+}
+
+async function processCommand(pid) {
+  return (await commandOutput('ps', ['-p', String(pid), '-o', 'command='], true)).trim()
+}
+
+async function processWorkingDirectory(pid) {
+  const output = await commandOutput('lsof', ['-a', '-p', String(pid), '-d', 'cwd', '-Fn'], true)
+  return output.split(/\r?\n/).find(line => line.startsWith('n'))?.slice(1) || ''
+}
+
+export function managedBackendRuntime(processInfo, projectRoot = backendRoot) {
+  if (resolve(processInfo.cwd || '/') !== resolve(projectRoot)) return null
+  const jarArgument = processInfo.command.match(/(?:^|\s)-jar\s+(?:"([^"]+)"|'([^']+)'|(\S+))/)?.slice(1).find(Boolean)
+  if (!jarArgument) return null
+  const runtimeJar = resolve(projectRoot, jarArgument)
+  const expectedPrefix = `${resolve(projectRoot, '.local/runtime')}/gaia-web-`
+  return runtimeJar.startsWith(expectedPrefix) && runtimeJar.endsWith('.jar') ? runtimeJar : null
+}
+
+export function backendRuntimeIsFresh({ currentFingerprint, recordedFingerprint, runtimeMtimeMs, latestSourceMtimeMs }) {
+  if (recordedFingerprint) return recordedFingerprint === currentFingerprint
+  return Number.isFinite(runtimeMtimeMs) && runtimeMtimeMs >= latestSourceMtimeMs
+}
+
+function readBackendState() {
+  if (!existsSync(backendStateFile)) return null
+  try { return JSON.parse(readFileSync(backendStateFile, 'utf8')) }
+  catch { return null }
+}
+
+function writeBackendState({ fingerprint, pid, runtimeJar }) {
+  writeFileSync(backendStateFile, `${JSON.stringify({ version: 1, fingerprint, pid, runtimeJar, builtAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 })
+}
+
+async function inspectLocalBackend(sourceSnapshot) {
+  const probes = await probeUnifiedBackend()
+  const pids = await processIdsOnPort(LOCAL_BACKEND_PORT)
+  const listeners = await Promise.all(pids.map(async pid => {
+    const info = { pid, command: await processCommand(pid), cwd: await processWorkingDirectory(pid) }
+    return { ...info, runtimeJar: managedBackendRuntime(info) }
+  }))
+  const managed = listeners.length === 1 && listeners[0].runtimeJar ? listeners[0] : null
+  const state = readBackendState()
+  const runtimeMtimeMs = managed && existsSync(managed.runtimeJar) ? statSync(managed.runtimeJar).mtimeMs : Number.NaN
+  const fresh = Boolean(managed && backendRuntimeIsFresh({
+    currentFingerprint: sourceSnapshot.fingerprint,
+    recordedFingerprint: state?.runtimeJar === managed.runtimeJar ? state.fingerprint : '',
+    runtimeMtimeMs,
+    latestSourceMtimeMs: sourceSnapshot.latestMtimeMs,
+  }))
+  return { probes, listeners, managed, fresh, ready: isUnifiedBackendReady(probes) }
+}
+
+async function stopManagedBackend(processInfo) {
+  console.log(`[backend] 检测到本工作区旧后端（PID ${processInfo.pid}），正在安全重启`)
+  try { process.kill(processInfo.pid, 'SIGTERM') }
+  catch (error) { if (error.code !== 'ESRCH') throw error }
+  await waitUntil(async () => !(await portIsOpen(LOCAL_BACKEND_PORT)), 20000, '旧 Gaia 统一后端退出')
+  rmSync(backendStateFile, { force: true })
+}
 
 export function isWebProbeReady(response) {
   return response.statusCode === 200 && /"code"\s*:\s*4001/.test(response.body)
@@ -232,16 +350,18 @@ export async function ensureLocalBackend() {
   mkdirSync(runtimeRoot, { recursive: true })
   mkdirSync(logRoot, { recursive: true })
 
-  const initialProbes = await probeUnifiedBackend()
-  if (isUnifiedBackendReady(initialProbes)) {
+  const sourceSnapshot = backendSourceSnapshot()
+  const initial = await inspectLocalBackend(sourceSnapshot)
+  if (initial.ready && initial.fresh) {
+    if (!readBackendState()) writeBackendState({ fingerprint: sourceSnapshot.fingerprint, pid: initial.managed.pid, runtimeJar: initial.managed.runtimeJar })
     console.log(`[backend] 复用已运行的 Gaia 统一后端 ${LOCAL_BACKEND_BASE_URL}`)
     return
   }
 
   const deadline = Date.now() + 300000
   while (!tryAcquireStartupLock()) {
-    const probes = await probeUnifiedBackend()
-    if (isUnifiedBackendReady(probes)) {
+    const pending = await inspectLocalBackend(sourceSnapshot)
+    if (pending.ready && pending.fresh) {
       console.log(`[backend] 另一个项目已启动 Gaia 统一后端，复用 ${LOCAL_BACKEND_BASE_URL}`)
       return
     }
@@ -250,19 +370,26 @@ export async function ensureLocalBackend() {
   }
 
   try {
-    const lockedProbes = await probeUnifiedBackend()
-    if (isUnifiedBackendReady(lockedProbes)) {
+    const locked = await inspectLocalBackend(sourceSnapshot)
+    if (locked.ready && locked.fresh) {
       console.log(`[backend] 复用已运行的 Gaia 统一后端 ${LOCAL_BACKEND_BASE_URL}`)
       return
     }
-    if (await portIsOpen(LOCAL_BACKEND_PORT)) {
-      throw new Error(`端口 ${LOCAL_BACKEND_PORT} 已有服务，但不是同时具备 Web 与移动端能力的当前 Gaia 统一后端；已拒绝重复启动。${probeFailureMessage(lockedProbes)}`)
+    if (locked.listeners.length) {
+      if (locked.managed) await stopManagedBackend(locked.managed)
+      else {
+        const details = locked.listeners.map(item => `PID ${item.pid}（${item.command || '命令未知'}）`).join('；')
+        throw new Error(`端口 ${LOCAL_BACKEND_PORT} 被非本工作区受管后端占用，无法保证代码版本，已拒绝自动关闭：${details}。${probeFailureMessage(locked.probes)}`)
+      }
     }
 
     await ensureRedis()
     const pid = await spawnDetached('bash', [backendScript], { cwd: workspaceRoot, logFile: backendLog })
     console.log(`[backend] 正在装配售后模块并启动共享后端（PID ${pid}），首次启动通常需要约 1–2 分钟`)
     await waitForBackend()
+    const started = await inspectLocalBackend(sourceSnapshot)
+    if (!started.ready || !started.managed) throw new Error('新后端已响应但无法确认其属于当前工作区，拒绝记录为可复用实例')
+    writeBackendState({ fingerprint: sourceSnapshot.fingerprint, pid: started.managed.pid, runtimeJar: started.managed.runtimeJar })
     console.log(`[backend] 已就绪并保持运行：${LOCAL_BACKEND_BASE_URL}`)
   }
   catch (error) {

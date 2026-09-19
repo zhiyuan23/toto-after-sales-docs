@@ -1,0 +1,67 @@
+[PASS] 列表 PENDING 通过 isServiceTaskPage 运行时校验 — code=0
+[PASS] 列表 SUPPLEMENT 通过 isServiceTaskPage 运行时校验 — code=0
+[PASS] 列表 REVIEW 通过 isServiceTaskPage 运行时校验 — code=0
+[PASS] 列表 HISTORY 通过 isServiceTaskPage 运行时校验 — code=0
+[PASS] 二级筛选 TODAY 通过 isServiceTaskPage — code=0
+[PASS] 二级筛选 MISSING_PARTS 通过 isServiceTaskPage — code=0
+[PASS] 列表页含 currentServices 且每项通过 isServiceTask — count=4
+[PASS] 列表行含 products/statusHistory/communications 结构
+[PASS] 列表页 categoryCounts / secondaryCounts 键完整
+[PASS] 全部 25 条可见工单详情通过 isServiceTask
+[PASS] 草稿 9309181001 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309181001 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191006 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191006 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191005 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191005 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191004 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191004 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191003 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191003 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191002 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191002 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191001 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191001 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191003 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191003 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191002 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191002 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309181002 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309181002 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191001 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191001 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191010 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191010 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191009 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191009 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191005 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191005 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191004 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191004 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309181003 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309181003 通过 isServiceTaskProgress — code=0
+[PASS] 退回要求 9309181003 通过 isServiceTaskSupplement
+[PASS] 草稿 9309191006 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191006 通过 isServiceTaskProgress — code=0
+[PASS] 退回要求 9309191006 通过 isServiceTaskSupplement
+[PASS] 草稿 9309181004 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309181004 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191011 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191011 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191008 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191008 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9509191007 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9509191007 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191009 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191009 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191008 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191008 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309191007 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309191007 通过 isServiceTaskProgress — code=0
+[PASS] 草稿 9309181005 通过 isServiceTaskDraft — code=0
+[PASS] 进度 9309181005 通过 isServiceTaskProgress — code=0
+[PASS] 产品码结果通过 isServiceTaskProductCodeResult — {"code":"W2TEST-20260919-C07","source":"SCAN","matched":true,"instanceId":"9509190307","productName":"W2TEST 测试产品 ONSITE-FLOW"}
+[PASS] 范围外详情 code=404（端侧会走业务异常分支）
+[PASS] 失效会话 code=4001（端侧会走未授权分支）
+
+=== 契约校验汇总：通过 65，失败 0 ===

@@ -1,0 +1,217 @@
+===== 1/3 重建 W2 夹具 =====
+executed 87 statements (seed)
+===== 2/3 校准 Redis 主键序列 =====
+已校准 0 张表；其余 67 张序列已满足 max(id)
+===== 3/3 运行 W04 验证 =====
+================== 1. 开始服务前草稿门禁 ==================
+[PASS] 开始前草稿可读且为空版本 — code=0 rev=0
+[PASS] 空草稿版本号可用 — e61eb604f7ef342cc09f…
+[PASS] 未开始服务时保存草稿被拒绝 — code=409 请先签到或开始远程服务
+[PASS] 被拒绝后草稿表无记录
+
+================== 2. 现场签到 ==================
+[PASS] 无定位且无到达说明被拒绝 — code=422 无法定位时必须填写到达说明
+[PASS] 定位授权但坐标不完整被拒绝 — code=422 定位成功时经纬度和精度不能为空
+[PASS] 经度越界被拒绝 — code=422 签到位置坐标不正确
+[PASS] 三次拒绝均未建立执行事实
+[PASS] 现场签到成功
+[PASS] 执行事实：人员/站点/模式/时间正确 — (5, 5, 1, 'ONSITE_CHECK_IN', 'SERVICE', Decimal('121.4737010'), Decimal('31.2304160'), 18, 1, datetime.datetime(2026, 9, 19, 14, 15, 38), None)
+[PASS] 执行事实：坐标与授权落库 — lon=121.4737010 lat=31.2304160 acc=18 auth=1
+[PASS] 签到写入动作审计
+[PASS] 签到后详情显示进行中与步骤 — active=True step=SERVICE
+[PASS] 签到后列表 currentServices 置顶本单
+[PASS] 签到后详情不再提供 checkIn 动作 — ['viewDetail', 'call', 'copyMobile', 'continueService', 'saveDraft', 'verifyProductCode', 'submitCompletion', 'recordCommunication', 'editSupplement', 'reschedule', 'markMissingParts', 'markUnreachable', 'cancel']
+[FAIL] [缺陷探针] 重复签到被拒绝（客户端已隐藏该动作，服务端应同样拒绝） — code=0 重复签到被接受并重置开始时间
+    └ 观察：重复签到后 started_at=2026-09-19 14:15:44 current_step=SERVICE；审计条数=2
+
+================== 3. 远程开始服务 ==================
+[PASS] 远程任务不接受现场签到 — code=409 远程任务不执行现场签到
+[PASS] 远程开始不得携带现场定位 — code=422 远程服务不得生成现场签到或定位例外
+[PASS] 远程开始服务成功
+[PASS] 远程执行事实不产生伪签到 — (1, 'REMOTE_START', None, None, 0, '')
+[PASS] 上门任务不接受远程开始 — code=409 只有远程任务可以开始远程服务
+
+================== 4. 草稿读写与校验（现场） ==================
+[PASS] 未使用配件却填耗用明细被拒绝 — code=422 未使用配件时不能填写耗用明细
+[PASS] 使用配件却无耗用明细被拒绝 — code=422 使用配件时必须填写实际耗用明细
+[PASS] 不存在或停用配件被拒绝 — code=422 配件不存在或已停用
+[PASS] 非法证据引用格式被拒绝 — code=422 现场证据引用格式不正确
+[PASS] 草稿保存成功（含配件耗用）
+[PASS] 草稿版本递增到 1 — revision=1
+[PASS] 草稿内容回读一致 — [{"partId": "2", "quantity": 1}]
+[PASS] 草稿配件明细落库
+[PASS] 执行事实步骤同步为 EVIDENCE
+[PASS] 草稿保存写入动作审计
+[PASS] 过期草稿版本被拒绝 — code=409 数据已变更，请刷新后重新编辑
+[PASS] 过期工单版本保存草稿被拒绝 — code=409 数据已变更，请刷新后重新编辑
+[PASS] 同请求号同内容保存草稿幂等 — revision 2 -> 2
+
+================== 5. 草稿隔离 ==================
+[PASS] A 单草稿保存成功
+[PASS] B 单草稿保存成功
+[PASS] 三张工单草稿互不串写 — A=A 单草稿 B=B 单草稿 ONSITE=检测：进水阀异常，需更换连接件
+[PASS] 草稿表按工单独立 3 行
+
+================== 6. 产品码校验 ==================
+[PASS] 本单产品码校验匹配 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "code": "W2TEST-20260919-C07",
+    "source": "SCAN",
+    "matched": true,
+    "instanceId": "9509190307",
+    "productName": "W2TEST 测试产品 ONSITE-FLOW"
+  
+…(truncated)
+[PASS] 匹配时返回产品名 — W2TEST 测试产品 ONSITE-FLOW
+[PASS] 不存在产品码返回不匹配（非报错） — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "code": "W2TEST-NO-SUCH-CODE",
+    "source": "MANUAL",
+    "matched": false,
+    "instanceId": "",
+    "productName": ""
+  },
+  "operateContent": null
+}
+[PASS] 他单产品码判为不匹配 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "code": "W2TEST-20260919-C08",
+    "source": "MANUAL",
+    "matched": false,
+    "instanceId": "",
+    "productName": ""
+  },
+  "operateContent": null
+}
+[PASS] 空产品码被拒绝 — code=422 产品码不能为空或超过100个字符
+[PASS] 范围外工单产品码校验被拒绝 — code=404
+[PASS] 非法产品码来源被拒绝 — code=422 产品码来源不正确
+
+================== 7. 现场完工提交 ==================
+[PASS] 过期草稿版本提交被拒绝 — code=409 数据已变更，请刷新后重新编辑
+[PASS] 缺客户确认时提交被拒绝 — code=422 请选择客户确认情况
+[PASS] 个人库存不足时提交被拒绝 — code=409 个人配件库存不足：2
+[PASS] 库存不足未产生提交版本
+[PASS] 库存不足未扣减个人库存
+[PASS] [事务原子性] 库存不足时未残留耗用单据（提交整体回滚） — 残留单据数=0
+[PASS] 完工前最终草稿保存成功
+[PASS] 现场完工提交成功
+[PASS] 进度显示进入审核中 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "orderId": "9509191007",
+    "status": "PENDING_REVIEW",
+    "category": "REVIEW",
+    "followUpStatus": "NOT_FOLLOWED_UP",
+    "latestSubmission": {
+   
+…(truncated)
+[PASS] 提交版本落库（v1 且业务字段与草稿一致） — versionNo=1 result=更换排水连接件并试水正常 code=W2TEST-20260919-C07 conf=CONFIRMED
+[PASS] 提交版本保存四类证据 — site=https://example.invalid/…
+[PASS] 提交版本记录草稿修订号 — draft_revision=5
+    └ 观察：submitter_id=2（移动端写入移动账号 id；Web 端写入 Gaia 用户 id）
+[PASS] 提交版本保存请求号与摘要 — W2TEST-SUB-OK
+[PASS] 提交版本关联库存单据 — inventory_document_id=20
+[PASS] 工单状态转为待审核 — PENDING_REVIEW
+[PASS] 状态历史记录提交动作
+[PASS] 草稿标记为已提交
+[PASS] 当前服务已失活结束 — (0, datetime.datetime(2026, 9, 19, 14, 18, 19))
+[PASS] 配件库存已扣减 — 5 -> 4
+[PASS] 耗用单据类型与来源正确 — (20, 'CONSUMPTION', 'COMPLETED', 'PERSONNEL', 5, None, '9509191007')
+[PASS] [事务原子性] 耗用单据/明细/流水/历史四表齐备且各 1 条 — doc=20
+[PASS] [事务原子性] 提交版本与工单状态同事务落地 — inventoryDocumentId=20 docId=20
+[PASS] 耗用流水为负向并记录结果库存 — (-1, 4, 'CONSUMPTION')
+[PASS] 同请求号重复提交幂等（不产生第 2 版） — code=0 count=1
+[PASS] 同请求号不同内容提交被拒绝 — code=409 请求号已用于不同的完工提交
+[PASS] 提交后再次提交被拒绝 — code=409 当前任务不可提交完工资料
+
+================== 8. 远程完工提交 ==================
+[PASS] 远程草稿保存（不强制现场证据）
+[PASS] 远程完工提交成功
+[PASS] 远程提交不写入现场/铭牌证据且无配件耗用 — (1, '', '', 'https://example.invalid/w2test/chat-1.png', None)
+[PASS] 远程提交保留沟通证据 — https://example.invalid/w2test/chat-1.pn
+[PASS] 远程工单进入待审核
+
+================== 9. 进度查询 ==================
+[PASS] 进行完工单进度：待审核并含最新提交 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "orderId": "9509191007",
+    "status": "PENDING_REVIEW",
+    "category": "REVIEW",
+    "followUpStatus": "NOT_FOLLOWED_UP",
+    "latestSubmission": {
+   
+…(truncated)
+[PASS] 退回工单进度：needsSupplement 为真 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "orderId": "9509191011",
+    "status": "PENDING_COMPLETION",
+    "category": "SUPPLEMENT",
+    "followUpStatus": "NOT_FOLLOWED_UP",
+    "latestSubmission
+…(truncated)
+[PASS] 待回访工单进度：awaitingFollowUp 为真 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "orderId": "9309191007",
+    "status": "PENDING_FOLLOW_UP",
+    "category": "HISTORY",
+    "followUpStatus": "NOT_FOLLOWED_UP",
+    "latestSubmission": {
+…(truncated)
+[PASS] 已关闭工单进度：既不待审核也不待补充 — {
+  "code": 0,
+  "errMsg": "",
+  "data": {
+    "orderId": "9309191008",
+    "status": "CLOSED",
+    "category": "HISTORY",
+    "followUpStatus": "FOLLOWED_UP",
+    "latestSubmission": {
+      "id": "9
+…(truncated)
+[PASS] 范围外工单进度被拒绝
+
+================== 10. 审核退回定向补充 ==================
+[PASS] 退回要求可读
+[PASS] 退回项为 4 项定向内容 — ['SITE_EVIDENCE', 'NAMEPLATE_EVIDENCE', 'CUSTOMER_CONFIRMATION', 'CONFIRMATION_EVIDENCE']
+[PASS] 退回基线为第 1 版 — 1
+[PASS] 退回原因可读 — W2TEST-20260919 请补充现场照片、铭牌照片与客户确认
+[PASS] 非退回工单查询退回要求被拒绝 — code=409 当前任务没有待补资料
+[PASS] 退回基线版本不一致被拒绝 — code=409 退回版本已变化，请刷新后重试
+[PASS] 指定项缺失时补充被拒绝 — code=422 客户确认附件不能为空
+[PASS] 定向补充提交成功
+[PASS] 保留不可变历史：现有 2 个提交版本 — versions=[1, 2]
+[PASS] 第 2 版父版本指向第 1 版 — 9509194001
+[PASS] 第 2 版记录补充项与说明 — SITE_EVIDENCE,NAMEPLATE_EVIDENCE,CUSTOMER_CONFIRMATION,CONFIRMATION_EVIDENCE
+[PASS] 第 2 版保存现场证据 — https://example.invalid/w2test/site-1.jp
+[PASS] 第 1 版未被覆盖（不可变） — v1=第 1 版服务结果，等待补充资料
+[PASS] 补充后工单回到待审核
+[PASS] 状态历史记录补充提交
+[PASS] 补充后不再是待补资料分类
+[PASS] 同请求号重复补充幂等（不产生第 3 版） — code=0 count=2
+
+================== 11. 范围与鉴权 ==================
+[PASS] 范围外工单 POST /check-ins 被拒绝 — code=404
+[PASS] 范围外工单 GET /draft 被拒绝 — code=404
+[PASS] 范围外工单 GET /progress 被拒绝 — code=404
+[PASS] 范围外工单 GET /supplements 被拒绝 — code=404
+[PASS] 失效会话 /check-ins 被拒绝 — code=4001
+[PASS] 失效会话 /draft 被拒绝 — code=4001
+[PASS] 失效会话 /progress 被拒绝 — code=4001
+
+================== 汇总 ==================
+共 105 项，通过 104，失败 1
+  FAIL [缺陷探针] 重复签到被拒绝（客户端已隐藏该动作，服务端应同样拒绝） — code=0 重复签到被接受并重置开始时间

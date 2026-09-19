@@ -90,8 +90,8 @@ test('parts home separates inventory actions from record-only shortcuts and retu
   w.actAction('part','P002');assert.equal(w.actAction('return-part','P002'),'w-return');assert.equal(w.snapshot().returnBasket.P002,1);assert.match(page('w-return').body(),/待提交 · 1 种 \/ 1 件/);
 });
 test('worker mine follows the consumer account-hub structure without duplicating company switching',()=>{
-  const {page}=fixture();const screen=page('w-mine'),html=screen.body(),nav=screen.rootNav();
-  assert.equal(screen.navigationMode,'custom-root');assert.match(nav,/徐汇服务中心[\s\S]*我的工作台[\s\S]*w-root-nav-compact-title">我的/);
+  const {page}=fixture();const screen=page('w-mine'),html=screen.body();
+  assert.equal(screen.navigationMode,'standard');assert.equal(screen.rootNav,null);assert.equal(screen.title,'我的');
   assert.match(html,/<header class="w-profile">[\s\S]*丁师傅[\s\S]*服务人员 · 上海示例服务企业[\s\S]*切换企业 ›[\s\S]*<\/header>/);
   assert.match(html,/<section class="w-resource-section"/);assert.match(html,/class="w-resource-grid is-single"/);assert.equal((html.match(/class="w-resource-card"/g)||[]).length,1);
   assert.match(html,/<section class="w-mine-section">/);assert.equal((html.match(/class="w-mine-row"/g)||[]).length,3);
@@ -101,10 +101,10 @@ test('worker mine follows the consumer account-hub structure without duplicating
 });
 test('root-tab navigation switches to a compact white title after content scrolls',()=>{
   const {page}=fixture();
-  for(const [id,title] of [['w-tasks','任务'],['w-parts','配件'],['w-mine','我的']])assert.match(page(id).rootNav(),new RegExp(`w-root-nav-compact-title">${title}`));
+  for(const [id,title] of [['w-tasks','任务'],['w-parts','配件']])assert.match(page(id).rootNav(),new RegExp(`w-root-nav-compact-title">${title}`));
   const app=readFileSync(resolve(__dirname,'../app.js'),'utf8'),css=readFileSync(resolve(__dirname,'../worker.css'),'utf8');
   assert.match(app,/phone-body'\)\.scrollTop>16/);assert.match(app,/addEventListener\('scroll',syncWorkerRootNavigation/);
-  assert.match(css,/worker-nav-compact\[data-nav="root"\][\s\S]*background:#fff[\s\S]*w-root-nav-compact-title/);
+  assert.match(css,/worker-nav-compact\[data-nav="root"\][\s\S]*background:#fff[\s\S]*left:50%[\s\S]*translateX\(-50%\)[\s\S]*w-root-nav-compact-title/);
 });
 test('technical and warranty resources use compact searches and grouped result cards',()=>{
   const {w,page}=fixture();let html=page('w-technical').body();

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>服务人员小程序 W01／W02／W04 真实链路验证报告</title>
+<style>
+  :root{
+    --brand:#2B74AA; --brand-soft:#EAF3FA; --canvas:#F6F7F7; --surface:#FFFFFF;
+    --line:#E4E7EA; --text:#1F2329; --text-2:#5A6270; --text-3:#8A919E;
+    --pass:#1F9254; --pass-bg:#E9F7EF; --fail:#D93026; --fail-bg:#FDECEA;
+    --warn:#B7791F; --warn-bg:#FDF6E3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--text);
+    font:15px/1.7 -apple-system,"PingFang SC","Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:36px 24px 72px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:28px}
+  .eyebrow{font-size:13px;color:var(--text-3);letter-spacing:.04em;margin:0 0 8px}
+  h1{margin:0 0 12px;font-size:26px;line-height:1.35;font-weight:600}
+  .meta{font-size:13px;color:var(--text-2);display:flex;flex-wrap:wrap;gap:6px 18px}
+  h2{font-size:18px;margin:40px 0 14px;padding-left:11px;border-left:3px solid var(--brand)}
+  h3{font-size:15px;margin:24px 0 10px;color:var(--text)}
+  p{margin:10px 0}
+  .verdict{background:var(--pass-bg);border:1px solid #BFE6D0;border-radius:10px;padding:20px 22px}
+  .verdict .big{font-size:19px;font-weight:600;color:var(--pass);margin:0 0 8px}
+  .verdict p{margin:6px 0;color:#24543B;font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:18px 0}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .card .lbl{font-size:13px;color:var(--text-2);margin:0 0 8px}
+  .card .num{font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .card .num.pass{color:var(--pass)}
+  .card .num.warn{color:var(--warn)}
+  .card .sub{font-size:12.5px;color:var(--text-3);margin-top:6px}
+  table{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px;margin:14px 0}
+  th,td{padding:10px 13px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#FAFBFB;font-weight:600;color:var(--text-2);font-size:13px;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  code{background:#F1F3F5;border-radius:4px;padding:1.5px 5px;font-size:12.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#35404D}
+  .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:500}
+  .tag.pass{background:var(--pass-bg);color:var(--pass)}
+  .tag.fail{background:var(--fail-bg);color:var(--fail)}
+  .tag.na{background:#F1F3F5;color:var(--text-3)}
+  ul{margin:10px 0;padding-left:22px}
+  li{margin:5px 0}
+  .defect{background:var(--fail-bg);border:1px solid #F5C9C5;border-radius:10px;padding:18px 20px}
+  .defect h3{margin-top:0;color:#9C2A22}
+  .note{background:var(--warn-bg);border:1px solid #EFDFB8;border-radius:10px;padding:16px 18px;font-size:14px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media (max-width:720px){.cols{grid-template-columns:1fr}}
+  .kv{font-size:14px}
+  .kv div{display:flex;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .kv div:last-child{border-bottom:none}
+  .kv b{flex:0 0 132px;font-weight:600;color:var(--text-2)}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--text-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">TOTO 售后服务 · 服务人员小程序（TOTO 客服助手）</p>
+  <h1>W01／W02／W04 真实链路验证报告</h1>
+  <div class="meta">
+    <span>验证日期：2026-09-19</span>
+    <span>环境：本地聚合后端 + 测试库 <code>gaia_wh_init_wzy</code></span>
+    <span>方式：真实移动会话 HTTP + 数据库逐字段对账</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <p class="big">结论：四个任务入口的主链可以完整跑通，每步接口均通过，数据正确。</p>
+  <p>W01 只读 42 / 42、W02 写动作 62 / 62、W04 履约 105 项中 104 项通过、端侧运行时结构校验 65 / 65，合计 <b>274 项检查 273 项通过</b>。</p>
+  <p>唯一失败项是主动植入的服务端缺陷探针（详见下方 <code>DEF-20260919-01</code>），不是回归失败，而是本轮验证发现的真实问题。</p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <p class="lbl">W01 任务列表与详情（只读）</p>
+    <p class="num pass">42 / 42</p>
+    <p class="sub">四分类、二级筛选、同源计数、关键词、分页、范围隔离</p>
+  </div>
+  <div class="card">
+    <p class="lbl">W02 联系记录与受限动作</p>
+    <p class="num pass">62 / 62</p>
+    <p class="sub">掩码读写、版本冲突、门禁枚举、幂等、审计</p>
+  </div>
+  <div class="card">
+    <p class="lbl">W04 履约闭环</p>
+    <p class="num warn">104 / 105</p>
+    <p class="sub">签到、草稿、产品码、完工、进度、定向补充</p>
+  </div>
+  <div class="card">
+    <p class="lbl">端侧运行时结构校验</p>
+    <p class="num pass">65 / 65</p>
+    <p class="sub"><code>src/types/task.ts</code> 的 <code>isServiceTask*</code> 校验器</p>
+  </div>
+</div>
+
+<h2>一、验证环境与方法</h2>
+<div class="cols">
+  <div class="kv">
+    <div><b>后端</b><span>本机聚合宿主 <code>127.0.0.1:8080</code>，移动路由 <code>/api/api/afterSales/mobile/service-personnel/...</code></span></div>
+    <div><b>数据库</b><span><code>gaia_wh_init_wzy</code>（真实读写）</span></div>
+    <div><b>Redis</b><span><code>127.0.0.1:16379</code>，主键发号计数器 <code>ID_KE_afs_*</code></span></div>
+    <div><b>会话</b><span>经授权直接插入专用移动会话行（不写入或重置任何人员密码），认证头 <code>X-AFS-SESSION-ID</code></span></div>
+    <div><b>身份</b><span>账号 2 <code>sunzhiyuan</code>／人员 5／服务站 5／企业 161</span></div>
+    <div><b>数据</b><span>自建 <code>W2TEST-20260919-*</code> 专用夹具 11 单，含配套清理脚本</span></div>
+  </div>
+  <div>
+    <p>验证不是只打接口看返回值，而是每步操作后回查数据库，逐字段核对工单状态、执行事实、草稿、提交版本、库存单据与流水、动作审计、状态历史七处的相互一致性。</p>
+    <p>端侧单独用 <code>src/types/task.ts</code> 的真实运行时长校器接收全部响应，确认页面不会因为结构校验失败而误判。</p>
+  </div>
+</div>
+
+<h2>二、逐项覆盖结果</h2>
+<table>
+  <thead>
+    <tr><th>切片</th><th>覆盖内容</th><th class="num">通过</th><th>关键证据</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>W01<br>只读</td>
+      <td>待处理／待补资料／审核中／历史四分类互斥；今日预约与等待配件二级筛选；分类计数与二级计数同源；任务号／联系人／地址关键词检索；分页与空结果；当前服务置顶；字段完整性与手机号解密</td>
+      <td class="num">42 / 42</td>
+      <td>同站其他人员、当前人员其他站点、未正式分配三类工单均不可见且猜测详情返回 <code>404</code>；无效分类与筛选返回 <code>422</code>；失效会话返回 <code>4001</code></td>
+    </tr>
+    <tr>
+      <td>W02<br>写动作</td>
+      <td>联系记录写入（渠道枚举、未来时间、内容长度、解密回读）；白名单字段修改（备用电话／地址补充／备注）与掩码；受限动作「确认预约／标记缺件／标记断联／取消任务／改约」</td>
+      <td class="num">62 / 62</td>
+      <td>请求号幂等回放；同请求号不同内容返回 <code>409</code>；过期版本 <code>409</code>；白名单修改触发 <code>EDIT_SUPPLEMENT</code> 审计与版本递增；改约成功使当前服务失活</td>
+    </tr>
+    <tr>
+      <td>W04<br>履约</td>
+      <td>现场签到与远程开始的模式互斥、坐标与定位例外校验；同一草稿的检测／处理／配件／证据／产品码／客户确认；产品码三态校验；完工一次提交；审核退回只补指定项；进度查询</td>
+      <td class="num">104 / 105</td>
+      <td>见下方数据一致性对账；唯一失败为缺陷探针 <code>DEF-20260919-01</code></td>
+    </tr>
+    <tr>
+      <td>端侧<br>契约</td>
+      <td>四分类列表页、二级筛选、当前服务、详情、草稿、进度、退回要求、产品码结果逐项过校验器</td>
+      <td class="num">65 / 65</td>
+      <td>全部可见工单的详情／草稿／进度均通过；范围外 <code>404</code> 与失效会话 <code>4001</code> 走业务异常分支而非成功结构</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>三、数据一致性对账（现场履约闭环）</h2>
+<p>以 <code>W2TEST-20260919-ONSITE-FLOW</code> 为例，完工提交后七处数据互相对得上：</p>
+<table>
+  <thead><tr><th>对象</th><th>核对结果</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr><td>工单主表</td><td><code>PENDING_REVIEW</code>，人员 5／站点 5，状态变更时间与完工提交同刻</td><td><span class="tag pass">一致</span></td></tr>
+    <tr><td>服务执行事实</td><td><code>ONSITE_CHECK_IN</code>，步骤 <code>REVIEW</code>，<code>service_active=0</code> 且已写结束时间；坐标 121.4737010 / 31.2304160 与授权标记落库</td><td><span class="tag pass">一致</span></td></tr>
+    <tr><td>服务草稿</td><td>已标记 <code>submitted=1</code>，配件耗用类型 <code>PARTS</code>，产品码与客户确认与提交内容一致</td><td><span class="tag pass">一致</span></td></tr>
+    <tr><td>提交版本</td><td>第 1 版，服务结果／产品码／客户确认与草稿一致，记录草稿修订号，关联库存单据 ID</td><td><span class="tag pass">一致</span></td></tr>
+    <tr><td>库存单据与流水</td><td><code>CONSUMPTION</code>／<code>COMPLETED</code>／来源为人员 5；流水 <code>-1</code>，结果库存与余额均为 4</td><td><span class="tag pass">一致</span></td></tr>
+    <tr><td>动作审计</td><td>签到、草稿保存、白名单修改按操作逐条落审计</td><td><span class="tag pass">一致</span></td></tr>
+    <tr><td>状态历史</td><td>含 <code>SUBMIT_COMPLETION</code> 一条，指向 <code>PENDING_REVIEW</code></td><td><span class="tag pass">一致</span></td></tr>
+  </tbody>
+</table>
+
+<h3>事务原子性专项</h3>
+<p>为排除「单据写了但提交没成功」这类半提交风险，专门构造了个人库存不足的完工提交：</p>
+<ul>
+  <li>接口按预期拒绝（<code>409 个人配件库存不足：2</code>）；</li>
+  <li>未产生提交版本；</li>
+  <li>个人库存未被扣减；</li>
+  <li><b>未残留任何耗用单据</b>——说明库存单据／明细／流水／历史与提交版本、工单状态在同一事务内，失败时整体回滚。</li>
+</ul>
+<p>成功路径同样核对：单据、明细、流水、历史四表各恰好 1 条，且提交版本记录的库存单据 ID 与实际单据 ID 相同。</p>
+
+<h2>四、发现的缺陷</h2>
+<div class="defect">
+  <h3>DEF-20260919-01：重复签到被接受并覆盖服务开始时间</h3>
+  <p><b>现象：</b>同一工单用<b>不同</b>请求号再次调用现场签到（或远程开始）接口时，服务端返回成功，<code>started_at</code> 被覆盖为新时间，<code>ended_at</code> 被清空，动作审计追加第二条。</p>
+  <p><b>根因：</b><code>startService</code> 的前置校验只覆盖「任务分类为待处理、状态为待完工、无异常」，<b>没有判断是否已存在活动执行</b>；底层 <code>startExecution</code> 使用 <code>ON DUPLICATE KEY UPDATE</code>，会直接覆盖 <code>started_at</code>、<code>ended_at</code>、坐标并递增 <code>revision</code>。</p>
+  <p><b>端侧行为已收敛：</b>签到后详情返回的 <code>actions</code> 中已不含 <code>checkIn</code>，页面不会再暴露该入口——服务端未做同等拒绝。</p>
+  <p><b>影响：</b>服务开始时间口径可被改写，直接影响时效／绩效统计；审计出现重复动作记录。实测第二条签到使开始时间前移、审计由 1 条变 2 条。</p>
+  <p><b>不是幂等回放问题：</b>同一请求号的重复调用已被幂等回放正确拦截返回原结果；完工提交另有请求号回放保护。因此仅签到／远程开始受影响。</p>
+  <p><b>修复方向：</b>在 <code>startService</code> 增加活动执行判断并返回 <code>409</code>，或改为不覆盖既有 <code>started_at</code>；需补服务端定向测试。</p>
+</div>
+
+<h2>五、本次未覆盖的范围</h2>
+<div class="note">
+  <p>本次验证证明的是<b>接口与数据层面的完整贯通</b>。以下项目没有真实验证，不能据此认为已通过业务验收：</p>
+  <ul>
+    <li><b>微信原生能力</b>：真实微信登录与授权、相机／相册、扫码、定位授权面板、真机拨号。</li>
+    <li><b>文件上传</b>：真实对象存储上传未执行；通用上传只返回 URL，W04 后端尚不能校验其归属，验证中使用的是占位引用。</li>
+    <li><b>真机与视觉</b>：微信开发者工具逐页视觉复核、真机交互与深色模式。</li>
+    <li><b>其他入口</b>：W03 任务地图延期；W05～W16（配件、资料、反馈、账号）尚未开发。</li>
+    <li><b>会话来源</b>：本次会话经授权直接插入数据库，未走真实密码登录链路。</li>
+  </ul>
+  <p>因此按项目规范，W01／W02／W04 的「真实实现」与「最终验收」计数<b>不因本轮增加</b>，G3 不变、G4／G5 仍未达到，研发验证不等于业务验收。</p>
+</div>
+
+<h2>六、复现方式</h2>
+<p>验证台已归档到 <code>.workbuddy/verify/service-personnel-w01w02w04/</code>，含全部脚本、证据日志与说明。基本顺序：</p>
+<table>
+  <thead><tr><th>步骤</th><th>脚本</th><th>作用</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><code>new_session.py</code></td><td>插入专用移动会话行并生成本地 token</td></tr>
+    <tr><td>2</td><td><code>fixture_w2.py</code></td><td>先清空 <code>9509191xxx</code> 区间再重建 11 单夹具</td></tr>
+    <tr><td>3</td><td><code>calibrate_seq.py</code></td><td>把 Redis 主键计数器对齐到各表 <code>max(id)</code></td></tr>
+    <tr><td>4</td><td><code>t_w01.py</code>／<code>t_w02.py</code>／<code>t_w04.py</code>／<code>sweep_w04.py</code></td><td>分片校验与收尾对账</td></tr>
+  </tbody>
+</table>
+<p class="note">三条必须遵守的纪律（都是本轮踩过的坑）：① 每轮必须先重跑夹具，否则上轮的草稿版本、幂等请求号、执行事实会残留造成大批假失败；② 库存单据链路必须一起清理，否则下次完工提交会撞唯一键并返回 <code>503</code>，<b>容易被误判为业务缺陷</b>；③ 手工种数据后必须校准主键序列，否则发号器会 fail-closed 抛 <code>503 售后业务主键序列未同步</code>。</p>
+
+<h2>七、文档回写</h2>
+<ul>
+  <li><code>specs/2026-09-18-服务人员小程序完整开发计划.md</code>：14.3 实施与验收记录新增本轮验证行；「完成内容」与「剩余事项」补充结论、缺陷编号与修复方向。</li>
+  <li><code>03-开发管理/06-服务人员小程序开发进度.md</code>：更新日期、当前结论、模块概览和 W01／W02／W04 三行的剩余工作与证据，并新增三段叙述。</li>
+  <li>两处均按项目规范标注为研发验证，未写入业务验收，未变更任何计数。</li>
+</ul>
+
+<footer>
+  报告由验证过程自动汇总生成 · 证据日志：<code>evidence-w01-w02.log</code>、<code>evidence-w04.log</code>、<code>evidence-contract.log</code>、<code>evidence-sweep.log</code><br>
+  遗留状态：<code>W2TEST-20260919-*</code> 夹具数据与验证用会话行保留在测试库，清理命令见验证台 README。
+</footer>
+
+</div>
+</body>
+</html>

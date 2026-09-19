@@ -1,0 +1,130 @@
+===== 1/4 重建 W2 夹具 =====
+executed 87 statements (seed)
+===== 2/4 校准 Redis 主键序列 =====
+已校准 0 张表；其余 67 张序列已满足 max(id)
+===== 3/4 运行 W01 只读验证 =====
+=== 数据库侧可见范围基线 ===
+  PENDING: 15 -> ['G3TEST-20260918-MISSING', 'G3TEST-20260918-TODAY', 'UITEST-20260919-ONSITE', 'UITEST-20260919-REMOTE', 'UITEST-20260919-UNREACHABLE', 'W2TEST-20260919-APPOINT', 'W2TEST-20260919-CANCEL', 'W2TEST-20260919-DRAFT-A', 'W2TEST-20260919-DRAFT-B', 'W2TEST-20260919-EDIT', 'W2TEST-20260919-MISSING', 'W2TEST-20260919-ONSITE-FLOW', 'W2TEST-20260919-REMOTE-FLOW', 'W2TEST-20260919-RESCHED', 'W2TEST-20260919-UNREACH']
+  SUPPLEMENT: 3 -> ['G3TEST-20260918-SUPPLEMENT', 'UITEST-20260919-SUPPLEMENT-MULTI', 'W2TEST-20260919-SUPPLEMENT']
+  REVIEW: 1 -> ['G3TEST-20260918-REVIEW']
+  HISTORY: 4 -> ['G3TEST-20260918-HISTORY', 'UITEST-20260919-CANCELLED', 'UITEST-20260919-CLOSED', 'UITEST-20260919-FOLLOWUP']
+  当前服务(currentServices): ['9309191004', '9309191005']
+[PASS] 列表 PENDING 与库内范围一致 — api=['G3TEST-20260918-MISSING', 'G3TEST-20260918-TODAY', 'UITEST-20260919-ONSITE', 'UITEST-20260919-REMOTE', 'UITEST-20260919-UNREACHABLE', 'W2TEST-20260919-APPOINT', 'W2TEST-20260919-CANCEL', 'W2TEST-20260919-DRAFT-A', 'W2TEST-20260919-DRAFT-B', 'W2TEST-20260919-EDIT', 'W2TEST-20260919-MISSING', 'W2TEST-20260919-ONSITE-FLOW', 'W2TEST-20260919-REMOTE-FLOW', 'W2TEST-20260919-RESCHED', 'W2TEST-20260919-UNREACH'] db=['G3TEST-20260918-MISSING', 'G3TEST-20260918-TODAY', 'UITEST-20260919-ONSITE', 'UITEST-20260919-REMOTE', 'UITEST-20260919-UNREACHABLE', 'W2TEST-20260919-APPOINT', 'W2TEST-20260919-CANCEL', 'W2TEST-20260919-DRAFT-A', 'W2TEST-20260919-DRAFT-B', 'W2TEST-20260919-EDIT', 'W2TEST-20260919-MISSING', 'W2TEST-20260919-ONSITE-FLOW', 'W2TEST-20260919-REMOTE-FLOW', 'W2TEST-20260919-RESCHED', 'W2TEST-20260919-UNREACH']
+[PASS] 列表 PENDING total 与行数一致 — total=15 rows=15
+[PASS] 列表 SUPPLEMENT 与库内范围一致 — api=['G3TEST-20260918-SUPPLEMENT', 'UITEST-20260919-SUPPLEMENT-MULTI', 'W2TEST-20260919-SUPPLEMENT'] db=['G3TEST-20260918-SUPPLEMENT', 'UITEST-20260919-SUPPLEMENT-MULTI', 'W2TEST-20260919-SUPPLEMENT']
+[PASS] 列表 SUPPLEMENT total 与行数一致 — total=3 rows=3
+[PASS] 列表 REVIEW 与库内范围一致 — api=['G3TEST-20260918-REVIEW'] db=['G3TEST-20260918-REVIEW']
+[PASS] 列表 REVIEW total 与行数一致 — total=1 rows=1
+[PASS] 列表 HISTORY 与库内范围一致 — api=['G3TEST-20260918-HISTORY', 'UITEST-20260919-CANCELLED', 'UITEST-20260919-CLOSED', 'UITEST-20260919-FOLLOWUP'] db=['G3TEST-20260918-HISTORY', 'UITEST-20260919-CANCELLED', 'UITEST-20260919-CLOSED', 'UITEST-20260919-FOLLOWUP']
+[PASS] 列表 HISTORY total 与行数一致 — total=4 rows=4
+[PASS] categoryCounts 四键齐全 — {'HISTORY': 4, 'PENDING': 17, 'REVIEW': 1, 'SUPPLEMENT': 3}
+[PASS] categoryCounts[HISTORY] == 列表 total(+当前服务) — counts=4 期望=4
+[PASS] categoryCounts[PENDING] == 列表 total(+当前服务) — counts=17 期望=17
+[PASS] categoryCounts[REVIEW] == 列表 total(+当前服务) — counts=1 期望=1
+[PASS] categoryCounts[SUPPLEMENT] == 列表 total(+当前服务) — counts=3 期望=3
+[PASS] 四分类合计 + 当前服务 == 可见任务总数 — counts合计=25 库内=25
+[PASS] 二级筛选 TODAY 与库内一致 — api=['G3TEST-20260918-MISSING', 'UITEST-20260919-REMOTE', 'UITEST-20260919-UNREACHABLE', 'W2TEST-20260919-APPOINT', 'W2TEST-20260919-CANCEL', 'W2TEST-20260919-DRAFT-A', 'W2TEST-20260919-DRAFT-B', 'W2TEST-20260919-EDIT', 'W2TEST-20260919-MISSING', 'W2TEST-20260919-ONSITE-FLOW', 'W2TEST-20260919-REMOTE-FLOW', 'W2TEST-20260919-RESCHED', 'W2TEST-20260919-UNREACH'] db=['G3TEST-20260918-MISSING', 'UITEST-20260919-REMOTE', 'UITEST-20260919-UNREACHABLE', 'W2TEST-20260919-APPOINT', 'W2TEST-20260919-CANCEL', 'W2TEST-20260919-DRAFT-A', 'W2TEST-20260919-DRAFT-B', 'W2TEST-20260919-EDIT', 'W2TEST-20260919-MISSING', 'W2TEST-20260919-ONSITE-FLOW', 'W2TEST-20260919-REMOTE-FLOW', 'W2TEST-20260919-RESCHED', 'W2TEST-20260919-UNREACH']
+[PASS] 二级筛选 MISSING_PARTS 与库内一致 — api=['G3TEST-20260918-MISSING'] db=['G3TEST-20260918-MISSING']
+  secondaryCounts = {'MISSING_PARTS': 1, 'TODAY': 15}
+[PASS] secondaryCounts.TODAY == 待处理(今日预约) + 进行中(今日) — api=15
+[PASS] 关键词搜索 G3TEST-20260918-TODAY — api=['G3TEST-20260918-TODAY']
+[PASS] 关键词搜索 UITEST-20260919-ONSITE — api=['UITEST-20260919-ONSITE']
+[PASS] 历史分类关键词搜索 — api=['G3TEST-20260918-HISTORY']
+[PASS] 搜索无结果返回空列表 — total=0
+[PASS] 分页 pageSize=1 返回单行 — p1=1 p2=1
+[PASS] 分页不同页数据不同 — G3TEST-20260918-TODAY vs W2TEST-20260919-DRAFT-B
+[PASS] 分页 total 稳定 — 15 / 15
+[PASS] currentServices 与 afs_service_execution 事实一致 — api=['9309191004', '9309191005'] db=['9309191004', '9309191005']
+[PASS] 当前服务未在列表中重复出现 — 交集=set()
+[PASS] 当前服务 UITEST-20260919-ACTIVE-REMOTE 带 continueService/saveDraft/submitCompletion — ['viewDetail', 'call', 'copyMobile', 'continueService', 'saveDraft', 'verifyProductCode', 'submitCompletion', 'recordCommunication', 'editSupplement', 'reschedule', 'markMissingParts', 'markUnreachable', 'cancel']
+[PASS] 当前服务 UITEST-20260919-ACTIVE-ONSITE 带 continueService/saveDraft/submitCompletion — ['viewDetail', 'call', 'copyMobile', 'continueService', 'saveDraft', 'verifyProductCode', 'submitCompletion', 'recordCommunication', 'editSupplement', 'reschedule', 'markMissingParts', 'markUnreachable', 'cancel']
+[PASS] 负向任务未出现在 PENDING 分类 — 泄漏=无
+[PASS] 负向任务未出现在 SUPPLEMENT 分类 — 泄漏=无
+[PASS] 负向任务未出现在 REVIEW 分类 — 泄漏=无
+[PASS] 负向任务未出现在 HISTORY 分类 — 泄漏=无
+[PASS] 直达详情 同站其他人员 被拒绝 — code=404 errMsg=记录不存在或不在当前数据范围内
+[PASS] 直达详情 当前人员其他站点 被拒绝 — code=404 errMsg=记录不存在或不在当前数据范围内
+[PASS] 直达详情 未正式分配 被拒绝 — code=404 errMsg=记录不存在或不在当前数据范围内
+[PASS] 非法分类被拒绝 — code=422 errMsg=任务分类不正确
+[PASS] 非法二级筛选被拒绝 — code=422 errMsg=任务筛选不正确
+[PASS] 会话失效被拒绝 — code=4001 errMsg=登录状态已失效，请重新登录
+[PASS] 不存在的任务返回 404 — code=404
+[PASS] 列表行含必要字段 — 缺失=[]
+[PASS] 列表行联系人/地址已解密（非掩码占位） — contactName=G3测试联系人 mobile=13900009018
+[PASS] 列表行返回版本号 — version=4048600939b9b2fd05cc015c…
+
+=== 汇总 ===
+共 42 项，通过 42，失败 0
+===== 4/4 运行 W02 写动作验证 =====
+==================== A. 任务详情 ====================
+[PASS] 详情可达且分类为 PENDING — category=PENDING status=PENDING_COMPLETION
+[PASS] 详情含必要字段 — 缺失=[]
+[PASS] 详情含产品明细 — [{"id": "9509190301", "productCode": "W2TEST-20260919-P01", "productName": "W2TEST 测试产品 EDIT", "instanceNo": "W2TEST-20260919-I01", "installationCode": "W2TEST-20260919-C01"}]
+[PASS] 详情含状态历史 — 1 条
+[PASS] 详情含处理动作集合 — ['viewDetail', 'call', 'copyMobile', 'recordCommunication', 'editSupplement', 'appointment', 'checkIn', 'reschedule', 'markMissingParts', 'markUnreachable', 'cancel']
+[PASS] 详情联系人已解密 — G3测试联系人/13900009018
+[PASS] 范围外任务详情 404
+
+==================== B. 联系记录 ====================
+[PASS] 联系记录写入成功
+[PASS] 沟通表新增 1 行 — 0 -> 1
+[PASS] 沟通行渠道/操作人正确 — channel=PHONE actor=2
+[PASS] 沟通行 request_id 与摘要已落库 — request=W2TEST-COMM-01
+[PASS] 详情回读新沟通记录（解密内容） — {"id": "9309193007", "orderId": "9509191001", "channel": "PHONE", "content": "已确认预约：W2TEST 已与客户确认上门时间", "correctsId": "", "actorId": "2", "occurredAt": "2026-09
+[PASS] 联系记录不改变工单状态 — PENDING_COMPLETION
+[PASS] 同请求号同内容幂等不重复写入 — count=1 code=0
+[PASS] 同请求号不同内容被拒绝 — code=409 请求号已用于不同的联系结果
+[PASS] 未来联系时间被拒绝 — code=422 联系时间必须是有效的已发生时间
+[PASS] 非法联系渠道被拒绝 — code=422 联系渠道不正确
+[PASS] 缺请求号被拒绝 — code=422 请求号不能为空或超过64个字符
+[PASS] 范围外任务写联系记录被拒绝 — code=404
+
+==================== C. 白名单字段修改 ====================
+[PASS] 白名单修改成功
+[PASS] 备用电话1 已脱敏落库 — 138****0101
+[PASS] 备用电话2 已脱敏落库 — 138****0102
+[PASS] 地址补充已脱敏落库 — W2TEST****
+[PASS] 任务备注已落库 — W2TEST 备注：门口有台阶
+[PASS] 工单版本递增 — revision=2
+[PASS] 详情回读备用电话为明文（本人可见） — 13800000101 / W2TEST 地址补充：3 号楼 2 单
+[PASS] 动作审计新增 1 条 — 0 -> 1
+[PASS] 审计动作码为 EDIT_SUPPLEMENT
+[PASS] 过期工单版本被拒绝 — code=409 数据已变更，请刷新后重新编辑
+[PASS] 非法字符越权字段被忽略（仅允许字段生效） — code=0 masked=138****0104
+[PASS] 修改补充信息不改变状态与归属 — ('PENDING_COMPLETION', 5, 5)
+
+==================== D. 受限状态动作 ====================
+[PASS] 确认预约成功
+[PASS] 预约时间段落库 — 14:00-16:00
+[PASS] 预约后状态仍为待处理 — PENDING_COMPLETION
+[PASS] 预约写入状态历史
+[PASS] 预约写入处理标签 — 今日预约
+[PASS] 早于今天的预约日期被拒绝 — code=422 预约日期不能早于今天
+[PASS] 非预约动作缺原因被拒绝 — code=422 处理原因不能为空或超过200个字符
+[PASS] 标记缺件成功
+[PASS] 缺件异常码与原因落库 — ('MISSING_PARTS', 'W2TEST 等待配件到货')
+[PASS] 缺件保留前一状态 — PENDING_COMPLETION
+[PASS] 缺件写入异常事件
+[PASS] 缺件后列表处理标签为等待配件 — 等待配件
+[PASS] 标记断联成功
+[PASS] 断联异常码落库
+[PASS] 取消任务成功
+[PASS] 取消后状态与异常码落库
+[PASS] 取消后详情分类进入历史 — HISTORY
+[PASS] 取消后不再提供取消动作 — ['viewDetail', 'call', 'copyMobile', 'viewProgress']
+[PASS] 首次动作成功并为幂等基线 — code=0 
+[PASS] 同请求号重复动作幂等（历史与审计均不重复） — history 3->3, audit 2->2
+[PASS] 同请求号不同内容动作被拒绝 — code=409 请求号已用于不同的任务操作
+[PASS] 过期版本号被拒绝 — code=409 数据已变更，请刷新后重新编辑
+[PASS] 枚举外动作被拒绝 — code=422 任务动作不正确
+[PASS] 待补资料任务不允许取消（服务端 actions 再校验） — code=409 当前任务阶段不允许此操作，请刷新后重试
+[PASS] 现场签到成功（改约前置）
+[PASS] 执行事实落库（签到） — (1, 'ONSITE_CHECK_IN', Decimal('121.4737000'), Decimal('31.2304000'), 20, 1)
+[PASS] 签到坐标与授权落库 — (Decimal('121.4737000'), Decimal('31.2304000'), 20, 1)
+[PASS] 改约成功
+[PASS] 改约后当前服务被失活并记录结束时间 — (0, datetime.datetime(2026, 9, 19, 14, 13, 52))
+[PASS] 改约后任务回到待处理 — PENDING_COMPLETION
+[PASS] 改约后详情不再显示进行中 — False
+
+==================== 汇总 ====================
+共 62 项，通过 62，失败 0

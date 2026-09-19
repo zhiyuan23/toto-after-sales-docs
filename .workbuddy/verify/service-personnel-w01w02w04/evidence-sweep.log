@@ -1,0 +1,69 @@
+==================== 现场闭环 9509191007 ====================
+id | order_no | status | service_mode | personnel_id | station_id | revision | status_changed_at
+------------------------------------------------------------
+9509191007 | W2TEST-20260919-ONSITE-FLOW | PENDING_REVIEW | ONSITE | 5 | 5 | 5 | 2026-09-19 14:18:19
+[1 rows]
+personnel_id | station_id | service_active | start_mode | current_step | started_at | ended_at | longitude | latitude | location_authorized
+------------------------------------------------------------
+5 | 5 | 0 | ONSITE_CHECK_IN | REVIEW | 2026-09-19 14:15:44 | 2026-09-19 14:18:19 | 121.4737010 | 31.2304160 | 1
+[1 rows]
+order_id | current_step | revision | submitted | usage_type | product_code | customer_confirmation
+------------------------------------------------------------
+9509191007 | REVIEW | 6 | 1 | PARTS | W2TEST-20260919-C07 | CONFIRMED
+[1 rows]
+id | version_no | service_result | product_code | customer_confirmation | inventory_document_id | draft_revision
+------------------------------------------------------------
+940918300011 | 1 | 更换排水连接件并试水正常 | W2TEST-20260919-C07 | CONFIRMED | 20 | 5
+[1 rows]
+part_id | owner_type | owner_id | movement_type | quantity_delta | resulting_quantity
+------------------------------------------------------------
+2 | PERSONNEL | 5 | CONSUMPTION | -1 | 4
+[1 rows]
+action_code | request_id | actor_id
+------------------------------------------------------------
+ONSITE_CHECK_IN | W2TEST-CI-OK | 2
+ONSITE_CHECK_IN | W2TEST-CI-AGAIN | 2
+SAVE_DRAFT | W2TEST-DRAFT-25 | 2
+EDIT_SUPPLEMENT | W2TEST-EDIT-W04 | 2
+SAVE_DRAFT | W2TEST-DRAFT-IDEM | 2
+SAVE_DRAFT | W2TEST-DRAFT-PARTIAL | 2
+SAVE_DRAFT | W2TEST-DRAFT-STOCK | 2
+SAVE_DRAFT | W2TEST-DRAFT-FULL | 2
+[8 rows]
+from_status | to_status | reason_code
+------------------------------------------------------------
+PENDING_ASSIGNMENT | PENDING_COMPLETION | W2TEST
+PENDING_COMPLETION | PENDING_REVIEW | SUBMIT_COMPLETION
+[2 rows]
+==================== 远程闭环 9509191008 ====================
+id | order_no | status | service_mode
+------------------------------------------------------------
+9509191008 | W2TEST-20260919-REMOTE-FLOW | PENDING_REVIEW | REMOTE
+[1 rows]
+start_mode | service_active | longitude | latitude | location_authorized | ended_at
+------------------------------------------------------------
+REMOTE_START | 0 |  |  | 0 | 2026-09-19 14:18:46
+[1 rows]
+version_no | site_evidence | nameplate_evidence | inventory_document_id
+------------------------------------------------------------
+1 |  |  | 
+[1 rows]
+==================== 退回补充 9509191011 ====================
+id | order_no | status
+------------------------------------------------------------
+9509191011 | W2TEST-20260919-SUPPLEMENT | PENDING_REVIEW
+[1 rows]
+version_no | parent_submission_id | supplemented_items | supplement_note | site_ev
+------------------------------------------------------------
+1 |  |  |  | 
+2 | 9509194001 | SITE_EVIDENCE,NAMEPLATE_EVIDENCE,CUSTOMER_CONFIRMATION,CONFIRMATION_EVIDENCE | 按审核指定项补充现场与铭牌照片并重新确认 | https://example.invalid/w2test/site-1.jp
+[2 rows]
+part_id | owner_type | owner_id | quantity
+------------------------------------------------------------
+2 | PERSONNEL | 5 | 4
+[1 rows]
+==================== 跨轮次残留检查（应为 0） ====================
+非完成单据 | 仍活动执行 | 活动却已结束 | 缺请求摘要
+------------------------------------------------------------
+0 | 2 | 0 | 1
+[1 rows]
