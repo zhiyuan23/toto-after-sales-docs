@@ -33,28 +33,38 @@ const icon=name=>`<span class="icon" data-icon="${name}">${svgIcon(name)}</span>
 const $=id=>document.getElementById(id)
 
 const queueMeta={
+  workbasket:{label:'统一工作篮',total:48,caption:'跨状态连续办理'},
   acceptance:{label:'待受理',total:18,caption:'PENDING_ACCEPTANCE'},
   station:{label:'待分配服务站',total:6,caption:'客服可办'},
-  dispatch:{label:'待服务站派人',total:12,caption:'跟进站点进度'},
+  dispatch:{label:'服务站处理中',total:12,caption:'服务站操作 · 客服跟进'},
   review:{label:'待完工审核',total:7,caption:'PENDING_REVIEW'},
   complaint:{label:'待定责投诉',total:5,caption:'OPEN 队列'},
   all:{label:'全部工单',total:248,caption:'包含关闭与取消'}
 }
 
+const actionableQueueKeys=['acceptance','station','dispatch','review','complaint']
+
+const transitionMeta={
+  station:{label:'今日转入',today:8,from:'待受理',to:'待分配服务站'},
+  dispatch:{label:'今日转入',today:6,from:'待分配服务站',to:'服务站处理中'},
+  review:{label:'今日转入',today:5,from:'服务站处理中',to:'待完工审核'}
+}
+
 const records=[
-  {id:'AS202609170001',queue:'acceptance',type:'安装',customer:'王女士',phone:'138****9123',context:'智能坐便器 · 400 热线',time:'等待 42 分钟',attention:true,status:'待受理',action:'创建服务工单'},
+  {id:'AS202609170001',queue:'acceptance',type:'安装',customer:'王女士',phone:'138****9123',context:'智能坐便器 · 400 热线',time:'等待 42 分钟',attention:true,priority:2,status:'待受理',action:'创建服务工单'},
   {id:'AS202609170002',queue:'acceptance',type:'维修',customer:'陈女士',phone:'159****3287',context:'智能柜 · 安装码 TO-8C92',time:'新进 8 分钟',status:'待受理',action:'创建服务工单'},
-  {id:'AS202609160998',queue:'acceptance',type:'使用指导',customer:'刘女士',phone:'186****7721',context:'智能坐便器 · 微信公众号',time:'等待 1 小时 28 分',attention:true,status:'待受理',action:'创建服务工单'},
+  {id:'AS202609160998',queue:'acceptance',type:'使用指导',customer:'刘女士',phone:'186****7721',context:'智能坐便器 · 微信公众号',time:'等待 1 小时 28 分',attention:true,priority:1,status:'待受理',action:'创建服务工单'},
   {id:'AS202609160997',queue:'station',type:'安装',customer:'沈女士',phone:'137****6655',context:'浦东新区张杨路 · 候选 2 站',time:'待办 23 分钟',status:'待分配服务站',action:'确认分配'},
   {id:'AS202609160996',queue:'station',type:'维修',customer:'宋先生',phone:'139****4411',context:'徐汇区虹桥路 · 匹配完成',time:'待办 36 分钟',status:'待分配服务站',action:'确认分配'},
-  {id:'AS202609160995',queue:'dispatch',type:'维修',customer:'赵先生',phone:'136****2210',context:'杭州拱墅服务站',time:'已分站 2 小时',status:'待服务站派人',action:'跟进站点'},
-  {id:'AS202609160994',queue:'dispatch',type:'安装',customer:'冯女士',phone:'188****3322',context:'广州天河服务站',time:'已分站 3 小时',attention:true,status:'待服务站派人',action:'转服务站'},
+  {id:'AS202609160995',queue:'dispatch',type:'维修',customer:'赵先生',phone:'136****2210',context:'杭州拱墅服务站',time:'已分站 2 小时',status:'服务站处理中',action:'跟进站点'},
+  {id:'AS202609160994',queue:'dispatch',type:'安装',customer:'冯女士',phone:'188****3322',context:'广州天河服务站',time:'已分站 3 小时',attention:true,status:'服务站处理中',action:'转服务站'},
   {id:'AS202609160993',queue:'review',type:'维修',customer:'邹先生',phone:'135****7766',context:'现场照片 3 张 · 有配件耗用',time:'提交 26 分钟',status:'待完工审核',action:'审核通过'},
-  {id:'CP202609170005',queue:'complaint',type:'投诉',customer:'周女士',phone:'137****8899',context:'关联 AS202609150041 · 服务履约阶段',time:'待定责 51 分钟',attention:true,status:'待定责',action:'提交定责记录'}
+  {id:'CP202609170005',queue:'complaint',type:'投诉',customer:'周女士',phone:'137****8899',context:'关联 AS202609150041 · 服务履约阶段',time:'待定责 51 分钟',attention:true,priority:3,status:'待定责',action:'提交定责记录'}
 ]
 
-let activeQueue='acceptance'
-let selectedId=records[0].id
+let activeQueue='workbasket'
+let selectedId='AS202609160998'
+let contextOpen=false
 let toastTimer
 
 function menuMarkup(){
@@ -63,51 +73,122 @@ function menuMarkup(){
 }
 
 function shellMarkup(){
-  return `<div class="app-shell" id="appShell"><header class="topbar"><a class="brand" href="index.html" aria-label="TOTO 售后服务首页"><span class="brand-mark" aria-hidden="true"><span>T</span></span><span class="brand-copy"><strong>TOTO 售后服务</strong><small>Blue Whale Digital</small></span></a><button class="perspective-switch" type="button" id="perspectiveButton"><span class="perspective-icon icon">${svgIcon('headset')}</span><span><small>当前工作视角</small><strong>客服作业</strong></span>${icon('chevron-down')}</button><nav class="module-nav" aria-label="一级功能"><button type="button" class="module-link is-active">${icon('gauge')}工单处理</button><button type="button" class="module-link" data-preview="异常与投诉">${icon('clipboard')}异常与投诉</button><button type="button" class="module-link" data-preview="业务查询">${icon('archive')}业务查询</button></nav><div class="topbar-actions"><button class="search-trigger" type="button" id="searchButton">${icon('search')}<span>搜索功能</span><kbd>⌘ K</kbd></button><button class="icon-button" type="button" id="fullscreenButton" aria-label="进入全屏">${icon('maximize')}</button><button class="icon-button" type="button" id="refreshButton" aria-label="刷新数据">${icon('refresh')}</button><button class="icon-button" type="button" id="themeButton" aria-label="切换深浅模式">${icon('moon')}</button><button class="user-menu" type="button" data-preview="个人菜单"><span class="avatar">客</span><span>客服主管</span>${icon('chevron-down')}</button></div></header><aside class="sidebar" aria-label="客服作业功能菜单"><div class="sidebar-scroll">${menuMarkup()}</div><button class="sidebar-collapse" id="sidebarButton" type="button">${icon('panel-left')}<span>收起菜单</span></button></aside><main class="workspace cs3-workspace" id="workspace">${workspaceMarkup()}</main></div>${overlayMarkup()}`
+  return `<div class="app-shell" id="appShell"><header class="topbar"><a class="brand" href="index.html" aria-label="TOTO 售后服务首页"><span class="brand-mark" aria-hidden="true"><span>T</span></span><span class="brand-copy"><strong>TOTO 售后服务</strong><small>Blue Whale Digital</small></span></a><button class="perspective-switch" type="button" id="perspectiveButton" aria-haspopup="dialog" aria-controls="prototypePanel"><span class="perspective-icon icon">${svgIcon('headset')}</span><span><small>当前工作视角</small><strong>客服作业</strong></span>${icon('chevron-down')}</button><nav class="module-nav" aria-label="一级功能"><button type="button" class="module-link is-active">${icon('gauge')}工单处理</button><button type="button" class="module-link" data-preview="异常与投诉">${icon('clipboard')}异常与投诉</button><button type="button" class="module-link" data-preview="业务查询">${icon('archive')}业务查询</button></nav><div class="topbar-actions"><button class="search-trigger" type="button" id="searchButton">${icon('search')}<span>搜索功能</span><kbd>⌘ K</kbd></button><button class="icon-button" type="button" id="fullscreenButton" aria-label="进入全屏">${icon('maximize')}</button><button class="icon-button" type="button" id="refreshButton" aria-label="刷新数据">${icon('refresh')}</button><button class="icon-button" type="button" id="themeButton" aria-label="切换深浅模式">${icon('moon')}</button><button class="user-menu" type="button" data-preview="个人菜单"><span class="avatar">客</span><span>客服主管</span>${icon('chevron-down')}</button></div></header><aside class="sidebar" aria-label="客服作业功能菜单"><div class="sidebar-scroll">${menuMarkup()}</div><button class="sidebar-collapse" id="sidebarButton" type="button">${icon('panel-left')}<span>收起菜单</span></button></aside><main class="workspace cs3-workspace" id="workspace">${workspaceMarkup()}</main></div>${overlayMarkup()}`
 }
 
 function workspaceMarkup(){
   const today=new Date()
-  return `<div class="page-heading role-heading cs3-heading"><div class="role-heading-main"><div><div class="context-line"><span>${today.getFullYear()} 年 ${today.getMonth()+1} 月 ${today.getDate()} 日</span><i></i><span>授权组织范围</span><button type="button" id="scopeButton">全国客服中心${icon('chevron-down')}</button></div><h1>客服工作台</h1><p>按优先级找到下一项任务，在当前页完成受理、分站、审核和投诉跟进。</p></div><span class="cs3-version">v0.3 · 新版</span></div><div class="heading-actions"><a class="secondary-button" href="customer-service.html">查看现版</a><span class="sample-badge"><span class="status-dot"></span>原型演示数据</span><button class="primary-button" type="button" id="newIntakeButton">${icon('plus')}发起服务受理</button></div></div><section class="cs3-overview" aria-label="客服待办概览"><div class="cs3-queue-strip" id="queueStrip"></div><article class="cs3-rhythm" aria-label="今日处理节奏"><div class="cs3-rhythm-copy"><span>今日已处理</span><strong>34</strong><small>较昨日同时 +6</small></div><div class="cs3-rhythm-chart" aria-label="9 点至 14 点每小时处理量"><span><i style="--h:28%"></i><small>09</small></span><span><i style="--h:46%"></i><small>10</small></span><span><i style="--h:72%"></i><small>11</small></span><span><i style="--h:42%"></i><small>12</small></span><span><i style="--h:61%"></i><small>13</small></span><span><i style="--h:84%"></i><small>14</small></span></div></article></section><section class="cs3-board"><article class="cs3-panel cs3-inbox"><header class="cs3-panel-heading"><div><h2>待办队列</h2><p>数量取各队列分页 total，搜索不改变统计口径</p></div><button class="plain-icon-button" type="button" id="queueStateButton" aria-label="队列状态演示">${icon('info')}</button></header><label class="cs3-search">${icon('search')}<input id="workSearch" type="search" placeholder="搜工单、顾客、手机或安装码" aria-label="搜索客服待办"></label><div class="cs3-tabs" id="queueTabs" role="tablist" aria-label="客服待办队列"></div><div class="cs3-inbox-list" id="inboxList"></div><footer class="cs3-inbox-footer"><span id="inboxCount"></span><button type="button" data-preview="完整工单列表">打开完整列表</button></footer></article><article class="cs3-panel cs3-task" id="taskPanel"></article><aside class="cs3-panel cs3-context" id="contextPanel"></aside></section>`
+  return `<div class="page-heading role-heading cs3-heading"><div class="role-heading-main"><div><div class="context-line"><span>${today.getFullYear()} 年 ${today.getMonth()+1} 月 ${today.getDate()} 日</span><i></i><button type="button" id="scopeButton">全国客服中心${icon('chevron-down')}</button></div><h1>客服工作台</h1></div><span class="cs3-version">v0.17 · 状态辨识优化</span></div><div class="heading-actions"><button class="cs3-heading-action" type="button" data-tool="lookup">${icon('search')}查顾客 / 工单</button><button class="cs3-heading-action is-primary" type="button" data-action="intake">${icon('plus')}新建服务</button><span class="sample-badge"><span class="status-dot"></span>原型数据</span><a class="cs3-version-link" href="customer-service.html">查看现版</a></div></div>
+  <section class="cs3-executive-deck" aria-label="当前消费者与客服核心待办指标">
+    <button class="cs3-signal-card cs3-current-customer" id="currentCustomerCard" type="button" aria-label="继续统一办理" aria-pressed="true"></button>
+    <button class="cs3-signal-card cs3-kpi-card" type="button" data-summary-queue="acceptance" aria-pressed="true"><span class="cs3-kpi-icon">${icon('headset')}</span><span class="cs3-kpi-label">待受理</span><span class="cs3-kpi-value"><strong data-kpi-count="acceptance">18</strong><small>单</small></span><span class="cs3-kpi-caption is-attention">2 项需关注 · 最长等待 1 小时 28 分</span></button>
+    <button class="cs3-signal-card cs3-kpi-card is-station" type="button" data-summary-queue="station" aria-pressed="false"><span class="cs3-kpi-icon">${icon('building')}</span><span class="cs3-kpi-label">待分配服务站</span><span class="cs3-kpi-value"><strong data-kpi-count="station">6</strong><small>单</small></span><span class="cs3-kpi-caption">客服选择服务站</span></button>
+    <button class="cs3-signal-card cs3-kpi-card is-dispatch" type="button" data-summary-queue="dispatch" aria-pressed="false"><span class="cs3-kpi-icon">${icon('clock')}</span><span class="cs3-kpi-label">服务站处理中</span><span class="cs3-kpi-value"><strong data-kpi-count="dispatch">12</strong><small>单</small></span><span class="cs3-kpi-caption">服务站操作 · 客服跟进</span></button>
+    <button class="cs3-signal-card cs3-kpi-card is-review" type="button" data-summary-queue="review" aria-pressed="false"><span class="cs3-kpi-icon">${icon('shield')}</span><span class="cs3-kpi-label">待完工审核</span><span class="cs3-kpi-value"><strong data-kpi-count="review">7</strong><small>单</small></span><span class="cs3-kpi-caption">需审核权限</span></button>
+    <button class="cs3-signal-card cs3-kpi-card is-complaint" type="button" data-summary-queue="complaint" aria-pressed="false"><span class="cs3-kpi-icon">${icon('triangle-alert')}</span><span class="cs3-kpi-label">待定责投诉</span><span class="cs3-kpi-value"><strong data-kpi-count="complaint">5</strong><small>项</small></span><span class="cs3-kpi-caption">异常分支 · 按权限处理</span></button>
+  </section>
+  <section class="cs3-queue-strip" id="queueStrip" aria-label="工单状态总览和队列筛选"></section>
+  <section class="cs3-board" id="workbenchBoard"><article class="cs3-panel cs3-inbox"><header class="cs3-panel-heading"><div><h2 id="queueTitle">统一工作篮</h2><p><span id="activeQueueSummary" aria-live="polite">48 项 · 跨状态优先排序</span><span class="cs3-queue-attention" id="queueAttentionSignal"></span></p></div><div class="cs3-panel-heading-actions"><button class="cs3-workbasket-button" type="button" id="workbasketButton" aria-pressed="true">${icon('layout')}<span>统一办理</span><strong>48</strong></button><button class="plain-icon-button" type="button" id="queueStateButton" aria-label="队列状态演示">${icon('info')}</button></div></header><label class="cs3-search">${icon('search')}<input id="workSearch" type="search" placeholder="搜工单、顾客、手机或安装码" aria-label="搜索客服待办"></label><div class="cs3-inbox-list" id="inboxList"></div><footer class="cs3-inbox-footer"><span id="inboxCount"></span><button type="button" data-tool="lookup">全量查询</button></footer></article><article class="cs3-panel cs3-task" id="taskPanel"></article><aside class="cs3-panel cs3-context" id="contextPanel"></aside></section>`
 }
 
 function overlayMarkup(){
-  return `<button class="prototype-fab" id="prototypeFab" type="button">${icon('layout')}<span>原型目录</span><strong>客服 2 版</strong></button><div class="scrim" id="scrim" hidden></div><aside class="prototype-panel" id="prototypePanel" role="dialog" aria-modal="true" aria-labelledby="prototypeTitle" hidden><header><div><span class="panel-kicker">WEB 管理后台</span><h2 id="prototypeTitle">客服工作台版本</h2><p>现版保留，新版独立评审。</p></div><button class="icon-button" id="closePrototypePanel" type="button" aria-label="关闭原型目录">${icon('x')}</button></header><div class="prototype-list"><a href="customer-service-v03.html" class="prototype-card is-current"><span class="prototype-number">03</span><span class="prototype-copy"><span class="prototype-status is-ready">当前</span><strong>客服聚焦办理台</strong><small>三栏同页办理</small></span>${icon('arrow-up-right')}</a><a href="customer-service.html" class="prototype-card"><span class="prototype-number">02</span><span class="prototype-copy"><span class="prototype-status is-ready">已保留</span><strong>客服工作台现版</strong><small>指标＋泳道＋抽屉</small></span>${icon('arrow-up-right')}</a><a href="index.html" class="prototype-card"><span class="prototype-number">01</span><span class="prototype-copy"><span class="prototype-status">其他视角</span><strong>总部运营</strong><small>返回后台原型</small></span>${icon('arrow-up-right')}</a></div><footer><a href="01-四视角后台原型设计说明.md">查看原型设计说明${icon('arrow-right')}</a><a href="../README.md">返回全部页面原型</a></footer></aside><div class="command-dialog" id="commandDialog" role="dialog" aria-modal="true" aria-label="搜索功能" hidden><label>${icon('search')}<input id="commandInput" type="search" placeholder="输入功能名称…"><kbd>ESC</kbd></label><div class="command-results" id="commandResults"></div></div><div class="popover scope-popover" id="scopePopover" hidden><span>当前授权范围</span><strong>全国客服中心</strong><p>工作台只聚合获授权数据；每项办理仍校验功能、动作权限、对象范围和后端 actions。</p></div><div class="toast cs3-toast" id="toast" role="status" aria-live="polite"></div>`
+  return `<button class="prototype-fab" id="prototypeFab" type="button" aria-haspopup="dialog" aria-controls="prototypePanel">${icon('layout')}<span>原型目录</span><strong>4 / 4</strong></button><div class="scrim" id="scrim" hidden></div><aside class="prototype-panel" id="prototypePanel" role="dialog" aria-modal="true" aria-labelledby="prototypeTitle" hidden><header><div><span class="panel-kicker">WEB 管理后台</span><h2 id="prototypeTitle">四视角原型目录</h2><p>同一套后台外壳，按角色工作目标切换。</p></div><button class="icon-button" id="closePrototypePanel" type="button" aria-label="关闭原型目录">${icon('x')}</button></header><div class="prototype-list"><a href="index.html" class="prototype-card"><span class="prototype-number">01</span><span class="prototype-copy"><span class="prototype-status">工作视角</span><strong>总部运营</strong><small>全国运营与数据判断</small></span>${icon('arrow-up-right')}</a><a href="customer-service-v03.html" class="prototype-card is-current"><span class="prototype-number">02</span><span class="prototype-copy"><span class="prototype-status is-ready">当前</span><strong>客服作业</strong><small>状态辨识优化工作台 v0.17</small></span>${icon('arrow-up-right')}</a><a href="service-station.html" class="prototype-card"><span class="prototype-number">03</span><span class="prototype-copy"><span class="prototype-status">工作视角</span><strong>服务站作业</strong><small>派工、履约与配件处理</small></span>${icon('arrow-up-right')}</a><a href="dealer.html" class="prototype-card"><span class="prototype-number">04</span><span class="prototype-copy"><span class="prototype-status">工作视角</span><strong>门店业务</strong><small>购买登记与服务发起</small></span>${icon('arrow-up-right')}</a><a href="customer-service.html" class="prototype-card"><span class="prototype-number">旧</span><span class="prototype-copy"><span class="prototype-status is-ready">版本对照</span><strong>客服工作台现版</strong><small>指标＋泳道＋抽屉</small></span>${icon('arrow-up-right')}</a></div><footer><a href="01-四视角后台原型设计说明.md">查看原型设计说明${icon('arrow-right')}</a><a href="../README.md">返回全部页面原型</a></footer></aside><div class="command-dialog" id="commandDialog" role="dialog" aria-modal="true" aria-label="搜索功能" hidden><label>${icon('search')}<input id="commandInput" type="search" placeholder="输入功能名称…"><kbd>ESC</kbd></label><div class="command-results" id="commandResults"></div></div><section class="cs3-tool-dialog" id="toolDialog" role="dialog" aria-modal="true" aria-labelledby="toolTitle" hidden><header class="cs3-tool-header"><div><span>客服快捷工具</span><h2 id="toolTitle">工作台内查询</h2></div><button class="icon-button" id="closeToolDialog" type="button" aria-label="关闭快捷工具">${icon('x')}</button></header><div class="cs3-tool-body" id="toolBody"></div></section><div class="popover scope-popover" id="scopePopover" hidden><span>当前授权范围</span><strong>全国客服中心</strong><p>工作台只聚合获授权数据；每项办理仍校验功能、动作权限、对象范围和后端 actions。</p></div><div class="toast cs3-toast" id="toast" role="status" aria-live="polite"></div>`
 }
 
 function queueStripMarkup(){
-  return ['acceptance','station','dispatch','review','complaint'].map(key=>{const item=queueMeta[key];return `<button type="button" class="cs3-queue-button${key==='complaint'?' is-danger':''}" data-queue="${key}" aria-pressed="${activeQueue===key}"><span>${item.label}</span><strong>${item.total}</strong><small>${item.caption}</small></button>`}).join('')
-}
-
-function tabsMarkup(){
-  return Object.entries(queueMeta).map(([key,item])=>`<button type="button" role="tab" data-tab="${key}" aria-selected="${activeQueue===key}">${key==='dispatch'?'待派人':item.label}<b>${item.total}</b></button>`).join('')
+  const nodes=[
+    {key:'acceptance',icon:'headset',owner:'客服操作',tone:'is-acceptance'},
+    {key:'station',icon:'building',owner:'客服操作',tone:'is-station'},
+    {key:'dispatch',icon:'clock',owner:'服务站操作 · 客服跟进',tone:'is-dispatch',external:true},
+    {key:'review',icon:'shield',owner:'需审核权限',tone:'is-review'}
+  ]
+  const main=nodes.map((node,index)=>{const item=queueMeta[node.key];const transition=transitionMeta[node.key];const detail=transition?`今日 00:00 至当前，从${transition.from}进入${transition.to} ${transition.today} 单`:'';const connector=index?`<span class="cs3-flow-connector" role="img" aria-label="${detail}" title="${detail}"><span class="cs3-flow-metric"><small>${transition.label}</small><strong>${transition.today} 单</strong></span>${icon('arrow-right')}</span>`:'';return `${connector}<button type="button" class="cs3-flow-node ${node.tone}${node.external?' is-external':''}" data-queue="${node.key}" aria-pressed="${activeQueue===node.key}"><span class="cs3-flow-icon">${icon(node.icon)}</span><span class="cs3-flow-copy"><span>${item.label}</span><small>${node.owner}</small></span><strong>${item.total}</strong></button>`}).join('')
+  const complaint=queueMeta.complaint
+  const unifiedBadge=activeQueue==='workbasket'?`<span class="cs3-flow-mode-badge">${icon('layout')}统一办理 · 跨状态</span>`:''
+  return `${unifiedBadge}<div class="cs3-status-main">${main}</div><button type="button" class="cs3-flow-node cs3-flow-exception is-complaint" data-queue="complaint" aria-pressed="${activeQueue==='complaint'}"><span class="cs3-flow-icon">${icon('triangle-alert')}</span><span class="cs3-flow-copy"><span>${complaint.label}</span><small>异常分支 · 按权限处理</small></span><strong>${complaint.total}</strong></button>`
 }
 
 function filteredRecords(){
   const keyword=$('workSearch')?.value.trim().toLowerCase()||''
-  return records.filter(item=>(activeQueue==='all'||item.queue===activeQueue)&&(!keyword||`${item.id}${item.customer}${item.phone}${item.context}${item.type}`.toLowerCase().includes(keyword)))
+  const scoped=activeQueue==='workbasket'?workbasketRecords():records.filter(item=>activeQueue==='all'||item.queue===activeQueue)
+  return scoped.filter(item=>!keyword||`${item.id}${item.customer}${item.phone}${item.context}${item.type}${item.status}${item.action}`.toLowerCase().includes(keyword))
+}
+
+function workbasketRecords(){
+  return records.filter(item=>actionableQueueKeys.includes(item.queue)).sort((left,right)=>{
+    const leftPriority=Number.isFinite(left.priority)?left.priority:99
+    const rightPriority=Number.isFinite(right.priority)?right.priority:99
+    if(leftPriority!==rightPriority)return leftPriority-rightPriority
+    if(Boolean(left.attention)!==Boolean(right.attention))return Number(Boolean(right.attention))-Number(Boolean(left.attention))
+    return records.indexOf(left)-records.indexOf(right)
+  })
+}
+
+function workbasketTotal(){
+  return actionableQueueKeys.reduce((total,key)=>total+queueMeta[key].total,0)
+}
+
+function priorityReason(item){
+  if(item.attention)return `等待时长较长，已进入关注队列`
+  if(item.queue==='complaint')return '异常分支待定责'
+  if(item.queue==='review')return '完工材料已提交待审核'
+  if(item.queue==='station')return '顾客需求已确认，等待分配服务站'
+  if(item.queue==='dispatch')return '服务站尚未回传处理进度'
+  return '当前授权范围内的优先待办'
+}
+
+function nextWorkItem(current){
+  const scope=activeQueue==='workbasket'?workbasketRecords():records.filter(item=>item.queue===current.queue)
+  return scope.find(item=>item.id!==current.id)
+}
+
+function renderCurrentCustomer(){
+  const item=records.find(record=>record.id===selectedId)||records.find(record=>record.queue!=='all')||records[0]
+  const card=$('currentCustomerCard')
+  const unified=activeQueue==='workbasket'
+  card.setAttribute('aria-pressed',String(unified))
+  card.setAttribute('aria-label',unified?`继续统一办理，当前优先消费者${item.customer}`:`返回统一办理并打开最高优先级待办`)
+  card.innerHTML=`<span class="cs3-current-heading"><span>${unified?'统一办理中':'当前聚焦队列'} · ${item.status}</span><em>${unified?'继续办理':'返回统一办理'}${icon('arrow-up-right')}</em></span><span class="cs3-current-person"><strong>${item.customer}</strong><small>${item.phone}</small></span><span class="cs3-current-order">${item.id}</span><span class="cs3-current-facts"><span><small>服务事项</small><strong>${item.type}</strong></span><span><small>当前时长</small><strong>${item.time}</strong></span><span><small>来源与商品</small><strong>${item.context}</strong></span></span>`
+  card.onclick=()=>selectQueue('workbasket')
 }
 
 function renderOverview(){
+  queueMeta.workbasket.total=workbasketTotal()
+  renderCurrentCustomer()
   $('queueStrip').innerHTML=queueStripMarkup()
-  $('queueTabs').innerHTML=tabsMarkup()
+  $('queueStrip').classList.toggle('is-workbasket-active',activeQueue==='workbasket')
+  $('queueStrip').setAttribute('aria-label',activeQueue==='workbasket'?'统一办理中，覆盖全部可办理工单状态':'工单状态总览和队列筛选')
+  $('queueTitle').textContent=activeQueue==='workbasket'?'统一工作篮':`${queueMeta[activeQueue].label}队列`
+  $('activeQueueSummary').textContent=activeQueue==='workbasket'?`${queueMeta.workbasket.total} 项 · 跨状态优先排序`:`${queueMeta[activeQueue].label} ${queueMeta[activeQueue].total} 条，${activeQueue==='all'?'按最新记录展示':'优先项在前'}`
+  const attentionCount=records.filter(item=>(activeQueue==='workbasket'?actionableQueueKeys.includes(item.queue):activeQueue==='all'||item.queue===activeQueue)&&item.attention).length
+  $('queueAttentionSignal').classList.toggle('is-clear',attentionCount===0)
+  $('queueAttentionSignal').innerHTML=attentionCount?`${icon('triangle-alert')}${attentionCount} 项需关注`:`${icon('check')}无特别关注`
+  $('workbasketButton').setAttribute('aria-pressed',String(activeQueue==='workbasket'))
+  $('workbasketButton').querySelector('strong').textContent=queueMeta.workbasket.total
+  document.querySelectorAll('[data-summary-queue]').forEach(button=>button.setAttribute('aria-pressed',String(activeQueue===button.dataset.summaryQueue)))
+  document.querySelectorAll('[data-kpi-count]').forEach(value=>{value.textContent=queueMeta[value.dataset.kpiCount].total})
   document.querySelectorAll('[data-queue]').forEach(button=>button.addEventListener('click',()=>selectQueue(button.dataset.queue)))
-  document.querySelectorAll('[data-tab]').forEach(button=>button.addEventListener('click',()=>selectQueue(button.dataset.tab)))
 }
 
 function renderInbox(){
   const rows=filteredRecords()
-  $('inboxList').innerHTML=rows.length?rows.map(item=>`<button type="button" class="cs3-inbox-item${item.attention?' is-attention':''}" data-record="${item.id}" aria-current="${selectedId===item.id}"><span class="item-main"><span class="item-id">${item.id}<span class="cs3-badge${item.queue==='complaint'?' is-danger':item.attention?' is-warn':''}">${item.type}</span></span><span class="item-copy">${item.customer} · ${item.phone}</span><span class="item-meta">${item.context}</span></span><span class="item-side"><strong>${item.time}</strong><small>${item.status}</small></span></button>`).join(''):`<div class="cs3-empty"><div><span>${icon('search')}</span><strong>未找到匹配待办</strong><p>请调整搜索词或切换队列。</p></div></div>`
+  $('inboxList').innerHTML=rows.length?rows.map(item=>`<button type="button" class="cs3-inbox-item${item.attention?' is-attention':''}" data-record="${item.id}" aria-current="${selectedId===item.id}"><span class="item-main"><span class="item-id">${item.id}<span class="cs3-badge${item.queue==='complaint'?' is-danger':item.attention?' is-warn':''}">${item.type}</span><span class="cs3-queue-tag">${queueMeta[item.queue]?.label||item.status}</span></span><span class="item-copy">${item.customer} · ${item.phone}</span><span class="item-meta">${item.context}</span><span class="item-next">下一动作：${item.action}</span></span><span class="item-side"><strong>${item.time}</strong><small>${item.status}</small></span></button>`).join(''):`<div class="cs3-empty"><div><span>${icon('search')}</span><strong>未找到匹配待办</strong><p>请调整搜索词或切换队列。</p></div></div>`
   $('inboxCount').textContent=`共 ${queueMeta[activeQueue].total} 条，当前显示 ${rows.length} 条演示数据`
   document.querySelectorAll('[data-record]').forEach(button=>button.addEventListener('click',()=>selectRecord(button.dataset.record)))
   if(!rows.some(item=>item.id===selectedId)&&rows.length)selectedId=rows[0].id
 }
 
 function progressMarkup(queue){
-  const steps=['客服受理','分配服务站','站点派人','现场履约','完工审核']
+  const steps=[
+    {label:'客服受理',owner:'客服'},
+    {label:'分配服务站',owner:'客服'},
+    {label:'站内派人',owner:'服务站',external:true},
+    {label:'现场履约',owner:'服务人员',external:true},
+    {label:'完工审核',owner:'授权客服'}
+  ]
   const order={acceptance:0,station:1,dispatch:2,review:4,complaint:0,all:4}
   const current=order[queue]??0
-  return `<div class="cs3-progress" aria-label="工单进度">${steps.map((step,index)=>`<span class="cs3-progress-step${index<current?' is-done':index===current?' is-current':''}"><i>${index<current?svgIcon('check'):index+1}</i><span>${step}</span></span>`).join('')}</div>`
+  return `<div class="cs3-progress" aria-label="工单进度与岗位分工">${steps.map((step,index)=>`<span class="cs3-progress-step${index<current?' is-done':index===current?' is-current':''}${step.external?' is-external':''}"><i>${index<current?svgIcon('check'):index+1}</i><span class="cs3-progress-copy"><b>${step.label}</b><small>${step.owner}</small></span></span>`).join('')}</div>`
 }
 
 function acceptanceForm(item){
@@ -138,46 +219,76 @@ function taskBody(item){
   return acceptanceForm(item)
 }
 
+function assistMarkup(item){
+  const content={
+    acceptance:{checks:[['服务资格','商品实例可办理','check'],['活动工单','未发现处理中冲突','check'],['最近沟通','今日 09:42 · 400 热线','clock']],next:'创建后进入待分配服务站，由客服选择服务站。'},
+    station:{checks:[['辖区匹配','街道级命中','check'],['候选服务站','2 个已启用','building'],['最近沟通','今日 09:31 · 顾客确认地址','clock']],next:'确认分站后，由服务站在本站工作台安排人员。'},
+    dispatch:{checks:[['当前责任方','服务站','building'],['站点反馈','尚未回传派人结果','clock'],['最近跟进','今日 10:08 · 已联系站点','headset']],next:'客服可催办或按权限转站，不代替服务站派人。'},
+    review:{checks:[['材料完整度','3 / 3 已提交','check'],['提交版本','v1 · 不可变','shield'],['当前权限','完工审核可操作','shield']],next:'通过后进入待回访；退回会保留本次提交版本。'},
+    complaint:{checks:[['关联工单','AS202609150041','clipboard'],['责任阶段','服务履约阶段','triangle-alert'],['最近沟通','今日 09:42 · 已联系顾客','headset']],next:'完成定责后进入投诉处理中，仍按状态逐步办理。'}
+  }[item.queue]||{checks:[['当前状态',item.status,'info']],next:'请按当前工单状态完成处理。'}
+  const checks=[['当前等待',item.time,item.attention?'triangle-alert':'clock'],...content.checks]
+  const visibleChecks=activeQueue==='workbasket'?checks.slice(0,3):checks
+  const upcoming=nextWorkItem(item)
+  const continuous=activeQueue==='workbasket'?`<section class="cs3-continuous-summary"><span><small>当前优先原因</small><strong>${priorityReason(item)}</strong></span><span><small>下一项预览</small><strong>${upcoming?`${queueMeta[upcoming.queue].label} · ${upcoming.customer}`:'当前工作篮已清空'}</strong></span></section>`:''
+  return `<aside class="cs3-task-assist" aria-label="当前办理辅助"><header><span>${activeQueue==='workbasket'?'连续办理':'办理辅助'}</span><small>${activeQueue==='workbasket'?'跨状态自动接续':'随当前待办更新'}</small></header>${continuous}<div class="cs3-assist-checks">${visibleChecks.map(row=>`<div><span class="cs3-assist-icon">${icon(row[2])}</span><span><small>${row[0]}</small><strong>${row[1]}</strong></span></div>`).join('')}</div><section class="cs3-assist-next"><span>当前任务下一步</span><p>${content.next}</p></section><div class="cs3-assist-actions">${activeQueue==='workbasket'?`<button class="cs3-assist-skip" type="button" data-skip-task>稍后处理</button>`:''}<button class="cs3-assist-open" type="button" data-context-open>${icon('user')}服务上下文${icon('arrow-right')}</button></div></aside>`
+}
+
 function footerActions(item){
   if(item.queue==='review')return `<button class="secondary-button" type="button" data-submit="return">退回补充</button><button class="primary-button" type="button" data-submit="review">审核通过</button>`
   if(item.queue==='dispatch')return `<button class="secondary-button" type="button" data-submit="save">保存跟进</button><button class="primary-button" type="button" data-submit="transfer">确认转服务站</button>`
   return `<button class="secondary-button" type="button" data-submit="draft">暂存</button><button class="primary-button" type="button" data-submit="primary">${item.action}</button>`
 }
 
+function setContextOpen(open){
+  contextOpen=open
+  $('workbenchBoard').classList.toggle('is-context-open',contextOpen)
+  $('contextToggleButton')?.setAttribute('aria-expanded',String(contextOpen))
+}
+
 function renderTask(){
   const item=records.find(record=>record.id===selectedId)||records[0]
-  $('taskPanel').innerHTML=`<header class="cs3-panel-heading cs3-task-heading"><div class="cs3-task-title">${icon(item.queue==='complaint'?'triangle-alert':'clipboard')}<div><h2>${item.status}</h2><span class="task-id">${item.id} · ${item.type} · ${item.customer}</span></div></div><span class="cs3-permission">${icon('shield')}按 actions 显示可办动作</span></header>${progressMarkup(item.queue)}<div class="cs3-task-scroll">${taskBody(item)}</div><footer class="cs3-task-footer"><span>${icon('check')}未保存内容在离开前会请求确认</span><div>${footerActions(item)}</div></footer>`
+  $('taskPanel').classList.toggle('is-continuous',activeQueue==='workbasket')
+  $('taskPanel').innerHTML=`<header class="cs3-panel-heading cs3-task-heading"><div class="cs3-task-title">${icon(item.queue==='complaint'?'triangle-alert':'clipboard')}<div><h2>${item.status}</h2><span class="task-id">${item.id} · ${item.type} · ${item.customer}</span></div></div><div class="cs3-task-heading-actions">${activeQueue==='workbasket'?'<span class="cs3-continuous-badge">统一工作篮</span>':''}<span class="cs3-permission">${icon('shield')}权限已校验</span><button class="cs3-context-toggle" type="button" id="contextToggleButton" aria-expanded="${contextOpen}">${icon('user')}服务上下文</button></div></header>${progressMarkup(item.queue)}<div class="cs3-task-workarea"><div class="cs3-task-scroll">${taskBody(item)}</div>${assistMarkup(item)}</div><footer class="cs3-task-footer"><span>${icon('check')}${activeQueue==='workbasket'?'完成后自动进入下一项授权待办':'离开前确认未保存内容'}</span><div>${footerActions(item)}</div></footer>`
   $('taskPanel').querySelectorAll('[data-submit]').forEach(button=>button.addEventListener('click',()=>finishTask(button.dataset.submit,item)))
+  $('contextToggleButton').addEventListener('click',()=>setContextOpen(!contextOpen))
+  $('taskPanel').querySelector('[data-context-open]')?.addEventListener('click',()=>setContextOpen(true))
+  $('taskPanel').querySelector('[data-skip-task]')?.addEventListener('click',skipCurrentTask)
   bindPreviewButtons($('taskPanel'))
 }
 
 function renderContext(){
   const item=records.find(record=>record.id===selectedId)||records[0]
-  $('contextPanel').innerHTML=`<header class="cs3-panel-heading"><div><h2>当前业务上下文</h2><p>随待办切换，办理时不丢失顾客与商品线索</p></div></header><div class="cs3-context-scroll"><section class="cs3-context-card"><h3>顾客与联系方式<button type="button" data-preview="顾客购买记录">查看记录</button></h3><div class="cs3-profile"><span class="cs3-profile-avatar">${item.customer[0]}</span><span class="cs3-profile-copy"><strong>${item.customer}</strong><span>${item.phone}</span><small>当前仅展示脱敏联系方式</small></span></div><dl class="cs3-fact-list"><div><dt>服务地址</dt><dd>上海市浦东新区张杨路</dd></div><div><dt>本次来源</dt><dd>${item.context.split('·').pop().trim()}</dd></div><div><dt>期望日期</dt><dd>2026-09-20</dd></div></dl></section><section class="cs3-context-card"><h3>关联商品<button type="button" data-preview="商品档案">商品档案</button></h3><div class="cs3-product"><span class="cs3-product-mark">TOTO</span><span><strong>智能坐便器 · CW992</strong><small>安装码 TO-8C92 · 商品实例当前可办理</small></span></div></section><section class="cs3-context-card"><h3>最近服务记录<button type="button" data-preview="全部服务历史">全部历史</button></h3><ol class="cs3-history"><li><i></i><span><strong>今日 09:42 · 进入${item.status}</strong><small>当前授权队列</small></span></li><li><i></i><span><strong>09-16 · 顾客留下服务诉求</strong><small>来源信息已脱敏</small></span></li><li><i></i><span><strong>2024-06-12 · 购买登记</strong><small>上海浦东授权门店</small></span></li></ol></section><section class="cs3-context-card"><h3>办理辅助</h3><div class="cs3-shortcuts"><button type="button" data-preview="安装码查询">${icon('scan')}<strong>安装码查询</strong><small>授权范围内详情</small></button><button type="button" data-preview="服务知识库">${icon('archive')}<strong>服务知识库</strong><small>按问题快速检索</small></button></div></section></div>`
+  $('contextPanel').innerHTML=`<header class="cs3-panel-heading"><div><h2>服务上下文</h2><p>随当前待办联动</p></div><button class="plain-icon-button cs3-context-close" type="button" id="closeContextButton" aria-label="关闭服务上下文">${icon('x')}</button></header><div class="cs3-context-scroll"><section class="cs3-context-card"><h3>顾客与联系方式<button type="button" data-tool="lookup">完整记录</button></h3><div class="cs3-profile"><span class="cs3-profile-avatar">${item.customer[0]}</span><span class="cs3-profile-copy"><strong>${item.customer}</strong><span>${item.phone}</span><small>当前仅展示脱敏联系方式</small></span></div><dl class="cs3-fact-list"><div><dt>服务地址</dt><dd>上海市浦东新区张杨路</dd></div><div><dt>本次来源</dt><dd>${item.context.split('·').pop().trim()}</dd></div><div><dt>期望日期</dt><dd>2026-09-20</dd></div></dl></section><section class="cs3-context-card"><h3>关联商品<button type="button" data-tool="code">核验商品</button></h3><div class="cs3-product"><span class="cs3-product-mark">TOTO</span><span><strong>智能坐便器 · CW992</strong><small>安装码 TO-8C92 · 商品实例当前可办理</small></span></div></section><section class="cs3-context-card"><h3>最近服务记录<button type="button" data-tool="lookup">全部历史</button></h3><ol class="cs3-history"><li><i></i><span><strong>今日 09:42 · 进入${item.status}</strong><small>当前授权队列</small></span></li><li><i></i><span><strong>09-16 · 顾客留下服务诉求</strong><small>来源信息已脱敏</small></span></li><li><i></i><span><strong>2024-06-12 · 购买登记</strong><small>上海浦东授权门店</small></span></li></ol></section><section class="cs3-context-card"><h3>就地辅助</h3><div class="cs3-shortcuts"><button type="button" data-tool="communication">${icon('headset')}<strong>补记沟通</strong><small>保留当前工单上下文</small></button><button type="button" data-tool="knowledge">${icon('archive')}<strong>服务知识库</strong><small>按问题快速检索</small></button></div></section></div>`
+  $('closeContextButton').addEventListener('click',()=>setContextOpen(false))
   bindPreviewButtons($('contextPanel'))
+  bindToolButtons($('contextPanel'))
 }
 
 function selectQueue(key){
   activeQueue=key
-  const first=records.find(item=>key==='all'||item.queue===key)
+  const first=key==='workbasket'?workbasketRecords()[0]:records.find(item=>key==='all'||item.queue===key)
   if(first)selectedId=first.id
   renderOverview();renderInbox();renderTask();renderContext()
 }
 
 function selectRecord(id){
+  const target=records.find(record=>record.id===id)
+  if(target&&activeQueue!=='workbasket')activeQueue=target.queue
   selectedId=id
-  renderInbox();renderTask();renderContext()
+  renderOverview();renderInbox();renderTask();renderContext()
 }
 
 function finishTask(outcome,item){
   if(outcome==='draft'||outcome==='save'){showToast('已保存当前原型草稿');return}
+  const continuousMode=activeQueue==='workbasket'
   const oldQueue=item.queue
   if(outcome==='return'){
     item.status='已退回补充';item.queue='all';queueMeta.review.total=Math.max(0,queueMeta.review.total-1)
   }else if(oldQueue==='acceptance'){
-    item.status='待分配服务站';item.queue='station';item.action='确认分配';queueMeta.acceptance.total--;queueMeta.station.total++
+    item.status='待分配服务站';item.queue='station';item.action='确认分配';queueMeta.acceptance.total--;queueMeta.station.total++;transitionMeta.station.today++
   }else if(oldQueue==='station'){
-    item.status='待服务站派人';item.queue='dispatch';item.action='跟进站点';queueMeta.station.total--;queueMeta.dispatch.total++
+    item.status='服务站处理中';item.queue='dispatch';item.action='跟进站点';queueMeta.station.total--;queueMeta.dispatch.total++;transitionMeta.dispatch.today++
   }else if(oldQueue==='review'){
     item.status='待回访';item.queue='all';queueMeta.review.total--
   }else if(oldQueue==='complaint'){
@@ -185,17 +296,28 @@ function finishTask(outcome,item){
   }else if(outcome==='transfer'){
     item.status='已转服务站，待站点派人'
   }
-  const next=records.find(record=>record.queue===oldQueue&&record.id!==item.id)||records.find(record=>record.queue===item.queue)||records[0]
-  activeQueue=oldQueue
+  item.priority=99
+  const next=continuousMode?(oldQueue==='acceptance'&&item.queue==='station'?item:workbasketRecords().find(record=>record.id!==item.id)||workbasketRecords()[0]||records[0]):records.find(record=>record.queue===oldQueue&&record.id!==item.id)||records.find(record=>record.queue===item.queue)||records[0]
+  activeQueue=continuousMode?'workbasket':oldQueue
   selectedId=next.id
   renderOverview();renderInbox();renderTask();renderContext()
-  showToast(`${item.id} 已完成本次原型办理，已定位到下一项`)
+  showToast(continuousMode?`${item.id} 已完成本阶段，统一工作篮已接续下一项授权任务`:`${item.id} 已完成本次原型办理，已定位到下一项`)
+}
+
+function skipCurrentTask(){
+  if(activeQueue!=='workbasket')return
+  const current=records.find(record=>record.id===selectedId)
+  if(current)current.priority=98
+  const next=workbasketRecords().find(record=>record.id!==selectedId)
+  if(next)selectedId=next.id
+  renderOverview();renderInbox();renderTask();renderContext()
+  showToast('已暂缓当前待办，继续处理下一项')
 }
 
 function startNewIntake(){
-  const item={id:'新建服务受理',queue:'acceptance',type:'待选择',customer:'待识别顾客',phone:'—',context:'客服人工受理',time:'刚刚',status:'服务受理',action:'创建服务工单'}
+  const item={id:'新建服务受理',queue:'acceptance',type:'待选择',customer:'待识别顾客',phone:'未填写',context:'客服人工受理',time:'刚刚',priority:0,status:'服务受理',action:'创建服务工单'}
   if(!records.some(record=>record.id===item.id))records.unshift(item)
-  activeQueue='acceptance';selectedId=item.id
+  activeQueue='workbasket';selectedId=item.id
   renderOverview();renderInbox();renderTask();renderContext()
   $('taskPanel').querySelector('input')?.focus()
 }
@@ -204,13 +326,42 @@ function bindPreviewButtons(root=document){
   root.querySelectorAll('[data-preview]').forEach(button=>button.addEventListener('click',()=>showToast(`${button.dataset.preview}：专业页入口已保留`)))
 }
 
+function bindToolButtons(root=document){
+  root.querySelectorAll('[data-tool]').forEach(button=>button.addEventListener('click',()=>openTool(button.dataset.tool)))
+}
+
+function toolResult(iconName,title,meta,action='',featured=false){
+  return `<article class="cs3-tool-result${featured?' is-featured':''}"><span>${icon(iconName)}</span><div><strong>${title}</strong><small>${meta}</small></div>${action}</article>`
+}
+
+function toolMarkup(kind){
+  const item=records.find(record=>record.id===selectedId)||records[0]
+  if(kind==='code')return {title:'安装码与商品核验',body:`<label class="cs3-tool-search">${icon('scan')}<input value="TO-8C92" aria-label="输入安装码"><button type="button" data-tool-query="code">核验</button></label><div class="cs3-tool-results">${toolResult('check','安装码 TO-8C92 · 可办理','TOTO 智能坐便器 CW992 · 购买记录 PR202406120018 · 上海浦东授权门店','<button type="button" data-use-code>带入受理</button>',true)}${toolResult('info','当前无活动工单','商品实例状态正常；新建服务时仍由后端重新校验资格。')}</div><p class="cs3-tool-callout">${icon('shield')}查询结果只显示当前授权范围内的脱敏业务信息，正式办理仍校验顾客、购买记录、商品状态和活动工单。</p>`}
+  if(kind==='knowledge')return {title:'服务知识库',body:`<label class="cs3-tool-search">${icon('search')}<input value="智能坐便器 遥控器" aria-label="搜索服务知识库"><button type="button" data-tool-query="knowledge">搜索</button></label><div class="cs3-tool-results">${toolResult('archive','智能坐便器遥控器重新配对','适用品番 CW992 · 指引版本 3 · 2026-08-18 生效','<button type="button" data-tool-choose="已打开知识指引">查看指引</button>',true)}${toolResult('archive','遥控器无响应的基础排查','检查电池、配对状态与遮挡；现场拆机前须转维修服务。','<button type="button" data-tool-choose="已打开排查指引">查看指引</button>')}${toolResult('archive','常见使用问题沟通话术','客服沟通参考，不替代产品维修判断。','<button type="button" data-tool-choose="已打开沟通话术">查看</button>')}</div>`}
+  if(kind==='communication')return {title:'补记沟通',body:`<div class="cs3-tool-results">${toolResult('headset',`${item.customer} · ${item.id}`,`${item.type} · ${item.phone} · ${item.status}`,'',true)}</div><form class="cs3-form" style="margin-top:12px"><div class="cs3-form-grid"><label><span>沟通方式 <em>*</em></span><select aria-label="沟通方式"><option>电话呼出</option><option>电话呼入</option><option>在线客服</option></select></label><label><span>沟通结果 <em>*</em></span><select aria-label="沟通结果"><option>已联系并确认</option><option>未接通</option><option>待对方回复</option></select></label></div><label><span>沟通记录 <em>*</em></span><textarea aria-label="沟通记录">已向顾客确认当前诉求与可联系时间。</textarea></label><button class="primary-button" type="button" data-tool-save>保存沟通记录</button></form>`}
+  return {title:'顾客与工单统一查询',body:`<label class="cs3-tool-search">${icon('search')}<input value="138 0000 9123" aria-label="搜索顾客、工单、手机号或安装码"><button type="button" data-tool-query="lookup">查询</button></label><div class="cs3-tool-results">${toolResult('user','王女士 · 138****9123','2 条购买记录 · 1 张活动工单','<button type="button" data-tool-choose="已查看顾客完整记录">查看记录</button>',true)}${toolResult('clipboard','AS202609170001 · 安装待受理','智能坐便器 · 400 热线 · 等待 42 分钟','<button type="button" data-open-record="AS202609170001">打开办理</button>')}${toolResult('archive','PR202406120018 · 购买记录','安装码 TO-8C92 · 当前商品实例可办理','<button type="button" data-tool="code">核验商品</button>')}</div>`}
+}
+
+function openTool(kind){
+  const view=toolMarkup(kind)
+  $('toolTitle').textContent=view.title
+  $('toolBody').innerHTML=view.body
+  openOverlay($('toolDialog'))
+  $('toolBody').querySelectorAll('[data-tool-query]').forEach(button=>button.addEventListener('click',()=>showToast('已按当前授权范围刷新查询结果')))
+  $('toolBody').querySelectorAll('[data-tool-choose]').forEach(button=>button.addEventListener('click',()=>showToast(button.dataset.toolChoose)))
+  $('toolBody').querySelectorAll('[data-open-record]').forEach(button=>button.addEventListener('click',()=>{closeOverlays();selectRecord(button.dataset.openRecord);showToast('已打开工单，可在当前页继续办理')}))
+  $('toolBody').querySelectorAll('[data-use-code]').forEach(button=>button.addEventListener('click',()=>{closeOverlays();startNewIntake();showToast('已把安装码带入新的服务受理')}))
+  $('toolBody').querySelectorAll('[data-tool-save]').forEach(button=>button.addEventListener('click',()=>{closeOverlays();showToast('沟通记录已保存到当前工单')}))
+  bindToolButtons($('toolBody'))
+}
+
 function showToast(message){
   $('toast').textContent=message;$('toast').classList.add('is-visible')
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('is-visible'),2200)
 }
 
 function openOverlay(panel){$('scrim').hidden=false;panel.hidden=false;panel.querySelector('button,input')?.focus()}
-function closeOverlays(){$('scrim').hidden=true;$('prototypePanel').hidden=true;$('commandDialog').hidden=true}
+function closeOverlays(){$('scrim').hidden=true;$('prototypePanel').hidden=true;$('commandDialog').hidden=true;$('toolDialog').hidden=true}
 
 function renderCommands(keyword=''){
   const commands=['客服工作台','服务受理','服务工单','派单调度','完工审核','异常工单','投诉管理','顾客购买记录','安装码管理','服务知识库','商品档案','服务质量','运营报表']
@@ -221,10 +372,13 @@ function renderCommands(keyword=''){
 
 function bindEvents(){
   $('workSearch').addEventListener('input',renderInbox)
-  $('newIntakeButton').addEventListener('click',startNewIntake)
+  $('workbasketButton').addEventListener('click',()=>selectQueue('workbasket'))
+  document.querySelectorAll('[data-summary-queue]').forEach(button=>button.addEventListener('click',()=>selectQueue(button.dataset.summaryQueue)))
+  document.querySelectorAll('[data-action="intake"]').forEach(button=>button.addEventListener('click',startNewIntake))
   $('prototypeFab').addEventListener('click',()=>openOverlay($('prototypePanel')))
   $('perspectiveButton').addEventListener('click',()=>openOverlay($('prototypePanel')))
   $('closePrototypePanel').addEventListener('click',closeOverlays)
+  $('closeToolDialog').addEventListener('click',closeOverlays)
   $('scrim').addEventListener('click',closeOverlays)
   $('searchButton').addEventListener('click',()=>{renderCommands();openOverlay($('commandDialog'))})
   $('commandInput').addEventListener('input',event=>renderCommands(event.target.value))
@@ -236,8 +390,9 @@ function bindEvents(){
   $('queueStateButton').addEventListener('click',()=>showToast('队列支持有数据、加载、空数据、失败与无权限状态'))
   document.querySelectorAll('.menu-group-title').forEach(button=>button.addEventListener('click',()=>{const group=button.closest('.menu-group');group.classList.toggle('is-open');button.setAttribute('aria-expanded',String(group.classList.contains('is-open')))}))
   document.addEventListener('click',event=>{if(!event.target.closest('#scopeButton')&&!event.target.closest('#scopePopover'))$('scopePopover').hidden=true})
-  document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();renderCommands();openOverlay($('commandDialog'))}if(event.key==='Escape'){closeOverlays();$('scopePopover').hidden=true}})
+  document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();renderCommands();openOverlay($('commandDialog'))}if(event.key==='Escape'){closeOverlays();$('scopePopover').hidden=true;setContextOpen(false)}})
   bindPreviewButtons()
+  bindToolButtons()
 }
 
 $('customerWorkbenchApp').innerHTML=shellMarkup()

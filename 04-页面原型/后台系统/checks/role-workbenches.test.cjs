@@ -20,6 +20,10 @@ test('三个角色原型都有独立固定入口',()=>{
   }
 })
 
+test('原有四视角目录中的客服入口进入行动工作台',()=>{
+  assert.match(js,/\['02','客服作业','状态辨识优化工作台 v0\.17','customer-service-v03\.html','serviceDesk'\]/)
+})
+
 test('客服首版队列和办理边界完整',()=>{
   for(const copy of ['待受理','PENDING_ACCEPTANCE','待派单','PENDING_DISPATCH','待完工审核','PENDING_REVIEW','待定责投诉','投诉 OPEN；不等于全部未结','顾客识别与受理'])assert.ok(js.includes(copy),`missing ${copy}`)
   assert.ok(js.includes('完工审核只属于客服视角'))

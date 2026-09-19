@@ -239,7 +239,7 @@
     $('#scopeButton').addEventListener('click',event=>{event.stopPropagation();const pop=$('#scopePopover');pop.hidden=!pop.hidden;});
     document.addEventListener('click',event=>{if(!event.target.closest('#scopeButton')&&!event.target.closest('#scopePopover'))$('#scopePopover').hidden=true;});
     const prototypePanel=$('#prototypePanel'); $('#prototypeFab').addEventListener('click',()=>openOverlay(prototypePanel)); $('#perspectiveButton').addEventListener('click',()=>openOverlay(prototypePanel)); $('#closePrototypePanel').addEventListener('click',closeOverlays); $('#scrim').addEventListener('click',closeOverlays);
-    const commands=[['全国地图工作台','headquarters-map.html'],['运营工作台（现版）','index.html'],['运营报表','operations-report.html'],['服务质量','service-quality.html'],['客服工作台','customer-service.html'],['服务站工作台','service-station.html'],['门店工作台','dealer.html']];
+    const commands=[['全国地图工作台','headquarters-map.html'],['运营工作台（现版）','index.html'],['运营报表','operations-report.html'],['服务质量','service-quality.html'],['客服行动工作台','customer-service-v03.html'],['服务站工作台','service-station.html'],['门店工作台','dealer.html']];
     const commandDialog=$('#commandDialog'), commandInput=$('#commandInput'), commandResults=$('#commandResults');
     const renderCommands=value=>{commandResults.innerHTML=commands.filter(([name])=>name.includes(value||'')).map(([name,url])=>`<button type="button" data-command-url="${url}"><strong>${name}</strong><span>打开页面</span></button>`).join('')||'<button type="button"><span>没有匹配功能</span></button>';};
     const openCommands=()=>{renderCommands('');openOverlay(commandDialog);setTimeout(()=>commandInput.focus(),30);};
