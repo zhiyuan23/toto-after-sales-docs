@@ -337,11 +337,14 @@ function probeFailureMessage(probes) {
   return `Web 探针=${web}；移动端探针=${mobile}`
 }
 
-async function waitForBackend() {
+async function waitForBackend(startPid) {
   return waitUntil(async () => {
     const probes = await probeUnifiedBackend()
-    return isUnifiedBackendReady(probes) ? probes : false
-  }, 240000, 'Gaia 统一后端 ')
+    if (isUnifiedBackendReady(probes)) return probes
+    if (!processIsAlive(startPid))
+      throw new Error(`Gaia 统一后端启动进程 PID ${startPid} 已提前退出；${probeFailureMessage(probes)}`)
+    return false
+  }, 720000, 'Gaia 统一后端 ')
 }
 
 export async function ensureLocalBackend() {
@@ -386,7 +389,7 @@ export async function ensureLocalBackend() {
     await ensureRedis()
     const pid = await spawnDetached('bash', [backendScript], { cwd: workspaceRoot, logFile: backendLog })
     console.log(`[backend] 正在装配售后模块并启动共享后端（PID ${pid}），首次启动通常需要约 1–2 分钟`)
-    await waitForBackend()
+    await waitForBackend(pid)
     const started = await inspectLocalBackend(sourceSnapshot)
     if (!started.ready || !started.managed) throw new Error('新后端已响应但无法确认其属于当前工作区，拒绝记录为可复用实例')
     writeBackendState({ fingerprint: sourceSnapshot.fingerprint, pid: started.managed.pid, runtimeJar: started.managed.runtimeJar })
