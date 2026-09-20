@@ -125,7 +125,7 @@ let highlightNext=false
 
 function icon(name){return `<span class="icon" data-icon="${name}">${svgIcon(name)}</span>`}
 function prototypeCards(){
-  const items=[['01','总部运营','运营工作台','index.html','headquarters'],['02','客服作业','状态辨识优化工作台 v0.17','customer-service-v03.html','serviceDesk'],['03','服务站作业','服务站工作台','service-station.html','station'],['04','门店业务','门店工作台','dealer.html','dealer']]
+  const items=[['01','总部运营','运营工作台','index.html','headquarters'],['02','客服作业','状态辨识优化工作台 v0.17','customer-service-v03.html','serviceDesk'],['03','服务站作业','服务站工作台','service-station-v02.html','station'],['04','门店业务','门店工作台','dealer.html','dealer']]
   return items.map(([number,name,page,href,id])=>`<a href="${href}" class="prototype-card${id===view?' is-current':''}"><span class="prototype-number">${number}</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>${name}</strong><small>${page}</small></span>${icon('arrow-up-right')}</a>`).join('')
 }
 function menuMarkup(){
