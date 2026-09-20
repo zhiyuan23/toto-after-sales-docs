@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="TOTO 售后服务站工作台：现有工单队列、跨单据待办、配件库存与当日期望工单交互原型。">
+  <title>服务站工作台 · 业务口径复核版 | TOTO 售后服务</title>
+  <link rel="stylesheet" href="service-station-v02.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="README.md" aria-label="返回后台原型目录"><span class="brand-mark">TOTO</span><span class="brand-copy"><strong>售后服务</strong><small>AFTER SALES SERVICE</small></span></a>
+      <details class="perspective-menu"><summary><span class="context-divider"></span><span class="context-name">切换工作视角</span><strong>服务站作业</strong><span class="context-chevron" aria-hidden="true">⌄</span></summary><nav aria-label="原型工作视角"><a href="index.html">总部运营</a><a href="customer-service-v03.html">客服作业</a><a href="service-station-v02.html" aria-current="page">服务站作业</a><a href="dealer.html">门店业务</a></nav></details>
+      <div class="top-actions"><span class="top-demo">交互原型 · 演示数据</span><span class="top-user"><b>站</b> 服务站管理员</span></div>
+    </header>
+
+    <aside class="sidebar" aria-label="服务站作业导航">
+      <div class="station-identity"><span class="identity-kicker">演示筛选服务站</span><strong>上海浦东服务站</strong><small>正式数据仍受账号授权范围约束</small></div>
+      <nav>
+        <p class="nav-label">本站工单</p>
+        <a class="nav-link active" href="#top" data-nav="top" aria-current="page">服务站工作台</a>
+        <a class="nav-link" href="#schedule" data-nav="schedule">今日排班与期望工单</a>
+        <a class="nav-link" href="#tasks" data-nav="assignment">工单分配 <span id="navAssignmentCount">3</span></a>
+        <p class="nav-label">配件管理</p>
+        <a class="nav-link" href="#tasks" data-nav="parts">领退料审批 <span id="navPartsCount">3</span></a>
+        <a class="nav-link" href="parts-management.html#stock">库存台账</a>
+      </nav>
+      <div class="sidebar-foot"><span class="foot-dot"></span><span>站点数据按授权范围查看</span></div>
+    </aside>
+
+    <main id="top" class="workspace">
+      <div class="content-wrap">
+        <div class="page-title-row">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> STATION OPERATIONS <span class="eyebrow-dot"></span> <span id="todayLabel"></span></div><h1>服务站工作台</h1><p>集中处理服务人员分配与领退料审批，顺手掌握今日业务情况。</p></div>
+          <div class="page-actions"><button class="button button-light" id="resetDemo" type="button">重置演示</button><a class="button button-primary" href="#schedule">查看今日排班 <span aria-hidden="true">↗</span></a></div>
+        </div>
+
+        <section class="metric-strip metric-strip-focus" aria-label="服务站待办与今日数据">
+          <button class="metric-card metric-card-all is-active" type="button" data-stat="all" data-action-label="查看全部 ↗" aria-controls="tasks" aria-pressed="true"><span class="metric-card-top"><span class="metric-icon">≡</span><span class="metric-card-link">当前视图</span></span><span class="metric-card-main"><span class="metric-card-label">全部待办</span><span class="metric-card-value"><strong id="statAll">0</strong><em>项</em></span></span><span class="metric-card-detail"><span>待分配 <b id="statAllAssignment">0</b></span><span>领退料审批 <b id="statAllParts">0</b></span></span></button>
+          <button class="metric-card metric-card-assignment" type="button" data-stat="assignment" data-action-label="去分配 ↗" aria-controls="tasks" aria-pressed="false"><span class="metric-card-top"><span class="metric-icon">◷</span><span class="metric-card-link">去分配 ↗</span></span><span class="metric-card-main"><span class="metric-card-label">待分配服务人员</span><span class="metric-card-value"><strong id="statAssignment">0</strong><em>单</em></span></span><span class="metric-card-detail"><span>自动分配失败 <b id="statAutoFailed">0</b></span><span>其他待派 <b id="statNormalAssignment">0</b></span></span></button>
+          <button class="metric-card metric-card-parts" type="button" data-stat="parts" data-action-label="去审批 ↗" aria-controls="tasks" aria-pressed="false"><span class="metric-card-top"><span class="metric-icon">▣</span><span class="metric-card-link">去审批 ↗</span></span><span class="metric-card-main"><span class="metric-card-label">待审领退料</span><span class="metric-card-value"><strong id="statParts">0</strong><em>单</em></span></span><span class="metric-card-detail"><span>领料 <b id="statRequisition">0</b></span><span>退料 <b id="statReturn">0</b></span></span></button>
+          <div class="metric-overview" aria-label="今日业务信息，仅供查看"><div class="metric-overview-head"><span>今日概况</span><small>只读信息</small></div><div class="metric-overview-values"><div><strong id="statToday">0</strong><span>期望服务工单</span></div><div><strong id="statMissingPart">0</strong><span>缺件工单</span></div><div><strong id="workingCountTop">0</strong><span>可用服务人员</span></div></div><a href="#schedule">查看下方今日排班与工单 →</a></div>
+        </section>
+
+        <div class="primary-grid">
+          <section class="panel tasks-panel" id="tasks" aria-labelledby="tasksTitle">
+            <div class="panel-head"><div><span class="section-kicker">ACTION QUEUE</span><h2 id="tasksTitle">本站待办</h2><p>只收录需要服务站办理的派人与领退料审批。</p></div><span class="panel-count" id="taskPanelCount">0 项</span></div>
+            <div class="task-toolbar"><div class="task-tabs" role="tablist" aria-label="待办类型"><button class="task-tab selected" type="button" role="tab" aria-selected="true" data-tab="all">全部待办 <b id="tabAllCount">0</b></button><button class="task-tab" type="button" role="tab" aria-selected="false" data-tab="assignment">待分配 <b id="tabAssignmentCount">0</b></button><button class="task-tab" type="button" role="tab" aria-selected="false" data-tab="parts">领退料审批 <b id="tabPartsCount">0</b></button></div><label class="task-search"><span class="sr-only">搜索当前待办</span><input id="taskSearch" type="search" placeholder="搜索单号或姓名" autocomplete="off"></label></div>
+            <div id="taskList" class="task-list" role="region" aria-label="待办列表" aria-live="polite" tabindex="0"></div>
+            <div class="panel-foot"><span id="taskFootnote">创建时间 · 最新在前</span><button type="button" id="clearSearch">清空筛选</button></div>
+          </section>
+
+          <section class="panel work-detail-panel" id="workDetail" aria-label="待办详情与办理">
+            <div id="workDetailHeader" class="work-detail-head"></div>
+            <div id="workDetailBody" class="work-detail-body"></div>
+            <div id="workDetailFooter" class="work-detail-foot"></div>
+          </section>
+
+          <aside class="panel inventory-panel" id="inventoryPanel" aria-label="本站库存">
+            <div id="inventoryContent"></div>
+          </aside>
+        </div>
+
+        <section class="panel schedule-panel" id="schedule" aria-labelledby="scheduleTitle"><div class="panel-head"><div><span class="section-kicker">PEOPLE & EXPECTED VISITS</span><h2 id="scheduleTitle">今日排班与期望工单</h2><p>人员可用性来自当日排班；按期望开始时间归入两小时时段，空格仅表示该时段无关联工单。</p></div><span class="panel-count">2026-09-20</span></div><div class="schedule-toolbar"><div class="schedule-summary"><span><b id="workingCount">0</b> 可用</span><span><b id="leaveCount">0</b> 请假</span><span><b id="stoppedCount">0</b> 暂停</span></div><div class="team-filter" role="group" aria-label="人员筛选"><button class="team-filter-button selected" data-people-filter="all" type="button" aria-pressed="true">全部人员</button><button class="team-filter-button" data-people-filter="working" type="button" aria-pressed="false">当日可用</button><button class="team-filter-button" data-people-filter="away" type="button" aria-pressed="false">不可用</button></div></div><div id="scheduleGrid" class="schedule-grid" aria-live="polite"></div><div class="schedule-footer"><span>期望工单包含不同状态；格子不表示工单持续时长，空格也不代表可接单。人员日容量来自人员档案。</span><a href="#tasks" data-nav="all">返回全部待办 →</a></div></section>
+        <p class="prototype-note">交互与数字均为演示。本站待办只组合待分配工单和处理中领退料单据；今日期望、缺件和人员可用性仅供查看。程序目前分别通过工单、排班与库存接口提供这些数据，正式接入仍须按当前账号权限和服务端返回校验。</p>
+      </div>
+    </main>
+  </div>
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div><aside id="detailDrawer" class="detail-drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden><div class="drawer-header"><div><span id="drawerKicker" class="section-kicker"></span><h2 id="drawerTitle"></h2></div><button id="drawerClose" class="close-button" type="button" aria-label="关闭详情">×</button></div><div id="drawerContent" class="drawer-content"></div><div id="drawerFooter" class="drawer-footer"></div></aside>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="service-station-v02.js"></script>
+</body>
+</html>
