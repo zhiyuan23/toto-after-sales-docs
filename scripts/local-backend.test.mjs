@@ -47,6 +47,24 @@ test('only recognizes runtime jars owned by the configured backend workspace', (
   }, root), '/workspace/backend/gaia-saas-proj/.local/runtime/gaia-web-20260919090000-123.jar')
   assert.equal(managedBackendRuntime({ cwd: '/workspace/other', command: 'java -jar .local/runtime/gaia-web-1.jar' }, root), null)
   assert.equal(managedBackendRuntime({ cwd: root, command: 'java -jar other-service.jar' }, root), null)
+  assert.equal(managedBackendRuntime({
+    pid: 123,
+    cwd: root,
+    command: '',
+    openFiles: ['/workspace/backend/gaia-saas-proj/.local/runtime/gaia-web-20260921090858-123.jar'],
+  }, root), '/workspace/backend/gaia-saas-proj/.local/runtime/gaia-web-20260921090858-123.jar')
+  assert.equal(managedBackendRuntime({
+    pid: 123,
+    cwd: root,
+    command: '',
+    openFiles: ['/workspace/backend/gaia-saas-proj/.local/runtime/gaia-web-20260921090858-456.jar'],
+  }, root), null)
+  assert.equal(managedBackendRuntime({
+    pid: 123,
+    cwd: '/workspace/other',
+    command: '',
+    openFiles: ['/workspace/backend/gaia-saas-proj/.local/runtime/gaia-web-20260921090858-123.jar'],
+  }, root), null)
 })
 
 test('fingerprint is authoritative and legacy runtimes fall back to source time', () => {

@@ -88,7 +88,13 @@ async function processIdsOnPort(port) {
 }
 
 async function processCommand(pid) {
-  return (await commandOutput('ps', ['-p', String(pid), '-o', 'command='], true)).trim()
+  try {
+    return (await commandOutput('ps', ['-p', String(pid), '-o', 'command='], true)).trim()
+  }
+  catch (error) {
+    if (error.code === 'EPERM' || error.code === 'EACCES') return ''
+    throw error
+  }
 }
 
 async function processWorkingDirectory(pid) {
@@ -96,13 +102,23 @@ async function processWorkingDirectory(pid) {
   return output.split(/\r?\n/).find(line => line.startsWith('n'))?.slice(1) || ''
 }
 
+async function processOpenFiles(pid) {
+  const output = await commandOutput('lsof', ['-p', String(pid), '-Fn'], true)
+  return output.split(/\r?\n/).filter(line => line.startsWith('n')).map(line => line.slice(1))
+}
+
 export function managedBackendRuntime(processInfo, projectRoot = backendRoot) {
   if (resolve(processInfo.cwd || '/') !== resolve(projectRoot)) return null
   const jarArgument = processInfo.command.match(/(?:^|\s)-jar\s+(?:"([^"]+)"|'([^']+)'|(\S+))/)?.slice(1).find(Boolean)
-  if (!jarArgument) return null
-  const runtimeJar = resolve(projectRoot, jarArgument)
   const expectedPrefix = `${resolve(projectRoot, '.local/runtime')}/gaia-web-`
-  return runtimeJar.startsWith(expectedPrefix) && runtimeJar.endsWith('.jar') ? runtimeJar : null
+  if (jarArgument) {
+    const runtimeJar = resolve(projectRoot, jarArgument)
+    return runtimeJar.startsWith(expectedPrefix) && runtimeJar.endsWith('.jar') ? runtimeJar : null
+  }
+  if (processInfo.command) return null
+  const openedJars = [...new Set((processInfo.openFiles || []).filter(path =>
+    path.startsWith(expectedPrefix) && path.endsWith(`-${processInfo.pid}.jar`)))]
+  return openedJars.length === 1 ? openedJars[0] : null
 }
 
 export function backendRuntimeIsFresh({ currentFingerprint, recordedFingerprint, runtimeMtimeMs, latestSourceMtimeMs }) {
@@ -124,7 +140,13 @@ async function inspectLocalBackend(sourceSnapshot) {
   const probes = await probeUnifiedBackend()
   const pids = await processIdsOnPort(LOCAL_BACKEND_PORT)
   const listeners = await Promise.all(pids.map(async pid => {
-    const info = { pid, command: await processCommand(pid), cwd: await processWorkingDirectory(pid) }
+    const command = await processCommand(pid)
+    const info = {
+      pid,
+      command,
+      cwd: await processWorkingDirectory(pid),
+      openFiles: command ? [] : await processOpenFiles(pid),
+    }
     return { ...info, runtimeJar: managedBackendRuntime(info) }
   }))
   const managed = listeners.length === 1 && listeners[0].runtimeJar ? listeners[0] : null
