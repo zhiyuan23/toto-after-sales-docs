@@ -167,7 +167,7 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 | 售后后端源码或 POM | `mvn -B verify`（可离线），按业务规则和权限风险补充测试；需要宿主联调时按第 3 节执行 install |
 | 小程序源码 | `pnpm type-check`、`pnpm eslint`、`pnpm stylelint`；业务逻辑按风险运行相关测试 |
 | 小程序租户、请求、产物或发布脚本 | 在源码检查基础上运行 `pnpm test:tenant`、`pnpm tenant:catalog:check` |
-| 小程序共享启动链、配置或样式 | 上述适用检查及 `pnpm build TOTO`、`pnpm build:h5 TOTO`，检查页面表现 |
+| 小程序共享启动链、配置或样式 | 上述适用检查及 `pnpm build [<TENANT>]`、`pnpm build:h5 [<TENANT>]`（租户默认 `TOTO`、环境默认 `test`）；需验证其他环境时显式执行 `pnpm build <TENANT> <ENV>`，并检查页面表现 |
 | 小程序依赖或锁文件 | 冻结安装及 `pnpm run audit`，兼容性变化增加双端构建；当前审计限制见小程序质量文档，不自动接受风险 |
 | 管理后台页面/API | 对修改文件执行非修复 ESLint（如 `yarn exec eslint src/views/afterSales/具体页面.vue`），执行 `yarn build` 和相关页面/权限验收；当前没有现成独立 type-check/test 脚本 |
 | 宿主装配或配置 | 定向 Maven verify、依赖和扫描检查；在已确认测试环境验证启动与真实接口，按风险检查权限和租户隔离 |
