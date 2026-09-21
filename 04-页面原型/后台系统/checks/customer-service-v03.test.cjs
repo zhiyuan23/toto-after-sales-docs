@@ -17,7 +17,7 @@ test('客服 v0.17 使用独立入口并保留现版',()=>{
 })
 
 test('顶部工作视角可切换到四个角色原型',()=>{
-  for(const href of ['index.html','customer-service-v03.html','service-station.html','dealer.html'])assert.match(js,new RegExp(`href="${href.replace('.','\\.')}"`),`missing ${href}`)
+  for(const href of ['index.html','customer-service-v03.html','service-station-v02.html','dealer.html'])assert.match(js,new RegExp(`href="${href.replace('.','\\.')}"`),`missing ${href}`)
   for(const copy of ['四视角原型目录','总部运营','客服作业','服务站作业','门店业务','4 / 4'])assert.ok(js.includes(copy),`missing ${copy}`)
   assert.match(js,/id="perspectiveButton" aria-haspopup="dialog" aria-controls="prototypePanel"/)
 })

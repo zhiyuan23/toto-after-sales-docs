@@ -3,14 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <meta name="description" content="TOTO 售后服务 Web 管理后台门店业务视角第二版流程原型。">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="TOTO 售后服务门店工作台：购买登记、顾客记录定位、发起服务与进度查询。">
   <title>TOTO 售后服务 | 门店工作台原型</title>
-  <link rel="stylesheet" href="admin.css">
-  <link rel="stylesheet" href="role-workbench.css">
+  <link rel="stylesheet" href="dealer-workbench.css">
 </head>
 <body data-view="dealer">
-  <div id="roleApp"></div>
-  <script src="role-workbench.js"></script>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z"/><path d="M9 8h6M9 12h6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M9 5V3h6v2M9 11h6M9 15h6"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9h18l-2-5H5L3 9Zm1 0v11h16V9M9 20v-7h6v7"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="返回后台原型目录"><span class="brand-mark">T</span><span><strong>TOTO 售后服务</strong><small>业务管理后台 · 原型</small></span></a>
+      <div class="topbar-perspective"><svg><use href="#i-grid"/></svg><span>门店业务</span></div>
+      <div class="topbar-spacer"></div>
+      <span class="prototype-badge">交互原型 · 示例数据</span>
+      <a class="topbar-catalog" href="README.md">原型目录 <svg><use href="#i-chevron"/></svg></a>
+      <div class="account"><span class="account-avatar">店</span><span>门店店员</span></div>
+    </header>
+
+    <aside class="sidebar" aria-label="门店业务导航">
+      <div class="sidebar-heading">业务办理</div>
+      <button class="side-link active" type="button" data-nav="top"><svg><use href="#i-grid"/></svg>门店工作台</button>
+      <button class="side-link" type="button" data-nav="registration"><svg><use href="#i-plus"/></svg>购买登记</button>
+      <button class="side-link" type="button" data-nav="records"><svg><use href="#i-receipt"/></svg>顾客购买记录</button>
+      <button class="side-link" type="button" data-nav="orders"><svg><use href="#i-clipboard"/></svg>服务工单</button>
+      <div class="sidebar-foot"><svg><use href="#i-store"/></svg><span>购买记录与工单按当前账号的数据权限自动过滤</span></div>
+    </aside>
+
+    <main class="workspace" id="top">
+      <div class="workspace-inner">
+        <div class="breadcrumb">业务办理 <span>/</span> 门店工作台</div>
+        <section class="page-heading">
+          <div><p class="eyebrow">门店服务入口</p><h1>门店工作台</h1><p>从顾客和购买记录出发，办理本次安装或维修需求，并查看后续进展。</p></div>
+          <div class="store-context"><label>数据范围</label><div class="store-select-wrap"><svg><use href="#i-store"/></svg><strong>当前账号授权门店</strong></div><small>由组织与门店数据权限自动过滤</small></div>
+        </section>
+
+        <div class="entry-grid">
+          <section class="lookup-card" aria-labelledby="lookupTitle">
+            <div class="lookup-copy"><span class="step-mark">01 · 接待与查询</span><h2 id="lookupTitle">顾客需要服务，先找到购买记录</h2><p>无论是购买当场提出安装需求，还是之后联系门店报修，都先确认顾客与本次商品。</p></div>
+            <form id="searchForm" class="lookup-form" role="search"><svg><use href="#i-search"/></svg><select id="searchType" aria-label="选择查询字段"><option value="keyword">单号／安装码</option><option value="mobile">手机号</option><option value="name">顾客姓名</option></select><input id="searchInput" type="search" autocomplete="off" placeholder="输入登记单号、安装码或门店名称" aria-label="查找顾客购买记录"><button type="submit">查找记录 <svg><use href="#i-arrow"/></svg></button></form>
+            <div class="lookup-bottom"><span>手机号和姓名按精确条件查询；查到记录后再选择商品办理服务。</span><button id="clearSearch" type="button" hidden>清除查询</button></div>
+          </section>
+          <section class="register-card" aria-labelledby="registerTitle"><div class="register-icon"><svg><use href="#i-plus"/></svg></div><span class="step-mark">购买时办理</span><h2 id="registerTitle">新增购买登记</h2><p>记录购买人、门店和商品。保存购买记录本身不会创建服务工单。</p><button id="registerButton" class="secondary-primary" type="button">开始登记 <svg><use href="#i-arrow"/></svg></button></section>
+        </div>
+
+        <div class="work-panels">
+          <section class="panel records-panel" id="recordsSection" aria-labelledby="recordsTitle">
+            <div class="panel-head"><div><p class="section-kicker">查找结果与近期记录</p><h2 id="recordsTitle">顾客购买记录</h2><p>选择一条记录，核对商品和已有服务后办理。</p></div><span id="recordCount" class="panel-count"></span></div>
+            <div class="filter-row" role="group" aria-label="购买记录筛选"><button class="filter active" type="button" data-record-filter="all">全部记录</button><button class="filter" type="button" data-record-filter="not-appointed">未申请安装</button><button class="filter" type="button" data-record-filter="partial">部分申请</button><span class="filter-note">安装状态仅供筛选，不代表顾客已提出需求</span></div>
+            <div class="record-layout"><div id="recordList" class="record-list" aria-live="polite"></div><div id="recordDetail" class="record-detail"></div></div>
+          </section>
+
+          <section class="panel orders-panel" id="ordersSection" aria-labelledby="ordersTitle"><div class="panel-head"><div><p class="section-kicker">提交后的进展</p><h2 id="ordersTitle">服务进度</h2><p>查看授权门店关联工单的安排与履约进展；门店不执行分站、分人或审核。</p></div><span id="orderCount" class="panel-count">仅查看进度</span></div><div class="order-filter" role="group" aria-label="服务进度筛选"><button class="filter active" type="button" data-order-filter="all">全部进度</button><button class="filter" type="button" data-order-filter="PENDING_DISPATCH">客服安排中</button><button class="filter" type="button" data-order-filter="PENDING_ASSIGNMENT">服务站安排中</button><button class="filter" type="button" data-order-filter="PENDING_COMPLETION">服务履约中</button></div><div id="orderList" class="order-list" aria-live="polite"></div></section>
+        </div>
+        <p class="page-footnote">原型按当前接口字段演示：购买记录与工单来自账号授权范围；工单状态在门店视角转换为顾客服务进度，分站与分人仍由客服和服务站处理。</p>
+      </div>
+    </main>
+  </div>
+
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden><header class="drawer-head"><div><p id="drawerKicker"></p><h2 id="drawerTitle"></h2></div><button id="closeDrawer" class="icon-button" type="button" aria-label="关闭"><svg><use href="#i-close"/></svg></button></header><div id="drawerBody" class="drawer-body"></div><footer id="drawerFooter" class="drawer-footer"></footer></aside>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="dealer-workbench.js"></script>
 </body>
 </html>

@@ -6,11 +6,10 @@ const root=path.resolve(__dirname,'..')
 const js=fs.readFileSync(path.join(root,'role-workbench.js'),'utf8')
 const css=fs.readFileSync(path.join(root,'admin.css'),'utf8')+fs.readFileSync(path.join(root,'role-workbench.css'),'utf8')
 
-test('三个角色原型都有独立固定入口',()=>{
+test('客服与服务站保留旧版固定入口，门店使用独立新原型',()=>{
   const pages={
     'customer-service.html':'serviceDesk',
-    'service-station.html':'station',
-    'dealer.html':'dealer'
+    'service-station.html':'station'
   }
   for(const [file,view] of Object.entries(pages)){
     const html=fs.readFileSync(path.join(root,file),'utf8')
@@ -18,6 +17,11 @@ test('三个角色原型都有独立固定入口',()=>{
     assert.match(html,/role-workbench\.js/)
     assert.match(html,/role-workbench\.css/)
   }
+  const dealer=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
+  assert.match(dealer,/data-view="dealer"/)
+  assert.match(dealer,/dealer-workbench\.js/)
+  assert.match(dealer,/dealer-workbench\.css/)
+  assert.doesNotMatch(dealer,/role-workbench\.js/)
 })
 
 test('原有四视角目录中的客服入口进入行动工作台',()=>{
@@ -34,11 +38,14 @@ test('服务站首版围绕今日履约且不推导负荷',()=>{
   assert.ok(!configsSlice('station').includes('完工审核'))
 })
 
-test('门店首版按购买记录统计并同页办理',()=>{
-  for(const copy of ['未申请安装','NOT_APPOINTED','部分申请安装','PARTIALLY_APPOINTED','全部购买记录','按购买记录统计，不是商品件数','开始购买登记','发起服务'])assert.ok(js.includes(copy),`missing ${copy}`)
+test('门店首页从顾客与购买记录出发，安装状态仅用于筛选',()=>{
+  const dealer=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
+  for(const copy of ['先找到购买记录','新增购买登记','保存购买记录本身不会创建服务工单','未申请安装','部分申请','安装状态仅供筛选，不代表顾客已提出需求','服务进度','客服安排中','服务站安排中','服务履约中'])assert.ok(dealer.includes(copy),`missing ${copy}`)
+  assert.doesNotMatch(dealer,/data-record-filter="pending"|>待建单</)
+  assert.doesNotMatch(dealer,/>待分站<|>待分人<|>待完工</)
 })
 
-test('三个原型具备核心交互、状态和降级动效',()=>{
+test('客服与服务站旧版保留核心交互、状态和降级动效',()=>{
   for(const token of ['selectQueue','renderRows','openWork','openCommand','setTableState','requestFullscreen','prefers-reduced-motion'])assert.ok(js.includes(token)||css.includes(token),`missing ${token}`)
   for(const state of ['data','loading','empty','error'])assert.match(js,new RegExp(`data-table-state=\\"${state}\\"`))
   assert.match(css,/@media\(prefers-reduced-motion:reduce\)/)
@@ -52,10 +59,21 @@ test('第二版补齐服务站提交完工和异常处理',()=>{
   for(const copy of ['选择服务人员','添加现场照片','配件耗用','提交客服审核','异常类型','后续动作','不在服务站视角执行审核'])assert.ok(js.includes(copy),`missing ${copy}`)
 })
 
-test('第二版明确门店从购买记录统一发起安装或维修',()=>{
-  for(const copy of ['选择购买记录','选择商品实例','选择服务类型','服务申请建单','提交并创建工单','INSTALLATION / REPAIR','PENDING_ACCEPTANCE','门店不分站、不派人'])assert.ok(js.includes(copy),`missing ${copy}`)
-  assert.match(js,/name="dealer-service-type"/)
-  assert.doesNotMatch(js,/data-work-action="代客报修"/)
+test('门店服务提交绑定购买记录和商品实例，工单只读查看',()=>{
+  const dealer=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
+  for(const token of ['recordId: record.id','instanceId: instance.id','name="type"','name="selected-instance"','activeOrderForInstance','openOrder','submitRegistration','submitService','PENDING_DISPATCH'])assert.ok(dealer.includes(token),`missing ${token}`)
+  assert.match(dealer,/type === 'INSTALLATION' && instance\.status !== 'AVAILABLE'/)
+  assert.match(dealer,/安装码已登记/)
+  assert.doesNotMatch(dealer,/PENDING_ACCEPTANCE|待建单|fetch\(/)
+})
+
+test('门店原型字段与当前购买登记、建单和工单查询契约一致',()=>{
+  const html=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
+  const dealer=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
+  for(const token of ['data-order-filter="PENDING_DISPATCH"','data-order-filter="PENDING_ASSIGNMENT"','data-order-filter="PENDING_COMPLETION"','id="searchType"','value="mobile"','value="name"'])assert.ok(html.includes(token),`missing ${token}`)
+  for(const token of ['name="storeId"','name="sourceType"','name="quantity"','name="contactName"','name="expectedTimeWindow"','name="faultId"','name="problemDescription"','name="province"','name="district"','clientRequestId'])assert.ok(dealer.includes(token),`missing ${token}`)
+  assert.match(html,/当前账号授权门店/)
+  assert.doesNotMatch(html,/id="storeSelect"|直营门店|data-order-filter="active"/)
 })
 
 test('办理后会更新队列数量并定位下一项',()=>{
@@ -79,7 +97,7 @@ test('两级候选信息采用当前业务可解释的推荐依据',()=>{
   assert.match(css,/candidate-card\.has-conflict/)
 })
 
-test('三个岗位工作台使用不重复指标卡的独立状态视图',()=>{
+test('旧版岗位工作台仍保留原状态视图',()=>{
   for(const layout of ['lanes','timeline','journey'])assert.match(js,new RegExp(`data-status-layout="${layout}"`))
   for(const copy of ['待办责任泳道','等待 42 分钟','待回访','今日任务时间轴','容量条','已排 / 已配置容量','购买记录服务轨迹','已购买','待安装','安装待受理','已安装','维修服务中'])assert.ok(js.includes(copy),`missing ${copy}`)
   for(const token of ['statusVisualMarkup','data-status-node','data-status-count','insertAdjacentHTML'])assert.ok(js.includes(token),`missing ${token}`)

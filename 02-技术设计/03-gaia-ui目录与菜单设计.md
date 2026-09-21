@@ -1,7 +1,7 @@
 # 售后服务 gaia-ui 目录与菜单设计
 
 - 版本：V3.0
-- 更新日期：2026-09-14
+- 更新日期：2026-09-21
 - 文档状态：V3 前端已实施；测试库菜单已同步，租户分发与正式账号联调待完成
 - 适用范围：单一 Web 管理后台及其总部运营、客服作业、服务站作业、门店业务视角
 - 需求依据：[TOTO 系统调研 ProcessOn 流程图](https://www.processon.com/f/6a681a83e50b43092180ded9#TOTO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94)、[页面清单](../01-功能需求/08-页面清单.md)及各端需求文档
@@ -23,7 +23,7 @@
 | 页面根目录 | `apps/after-sales/src/views/`；`src/views/afterSales/` 仅作 legacy 保留 |
 | 导航层级 | 顶部一级菜单 → 左侧业务分组 → 功能菜单；详情、编辑、扫码填写、签名等作为隐藏路由或页面内流程 |
 | 权限方式 | 唯一注册功能树；按总部运营、客服作业、服务站作业、门店业务投影已授权功能；管理员获得四视角切换权，具体功能仍须显式授权 |
-| 默认首页 | 按视角进入运营工作台、客服工作台、服务站工作台或门店工作台；总首页 `/` 直接呈现当前视角工作台 |
+| 默认首页 | 按视角进入对应工作台；四个视角的侧栏入口统一显示“工作台”，总首页 `/` 直接呈现当前视角工作台 |
 | 门店切换 | 放在门店工作台页头或全局业务上下文，不作为左侧菜单 |
 | 菜单来源 | 继续由 `/api/sys/Module/tree` 返回动态菜单，菜单节点指向 `src/views/<path>/index.vue` |
 
@@ -36,6 +36,7 @@
 3. 同一概念只使用一个词：统一使用“顾客”而非顾客/客户混用；“客户服务”仅表示客服业务域；统一使用“服务人员”而非师傅/安装师傅。
 4. 原图“售后网点管理”改为“服务站管理”，“商品条码异常查询”简化为“条码异常”；原“服务商品管理／服务项目”已退出当前 Web 产品范围。
 5. “管理”用于可增删改的主业务对象，“查询”用于只读检索，“工作台”用于待办与概览，“配置”用于规则或参数。
+   四个工作视角各自只投影一个工作台入口，侧栏名称均为“工作台”；视角名称由页头切换器标识，功能代码、路径和权限继续区分四个首页。
 6. 列表、详情、创建、编辑原则上属于同一功能菜单；商品图片、顾客扫码填写、隐私签名、退货确认等不单独占用侧栏菜单。
 7. 菜单显示名称使用简体中文；目录与路径使用有业务含义的英文 camelCase，菜单代码统一使用 `afs` 前缀，避免与 Gaia 既有模块冲突。
 
@@ -171,12 +172,12 @@
 
 ### 4.1 工作台
 
-| 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
-| --- | --- | --- | --- | --- |
-| 运营工作台 | `afsDashboardOverview` | `afterSales/dashboard/overview` | A01 | 管理员、总部 |
-| 客服工作台 | `afsDashboardCustomerService` | `afterSales/dashboard/customerService` | A01（与总部首页共用历史入口） | 管理员、客服主管、客服专员 |
-| 服务站工作台 | `afsDashboardStation` | `afterSales/dashboard/serviceStation` | A02 | 管理员、服务站管理员 |
-| 门店工作台 | `afsDashboardDealer` | `afterSales/dashboard/dealer` | D02 | 管理员、代理商管理员、门店店员 |
+| 菜单名称 | 工作视角 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
+| --- | --- | --- | --- | --- | --- |
+| 工作台 | 总部运营 | `afsDashboardOverview` | `afterSales/dashboard/overview` | A01 | 管理员、总部 |
+| 工作台 | 客服作业 | `afsDashboardCustomerService` | `afterSales/dashboard/customerService` | A01（与总部首页共用历史入口） | 管理员、客服主管、客服专员 |
+| 工作台 | 服务站作业 | `afsDashboardStation` | `afterSales/dashboard/serviceStation` | A02 | 管理员、服务站管理员 |
+| 工作台 | 门店业务 | `afsDashboardDealer` | `afterSales/dashboard/dealer` | D02 | 管理员、代理商管理员、门店店员 |
 
 ### 4.2 客户服务
 
