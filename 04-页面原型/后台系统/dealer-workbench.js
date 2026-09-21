@@ -26,12 +26,28 @@
 
   const orders = [
     { id: 'o1', no: 'SO-20260920-021', recordId: 'r2', instanceId: 'i2a', type: 'INSTALLATION', status: 'PENDING_DISPATCH', expectedDate: '2026-09-24', expectedTimeWindow: '上午', station: '', personnel: '', note: '顾客到店提出安装需求', events: [{ status: 'PENDING_DISPATCH', time: '2026-09-20 15:40' }] },
-    { id: 'o2', no: 'SO-20260919-014', recordId: 'r3', instanceId: 'i3', type: 'REPAIR', status: 'PENDING_COMPLETION', expectedDate: '2026-09-22', expectedTimeWindow: '09:00—12:00', station: '徐汇服务站', personnel: '王师傅', fault: '出水量异常', note: '出水量变小', events: [{ status: 'PENDING_COMPLETION', time: '2026-09-21 09:15' }, { status: 'PENDING_DISPATCH', time: '2026-09-19 10:25' }] },
+    { id: 'o2', no: 'SO-20260919-014', recordId: 'r3', instanceId: 'i3', type: 'REPAIR', status: 'PENDING_COMPLETION', expectedDate: '2026-09-22', expectedTimeWindow: '09:00-12:00', station: '徐汇服务站', personnel: '王师傅', fault: '出水量异常', note: '出水量变小', events: [{ status: 'PENDING_COMPLETION', time: '2026-09-21 09:15' }, { status: 'PENDING_DISPATCH', time: '2026-09-19 10:25' }] },
     { id: 'o3', no: 'SO-20260901-008', recordId: 'r4', instanceId: 'i4', type: 'INSTALLATION', status: 'COMPLETED', expectedDate: '2026-09-03', expectedTimeWindow: '下午', station: '徐汇服务站', personnel: '李师傅', note: '安装服务已完成', events: [{ status: 'COMPLETED', time: '2026-09-03 16:20' }, { status: 'PENDING_DISPATCH', time: '2026-09-01 11:10' }] },
     { id: 'o4', no: 'SO-20260919-009', recordId: 'r5', instanceId: 'i5', type: 'REPAIR', status: 'PENDING_ASSIGNMENT', expectedDate: '2026-09-25', expectedTimeWindow: '全天', station: '浦东服务站', personnel: '', fault: '阀芯漏水', note: '阀芯位置持续滴水', events: [{ status: 'PENDING_ASSIGNMENT', time: '2026-09-20 08:40' }, { status: 'PENDING_DISPATCH', time: '2026-09-19 14:10' }] }
   ]
 
-  const state = { query: '', searchType: 'keyword', recordFilter: 'all', selectedRecordId: 'r1', selectedInstanceId: 'i1', orderFilter: 'all', lastFocus: null }
+  const storeInsight = {
+    todayProducts: 12,
+    products: 286,
+    customers: 241,
+    records: 258,
+    productTrend: [7, 8, 8, 10, 9, 11, 12, 11, 13, 14, 13, 15, 16, 14, 17, 18, 16, 19, 18, 20, 22, 19, 21, 23, 22, 24, 21, 25, 27, 25],
+    customerTrend: [6, 7, 7, 8, 8, 9, 10, 10, 11, 12, 11, 12, 13, 12, 14, 15, 14, 16, 16, 17, 18, 16, 18, 19, 18, 20, 18, 21, 22, 20],
+    topProducts: [
+      { id: 'p992', name: '智能坐便器 CW992', shortName: '智能坐便器', value: 92 },
+      { id: 'p093', name: '台盆龙头 TLG093', shortName: '台盆龙头', value: 68 },
+      { id: 'p014', name: '淋浴花洒 TBW014', shortName: '淋浴花洒', value: 54 },
+      { id: 'other', name: '其他商品', shortName: '其他商品', value: 72 }
+    ],
+    customerMix: { newCustomers: 198, repeatCustomers: 43 }
+  }
+
+  const state = { query: '', searchType: 'keyword', recordFilter: 'all', orderFilter: 'all', lastFocus: null }
   const $ = (selector) => document.querySelector(selector)
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character])
   const icon = (name) => `<svg aria-hidden="true"><use href="#i-${name}"/></svg>`
@@ -41,11 +57,12 @@
   const today = () => { const date = new Date(); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` }
   const clientRequestId = () => `dealer-${Date.now()}-${Math.random().toString(16).slice(2)}`
   const compact = (value) => String(value ?? '').toLowerCase().replace(/\s/g, '')
-  const storeName = (id) => stores.find((store) => store.id === id)?.name ?? '—'
+  const storeName = (id) => stores.find((store) => store.id === id)?.name ?? '--'
   const typeLabel = (type) => ({ INSTALLATION: '安装', REPAIR: '维修' })[type] ?? type
   const statusLabel = (status) => ({ PENDING_VERIFICATION: '客服受理中', PENDING_DISPATCH: '客服安排中', PENDING_ASSIGNMENT: '服务站安排中', PENDING_COMPLETION: '服务履约中', PENDING_REVIEW: '完工审核中', COMPLETED: '已完成', CANCELLED: '已取消' })[status] ?? status
   const eventLabel = (status) => ({ PENDING_DISPATCH: '工单进入待分配服务站', PENDING_ASSIGNMENT: '服务站已确定，等待分配人员', PENDING_COMPLETION: '服务人员处理中', PENDING_REVIEW: '完工资料待审核', COMPLETED: '服务已完成', CANCELLED: '工单已取消' })[status] ?? statusLabel(status)
   const serviceOwner = (order) => order.personnel ? `${order.station} · ${order.personnel}` : order.station ? `${order.station} · 服务人员待确定` : '服务站待确定'
+  const serviceEligible = (instance) => instance.status !== 'RETURNED' && !activeOrderForInstance(instance.id)
 
   function appointmentState(record) {
     const appointed = record.instances.filter((instance) => instance.status === 'APPOINTED').length
@@ -66,31 +83,21 @@
     return records.filter((record) => state.recordFilter === 'all' || appointmentState(record).key === state.recordFilter).filter(matchesSearch)
   }
 
-  function selectedRecord() { return records.find((record) => record.id === state.selectedRecordId) }
-
-  function keepVisibleSelection(list) {
-    if (!list.some((record) => record.id === state.selectedRecordId)) {
-      state.selectedRecordId = list[0]?.id ?? null
-      state.selectedInstanceId = list[0]?.instances[0]?.id ?? null
-    }
-    const record = selectedRecord()
-    if (record && !record.instances.some((instance) => instance.id === state.selectedInstanceId)) state.selectedInstanceId = record.instances[0]?.id ?? null
-  }
-
   function emptyState(title, copy) {
     return `<div class="empty-state">${icon('search')}<strong>${escapeHtml(title)}</strong><p>${escapeHtml(copy)}</p></div>`
   }
 
   function renderRecords() {
     const list = visibleRecords()
-    keepVisibleSelection(list)
     $('#recordCount').textContent = `${list.length} 条记录`
     $('#recordList').innerHTML = list.length ? list.map((record) => {
       const appointment = appointmentState(record)
-      const selected = record.id === state.selectedRecordId
-      return `<button type="button" class="record-item ${selected ? 'selected' : ''}" data-record-id="${record.id}" aria-pressed="${selected}"><span class="record-avatar">${escapeHtml(record.customer.slice(0, 1))}</span><span class="record-main"><strong>${escapeHtml(record.customer)} · ${escapeHtml(record.mobile)}</strong><small>${escapeHtml(record.no)} · ${record.instances.length} 件商品</small></span><span class="record-aside"><em class="${appointment.key !== 'appointed' ? 'status-mini' : ''}">${appointment.label}</em><small>${escapeHtml(record.purchaseDate)}</small></span></button>`
-    }).join('') : emptyState('没有符合条件的购买记录', state.query ? '请核对当前查询类型和输入内容。姓名、手机号需精确匹配。' : '可切换安装状态筛选，或从顶部查询。')
-    renderRecordDetail()
+      const productNames = record.instances.map((item) => item.product)
+      const uniqueProducts = [...new Set(productNames)]
+      const productSummary = uniqueProducts.length > 1 ? `${uniqueProducts[0]} 等 ${record.instances.length} 件` : `${uniqueProducts[0]} · ${record.instances.length} 件`
+      const eligible = record.instances.some(serviceEligible)
+      return `<div class="record-row"><div class="record-customer"><span class="record-avatar">${escapeHtml(record.customer.slice(0, 1))}</span><span class="record-cell"><strong>${escapeHtml(record.customer)} · ${escapeHtml(record.mobile)}</strong><small>${escapeHtml(record.no)}</small></span></div><div class="record-cell"><strong>${escapeHtml(productSummary)}</strong><small>${escapeHtml(record.purchaseDate)} · ${escapeHtml(storeName(record.storeId))}</small></div><span class="record-status ${appointment.key !== 'appointed' ? 'attention' : ''}">${appointment.label}</span><div class="record-actions"><button type="button" class="row-action" data-view-record="${record.id}">查看</button><button type="button" class="row-action row-service" data-create-service="${record.id}" ${eligible ? '' : 'disabled'}>${eligible ? '创建工单' : '暂不可建'}</button></div></div>`
+    }).join('') : emptyState('没有符合条件的购买记录', state.query ? '请核对当前查询类型和输入内容。姓名、手机号需精确匹配。' : '可切换安装状态筛选，或在购买记录中查询。')
     document.querySelectorAll('[data-record-filter]').forEach((button) => {
       button.classList.toggle('active', button.dataset.recordFilter === state.recordFilter)
       button.setAttribute('aria-pressed', String(button.dataset.recordFilter === state.recordFilter))
@@ -98,15 +105,12 @@
     $('#clearSearch').hidden = !state.query
   }
 
-  function renderRecordDetail() {
-    const record = selectedRecord()
-    if (!record) {
-      $('#recordDetail').innerHTML = emptyState('选择一条购买记录', '核对购买人和商品实例后，再办理本次服务需求。')
-      return
-    }
-    const instance = record.instances.find((item) => item.id === state.selectedInstanceId) ?? record.instances[0]
+  function openRecord(id) {
+    const record = recordById(id)
+    if (!record) return
     const relatedOrders = orders.filter((order) => order.recordId === record.id)
-    $('#recordDetail').innerHTML = `<span class="detail-eyebrow">当前选择 · 购买记录详情</span><div class="detail-head"><div><h3>${escapeHtml(record.customer)}</h3><p>${escapeHtml(record.mobile)} · ${escapeHtml(appointmentState(record).label)}</p></div><span class="record-code">${escapeHtml(record.no)}</span></div><dl class="detail-facts"><div><dt>购买日期</dt><dd>${escapeHtml(record.purchaseDate)}</dd></div><div><dt>登记门店</dt><dd>${escapeHtml(storeName(record.storeId))}</dd></div><div><dt>关联工单</dt><dd>${relatedOrders.length} 笔</dd></div></dl><p class="detail-label">选择本次需要服务的商品</p><div class="instance-list">${record.instances.map((item) => `<label class="instance-item"><input type="radio" name="selected-instance" value="${item.id}" ${item.id === instance.id ? 'checked' : ''}><span>${icon('receipt')}</span><div><strong>${escapeHtml(item.product)}</strong><small>安装码 ${escapeHtml(item.code)}</small></div><em class="${item.status === 'AVAILABLE' ? 'busy' : ''}">${item.status === 'AVAILABLE' ? '可申请安装' : item.status === 'APPOINTED' ? '已申请安装' : '已退回'}</em></label>`).join('')}</div><div class="detail-foot"><p>系统在提交时校验商品状态和活动工单，重复申请会被拒绝。</p><button type="button" class="primary-button" id="startServiceButton">发起安装 / 维修 ${icon('arrow')}</button></div>`
+    const productsMarkup = record.instances.map((item) => `<div class="instance-item"><span>${icon('receipt')}</span><div><strong>${escapeHtml(item.product)}</strong><small>安装码 ${escapeHtml(item.code)}</small></div><em class="${item.status === 'AVAILABLE' ? 'busy' : ''}">${item.status === 'AVAILABLE' ? '未申请安装' : item.status === 'APPOINTED' ? '已申请安装' : '已退回'}</em></div>`).join('')
+    openDrawer('购买记录 · 只读详情', record.no, `<div class="record-readonly"><h3>${escapeHtml(record.customer)} · ${escapeHtml(record.mobile)}</h3><dl><div><dt>购买日期</dt><dd>${escapeHtml(record.purchaseDate)}</dd></div><div><dt>登记门店</dt><dd>${escapeHtml(storeName(record.storeId))}</dd></div><div><dt>安装状态</dt><dd>${escapeHtml(appointmentState(record).label)}</dd></div><div><dt>关联工单</dt><dd>${relatedOrders.length} 笔</dd></div></dl><div class="drawer-note">${escapeHtml(record.province)} ${escapeHtml(record.city)} ${escapeHtml(record.district)} ${escapeHtml(record.street)} ${escapeHtml(record.address)}</div><div><p class="drawer-section-title">登记商品</p><div class="instance-list">${productsMarkup}</div></div></div>`, `<button type="button" data-close-drawer>关闭</button>`)
   }
 
   function renderOrders() {
@@ -124,7 +128,189 @@
     })
   }
 
-  function render() { renderRecords(); renderOrders() }
+  function openOrdersOverview() {
+    const orderMarkup = orders.map((order) => {
+      const record = recordById(order.recordId)
+      const completed = ['COMPLETED', 'CANCELLED'].includes(order.status)
+      const instance = record?.instances.find((item) => item.id === order.instanceId)
+      return `<button type="button" class="order-drawer-card" data-order-id="${order.id}"><span><b>${escapeHtml(order.no)}</b><em class="order-state ${completed ? 'completed' : ''}">${escapeHtml(statusLabel(order.status))}</em></span><strong>${escapeHtml(typeLabel(order.type))} · ${escapeHtml(instance?.product || record?.no)}</strong><small>${escapeHtml(record?.customer)} · ${escapeHtml(record?.mobile)}</small><small>${escapeHtml(serviceOwner(order))} · 预约 ${escapeHtml(order.expectedDate)}</small></button>`
+    }).join('')
+    openDrawer('低频查询 · 当前授权门店', '本店服务工单', `<div class="drawer-note">顾客咨询服务进度时按需进入。门店只查看客服安排、服务站安排和履约进度，不执行分站、派人或审核。</div><div class="orders-drawer-list">${orderMarkup}</div>`, `<button type="button" data-close-drawer>关闭</button>`)
+  }
+
+  function drawStoreTrend() {
+    const canvas = $('#storeTrendChart')
+    if (!canvas) return
+    const width = Math.max(1, Math.round(canvas.clientWidth))
+    const height = Math.max(1, Math.round(canvas.clientHeight))
+    const ratio = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = width * ratio
+    canvas.height = height * ratio
+    const context = canvas.getContext('2d')
+    context.scale(ratio, ratio)
+    const values = [...storeInsight.productTrend, ...storeInsight.customerTrend]
+    const max = Math.ceil((Math.max(...values) + 2) / 10) * 10
+    const min = 0
+    const left = 28
+    const right = width - 6
+    const top = 7
+    const bottom = height - 10
+    const x = (index) => left + ((right - left) * index) / (storeInsight.productTrend.length - 1)
+    const y = (value) => bottom - ((bottom - top) * (value - min)) / (max - min)
+    context.lineWidth = 1
+    context.strokeStyle = '#edf1f6'
+    context.font = '8px "SF Pro Display", "PingFang SC", sans-serif'
+    context.fillStyle = '#98a4b3'
+    context.textAlign = 'right'
+    context.textBaseline = 'middle'
+    for (let index = 0; index < 4; index += 1) {
+      const guideValue = (max * index) / 3
+      const guideY = y(guideValue)
+      context.beginPath()
+      context.moveTo(left, guideY)
+      context.lineTo(right, guideY)
+      context.stroke()
+      context.fillText(String(Math.round(guideValue)), left - 6, guideY)
+    }
+    const drawLine = (data, color) => {
+      const gradient = context.createLinearGradient(0, top, 0, bottom)
+      gradient.addColorStop(0, `${color}24`)
+      gradient.addColorStop(1, `${color}00`)
+      context.beginPath()
+      data.forEach((value, index) => {
+        if (index === 0) context.moveTo(x(index), y(value))
+        else context.lineTo(x(index), y(value))
+      })
+      context.lineTo(x(data.length - 1), bottom)
+      context.lineTo(x(0), bottom)
+      context.closePath()
+      context.fillStyle = gradient
+      context.fill()
+      context.beginPath()
+      data.forEach((value, index) => {
+        if (index === 0) context.moveTo(x(index), y(value))
+        else context.lineTo(x(index), y(value))
+      })
+      context.lineWidth = 1.8
+      context.strokeStyle = color
+      context.lineJoin = 'round'
+      context.lineCap = 'round'
+      context.stroke()
+      const last = data.length - 1
+      context.beginPath()
+      context.arc(x(last), y(data[last]), 2.2, 0, Math.PI * 2)
+      context.fillStyle = color
+      context.fill()
+    }
+    drawLine(storeInsight.productTrend, '#3979ca')
+    drawLine(storeInsight.customerTrend, '#59aaa0')
+  }
+
+  function drawProductMix() {
+    const canvas = $('#productMixChart')
+    if (!canvas) return
+    const width = Math.max(1, Math.round(canvas.clientWidth))
+    const height = Math.max(1, Math.round(canvas.clientHeight))
+    const ratio = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = width * ratio
+    canvas.height = height * ratio
+    const context = canvas.getContext('2d')
+    context.scale(ratio, ratio)
+    const labelWidth = Math.min(116, Math.max(88, width * 0.32))
+    const valueWidth = 28
+    const barLeft = labelWidth
+    const barRight = width - valueWidth
+    const max = Math.max(...storeInsight.topProducts.map((item) => item.value))
+    const rowHeight = height / storeInsight.topProducts.length
+    context.font = '9px "SF Pro Display", "PingFang SC", sans-serif'
+    context.textBaseline = 'middle'
+    storeInsight.topProducts.forEach((item, index) => {
+      const centerY = rowHeight * index + rowHeight / 2
+      const barHeight = 10
+      context.fillStyle = '#5f6f84'
+      context.textAlign = 'left'
+      context.fillText(item.shortName, 0, centerY)
+      context.fillStyle = '#edf1f6'
+      context.fillRect(barLeft, centerY - barHeight / 2, barRight - barLeft, barHeight)
+      context.fillStyle = index === 0 ? '#3979ca' : index === 1 ? '#5b91d2' : index === 2 ? '#7da8da' : '#a7b7cb'
+      context.fillRect(barLeft, centerY - barHeight / 2, ((barRight - barLeft) * item.value) / max, barHeight)
+      context.fillStyle = '#52647a'
+      context.textAlign = 'right'
+      context.fillText(`${item.value}`, width, centerY)
+    })
+  }
+
+  function renderProductRank() {
+    const list = $('#productRankList')
+    if (!list) return
+    const max = Math.max(...storeInsight.topProducts.map((item) => item.value), 1)
+    const total = Math.max(storeInsight.products, 1)
+    list.innerHTML = storeInsight.topProducts.map((item, index) => {
+      const share = ((item.value / total) * 100).toFixed(1)
+      const rankLabel = item.id === 'other' ? '其他' : String(index + 1).padStart(2, '0')
+      return `<div class="product-rank-item" role="listitem"><span class="rank-number">${rankLabel}</span><div class="rank-product"><strong>${escapeHtml(item.shortName)}</strong><small>${escapeHtml(item.name)}</small><span class="rank-line"><i style="--rank-width:${Math.round((item.value / max) * 100)}%"></i></span></div><div class="rank-value"><strong>${item.value}</strong><small>${share}%</small></div></div>`
+    }).join('')
+  }
+
+  function drawCustomerMix() {
+    const canvas = $('#customerMixChart')
+    if (!canvas) return
+    const width = Math.max(1, Math.round(canvas.clientWidth))
+    const height = Math.max(1, Math.round(canvas.clientHeight))
+    const ratio = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = width * ratio
+    canvas.height = height * ratio
+    const context = canvas.getContext('2d')
+    context.scale(ratio, ratio)
+    const { newCustomers, repeatCustomers } = storeInsight.customerMix
+    const total = Math.max(1, newCustomers + repeatCustomers)
+    const repeatRate = repeatCustomers / total
+    const radius = Math.min(width, height) * 0.34
+    const lineWidth = Math.max(8, radius * 0.28)
+    const centerX = width / 2
+    const centerY = height / 2
+    const start = -Math.PI / 2
+    context.lineWidth = lineWidth
+    context.lineCap = 'butt'
+    context.strokeStyle = '#dce8f6'
+    context.beginPath()
+    context.arc(centerX, centerY, radius, start, start + Math.PI * 2)
+    context.stroke()
+    context.strokeStyle = '#4f91cf'
+    context.beginPath()
+    context.arc(centerX, centerY, radius, start, start + Math.PI * 2 * repeatRate)
+    context.stroke()
+    context.fillStyle = '#1d2d45'
+    context.font = '700 14px "SF Pro Display", "PingFang SC", sans-serif'
+    context.textAlign = 'center'
+    context.textBaseline = 'middle'
+    context.fillText(`${(repeatRate * 100).toFixed(1)}%`, centerX, centerY - 4)
+    context.fillStyle = '#8b98a9'
+    context.font = '7px "SF Pro Display", "PingFang SC", sans-serif'
+    context.fillText('复购客户', centerX, centerY + 10)
+  }
+
+  function drawStoreCharts() {
+    drawStoreTrend()
+    drawProductMix()
+    drawCustomerMix()
+  }
+
+  function renderStoreInsight() {
+    $('#todayProductCount').textContent = storeInsight.todayProducts.toLocaleString('zh-CN')
+    $('#productSalesCount').textContent = storeInsight.products.toLocaleString('zh-CN')
+    $('#productChartTotal').textContent = `共 ${storeInsight.products.toLocaleString('zh-CN')} 件`
+    $('#customerCount').textContent = storeInsight.customers.toLocaleString('zh-CN')
+    $('#purchaseRecordCount').textContent = storeInsight.records.toLocaleString('zh-CN')
+    $('#newCustomerCount').textContent = storeInsight.customerMix.newCustomers.toLocaleString('zh-CN')
+    $('#repeatCustomerCount').textContent = storeInsight.customerMix.repeatCustomers.toLocaleString('zh-CN')
+    const customerMixTotal = Math.max(1, storeInsight.customerMix.newCustomers + storeInsight.customerMix.repeatCustomers)
+    $('#repeatCustomerRate').textContent = `${((storeInsight.customerMix.repeatCustomers / customerMixTotal) * 100).toFixed(1)}%`
+    renderProductRank()
+    drawStoreCharts()
+  }
+
+  function render() { renderRecords(); renderStoreInsight() }
 
   function openDrawer(kicker, title, body, footer) {
     state.lastFocus = document.activeElement
@@ -174,16 +360,25 @@
     if (codes.length !== quantity) { error.textContent = '安装码数量必须与商品数量一致。'; error.hidden = false; return }
     if (new Set(codes.map(compact)).size !== codes.length) { error.textContent = '同一购买登记中的安装码不能重复。'; error.hidden = false; return }
     if (records.some((record) => record.instances.some((item) => codes.some((code) => compact(item.code) === compact(code))))) { error.textContent = '安装码已登记，请先查询已有购买记录。'; error.hidden = false; return }
+    const isNewCustomer = !records.some((record) => compact(record.mobile) === compact(mobile))
     const product = products.find((item) => item.id === data.get('productId'))
     const id = `r${Date.now()}`
     const stamp = Date.now()
     const newRecord = { id, clientRequestId: clientRequestId(), storeId: String(data.get('storeId')), no: `REG-DEMO-${String(records.length + 1).padStart(3, '0')}`, customer: String(data.get('customer')).trim(), mobile, purchaseDate: String(data.get('purchaseDate')), province: String(data.get('province')).trim(), city: String(data.get('city')).trim(), district: String(data.get('district')).trim(), street: String(data.get('street')).trim(), address: String(data.get('address')).trim(), instances: codes.map((code, index) => ({ id: `i${stamp}-${index + 1}`, productId: product.id, product: product.name, code, status: 'AVAILABLE' })) }
     records.unshift(newRecord)
+    storeInsight.todayProducts += quantity
+    storeInsight.products += quantity
+    storeInsight.records += 1
+    storeInsight.customers += isNewCustomer ? 1 : 0
+    if (isNewCustomer) storeInsight.customerMix.newCustomers += 1
+    else if (storeInsight.customerMix.newCustomers > 0) { storeInsight.customerMix.newCustomers -= 1; storeInsight.customerMix.repeatCustomers += 1 }
+    storeInsight.productTrend[storeInsight.productTrend.length - 1] += quantity
+    storeInsight.customerTrend[storeInsight.customerTrend.length - 1] += isNewCustomer ? 1 : 0
+    const productRank = storeInsight.topProducts.find((item) => item.id === product.id)
+    if (productRank) productRank.value += quantity
     state.query = ''
     $('#searchInput').value = ''
     state.recordFilter = 'all'
-    state.selectedRecordId = id
-    state.selectedInstanceId = newRecord.instances[0].id
     closeDrawer()
     render()
     toast('购买登记已保存；当前没有自动创建服务工单。')
@@ -191,14 +386,36 @@
 
   function faultOptions(productId) { return (faults[productId] ?? []).map((fault) => `<option value="${fault.id}">${escapeHtml(fault.name)}</option>`).join('') }
 
-  function openService() {
-    const record = selectedRecord()
-    const instance = record?.instances.find((item) => item.id === state.selectedInstanceId)
-    if (!record || !instance || instance.status === 'RETURNED') { renderRecordDetail(); return }
+  function openService(id) {
+    const record = recordById(id)
+    if (!record) return
+    const initial = record.instances.find(serviceEligible)
+    if (!initial) { toast('这笔购买记录暂无可新建服务工单的商品。'); return }
+    const instanceOptions = record.instances.map((item) => {
+      const active = activeOrderForInstance(item.id)
+      const eligible = serviceEligible(item)
+      const status = active ? '已有进行中工单' : item.status === 'RETURNED' ? '已退回' : item.status === 'AVAILABLE' ? '可安装或维修' : '可报修'
+      return `<label><input type="radio" name="instanceId" value="${item.id}" data-install-allowed="${item.status === 'AVAILABLE'}" ${item.id === initial.id ? 'checked' : ''} ${eligible ? '' : 'disabled'}><span><strong>${escapeHtml(item.product)}</strong><small>安装码 ${escapeHtml(item.code)}</small></span><small class="choice-status">${status}</small></label>`
+    }).join('')
+    const installAllowed = initial.status === 'AVAILABLE'
+    openDrawer('代消费者办理 · 来自购买记录', '创建服务工单', `<div class="drawer-note"><strong>${escapeHtml(record.customer)} · ${escapeHtml(record.no)}</strong><br>请在弹出层中选择本次服务的商品和类型。提交时由系统再次校验购买登记、商品状态和活动工单。</div><form id="serviceForm" class="drawer-form" data-record-id="${record.id}"><div><p class="drawer-section-title">选择需要服务的商品</p><div class="choice-list">${instanceOptions}</div></div><div><p class="drawer-section-title">选择服务类型</p><div class="type-choice"><label><input id="installationType" type="radio" name="type" value="INSTALLATION" ${installAllowed ? 'checked' : 'disabled'}>安装 <small id="installChoiceHint">${installAllowed ? '' : '已申请安装'}</small></label><label><input type="radio" name="type" value="REPAIR" ${installAllowed ? '' : 'checked'}>维修</label></div></div><div class="two-col"><label>联系人姓名<input name="contactName" required maxlength="100" value="${escapeHtml(record.customer)}"></label><label>联系人手机<input name="mobile" required inputmode="tel" maxlength="30" value="${escapeHtml(record.mobile)}"></label></div><div class="two-col"><label>期望上门日期<input name="expectedDate" type="date" required min="${today()}" value="${today()}"></label><label>期望时段<input name="expectedTimeWindow" maxlength="100" placeholder="例如 09:00-12:00"></label></div><div class="region-grid"><label>省份<input name="province" required value="${escapeHtml(record.province)}"></label><label>城市<input name="city" value="${escapeHtml(record.city)}"></label><label>区县<input name="district" value="${escapeHtml(record.district)}"></label><label>街道<input name="street" value="${escapeHtml(record.street)}"></label></div><label>详细地址<input name="address" required maxlength="500" value="${escapeHtml(record.address)}"></label><label id="faultField" hidden>故障分类<select name="faultId">${faultOptions(initial.productId)}</select></label><label id="problemField" hidden>问题描述<textarea name="problemDescription" maxlength="500" placeholder="请描述故障现象"></textarea></label><label>受理备注<textarea name="remark" maxlength="200" placeholder="选填"></textarea></label><p class="form-error" id="serviceError" hidden></p></form>`, `<button type="button" data-close-drawer>取消</button><button type="submit" form="serviceForm" class="primary-button">提交服务工单</button>`)
+    updateServiceFields()
+  }
+
+  function updateServiceInstance() {
+    const form = $('#serviceForm')
+    const selected = form?.querySelector('input[name="instanceId"]:checked')
+    if (!form || !selected) return
+    const record = recordById(form.dataset.recordId)
+    const instance = record?.instances.find((item) => item.id === selected.value)
+    if (!instance) return
+    const installation = $('#installationType')
     const installAllowed = instance.status === 'AVAILABLE'
-    openDrawer('购买记录 · 发起服务', '办理安装或维修', `<div class="drawer-note"><strong>${escapeHtml(record.customer)} · ${escapeHtml(record.no)}</strong><br>${escapeHtml(instance.product)} · 安装码 ${escapeHtml(instance.code)}<br>提交时由系统再次校验购买登记、商品状态和活动工单。</div><form id="serviceForm" class="drawer-form"><div class="type-choice"><label><input type="radio" name="type" value="INSTALLATION" ${installAllowed ? 'checked' : 'disabled'}>安装${installAllowed ? '' : '（商品已申请）'}</label><label><input type="radio" name="type" value="REPAIR" ${installAllowed ? '' : 'checked'}>维修</label></div><div class="two-col"><label>联系人姓名<input name="contactName" required maxlength="100" value="${escapeHtml(record.customer)}"></label><label>联系人手机<input name="mobile" required inputmode="tel" maxlength="30" value="${escapeHtml(record.mobile)}"></label></div><div class="two-col"><label>期望上门日期<input name="expectedDate" type="date" required min="${today()}" value="${today()}"></label><label>期望时段<input name="expectedTimeWindow" maxlength="100" placeholder="例如 09:00—12:00"></label></div><div class="region-grid"><label>省份<input name="province" required value="${escapeHtml(record.province)}"></label><label>城市<input name="city" value="${escapeHtml(record.city)}"></label><label>区县<input name="district" value="${escapeHtml(record.district)}"></label><label>街道<input name="street" value="${escapeHtml(record.street)}"></label></div><label>详细地址<input name="address" required maxlength="500" value="${escapeHtml(record.address)}"></label><label id="faultField" hidden>故障分类<select name="faultId">${faultOptions(instance.productId)}</select></label><label id="problemField" hidden>问题描述<textarea name="problemDescription" maxlength="500" placeholder="请描述故障现象"></textarea></label><label>受理备注<textarea name="remark" maxlength="200" placeholder="选填"></textarea></label><p class="form-error" id="serviceError" hidden></p></form>`, `<button type="button" data-close-drawer>取消</button><button type="submit" form="serviceForm" class="primary-button">提交服务工单</button>`)
-    $('#serviceForm').dataset.recordId = record.id
-    $('#serviceForm').dataset.instanceId = instance.id
+    installation.disabled = !installAllowed
+    $('#installChoiceHint').textContent = installAllowed ? '' : '已申请安装'
+    if (!installAllowed && installation.checked) form.querySelector('input[name="type"][value="REPAIR"]').checked = true
+    const faultSelect = form.querySelector('select[name="faultId"]')
+    if (faultSelect) faultSelect.innerHTML = faultOptions(instance.productId)
     updateServiceFields()
   }
 
@@ -216,7 +433,7 @@
   function submitService(form) {
     const data = new FormData(form)
     const record = recordById(form.dataset.recordId)
-    const instance = record?.instances.find((item) => item.id === form.dataset.instanceId)
+    const instance = record?.instances.find((item) => item.id === data.get('instanceId'))
     const type = String(data.get('type') ?? '')
     const error = $('#serviceError')
     if (!record || !instance || instance.status === 'RETURNED') { error.textContent = '购买记录或商品状态已变化，请重新选择。'; error.hidden = false; return }
@@ -263,23 +480,25 @@
     document.addEventListener('click', (event) => {
       const target = event.target.closest('button')
       if (!target) return
-      if (target.dataset.recordId) { state.selectedRecordId = target.dataset.recordId; state.selectedInstanceId = selectedRecord()?.instances[0]?.id ?? null; renderRecords(); return }
+      if (target.dataset.viewRecord) { openRecord(target.dataset.viewRecord); return }
+      if (target.dataset.createService) { openService(target.dataset.createService); return }
       if (target.dataset.orderId) { openOrder(target.dataset.orderId); return }
       if (target.dataset.recordFilter) { state.recordFilter = target.dataset.recordFilter; renderRecords(); return }
       if (target.dataset.orderFilter) { state.orderFilter = target.dataset.orderFilter; renderOrders(); return }
       if (target.dataset.closeDrawer !== undefined) { closeDrawer(); return }
-      if (target.id === 'startServiceButton') { openService(); return }
       if (target.dataset.nav === 'registration') { openRegistration(); return }
+      if (target.dataset.nav === 'orders') { openOrdersOverview(); return }
       if (target.dataset.nav) { const section = { top: '#top', records: '#recordsSection', orders: '#ordersSection' }[target.dataset.nav]; $(section)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); document.querySelectorAll('[data-nav]').forEach((button) => button.classList.toggle('active', button === target)) }
     })
     document.addEventListener('change', (event) => {
-      if (event.target.name === 'selected-instance') { state.selectedInstanceId = event.target.value; renderRecordDetail() }
+      if (event.target.name === 'instanceId') updateServiceInstance()
       if (event.target.name === 'type') updateServiceFields()
     })
     document.addEventListener('submit', (event) => {
       if (event.target.id === 'registrationForm') { event.preventDefault(); submitRegistration(event.target) }
       if (event.target.id === 'serviceForm') { event.preventDefault(); submitService(event.target) }
     })
+    window.addEventListener('resize', drawStoreCharts)
     render()
   }
 

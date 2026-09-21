@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light">
   <meta name="description" content="TOTO 售后服务门店工作台：购买登记、顾客记录定位、发起服务与进度查询。">
   <title>TOTO 售后服务 | 门店工作台原型</title>
-  <link rel="stylesheet" href="dealer-workbench.css">
+  <link rel="stylesheet" href="dealer-workbench.css?v=16">
 </head>
 <body data-view="dealer">
   <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -21,6 +21,8 @@
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c.7-4.2 3.2-6.3 7.5-6.3s6.8 2.1 7.5 6.3"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m4 7 8-4 8 4v10l-8 4-8-4V7Z"/><path d="m4 7 8 4 8-4M12 11v10"/></symbol>
   </svg>
 
   <div class="app-shell">
@@ -38,7 +40,7 @@
       <button class="side-link active" type="button" data-nav="top"><svg><use href="#i-grid"/></svg>门店工作台</button>
       <button class="side-link" type="button" data-nav="registration"><svg><use href="#i-plus"/></svg>购买登记</button>
       <button class="side-link" type="button" data-nav="records"><svg><use href="#i-receipt"/></svg>顾客购买记录</button>
-      <button class="side-link" type="button" data-nav="orders"><svg><use href="#i-clipboard"/></svg>服务工单</button>
+      <button class="side-link" type="button" data-nav="orders"><svg><use href="#i-clipboard"/></svg>服务工单查询</button>
       <div class="sidebar-foot"><svg><use href="#i-store"/></svg><span>购买记录与工单按当前账号的数据权限自动过滤</span></div>
     </aside>
 
@@ -46,29 +48,62 @@
       <div class="workspace-inner">
         <div class="breadcrumb">业务办理 <span>/</span> 门店工作台</div>
         <section class="page-heading">
-          <div><p class="eyebrow">门店服务入口</p><h1>门店工作台</h1><p>从顾客和购买记录出发，办理本次安装或维修需求，并查看后续进展。</p></div>
+          <div><p class="eyebrow">门店业务办理</p><h1>门店工作台</h1><p>登记购买关系、查询本店记录，并从具体商品帮消费者创建服务工单。</p></div>
           <div class="store-context"><label>数据范围</label><div class="store-select-wrap"><svg><use href="#i-store"/></svg><strong>当前账号授权门店</strong></div><small>由组织与门店数据权限自动过滤</small></div>
         </section>
 
         <div class="entry-grid">
-          <section class="lookup-card" aria-labelledby="lookupTitle">
-            <div class="lookup-copy"><span class="step-mark">01 · 接待与查询</span><h2 id="lookupTitle">顾客需要服务，先找到购买记录</h2><p>无论是购买当场提出安装需求，还是之后联系门店报修，都先确认顾客与本次商品。</p></div>
-            <form id="searchForm" class="lookup-form" role="search"><svg><use href="#i-search"/></svg><select id="searchType" aria-label="选择查询字段"><option value="keyword">单号／安装码</option><option value="mobile">手机号</option><option value="name">顾客姓名</option></select><input id="searchInput" type="search" autocomplete="off" placeholder="输入登记单号、安装码或门店名称" aria-label="查找顾客购买记录"><button type="submit">查找记录 <svg><use href="#i-arrow"/></svg></button></form>
-            <div class="lookup-bottom"><span>手机号和姓名按精确条件查询；查到记录后再选择商品办理服务。</span><button id="clearSearch" type="button" hidden>清除查询</button></div>
+          <section class="register-card" aria-labelledby="registerTitle">
+            <div class="register-icon"><svg><use href="#i-plus"/></svg></div>
+            <div class="register-copy"><span class="step-mark">主要工作 · 购买发生时</span><h2 id="registerTitle">登记一笔购买</h2><p>建立消费者与已购商品的关系，作为后续安装、维修和进度查询的业务基础。</p></div>
+            <div class="relationship-flow" aria-label="购买关系">
+              <span class="relationship-node"><i><svg><use href="#i-user"/></svg></i><b>消费者</b></span>
+              <span class="relationship-connector" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
+              <span class="relationship-node"><i><svg><use href="#i-receipt"/></svg></i><b>购买记录</b></span>
+              <span class="relationship-connector" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
+              <span class="relationship-node"><i><svg><use href="#i-package"/></svg></i><b>商品实例</b></span>
+            </div>
+            <div class="register-actions"><button id="registerButton" class="secondary-primary" type="button"><span>开始购买登记</span><span class="register-button-icon"><svg><use href="#i-arrow"/></svg></span></button><small>保存后只生成购买记录，不会自动创建服务工单</small></div>
           </section>
-          <section class="register-card" aria-labelledby="registerTitle"><div class="register-icon"><svg><use href="#i-plus"/></svg></div><span class="step-mark">购买时办理</span><h2 id="registerTitle">新增购买登记</h2><p>记录购买人、门店和商品。保存购买记录本身不会创建服务工单。</p><button id="registerButton" class="secondary-primary" type="button">开始登记 <svg><use href="#i-arrow"/></svg></button></section>
+
+          <section class="store-kpis store-summary-card" aria-label="门店经营指标">
+            <div class="kpi-grid">
+              <article class="kpi-card is-today"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-plus"/></svg></span><b class="kpi-delta is-up">较昨日 +3</b></div><span class="kpi-label">今日登记商品</span><div class="kpi-value"><strong id="todayProductCount">12</strong><small>件</small></div><p>购买登记中的商品实例</p><span class="kpi-decoration" aria-hidden="true"></span></article>
+              <article class="kpi-card is-product"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-store"/></svg></span><b class="kpi-delta is-up">较前 30 天 +8.6%</b></div><span class="kpi-label">近 30 天销售商品</span><div class="kpi-value"><strong id="productSalesCount">286</strong><small>件</small></div><p>按已登记商品实例计</p><span class="kpi-decoration" aria-hidden="true"></span></article>
+              <article class="kpi-card is-customer"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-grid"/></svg></span><b class="kpi-delta is-up">较前 30 天 +6.2%</b></div><span class="kpi-label">近 30 天成交客户</span><div class="kpi-value"><strong id="customerCount">241</strong><small>人</small></div><p>按购买人手机号去重</p><span class="kpi-decoration" aria-hidden="true"></span></article>
+              <article class="kpi-card is-record"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-receipt"/></svg></span><b class="kpi-delta is-up">较前 30 天 +7.5%</b></div><span class="kpi-label">近 30 天购买记录</span><div class="kpi-value"><strong id="purchaseRecordCount">258</strong><small>笔</small></div><p>按购买登记单据计</p><span class="kpi-decoration" aria-hidden="true"></span></article>
+            </div>
+          </section>
         </div>
 
         <div class="work-panels">
           <section class="panel records-panel" id="recordsSection" aria-labelledby="recordsTitle">
-            <div class="panel-head"><div><p class="section-kicker">查找结果与近期记录</p><h2 id="recordsTitle">顾客购买记录</h2><p>选择一条记录，核对商品和已有服务后办理。</p></div><span id="recordCount" class="panel-count"></span></div>
+            <div class="panel-head"><div><p class="section-kicker">本店购买记录</p><h2 id="recordsTitle">购买记录</h2><p>选择一条记录，查看消费者、商品和关联服务。</p></div><span id="recordCount" class="panel-count"></span></div>
+            <div class="records-tools"><form id="searchForm" class="record-search" role="search"><svg><use href="#i-search"/></svg><select id="searchType" aria-label="选择查询字段"><option value="keyword">单号／安装码</option><option value="mobile">手机号</option><option value="name">顾客姓名</option></select><input id="searchInput" type="search" autocomplete="off" placeholder="输入登记单号、安装码或门店名称" aria-label="查找顾客购买记录"><button type="submit">查询</button></form><button id="clearSearch" class="clear-search" type="button" hidden>清除条件</button><span>手机号和姓名按精确条件查询</span></div>
             <div class="filter-row" role="group" aria-label="购买记录筛选"><button class="filter active" type="button" data-record-filter="all">全部记录</button><button class="filter" type="button" data-record-filter="not-appointed">未申请安装</button><button class="filter" type="button" data-record-filter="partial">部分申请</button><span class="filter-note">安装状态仅供筛选，不代表顾客已提出需求</span></div>
-            <div class="record-layout"><div id="recordList" class="record-list" aria-live="polite"></div><div id="recordDetail" class="record-detail"></div></div>
+            <div class="record-table"><div class="record-table-head" aria-hidden="true"><span>消费者／记录</span><span>商品／购买日期</span><span>状态</span><span>操作</span></div><div id="recordList" class="record-list" aria-live="polite"></div></div>
           </section>
 
-          <section class="panel orders-panel" id="ordersSection" aria-labelledby="ordersTitle"><div class="panel-head"><div><p class="section-kicker">提交后的进展</p><h2 id="ordersTitle">服务进度</h2><p>查看授权门店关联工单的安排与履约进展；门店不执行分站、分人或审核。</p></div><span id="orderCount" class="panel-count">仅查看进度</span></div><div class="order-filter" role="group" aria-label="服务进度筛选"><button class="filter active" type="button" data-order-filter="all">全部进度</button><button class="filter" type="button" data-order-filter="PENDING_DISPATCH">客服安排中</button><button class="filter" type="button" data-order-filter="PENDING_ASSIGNMENT">服务站安排中</button><button class="filter" type="button" data-order-filter="PENDING_COMPLETION">服务履约中</button></div><div id="orderList" class="order-list" aria-live="polite"></div></section>
+          <div class="analytics-workspace">
+            <section class="panel trend-panel" aria-labelledby="analyticsTitle">
+              <div class="panel-head analytics-heading"><div><p class="section-kicker">购买登记数据</p><h2 id="analyticsTitle">近 30 日登记趋势</h2><p>商品实例与手机号去重客户。</p></div><div class="trend-legend"><span><i class="product-dot"></i>商品数</span><span><i class="customer-dot"></i>客户数</span></div></div>
+              <div class="trend-canvas-wrap"><canvas id="storeTrendChart" role="img" aria-label="近 30 日商品数和客户数登记趋势"></canvas><div class="chart-axis"><span>08/23</span><span>09/01</span><span>09/11</span><span>09/21</span></div></div>
+              <p class="analytics-foot">商品数按商品实例计；客户数按购买人手机号去重。</p>
+            </section>
+
+            <div class="insight-rail">
+              <section class="panel product-rank-panel" aria-labelledby="productRankTitle">
+                <div class="compact-panel-head"><div><p class="section-kicker">商品结构</p><h2 id="productRankTitle">热销商品</h2><small>按登记件数排序</small></div><span id="productChartTotal" class="chart-total">共 286 件</span></div>
+                <div id="productRankList" class="product-rank-list" role="list" aria-label="近 30 天热销商品排行"></div>
+                <canvas id="productMixChart" class="visually-hidden-chart" role="img" aria-label="近 30 天热销商品横向柱状图"></canvas>
+              </section>
+              <section class="panel customer-mix-panel" aria-labelledby="customerMixTitle">
+                <div class="compact-panel-head"><div><p class="section-kicker">客户结构 · 近 30 天</p><h2 id="customerMixTitle">新客与复购</h2></div><span class="demo-pill">示例</span></div>
+                <div class="customer-mix-body"><canvas id="customerMixChart" role="img" aria-label="近 30 天新客与复购客户结构"></canvas><div class="customer-mix-legend"><div><i class="new-dot"></i><span>新客户</span><strong id="newCustomerCount">198</strong></div><div><i class="repeat-dot"></i><span>复购客户</span><strong id="repeatCustomerCount">43</strong></div><p><b id="repeatCustomerRate">17.8%</b> 客户为复购</p></div></div>
+              </section>
+            </div>
+          </div>
         </div>
-        <p class="page-footnote">原型按当前接口字段演示：购买记录与工单来自账号授权范围；工单状态在门店视角转换为顾客服务进度，分站与分人仍由客服和服务站处理。</p>
       </div>
     </main>
   </div>
@@ -76,6 +111,6 @@
   <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
   <aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden><header class="drawer-head"><div><p id="drawerKicker"></p><h2 id="drawerTitle"></h2></div><button id="closeDrawer" class="icon-button" type="button" aria-label="关闭"><svg><use href="#i-close"/></svg></button></header><div id="drawerBody" class="drawer-body"></div><footer id="drawerFooter" class="drawer-footer"></footer></aside>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="dealer-workbench.js"></script>
+  <script src="dealer-workbench.js?v=16"></script>
 </body>
 </html>

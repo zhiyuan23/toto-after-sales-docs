@@ -38,11 +38,37 @@ test('服务站首版围绕今日履约且不推导负荷',()=>{
   assert.ok(!configsSlice('station').includes('完工审核'))
 })
 
-test('门店首页从顾客与购买记录出发，安装状态仅用于筛选',()=>{
+test('门店首页以购买登记为主任务，代客建单必须从购买记录发起',()=>{
   const dealer=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
-  for(const copy of ['先找到购买记录','新增购买登记','保存购买记录本身不会创建服务工单','未申请安装','部分申请','安装状态仅供筛选，不代表顾客已提出需求','服务进度','客服安排中','服务站安排中','服务履约中'])assert.ok(dealer.includes(copy),`missing ${copy}`)
+  const dealerJs=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
+  const dealerCss=fs.readFileSync(path.join(root,'dealer-workbench.css'),'utf8')
+  for(const copy of ['主要工作 · 购买发生时','登记一笔购买','消费者','购买记录','商品实例','保存后只生成购买记录，不会自动创建服务工单','未申请安装','部分申请','安装状态仅供筛选，不代表顾客已提出需求','服务工单查询'])assert.ok(dealer.includes(copy),`missing ${copy}`)
+  assert.ok(dealerCss.includes('.relationship-flow'))
+  assert.ok(dealer.indexOf('id="recordsSection"')<dealer.indexOf('id="searchForm"'))
+  assert.doesNotMatch(dealer,/id="recordDetail"|id="ordersSection"|class="lookup-card"/)
+  for(const token of ['openOrdersOverview','低频查询 · 当前授权门店','本店服务工单'])assert.ok(dealerJs.includes(token),`missing ${token}`)
   assert.doesNotMatch(dealer,/data-record-filter="pending"|>待建单</)
   assert.doesNotMatch(dealer,/>待分站<|>待分人<|>待完工</)
+})
+
+test('门店概览只使用购买登记可解释的数据及趋势',()=>{
+  const dealer=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
+  const dealerJs=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
+  const dealerCss=fs.readFileSync(path.join(root,'dealer-workbench.css'),'utf8')
+  for(const copy of ['今日登记商品','近 30 天销售商品','近 30 天成交客户','近 30 天购买记录','较前 30 天','近 30 日登记趋势','热销商品','新客与复购','商品数按商品实例计','客户数按购买人手机号去重','storeTrendChart','productMixChart','customerMixChart'])assert.ok(dealer.includes(copy),`missing ${copy}`)
+  for(const token of ['todayProducts','productTrend','customerTrend','topProducts','customerMix','drawStoreTrend','drawProductMix','drawCustomerMix','renderProductRank','renderStoreInsight'])assert.ok(dealerJs.includes(token),`missing ${token}`)
+  for(const token of ['kpi-card-head','kpi-icon','kpi-decoration','productRankList','按登记件数排序','register-button-icon','relationship-node','relationship-connector','#i-user','#i-receipt','#i-package'])assert.ok(dealer.includes(token),`missing ${token}`)
+  assert.match(dealerCss,/\.analytics-workspace \.trend-panel\{grid-row:1/)
+  assert.match(dealerCss,/\.analytics-workspace \.insight-rail\{grid-row:2/)
+  assert.match(dealerCss,/\.analytics-workspace\{grid-template-rows:repeat\(2,minmax\(0,1fr\)\)\}/)
+  assert.match(dealerCss,/\.register-card\{border:0;background:linear-gradient\(135deg,#245fbf,#377ef0\)/)
+  assert.match(dealerCss,/\.relationship-flow\{padding:2px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none\}/)
+  assert.match(dealerCss,/\.relationship-flow\{width:max-content;max-width:100%;grid-template-columns:auto 16px auto 16px auto/)
+  assert.match(dealerCss,/\.register-actions \.secondary-primary\{min-width:196px;height:44px/)
+  assert.doesNotMatch(dealer,/门店数据 · 当前授权范围|>经营概览</)
+  assert.ok(dealer.indexOf('class="work-panels"')<dealer.indexOf('id="analyticsTitle"'),'经营图表应位于核心办理区之后')
+  assert.ok(dealer.indexOf('id="recordsSection"')<dealer.indexOf('id="analyticsTitle"'),'购买记录应与经营趋势组成下方主区域')
+  assert.doesNotMatch(dealer,/id="(?:salesAmount|revenue|profit)|<span>销售额|<h3>销售额|<span>利润|<h3>利润/)
 })
 
 test('客服与服务站旧版保留核心交互、状态和降级动效',()=>{
@@ -61,7 +87,7 @@ test('第二版补齐服务站提交完工和异常处理',()=>{
 
 test('门店服务提交绑定购买记录和商品实例，工单只读查看',()=>{
   const dealer=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
-  for(const token of ['recordId: record.id','instanceId: instance.id','name="type"','name="selected-instance"','activeOrderForInstance','openOrder','submitRegistration','submitService','PENDING_DISPATCH'])assert.ok(dealer.includes(token),`missing ${token}`)
+  for(const token of ['recordId: record.id','instanceId: instance.id','name="type"','name="instanceId"','data-create-service','activeOrderForInstance','openRecord','openService(id)','openOrder','submitRegistration','submitService','PENDING_DISPATCH','代消费者办理 · 来自购买记录'])assert.ok(dealer.includes(token),`missing ${token}`)
   assert.match(dealer,/type === 'INSTALLATION' && instance\.status !== 'AVAILABLE'/)
   assert.match(dealer,/安装码已登记/)
   assert.doesNotMatch(dealer,/PENDING_ACCEPTANCE|待建单|fetch\(/)
@@ -70,8 +96,8 @@ test('门店服务提交绑定购买记录和商品实例，工单只读查看',
 test('门店原型字段与当前购买登记、建单和工单查询契约一致',()=>{
   const html=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
   const dealer=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
-  for(const token of ['data-order-filter="PENDING_DISPATCH"','data-order-filter="PENDING_ASSIGNMENT"','data-order-filter="PENDING_COMPLETION"','id="searchType"','value="mobile"','value="name"'])assert.ok(html.includes(token),`missing ${token}`)
-  for(const token of ['name="storeId"','name="sourceType"','name="quantity"','name="contactName"','name="expectedTimeWindow"','name="faultId"','name="problemDescription"','name="province"','name="district"','clientRequestId'])assert.ok(dealer.includes(token),`missing ${token}`)
+  for(const token of ['id="searchType"','value="mobile"','value="name"','服务工单查询'])assert.ok(html.includes(token),`missing ${token}`)
+  for(const token of ['PENDING_DISPATCH','PENDING_ASSIGNMENT','PENDING_COMPLETION','name="storeId"','name="sourceType"','name="quantity"','name="contactName"','name="expectedTimeWindow"','name="faultId"','name="problemDescription"','name="province"','name="district"','clientRequestId'])assert.ok(dealer.includes(token),`missing ${token}`)
   assert.match(html,/当前账号授权门店/)
   assert.doesNotMatch(html,/id="storeSelect"|直营门店|data-order-filter="active"/)
 })
