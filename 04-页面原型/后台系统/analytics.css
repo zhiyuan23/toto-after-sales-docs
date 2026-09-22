@@ -8,3 +8,4 @@
 @keyframes bar-grow{from{transform:scaleY(0)}}
 @media(max-width:1280px){.analytics-filter{grid-template-columns:repeat(10,minmax(0,1fr))}.filter-actions{grid-column:span 2}.analytics-grid{grid-template-columns:minmax(0,1.45fr) 280px}.chart-legend{width:135px}.analytics-metrics{gap:8px}.analytics-metric{padding:13px}.analytics-metric strong{font-size:21px}.heading-actions{flex-wrap:wrap;justify-content:flex-end}.applied-query>span:last-child{display:none}}
 @media(prefers-reduced-motion:reduce){.bar-item button{animation:none}}
+.version-switch{display:inline-flex;padding:3px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}.version-switch a{display:grid;min-width:46px;height:28px;place-items:center;border-radius:7px;color:var(--text-3);font-size:9px;font-weight:650}.version-switch a[aria-current="page"]{background:var(--primary);color:#fff}.heading-actions .version-switch{margin-left:2px}

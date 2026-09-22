@@ -5,7 +5,7 @@
 | 目录 | 查看入口 | 职责与当前状态 |
 | --- | --- | --- |
 | 小程序 | [打开当前原型](小程序/index.html?consumerVersion=0.13#w-tasks) · [查看与修改指南](小程序/README.md) | 该链接是服务人员端唯一有效开发基线；首页概览卡展示今日预约和等待配件数量，点击直接切换任务列表筛选。服务人员旧版截图与并排预览已清理，日程和地图延期，不属于当前原型或开发范围 |
-| 后台系统 | [总部现版](后台系统/index.html) · [总部地图版](后台系统/headquarters-map.html) · [客服状态辨识优化工作台](后台系统/customer-service-v03.html) · [服务站管理卡片样式](后台系统/service-station-card-prototype.html) · [配件管理](后台系统/parts-management.html#inbound) · [服务质量](后台系统/service-quality.html) · [运营报表](后台系统/operations-report.html) · [查看与修改指南](后台系统/README.md) | 四视角 Web 管理后台原型；总部现版完整保留；客服现版保留，客服工作台已升级为 v0.17：左上消费者主卡作为统一办理入口，第二层状态选中颜色与顶部图标语义色一致，统一模式和单队列模式保持相同高度；主工作面使用“统一工作篮”混合展示待受理、分站、跟进、审核和投诉待办，中间表单随选中任务自适应，右侧提供优先原因、下一项预览和稍后处理，完成后自动接续下一项授权任务；服务站管理卡片提供三个方向，服务站已新增配件入库、库存、领料和退料完整交互原型；其他角色待逐页评审 |
+| 后台系统 | [总部现版](后台系统/index.html) · [总部地图版](后台系统/headquarters-map.html) · [客服状态辨识优化工作台](后台系统/customer-service-v03.html) · [服务站管理卡片样式](后台系统/service-station-card-prototype.html) · [配件管理](后台系统/parts-management.html#inbound) · [服务质量新版](后台系统/service-quality-v2.html)／[旧版](后台系统/service-quality.html) · [运营报表新版](后台系统/operations-report-v2.html)／[旧版](后台系统/operations-report.html) · [查看与修改指南](后台系统/README.md) | 四视角 Web 管理后台原型；总部现版完整保留；服务质量与运营报表新增总部运营视觉新版并保留旧实施基线，两版标题区可直接切换；客服现版保留，客服工作台已升级为 v0.17：左上消费者主卡作为统一办理入口，第二层状态选中颜色与顶部图标语义色一致，统一模式和单队列模式保持相同高度；主工作面使用“统一工作篮”混合展示待受理、分站、跟进、审核和投诉待办，中间表单随选中任务自适应，右侧提供优先原因、下一项预览和稍后处理，完成后自动接续下一项授权任务；服务站管理卡片提供三个方向，服务站已新增配件入库、库存、领料和退料完整交互原型；其他角色待逐页评审 |
 
 ```text
 04-页面原型/
@@ -26,8 +26,8 @@
 └── 后台系统/
     ├── index.html            # 四视角入口与总部运营工作台
     ├── headquarters-map.html # 总部全国地图工作台独立方案
-    ├── service-quality.html  # 总部服务质量实施基线 v1.0
-    ├── operations-report.html # 总部运营报表实施基线 v1.0
+    ├── service-quality-v2.html / service-quality.html # 总部服务质量视觉新版／旧实施基线
+    ├── operations-report-v2.html / operations-report.html # 总部运营报表视觉新版／旧实施基线
     ├── customer-service.html # 客服作业现版入口
     ├── customer-service-v03.html # 客服行动工作台入口（稳定文件名）
     ├── service-station.html  # 服务站作业第一版入口
@@ -37,8 +37,8 @@
     ├── admin.js              # 总部页面交互与演示数据
     ├── headquarters-map.css  # 总部地图工作台布局、图层与动效
     ├── headquarters-map.js   # 省级地图绘制、图层切换与区域联动
-    ├── analytics.css         # 总部专业分析页样式
-    ├── analytics.js          # 质量与报表交互及演示数据
+    ├── analytics-v2.css / analytics-v2.js # 总部专业分析视觉新版样式、图表与交互
+    ├── analytics.css / analytics.js # 两个专业分析旧版样式与交互
     ├── role-workbench.css    # 三个岗位页面、抽屉与角色化动效
     ├── role-workbench.js     # 三个岗位视角结构、演示数据与交互
     ├── customer-service-v03.css # 客服行动工作台样式

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN" data-analytics-v2-page="report">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="TOTO 售后服务总部运营报表新版原型。">
+  <title>运营报表 · 新版 | TOTO 售后服务</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="analytics-v2.css?v=20260922-1">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="TOTO 售后服务首页"><span class="brand-mark" aria-hidden="true"><span>T</span></span><span class="brand-copy"><strong>TOTO 售后服务</strong><small>Blue Whale Digital</small></span></a>
+      <button class="perspective-switch" type="button" id="perspectiveButton"><span class="perspective-icon icon" data-icon="building"></span><span><small>当前工作视角</small><strong>总部运营</strong></span><span class="icon chevron" data-icon="chevron-down"></span></button>
+      <nav class="module-nav" aria-label="一级功能"><a href="index.html" class="module-link is-active"><span class="icon" data-icon="chart"></span>运营管理</a><button type="button" class="module-link" data-preview-link="业务查询"><span class="icon" data-icon="search"></span>业务查询</button><button type="button" class="module-link" data-preview-link="基础资料"><span class="icon" data-icon="archive"></span>基础资料</button></nav>
+      <div class="topbar-actions"><button class="search-trigger" type="button" id="searchButton"><span class="icon" data-icon="search"></span><span>搜索功能</span><kbd>⌘ K</kbd></button><button class="icon-button" type="button" id="fullscreenButton" aria-label="进入全屏"><span class="icon" data-icon="maximize"></span></button><button class="icon-button" type="button" id="refreshButton" aria-label="刷新数据"><span class="icon" data-icon="refresh"></span></button><button class="icon-button" type="button" id="themeButton" aria-label="切换深浅模式"><span class="icon" data-icon="moon"></span></button><button class="user-menu" type="button" data-preview-link="个人菜单"><span class="avatar">雪</span><span>演示用户</span><span class="icon" data-icon="chevron-down"></span></button></div>
+    </header>
+
+    <aside class="sidebar" aria-label="总部运营功能菜单"><div class="sidebar-scroll">
+      <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>运营管理</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><a href="index.html" class="menu-item"><span class="icon" data-icon="gauge"></span><span>运营工作台</span></a><a href="service-quality-v2.html" class="menu-item"><span class="icon" data-icon="shield"></span><span>服务质量</span></a><a href="operations-report-v2.html" class="menu-item is-active"><span class="icon" data-icon="file-chart"></span><span>运营报表</span></a></div></section>
+      <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>业务查询</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><button type="button" class="menu-item" data-preview-link="服务工单"><span class="icon" data-icon="clipboard"></span><span>服务工单</span></button><button type="button" class="menu-item" data-preview-link="顾客购买记录"><span class="icon" data-icon="receipt"></span><span>顾客购买记录</span></button><button type="button" class="menu-item" data-preview-link="安装码管理"><span class="icon" data-icon="scan"></span><span>安装码管理</span></button></div></section>
+      <section class="menu-group"><button class="menu-group-title" type="button" aria-expanded="false"><span>数据与结算</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><a href="operations-report-v2.html" class="menu-item"><span class="icon" data-icon="file-chart"></span><span>运营报表</span></a><button type="button" class="menu-item" data-preview-link="数据任务"><span class="icon" data-icon="database"></span><span>数据任务</span></button></div></section>
+    </div><button class="sidebar-collapse" id="sidebarButton" type="button"><span class="icon" data-icon="panel-left"></span><span>收起菜单</span></button></aside>
+
+    <main class="workspace analytics-v2-workspace" id="workspace">
+      <header class="v2-page-heading reveal">
+        <div><div class="context-line"><span id="fullDate">2026 年 9 月 22 日</span><i></i><span>授权组织范围</span><strong>全国总部</strong></div><div class="title-row"><h1>运营报表</h1><span class="sample-badge"><span class="status-dot"></span>原型演示数据</span></div><p>按已确认维度查看工单规模、结构和变化趋势，并下钻到关联工单。</p></div>
+        <div class="heading-utilities"><span>更新于 <strong id="lastUpdated">09:32</strong></span><nav class="version-switch" aria-label="原型版本"><a href="operations-report-v2.html" aria-current="page">新版</a><a href="operations-report.html">旧版</a></nav><button type="button" class="secondary-button heading-export" id="reportExport"><span class="icon" data-icon="download"></span>导出报表</button></div>
+      </header>
+
+      <section class="v2-filter report-v2-filter reveal" style="--delay:50ms" aria-label="运营报表筛选">
+        <label class="v2-field is-date"><span>创建日期 · 最多 93 天</span><span class="v2-control"><span class="icon" data-icon="calendar"></span><input id="reportStart" type="date" value="2026-08-22"><i>至</i><input id="reportEnd" type="date" value="2026-09-21"></span></label>
+        <label class="v2-field"><span>服务类型</span><span class="v2-control"><select id="reportServiceType"><option value="all">全部类型</option><option value="INSTALLATION">安装</option><option value="REPAIR">维修</option><option value="GUIDANCE">指导</option></select><span class="icon" data-icon="chevron-down"></span></span></label>
+        <label class="v2-field"><span>建单来源</span><span class="v2-control"><select id="reportSource"><option value="all">全部来源</option><option value="CONSUMER">消费者</option><option value="DEALER">门店</option><option value="CUSTOMER_SERVICE">客服</option></select><span class="icon" data-icon="chevron-down"></span></span></label>
+        <div class="dimension-switch" role="tablist" aria-label="报表维度"><span>按维度分析</span><div><button type="button" class="is-active" data-report-dimension="date">日期</button><button type="button" data-report-dimension="type">服务类型</button><button type="button" data-report-dimension="source">建单来源</button><button type="button" data-report-dimension="province">服务省份</button><button type="button" data-report-dimension="station">服务站</button><button type="button" data-report-dimension="store">门店</button><button type="button" data-report-dimension="product">商品</button></div></div>
+        <div class="v2-filter-actions"><button type="button" class="primary-button" id="reportQuery"><span class="icon" data-icon="search"></span>查询</button><button type="button" class="secondary-button" id="reportReset">重置</button></div>
+        <p class="v2-validation" id="reportValidation" role="alert" hidden></p>
+      </section>
+
+      <section class="v2-metric-grid report-metrics reveal" style="--delay:90ms" aria-label="运营报表汇总">
+        <article class="v2-metric is-primary"><span>工单总数</span><strong id="reportTotal">3,735<small> 单</small></strong><p><span>较上期 3,317 单</span><b class="is-up">↑ 12.6%</b></p></article>
+        <article class="v2-metric"><span>当前已关闭</span><strong id="reportClosed">2,904</strong><p><span>查询时当前状态</span><b id="reportClosedRate">77.75%</b></p></article>
+        <article class="v2-metric"><span>当前已取消</span><strong id="reportCancelled">116</strong><p><span>查询时当前状态</span><b id="reportCancelledRate" class="is-down">3.11%</b></p></article>
+        <article class="v2-metric"><span>有投诉工单</span><strong id="reportComplaints">82</strong><p><span>多个投诉只计 1 单</span><b id="reportComplaintRate" class="is-alert">2.20%</b></p></article>
+      </section>
+
+      <section class="v2-main-grid report-main-grid reveal" style="--delay:130ms">
+        <article class="v2-section trend-section"><header><div><h2>30 天工单趋势</h2><p id="reportTrendScope">2026/08/22—2026/09/21 · 按创建日期</p></div><div class="chart-legend"><span><i class="is-volume"></i>工单总数</span><span><i class="is-closed"></i>当前已关闭</span><span><i class="is-cancelled"></i>当前已取消</span><span><i class="is-complaint"></i>有投诉工单</span></div></header><div class="canvas-wrap"><canvas id="reportTrendCanvas" aria-label="三十日工单量、关闭、取消和投诉趋势"></canvas><div class="canvas-tooltip" id="reportChartTooltip" hidden></div></div><footer><span>关闭、取消和投诉反映查询时状态。</span><span>投诉与其他状态可能重叠</span></footer></article>
+        <article class="v2-section structure-section"><header><div><h2>按<span id="reportStructureType">日期</span>结构分析</h2><p>工单总数 Top 6</p></div><a href="#reportDetailTable">查看全部<span class="icon" data-icon="chevron-right"></span></a></header><div class="structure-list" id="reportStructure"></div><p class="comparison-note"><span class="icon" data-icon="info"></span><span id="reportStructureNote">各组同组内按工单 ID 去重。</span></p></article>
+      </section>
+
+      <section class="v2-section observation-section reveal" style="--delay:160ms"><header><div><h2>运营观察</h2><p>仅依据当前周期与上期对比生成</p></div></header><div class="observation-list" id="reportObservations"></div></section>
+
+      <section class="v2-section table-section report-table-section reveal" style="--delay:190ms" id="reportDetailTable"><header><div><h2>按<span id="reportTableType">日期</span>分组明细</h2><p id="reportTableDescription">同组内按工单 ID 去重</p></div><button type="button" class="secondary-button" id="reportStateButton"><span class="icon" data-icon="flask"></span>状态演示</button></header><div class="v2-table-wrap"><table><thead><tr><th id="reportGroupHeader">日期</th><th>工单总数</th><th>当前已关闭</th><th>当前已取消</th><th>有投诉工单</th><th>关闭率</th><th>取消率</th><th>投诉率</th><th></th></tr></thead><tbody id="reportRows"></tbody></table><div class="v2-table-state" id="reportTableState" hidden></div></div><footer class="v2-table-footer"><span id="reportTableCount">共 7 个日期分组</span><div><button type="button" disabled>上一页</button><strong>1</strong><button type="button">下一页</button></div></footer></section>
+
+      <aside class="v2-boundary"><span class="icon" data-icon="info"></span><p><strong>口径说明：</strong>工单按创建日期选取；关闭、取消和投诉是查询时状态，投诉与其他状态可能重叠。商品维度下同一工单可出现在多个商品组，禁止跨组加总。</p></aside>
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="detail-drawer analytics-drawer" id="analyticsDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden><header><div><span>运营报表详情</span><h2 id="drawerTitle">—</h2></div><button class="icon-button" type="button" id="closeDrawer" aria-label="关闭详情"><span class="icon" data-icon="x"></span></button></header><div class="detail-content" id="drawerContent"></div><footer><button class="secondary-button" type="button" id="drawerCloseButton">关闭</button><button class="primary-button" type="button" id="drawerAction">查看关联工单</button></footer></aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="analytics-v2.js?v=20260922-1"></script>
+</body>
+</html>

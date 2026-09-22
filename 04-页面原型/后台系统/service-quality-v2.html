@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN" data-analytics-v2-page="quality">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="TOTO 售后服务总部运营服务质量新版原型。">
+  <title>服务质量 · 新版 | TOTO 售后服务</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="analytics-v2.css?v=20260922-1">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="TOTO 售后服务首页"><span class="brand-mark" aria-hidden="true"><span>T</span></span><span class="brand-copy"><strong>TOTO 售后服务</strong><small>Blue Whale Digital</small></span></a>
+      <button class="perspective-switch" type="button" id="perspectiveButton"><span class="perspective-icon icon" data-icon="building"></span><span><small>当前工作视角</small><strong>总部运营</strong></span><span class="icon chevron" data-icon="chevron-down"></span></button>
+      <nav class="module-nav" aria-label="一级功能"><a href="index.html" class="module-link is-active"><span class="icon" data-icon="chart"></span>运营管理</a><button type="button" class="module-link" data-preview-link="业务查询"><span class="icon" data-icon="search"></span>业务查询</button><button type="button" class="module-link" data-preview-link="基础资料"><span class="icon" data-icon="archive"></span>基础资料</button></nav>
+      <div class="topbar-actions"><button class="search-trigger" type="button" id="searchButton"><span class="icon" data-icon="search"></span><span>搜索功能</span><kbd>⌘ K</kbd></button><button class="icon-button" type="button" id="fullscreenButton" aria-label="进入全屏"><span class="icon" data-icon="maximize"></span></button><button class="icon-button" type="button" id="refreshButton" aria-label="刷新数据"><span class="icon" data-icon="refresh"></span></button><button class="icon-button" type="button" id="themeButton" aria-label="切换深浅模式"><span class="icon" data-icon="moon"></span></button><button class="user-menu" type="button" data-preview-link="个人菜单"><span class="avatar">雪</span><span>演示用户</span><span class="icon" data-icon="chevron-down"></span></button></div>
+    </header>
+
+    <aside class="sidebar" aria-label="总部运营功能菜单"><div class="sidebar-scroll">
+      <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>运营管理</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><a href="index.html" class="menu-item"><span class="icon" data-icon="gauge"></span><span>运营工作台</span></a><a href="service-quality-v2.html" class="menu-item is-active"><span class="icon" data-icon="shield"></span><span>服务质量</span></a><a href="operations-report-v2.html" class="menu-item"><span class="icon" data-icon="file-chart"></span><span>运营报表</span></a></div></section>
+      <section class="menu-group is-open"><button class="menu-group-title" type="button" aria-expanded="true"><span>业务查询</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><button type="button" class="menu-item" data-preview-link="服务工单"><span class="icon" data-icon="clipboard"></span><span>服务工单</span></button><button type="button" class="menu-item" data-preview-link="顾客购买记录"><span class="icon" data-icon="receipt"></span><span>顾客购买记录</span></button><button type="button" class="menu-item" data-preview-link="安装码管理"><span class="icon" data-icon="scan"></span><span>安装码管理</span></button></div></section>
+      <section class="menu-group"><button class="menu-group-title" type="button" aria-expanded="false"><span>渠道与网点</span><span class="icon" data-icon="chevron-down"></span></button><div class="menu-list"><button type="button" class="menu-item" data-preview-link="代理商管理"><span class="icon" data-icon="building"></span><span>代理商管理</span></button><button type="button" class="menu-item" data-preview-link="门店管理"><span class="icon" data-icon="store"></span><span>门店管理</span></button><button type="button" class="menu-item" data-preview-link="服务站管理"><span class="icon" data-icon="wrench"></span><span>服务站管理</span></button></div></section>
+    </div><button class="sidebar-collapse" id="sidebarButton" type="button"><span class="icon" data-icon="panel-left"></span><span>收起菜单</span></button></aside>
+
+    <main class="workspace analytics-v2-workspace" id="workspace">
+      <header class="v2-page-heading reveal">
+        <div><div class="context-line"><span id="fullDate">2026 年 9 月 22 日</span><i></i><span>授权组织范围</span><strong>全国总部</strong></div><div class="title-row"><h1>服务质量</h1><span class="sample-badge"><span class="status-dot"></span>原型演示数据</span></div><p>从服务过程、结果和用户反馈，综合查看全国售后服务表现。</p></div>
+        <div class="heading-utilities"><span>更新于 <strong id="lastUpdated">09:32</strong></span><nav class="version-switch" aria-label="原型版本"><a href="service-quality-v2.html" aria-current="page">新版</a><a href="service-quality.html">旧版</a></nav></div>
+      </header>
+
+      <section class="v2-filter reveal" style="--delay:50ms" aria-label="服务质量筛选">
+        <label class="v2-field is-date"><span>统计周期</span><span class="v2-control"><span class="icon" data-icon="calendar"></span><input id="qualityStart" type="date" value="2026-08-22"><i>至</i><input id="qualityEnd" type="date" value="2026-09-21"></span></label>
+        <label class="v2-field"><span>统计对象</span><span class="v2-control"><select id="qualityType"><option value="region">区域</option><option value="station">服务站</option><option value="personnel">服务人员</option></select><span class="icon" data-icon="chevron-down"></span></span></label>
+        <label class="v2-field is-keyword"><span>对象关键词</span><span class="v2-control"><span class="icon" data-icon="search"></span><input id="qualityKeyword" type="search" placeholder="输入名称或编码"></span></label>
+        <div class="v2-filter-actions"><button type="button" class="primary-button" id="qualityQuery"><span class="icon" data-icon="search"></span>查询</button><button type="button" class="secondary-button" id="qualityReset">重置</button></div>
+        <p class="v2-validation" id="qualityValidation" role="alert" hidden></p>
+      </section>
+
+      <section class="v2-metric-grid reveal" style="--delay:90ms" aria-label="质量汇总指标">
+        <article class="v2-metric is-primary"><span>服务量</span><span class="metric-symbol"><span class="icon" data-icon="clipboard"></span></span><strong id="qualityVolume">7,642<small> 单</small></strong><p><span id="qualityPreviousVolume">较前期 6,981 单</span><b class="is-up">↑ 9.5%</b></p></article>
+        <article class="v2-metric"><span>及时率</span><span class="metric-symbol"><span class="icon" data-icon="clock"></span></span><strong id="qualityTimely">96.10%</strong><p><span id="qualityTimelyFraction">7,344 / 7,642 单</span><b class="is-up">↑ 0.8 个百分点</b></p></article>
+        <article class="v2-metric"><span>一次完工率</span><span class="metric-symbol"><span class="icon" data-icon="wrench"></span></span><strong id="qualityFirstFix">92.60%</strong><p><span id="qualityFirstFixFraction">7,076 / 7,642 单</span><b class="is-up">↑ 0.8 个百分点</b></p></article>
+        <article class="v2-metric is-paired"><span class="metric-symbol is-teal"><span class="icon" data-icon="receipt"></span></span><div><span>评价覆盖率</span><strong id="qualityRatingCoverage">68.30%</strong><p id="qualityRatedFraction">5,217 / 7,642 单</p></div><div><span>评价均分</span><strong id="qualityRating">4.72<small> 分</small></strong><p>基于已有评价</p></div></article>
+        <article class="v2-metric"><span>投诉率</span><span class="metric-symbol is-danger"><span class="icon" data-icon="triangle-alert"></span></span><strong id="qualityComplaintRate">0.82%</strong><p><span id="qualityComplaintFraction">63 / 7,642 单</span><b class="is-down">↓ 0.2 个百分点</b></p></article>
+      </section>
+
+      <section class="v2-main-grid reveal" style="--delay:130ms">
+        <article class="v2-section trend-section"><header><div><h2>服务质量趋势</h2><p id="qualityTrendScope">2026/08/22—2026/09/21 · 全国汇总</p></div><div class="chart-legend" aria-label="图例"><span><i class="is-volume"></i>服务量</span><span><i class="is-timely"></i>及时率</span><span><i class="is-first-fix"></i>一次完工率</span></div></header><div class="canvas-wrap"><canvas id="qualityTrendCanvas" aria-label="服务量、及时率和一次完工率三十日趋势"></canvas><div class="canvas-tooltip" id="qualityChartTooltip" hidden></div></div><footer><span>柱形按日展示服务量，折线按对应分子与分母计算。</span><span>不对对象百分比再次平均</span></footer></article>
+        <article class="v2-section comparison-section"><header><div><h2><span id="qualityComparisonType">区域</span>服务质量对比</h2><p>同周期对象横向比较</p></div><a href="#qualityDetailTable">查看明细<span class="icon" data-icon="chevron-right"></span></a></header><div class="metric-tabs" role="tablist" aria-label="对比指标"><button type="button" class="is-active" data-quality-rank="timely">及时率</button><button type="button" data-quality-rank="firstFix">一次完工率</button><button type="button" data-quality-rank="complaintRate">投诉率</button><button type="button" data-quality-rank="serviceCount">服务量</button></div><div class="ranking-bars" id="qualityRanking"></div><p class="comparison-note"><span class="icon" data-icon="info"></span>颜色只表达当前对象之间的相对位置，不代表 SLA 达标或违规。</p></article>
+      </section>
+
+      <section class="v2-detail-grid reveal" style="--delay:170ms">
+        <article class="v2-section attention-section"><header><div><h2>重点关注</h2><p>按量级与相对质量表现综合排序</p></div><div class="object-tabs" role="tablist"><button type="button" class="is-active" data-attention-type="station">服务站</button><button type="button" data-attention-type="personnel">服务人员</button><button type="button" data-attention-type="region">区域</button></div></header><div class="attention-list" id="qualityAttention"></div></article>
+        <article class="v2-section table-section" id="qualityDetailTable"><header><div><h2><span id="qualityTableType">区域</span>明细</h2><p>点击行查看事实与下钻条件</p></div><button type="button" class="secondary-button" id="qualityExport"><span class="icon" data-icon="download"></span>导出</button></header><div class="v2-table-wrap"><table><thead><tr><th>统计对象</th><th>服务量</th><th>及时率</th><th>一次完工率</th><th>评价均分</th><th>投诉数</th><th></th></tr></thead><tbody id="qualityRows"></tbody></table><div class="v2-table-state" id="qualityTableState" hidden></div></div><footer class="v2-table-footer"><span id="qualityTableCount">共 7 条</span><div><button type="button" disabled>上一页</button><strong>1</strong><button type="button" disabled>下一页</button></div></footer></article>
+      </section>
+
+      <aside class="v2-boundary"><span class="icon" data-icon="info"></span><p><strong>口径说明：</strong>汇总指标必须由同授权范围、同周期的分子与分母聚合计算；页面不设置未确认的 SLA 阈值，也不对多个对象的百分比直接求平均。</p></aside>
+    </main>
+  </div>
+
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="detail-drawer analytics-drawer" id="analyticsDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden><header><div><span>质量对象详情</span><h2 id="drawerTitle">—</h2></div><button class="icon-button" type="button" id="closeDrawer" aria-label="关闭详情"><span class="icon" data-icon="x"></span></button></header><div class="detail-content" id="drawerContent"></div><footer><button class="secondary-button" type="button" id="drawerCloseButton">关闭</button><button class="primary-button" type="button" id="drawerAction">查看关联工单</button></footer></aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="analytics-v2.js?v=20260922-1"></script>
+</body>
+</html>
