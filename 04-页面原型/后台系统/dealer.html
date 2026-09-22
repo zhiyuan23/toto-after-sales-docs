@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light">
   <meta name="description" content="TOTO 售后服务门店工作台：购买登记、顾客记录定位、发起服务与进度查询。">
   <title>TOTO 售后服务 | 门店工作台原型</title>
-  <link rel="stylesheet" href="dealer-workbench.css?v=16">
+  <link rel="stylesheet" href="dealer-workbench.css?v=20">
 </head>
 <body data-view="dealer">
   <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -55,7 +55,7 @@
         <div class="entry-grid">
           <section class="register-card" aria-labelledby="registerTitle">
             <div class="register-icon"><svg><use href="#i-plus"/></svg></div>
-            <div class="register-copy"><span class="step-mark">主要工作 · 购买发生时</span><h2 id="registerTitle">登记一笔购买</h2><p>建立消费者与已购商品的关系，作为后续安装、维修和进度查询的业务基础。</p></div>
+            <div class="register-copy"><h2 id="registerTitle">登记一笔购买</h2><p>建立消费者与已购商品的关系，作为后续安装、维修和进度查询的业务基础。</p></div>
             <div class="relationship-flow" aria-label="购买关系">
               <span class="relationship-node"><i><svg><use href="#i-user"/></svg></i><b>消费者</b></span>
               <span class="relationship-connector" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
@@ -68,10 +68,10 @@
 
           <section class="store-kpis store-summary-card" aria-label="门店经营指标">
             <div class="kpi-grid">
-              <article class="kpi-card is-today"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-plus"/></svg></span><b class="kpi-delta is-up">较昨日 +3</b></div><span class="kpi-label">今日登记商品</span><div class="kpi-value"><strong id="todayProductCount">12</strong><small>件</small></div><p>购买登记中的商品实例</p><span class="kpi-decoration" aria-hidden="true"></span></article>
-              <article class="kpi-card is-product"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-store"/></svg></span><b class="kpi-delta is-up">较前 30 天 +8.6%</b></div><span class="kpi-label">近 30 天销售商品</span><div class="kpi-value"><strong id="productSalesCount">286</strong><small>件</small></div><p>按已登记商品实例计</p><span class="kpi-decoration" aria-hidden="true"></span></article>
-              <article class="kpi-card is-customer"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-grid"/></svg></span><b class="kpi-delta is-up">较前 30 天 +6.2%</b></div><span class="kpi-label">近 30 天成交客户</span><div class="kpi-value"><strong id="customerCount">241</strong><small>人</small></div><p>按购买人手机号去重</p><span class="kpi-decoration" aria-hidden="true"></span></article>
-              <article class="kpi-card is-record"><div class="kpi-card-head"><span class="kpi-icon"><svg><use href="#i-receipt"/></svg></span><b class="kpi-delta is-up">较前 30 天 +7.5%</b></div><span class="kpi-label">近 30 天购买记录</span><div class="kpi-value"><strong id="purchaseRecordCount">258</strong><small>笔</small></div><p>按购买登记单据计</p><span class="kpi-decoration" aria-hidden="true"></span></article>
+              <article class="kpi-card is-today"><span class="kpi-icon"><svg><use href="#i-plus"/></svg></span><div class="kpi-main"><span class="kpi-label">今日登记商品</span><div class="kpi-value"><strong id="todayProductCount">12</strong><small>件</small></div></div><div class="kpi-meta"><b class="kpi-delta is-up">较昨日 +3</b><p>购买登记中的商品实例</p></div></article>
+              <article class="kpi-card is-product"><span class="kpi-icon"><svg><use href="#i-store"/></svg></span><div class="kpi-main"><span class="kpi-label">近 30 天销售商品</span><div class="kpi-value"><strong id="productSalesCount">286</strong><small>件</small></div></div><div class="kpi-meta"><b class="kpi-delta is-up">较前 30 天 +8.6%</b><p>按已登记商品实例计</p></div></article>
+              <article class="kpi-card is-customer"><span class="kpi-icon"><svg><use href="#i-grid"/></svg></span><div class="kpi-main"><span class="kpi-label">近 30 天成交客户</span><div class="kpi-value"><strong id="customerCount">241</strong><small>人</small></div></div><div class="kpi-meta"><b class="kpi-delta is-up">较前 30 天 +6.2%</b><p>按购买人手机号去重</p></div></article>
+              <article class="kpi-card is-record"><span class="kpi-icon"><svg><use href="#i-receipt"/></svg></span><div class="kpi-main"><span class="kpi-label">近 30 天购买记录</span><div class="kpi-value"><strong id="purchaseRecordCount">258</strong><small>笔</small></div></div><div class="kpi-meta"><b class="kpi-delta is-up">较前 30 天 +7.5%</b><p>按购买登记单据计</p></div></article>
             </div>
           </section>
         </div>
@@ -111,6 +111,6 @@
   <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
   <aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden><header class="drawer-head"><div><p id="drawerKicker"></p><h2 id="drawerTitle"></h2></div><button id="closeDrawer" class="icon-button" type="button" aria-label="关闭"><svg><use href="#i-close"/></svg></button></header><div id="drawerBody" class="drawer-body"></div><footer id="drawerFooter" class="drawer-footer"></footer></aside>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="dealer-workbench.js?v=16"></script>
+  <script src="dealer-workbench.js?v=20"></script>
 </body>
 </html>
