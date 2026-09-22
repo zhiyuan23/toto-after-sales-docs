@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url'
 export const LOCAL_BACKEND_PORT = 8080
 export const LOCAL_BACKEND_BASE_URL = `http://127.0.0.1:${LOCAL_BACKEND_PORT}/api`
 export const LOCAL_REDIS_PORT = 16379
+export const LOCAL_BACKEND_PROBE_TIMEOUT_MS = 5000
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
 const workspaceRoot = resolve(scriptDirectory, '../../..')
@@ -136,8 +137,8 @@ function writeBackendState({ fingerprint, pid, runtimeJar }) {
   writeFileSync(backendStateFile, `${JSON.stringify({ version: 1, fingerprint, pid, runtimeJar, builtAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 })
 }
 
-async function inspectLocalBackend(sourceSnapshot) {
-  const probes = await probeUnifiedBackend()
+async function inspectLocalBackend(sourceSnapshot, knownProbes) {
+  const probes = knownProbes ?? await probeUnifiedBackend()
   const pids = await processIdsOnPort(LOCAL_BACKEND_PORT)
   const listeners = await Promise.all(pids.map(async pid => {
     const command = await processCommand(pid)
@@ -198,7 +199,7 @@ function httpProbe({ path, headers = {} }) {
       port: LOCAL_BACKEND_PORT,
       path,
       method: 'GET',
-      timeout: 1500,
+      timeout: LOCAL_BACKEND_PROBE_TIMEOUT_MS,
       headers: { Accept: 'application/json', ...headers },
     }, response => {
       let body = ''
@@ -411,8 +412,8 @@ export async function ensureLocalBackend() {
     await ensureRedis()
     const pid = await spawnDetached('bash', [backendScript], { cwd: workspaceRoot, logFile: backendLog })
     console.log(`[backend] 正在装配售后模块并启动共享后端（PID ${pid}），首次启动通常需要约 1–2 分钟`)
-    await waitForBackend(pid)
-    const started = await inspectLocalBackend(sourceSnapshot)
+    const readyProbes = await waitForBackend(pid)
+    const started = await inspectLocalBackend(sourceSnapshot, readyProbes)
     if (!started.ready || !started.managed) throw new Error('新后端已响应但无法确认其属于当前工作区，拒绝记录为可复用实例')
     writeBackendState({ fingerprint: sourceSnapshot.fingerprint, pid: started.managed.pid, runtimeJar: started.managed.runtimeJar })
     console.log(`[backend] 已就绪并保持运行：${LOCAL_BACKEND_BASE_URL}`)

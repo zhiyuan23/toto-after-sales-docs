@@ -10,11 +10,13 @@ import {
   isUnifiedBackendReady,
   isWebProbeReady,
   LOCAL_BACKEND_BASE_URL,
+  LOCAL_BACKEND_PROBE_TIMEOUT_MS,
   managedBackendRuntime,
 } from './local-backend.mjs'
 
 test('shared local backend uses the Gaia context path on one canonical port', () => {
   assert.equal(LOCAL_BACKEND_BASE_URL, 'http://127.0.0.1:8080/api')
+  assert.equal(LOCAL_BACKEND_PROBE_TIMEOUT_MS, 5000)
 })
 
 test('web readiness requires the expected anonymous Gaia response', () => {
