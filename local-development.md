@@ -10,7 +10,7 @@
 - 数据库凭据只保存在宿主 `.local/application.properties`，目录已忽略，文件权限为 `600`。不要提交、分享或把密码复制到前端环境变量。连接使用 TLS 加密；当前 `sslMode=REQUIRED` 不等同于已配置 CA 和服务器身份校验。
 - Web 使用 `VITE_API_URL=http://127.0.0.1:8080/api/`；两个小程序的 `pnpm dev`／`pnpm dev:h5` 默认注入 `GAIA_API_BASE_URL=http://127.0.0.1:8080/api`。三端都保留接口自己的 `/api`，因此宿主实际收到 `/api/api/...`，不要误删一层。
 - Redis 使用独立本地端口 `16379`，不连接共享测试 Redis，也不占用已有的 `6379`。自动改表、业务启动初始化、日志消费者、租户同步订阅和通知已在本机配置中关闭。
-- 普通开发连接具有写权限，页面的保存、删除会真实影响共享测试库。未经针对目标库和脚本的明确授权，不要运行迁移、初始化 SQL 或清库脚本；建议后续由 DBA 提供限定库权限的开发账号替代 root。
+- 普通开发连接具有写权限，页面的保存、删除会真实影响共享测试库。正常功能开发所需的测试库迁移、对应菜单／操作权限和可追踪测试数据，已获持续授权；执行前必须确认当前连接的目标库、核对脚本影响与依赖、准备适用备份或回退方案，执行后回读并记入功能 Spec。清库、大范围破坏性或跨功能批量修改及生产库操作仍须单独明确授权；建议后续由 DBA 提供限定库权限的开发账号替代 root。
 
 ### 启动与断点调试
 
@@ -20,7 +20,7 @@
 yarn dev:full
 ```
 
-该命令会先关闭上一轮仍占用 7004/9010 的本工作区 Vite 进程，再调用 `scripts/local-backend.mjs`。启动器对售后模块、聚合宿主的 POM 与 `src/main` 以及后端启动脚本计算内容指纹：8080 同时具备 Web／移动能力、属于本工作区受管运行包且指纹与当前源码一致时才复用；源码变化时会在跨项目启动锁内安全关闭旧 JVM、重新安装售后模块并装配宿主；端口属于其他程序时明确列出 PID 并拒绝强杀。若本机限制 `ps` 读取命令行，启动器会结合进程工作目录及其已打开的本工作区运行 JAR 校验归属，无法确认时仍拒绝自动关闭。最后启动 7004 主系统和 9010 售后子系统前端。后端首次装配通常需要约 1–2 分钟；本次目标测试库冷启动包含大量类扫描和售后主键水位核对，实际更久，启动探针等待上限已调为 12 分钟。出现“已就绪”日志后访问 `http://127.0.0.1:7004/`。共享 Redis 和后端独立常驻，`Ctrl+C` 只停止本次前端，不影响同时运行的两个小程序。该入口依赖当前跨仓目录结构以及本机 bash、JDK 21、Maven、Redis、lsof，仅支持 macOS/Linux。
+该命令会先关闭上一轮仍占用 7004/9010 的本工作区 Vite 进程，再调用 `scripts/local-backend.mjs`。启动器对共享 `gaia-sys`、售后模块、聚合宿主的 POM 与 `src/main` 以及后端启动脚本计算内容指纹：8080 同时具备 Web／移动能力、属于本工作区受管运行包且指纹与当前源码一致时才复用；源码变化时会在跨项目启动锁内安全关闭旧 JVM、重新安装宿主依赖的 Gaia 系统模块与售后模块并装配宿主；端口属于其他程序时明确列出 PID 并拒绝强杀。若本机限制 `ps` 读取命令行，启动器会结合进程工作目录及其已打开的本工作区运行 JAR 校验归属，无法确认时仍拒绝自动关闭。最后启动 7004 主系统和 9010 售后子系统前端。后端首次装配通常需要约 1–2 分钟；本次目标测试库冷启动包含大量类扫描和售后主键水位核对，实际更久，启动探针等待上限已调为 12 分钟。出现“已就绪”日志后访问 `http://127.0.0.1:7004/`。共享 Redis 和后端独立常驻，`Ctrl+C` 只停止本次前端，不影响同时运行的两个小程序。该入口依赖当前跨仓目录结构以及本机 bash、JDK 21、Maven、Redis、lsof，仅支持 macOS/Linux。
 
 只运行售后子系统时，优先在本工作区 `docs/toto` 根目录执行：
 
@@ -45,11 +45,13 @@ pnpm dev:h5 TOTO
 redis-server --bind 127.0.0.1 --port 16379 --protected-mode yes --save '' --appendonly no
 ```
 
-在本工作区 `docs/toto` 下启动后端；脚本先安装本地售后模块，再打包宿主，并将可执行 JAR 复制为 `.local/runtime/` 下的本次运行副本后启动，避免后续 Maven 打包覆盖 `target/gaia-web.jar` 时破坏运行中 JVM 的延迟类加载。这里只做构建并跳过测试，不代表业务测试通过：
+在本工作区 `docs/toto` 下启动后端；脚本先清理并安装宿主依赖的 Gaia 系统模块与售后模块，再打包宿主，并将可执行 JAR 复制为 `.local/runtime/` 下的本次运行副本后启动，避免后续 Maven 打包覆盖 `target/gaia-web.jar` 时破坏运行中 JVM 的延迟类加载。这里只做构建并跳过测试，不代表业务测试通过：
 
 ```bash
 bash scripts/start-local-backend.sh
 ```
+
+本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用自己的 Logback 文件仍在 `.local/logs/gaia_saas/` 按大小滚动。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log`；旧版无上限的 `shared-backend.log` 不再使用。
 
 在 `frontend/gaia-ui` 下启动前端；根项目使用 Node 22 / Yarn，编排脚本为售后子项目单独使用 Node 24 / pnpm：
 
@@ -124,6 +126,10 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 | `gaia-saas-proj` | JDK 21、内部 Gaia 制品；Web JAR 为默认售后宿主 | 装配前提满足后执行 `mvn -B -pl gaia-saas-web-jar -am verify`；入口 `com.ehsure.gaia.WebApplication` |
 
 开始任务时分别检查 Git 状态；管理后台同时检查 `git submodule status`，保留 `src/views/common` 的已有变化。私服认证使用开发者本机 Maven settings，不写入 POM。
+
+### 小程序同一 Wi-Fi 真机调试
+
+本机后端默认只监听 `127.0.0.1:8080`，手机无法访问电脑的回环地址。需要在 `backend/gaia-saas-proj/.local/application.properties` 将 `server.address` 设为 `0.0.0.0` 并重启后端；保持 Redis 仅监听回环地址。然后在消费者端和服务人员端各自未提交的 `.env.development.local` 设置 `GAIA_API_BASE_URL=http://<电脑局域网IP>:8080/api`，分别运行 `pnpm dev TOTO`。开发命令会识别本机网卡 IP，继续启动或复用共享后端。电脑 IP 变化时更新两处本地配置；手机与电脑须处于可互访的同一网络，电脑防火墙允许 8080 入站。微信开发者工具勾选“不校验合法域名”，手机预览时打开调试模式；体验版及正式版仍使用微信后台已配置的 HTTPS 合法域名。该地址只写入本地开发配置，不进入仓库或正式产物。
 
 ## 2. 真实联调的前置条件
 

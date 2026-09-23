@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import {
   closeSync,
   existsSync,
+  fchmodSync,
   mkdirSync,
   openSync,
   readdirSync,
@@ -27,8 +28,10 @@ const backendRoot = resolve(workspaceRoot, 'backend/gaia-saas-proj')
 const runtimeRoot = resolve(backendRoot, '.local/runtime')
 const logRoot = resolve(backendRoot, '.local/logs')
 const backendScript = resolve(scriptDirectory, 'start-local-backend.sh')
+const boundedBackendLogScript = resolve(scriptDirectory, 'bounded-backend-log.mjs')
 const startupLock = resolve(runtimeRoot, 'shared-backend-start.lock')
-const backendLog = resolve(logRoot, 'shared-backend.log')
+const backendBootstrapLog = resolve(logRoot, 'shared-backend-bootstrap.log')
+const backendLogForPid = pid => resolve(logRoot, `shared-backend-${pid}.log`)
 const backendStateFile = resolve(runtimeRoot, 'shared-backend-state.json')
 const redisLog = resolve(logRoot, 'shared-redis.log')
 const redisPidFile = resolve(runtimeRoot, 'shared-redis.pid')
@@ -71,7 +74,9 @@ export function fingerprintBackendFiles(entries) {
 
 function backendSourceSnapshot() {
   const afterSalesRoot = resolve(workspaceRoot, 'backend/gaia-after-sales')
+  const gaiaSysRoot = resolve(workspaceRoot, 'backend/gaia-sys')
   const repositories = [
+    { label: 'gaia-sys', root: gaiaSysRoot },
     { label: 'gaia-after-sales', root: afterSalesRoot },
     { label: 'gaia-saas-proj', root: backendRoot },
   ]
@@ -80,6 +85,7 @@ function backendSourceSnapshot() {
     path,
   })))
   entries.push({ key: 'docs/toto/scripts/start-local-backend.sh', path: backendScript })
+  entries.push({ key: 'docs/toto/scripts/bounded-backend-log.mjs', path: boundedBackendLogScript })
   return fingerprintBackendFiles(entries)
 }
 
@@ -166,7 +172,25 @@ async function stopManagedBackend(processInfo) {
   console.log(`[backend] 检测到本工作区旧后端（PID ${processInfo.pid}），正在安全重启`)
   try { process.kill(processInfo.pid, 'SIGTERM') }
   catch (error) { if (error.code !== 'ESRCH') throw error }
-  await waitUntil(async () => !(await portIsOpen(LOCAL_BACKEND_PORT)), 20000, '旧 Gaia 统一后端退出')
+  try {
+    await waitUntil(() => !processIsAlive(processInfo.pid), 20000, '旧 Gaia 统一后端退出')
+  }
+  catch (error) {
+    const command = await processCommand(processInfo.pid)
+    const current = {
+      pid: processInfo.pid,
+      command,
+      cwd: await processWorkingDirectory(processInfo.pid),
+      openFiles: command ? [] : await processOpenFiles(processInfo.pid),
+    }
+    if (managedBackendRuntime(current) !== processInfo.runtimeJar)
+      throw new Error(`旧后端 PID ${processInfo.pid} 未退出且进程归属已变化，拒绝强制终止：${error.message}`)
+    console.log(`[backend] 旧后端 PID ${processInfo.pid} 在 20 秒内未退出，确认归属后强制终止`)
+    try { process.kill(processInfo.pid, 'SIGKILL') }
+    catch (killError) { if (killError.code !== 'ESRCH') throw killError }
+    await waitUntil(() => !processIsAlive(processInfo.pid), 5000, '旧 Gaia 统一后端强制退出')
+  }
+  await waitUntil(async () => !(await portIsOpen(LOCAL_BACKEND_PORT)), 5000, '旧 Gaia 统一后端端口释放')
   rmSync(backendStateFile, { force: true })
 }
 
@@ -318,8 +342,9 @@ function releaseStartupLock() {
   }
 }
 
-function spawnDetached(command, args, { cwd, logFile }) {
-  const output = openSync(logFile, 'a')
+function spawnDetached(command, args, { cwd, logFile, truncateLog = false }) {
+  const output = openSync(logFile, truncateLog ? 'w' : 'a', 0o600)
+  fchmodSync(output, 0o600)
   const child = spawn(command, args, {
     cwd,
     detached: true,
@@ -395,6 +420,7 @@ export async function ensureLocalBackend() {
     await wait(500)
   }
 
+  let backendLog = backendBootstrapLog
   try {
     const locked = await inspectLocalBackend(sourceSnapshot)
     if (locked.ready && locked.fresh) {
@@ -410,7 +436,12 @@ export async function ensureLocalBackend() {
     }
 
     await ensureRedis()
-    const pid = await spawnDetached('bash', [backendScript], { cwd: workspaceRoot, logFile: backendLog })
+    const pid = await spawnDetached('bash', [backendScript], {
+      cwd: workspaceRoot,
+      logFile: backendBootstrapLog,
+      truncateLog: true,
+    })
+    backendLog = backendLogForPid(pid)
     console.log(`[backend] 正在装配售后模块并启动共享后端（PID ${pid}），首次启动通常需要约 1–2 分钟`)
     const readyProbes = await waitForBackend(pid)
     const started = await inspectLocalBackend(sourceSnapshot, readyProbes)
@@ -419,7 +450,7 @@ export async function ensureLocalBackend() {
     console.log(`[backend] 已就绪并保持运行：${LOCAL_BACKEND_BASE_URL}`)
   }
   catch (error) {
-    throw new Error(`${error.message}；后端日志：${backendLog}`)
+    throw new Error(`${error.message}；后端日志：${backendLog}；启动引导日志：${backendBootstrapLog}`)
   }
   finally {
     releaseStartupLock()
