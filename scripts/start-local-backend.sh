@@ -31,4 +31,7 @@ chmod 600 "$backend_runtime_jar"
 cd "$backend_root"
 exec java -jar "$backend_runtime_jar" \
     --spring.config.additional-location=file:.local/ \
-    --after-sales.mobile.single-tenant-id=1001
+    --after-sales.mobile.single-tenant-id=1001 \
+    --after-sales.consumer.support.phone=400-820-9787 \
+    --after-sales.consumer.support.hours='周一至周日 8:00-22:00（法定节假日除外）' \
+    --after-sales.consumer.support.wechat-enabled=true
