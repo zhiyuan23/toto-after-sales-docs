@@ -135,7 +135,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         id: 'c-register', title: '添加产品', entry: 'C04 · 扫码优先添加产品',
         goal: '把统一扫码作为手动添加的首选入口；系统识别码类型，用户无需先判断产品码、溯源码、SN 或购买凭证码。',
         note: '扫码与识别均为虚构原型数据。可信唯一标识可定位产品实例，购买凭证码可关联已有购买，普通商品码只能识别型号；没有码时才进入手动选择与购买日期。产品出现在列表中不等于服务权益已核验。',
-        body: ctx => `<p class="c-page-intro">优先扫描产品或购买资料上的编码，系统自动识别。</p><button class="c-scan-button" data-reg-method="product-code"><span class="c-scan-frame" data-icon="camera" aria-hidden="true"></span><strong>扫一扫添加产品</strong><span>支持产品码、溯源码、SN、安装／购买凭证码</span></button><div class="c-divider-label"><span>没有码或无法识别</span></div><button class="c-menu-row" data-reg-method="manual"><span><strong>手动选择产品和购买日期</strong><small>用于旧产品、无码产品或历史订单未接入</small></span><span aria-hidden="true">›</span></button><button class="c-menu-row" data-phone-sync data-sync-target="products"><span><strong>${ctx.phoneAuthorized?'同步购买产品':'微信授权并同步'}</strong><small>${ctx.phoneAuthorized?'检查最新购买记录':'自动查找已接入的购买产品'}</small></span><span aria-hidden="true">↻</span></button>`,
+        body: ctx => `<p class="c-page-intro">优先扫描产品或购买资料上的编码，系统自动识别。</p><button class="c-scan-button" data-reg-method="product-code"><span class="c-scan-frame" data-icon="camera" aria-hidden="true"></span><strong>扫一扫添加产品</strong><span>支持产品码、溯源码、SN、安装／购买凭证码</span></button><button class="c-menu-row" data-phone-sync data-sync-target="products"><span><strong>${ctx.phoneAuthorized?'同步购买产品':'微信授权并同步'}</strong><small>${ctx.phoneAuthorized?'检查最新购买记录':'自动查找已接入的购买产品'}</small></span><span aria-hidden="true">↻</span></button>`,
       },
       {
         id: 'c-manual-select', title: '选择您的商品', entry: 'C04 · 手动选择分类、系列与商品',
