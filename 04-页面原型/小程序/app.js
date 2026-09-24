@@ -160,6 +160,7 @@
     $('#phone').classList.toggle('consumer-phone', current.app === 'consumer');
     $('#phone').classList.toggle('worker-phone', current.app === 'worker');
     $('#worker-controls').hidden=current.app!=='worker';
+    if(current.app==='worker')$('#worker-task-card-scenario').value=worker.taskCardScenario();
     $('#phone').dataset.screen = current.id;
     $('#consumer-controls').hidden = current.app !== 'consumer';
     $('#outlet-controls').hidden = !outlets?.owns(current.id);
@@ -601,6 +602,7 @@
   $('#prev-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)-1].id);});
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
   $('#consumer-scenario').addEventListener('change',event=>{const keepPage=brandPreview?(['c-service','c-mine'].includes(current.id)?current.id:null):(current.id==='c-service' || account?.owns(current.id) ? current.id : null);resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (brandPreview?'c-home':consumer.hasProducts?'c-home':'c-welcome'),false,true);});
+  $('#worker-task-card-scenario').addEventListener('change',event=>{saveDraft();worker.setTaskCardScenario(event.target.value);routeHistory=[];current=null;showScreen('w-tasks',false,true);});
   $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer(brandPreview?'visitor':'registered');routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
   $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
@@ -608,7 +610,7 @@
   document.querySelectorAll?.('[data-consumer-version-link]').forEach(link=>link.setAttribute('aria-current',link.dataset.consumerVersionLink===consumerVersion?'page':'false'));
   if (brandPreview) $('#consumer-scenario').insertAdjacentHTML('afterbegin','<option value="visitor">游客 · 浏览品牌与产品</option><option value="unlinked">已登录 · 尚未关联产品</option>');
   const versionNote=$('#prototype-version-note');
-  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':brandPreview?'v0.14 · 品牌产品与服务评审':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>日程与地图已延期，不属于当前原型。`;
+  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':brandPreview?'v0.14 · 品牌产品与服务评审':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>任务页可进入日程与任务地图原型。`;
   const phaseLabel=$('#consumer-phase-label');
   if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':brandPreview?'03 v0.14 品牌产品与服务评审原型':'02 v0.13 视觉设计原型';
   if (brandPreview) resetConsumer('visitor');

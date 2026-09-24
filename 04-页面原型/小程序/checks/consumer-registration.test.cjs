@@ -412,8 +412,8 @@ test('all templates render across consumer scenarios, registration methods, code
   const screens = [...f.apps.consumer.screens, ...f.apps.worker.screens];
   const ids = new Set(screens.map(screen => screen.id));
   assert.equal(f.apps.consumer.screens.length, 32);
-  assert.equal(f.apps.worker.screens.length, 25);
-  assert.equal(ids.size, 57);
+  assert.equal(f.apps.worker.screens.length, 27);
+  assert.equal(ids.size, 59);
   let combinations = 0;
   for (const scenario of ['welcome', 'registered', 'confirmed']) {
     f.resetConsumer(scenario);
@@ -437,7 +437,7 @@ test('all templates render across consumer scenarios, registration methods, code
       }
     }
   }
-  assert.equal(combinations, 12312);
+  assert.equal(combinations, 12744);
   f.consumer.registrationMethod = 'manual';
   f.showScreen('c-home');
   f.renderFlows();
@@ -775,10 +775,10 @@ test('late avatar reads cannot overwrite a newer choice or revive a reset profil
 });
 
 
-test('worker home overview buttons filter the current list without schedule or map pages',()=>{
+test('worker overview opens confirmed appointments and the pending task map',()=>{
   const f=fixture({hash:'#w-tasks'}),body=f.get('#phone-body');
-  assert.match(body.innerHTML,/待处理任务快捷筛选/);assert.doesNotMatch(body.innerHTML,/data-wsched|data-wmap/);
-  f.click({worker:'dashboard-filter',value:'today'});assert.equal(f.current().id,'w-tasks');assert.equal(f.worker.snapshot().filter,'today');assert.equal(f.worker.filteredTasks().length,2);
-  f.click({worker:'dashboard-filter',value:'parts'});assert.equal(f.current().id,'w-tasks');assert.equal(f.worker.snapshot().filter,'parts');assert.equal(f.worker.filteredTasks().length,1);
-  assert.equal(f.apps.worker.screens.some(page=>['w-schedule','w-map'].includes(page.id)),false);
+  assert.match(body.innerHTML,/class="w-task-overview"/);assert.match(body.innerHTML,/data-go="w-schedule"/);assert.match(body.innerHTML,/data-go="w-map"/);
+  f.click({go:'w-schedule'});assert.equal(f.current().id,'w-schedule');assert.match(body.innerHTML,/每日待办[\s\S]*已确认 2 单/);
+  f.click({go:'w-tasks'});assert.equal(f.current().id,'w-tasks');
+  f.click({go:'w-map'});assert.equal(f.current().id,'w-map');assert.match(body.innerHTML,/任务地图 <b>6<\/b> 个位置/);assert.doesNotMatch(body.innerHTML,/许先生/);
 });

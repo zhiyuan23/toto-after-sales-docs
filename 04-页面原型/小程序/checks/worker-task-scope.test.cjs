@@ -63,20 +63,50 @@ test('review progress uses a compact workflow overview instead of repeating the 
   w.actAction('task',ZHAO);html=page('w-review').body();
   assert.match(html,/class="w-review-overview red"/);assert.match(html,/资料退回待补充[\s\S]*class="issue" aria-current="step">[\s\S]*服务审核/);
 });
-test('task home overview switches the list to today and missing-parts filters',()=>{
+test('task overview links to confirmed appointments and pending task map',()=>{
   const {w,page}=fixture(),home=page('w-tasks');let html=home.body(),nav=home.rootNav();
   assert.match(nav,/9 月 13 日 · 星期日/);assert.match(nav,/今天，安排清楚/);assert.doesNotMatch(nav,/data-wmap|地图/);
   assert.equal(home.navigationMode,'custom-root');assert.match(home.note,/navigationStyle: custom[\s\S]*uni\.getWindowInfo\(\)[\s\S]*wx\.getMenuButtonBoundingClientRect\(\)/);
-  assert.equal(page('w-schedule'),undefined);assert.equal(page('w-map'),undefined);assert.match(home.note,/日程与地图已经延期/);
+  assert.ok(page('w-schedule'));assert.ok(page('w-map'));
   assert.doesNotMatch(html,/今天，安排清楚|data-wmap|data-wsched/);
-  assert.match(html,/class="w-focus-actions"/);assert.match(html,/data-worker="dashboard-filter" data-value="today"[^>]+筛选今日预约任务，共 2 单/);assert.match(html,/data-worker="dashboard-filter" data-value="parts"[^>]+筛选等待配件任务，共 1 单/);
+  assert.match(html,/class="w-task-overview"/);assert.match(html,/待处理任务 7 单/);
+  assert.match(html,/class="w-task-overview-summary"[\s\S]*class="w-task-overview-actions"/);
+  assert.match(html,/今日已预约 2 单，本月已完成 1 单/);
+  assert.match(html,/data-go="w-schedule"[^>]+查看今日已确认预约日程/);assert.match(html,/data-go="w-map"[^>]+查看待处理任务地图/);
+  assert.doesNotMatch(html,/w-task-overview-schedule|已确认预约 2 单/);
+  assert.doesNotMatch(html,/w-focus-actions|等待配件<\/b>/);
+  assert.match(page('w-schedule').body(),/每日待办[\s\S]*已确认 2 单/);
+  assert.match(page('w-schedule').body(),/陈女士[\s\S]*林女士/);
+  assert.doesNotMatch(page('w-map').body(),/许先生/);
   assert.doesNotMatch(html,/class="w-task-nav"/);assert.match(html,/待处理任务筛选/);
-  assert.ok(html.indexOf('class="w-focus"')<html.indexOf('w-task-queues'));
+  assert.ok(html.indexOf('class="w-task-overview"')<html.indexOf('w-task-queues'));
   assert.equal(w.actAction('dashboard-filter','today'),'w-tasks');assert.equal(w.filteredTasks().length,2);assert.equal(w.snapshot().queue,'pending');
   html=page('w-tasks').body();assert.match(html,/class="selected" data-worker="filter" data-value="today"/);
   w.actAction('queue','returned');w.actAction('filter','parts');assert.equal(w.snapshot().queue,'returned');assert.equal(w.snapshot().filter,'all');
   assert.doesNotMatch(page('w-tasks').body(),/待处理任务筛选/);
   w.actAction('dashboard-filter','parts');assert.equal(w.snapshot().queue,'pending');assert.equal(w.snapshot().filter,'parts');assert.equal(w.filteredTasks().length,1);
+});
+test('monthly completed metric follows approval time and stays separate from today appointments',()=>{
+  const {w,page}=fixture();
+  w.actAction('task',HUANG);w.simulate('approved');
+  assert.match(page('w-tasks').body(),/今日已预约 2 单，本月已完成 2 单/);
+  w.simulate('closed');
+  assert.match(page('w-tasks').body(),/今日已预约 2 单，本月已完成 2 单/);
+  const previousMonth=fixture(src=>src.replace("completedAt:'2026-09-11'","completedAt:'2026-08-31'"));
+  assert.match(previousMonth.page('w-tasks').body(),/今日已预约 2 单，本月已完成 0 单/);
+});
+test('schedule week selection updates the daily list and returns to the demo date',()=>{
+  const {w,page}=fixture(),body=()=>page('w-schedule').body();
+  assert.match(body(),/data-value="2026-09-13"[^>]*aria-pressed="true"/);
+  assert.equal(w.actAction('schedule-week','7'),'w-schedule');
+  assert.match(body(),/9 月 14 日 — 9 月 20 日/);
+  assert.equal(w.actAction('schedule-day','2026-09-14'),'w-schedule');
+  assert.match(body(),/已确认 2 单[\s\S]*刘女士[\s\S]*吴先生/);
+  assert.doesNotMatch(body(),/陈女士/);
+  assert.equal(w.actAction('schedule-day','2026-09-15'),'w-schedule');
+  assert.match(body(),/当天暂无已确认预约/);
+  assert.equal(w.actAction('schedule-today',''),'w-schedule');
+  assert.match(body(),/已确认 2 单[\s\S]*陈女士/);
 });
 test('parts home separates inventory actions from record-only shortcuts and return supports a detail shortcut',()=>{
   const {w,page}=fixture(),screen=page('w-parts'),home=screen.body(),nav=screen.rootNav();
@@ -115,9 +145,10 @@ test('technical and warranty resources use compact searches and grouped result c
   assert.match(page('w-document').body(),/w-resource-detail-hero[\s\S]*w-resource-detail-body/);assert.match(page('w-warranty-detail').body(),/w-warranty-hero[\s\S]*w-warranty-scope/);
 });
 test('requisition purpose separates work-order issue from standby stock replenishment',()=>{
-  const {w,page}=fixture();let html=page('w-requisition').body();assert.match(html,/data-worker-purpose/);assert.match(html,/工单领料/);assert.match(html,/常备库存补充/);assert.match(html,/name="workOrder"/);assert.ok(html.indexOf('待提交')<html.indexOf('领料用途')&&html.indexOf('领料用途')<html.indexOf('关联工单'));
+  const {w,page}=fixture();let html=page('w-requisition').body();assert.match(html,/data-worker-purpose/);assert.match(html,/工单领料/);assert.match(html,/常备库存补充/);assert.match(html,/name="workOrder"/);assert.ok(html.indexOf('领料用途')<html.indexOf('关联工单')&&html.indexOf('关联工单')<html.indexOf('选择配件'));assert.doesNotMatch(html,/连接软管/);assert.doesNotMatch(html,/class="section-card w-requisition-review"/);
+  w.actAction('basket-plus','P001');html=page('w-requisition').body();assert.match(html,/本次领料/);assert.match(html,/1 种 · 1 件/);
   w.actAction('requisition-purpose','stock');html=page('w-requisition').body();assert.match(html,/补充原因/);assert.match(html,/提交补充申请/);assert.doesNotMatch(html,/name="workOrder"/);
-  w.actAction('task-parts');html=page('w-requisition').body();assert.match(html,/value="工单领料" readonly/);assert.doesNotMatch(html,/data-worker-purpose/);assert.match(html,/name="workOrder"/);
+  w.actAction('task-parts');html=page('w-requisition').body();assert.match(html,/领料用途已锁定/);assert.doesNotMatch(html,/data-worker-purpose/);assert.match(html,/name="workOrder"/);
 });
 test('review and returned-material tasks cannot be modified through stale scheduling or service links',()=>{
   const {w,page}=fixture();for(const id of [HUANG,ZHAO]){w.actAction('task',id);assert.doesNotMatch(page('w-detail').body(),/联系 \/ 改约|编辑补充信息|去这单/);assert.equal(w.guard('w-appointment'),'w-detail');assert.equal(w.guard('w-service'),'w-detail');assert.throws(()=>w.submitAction('appointment',{result:'lost',note:'不应更改'}),/不可/);assert.throws(()=>w.submitAction('edit',{note:'不应更改'}),/仅可查看/);assert.throws(()=>w.submitAction('exception',{flag:'已取消',reason:'不应更改'}),/不可/);}
@@ -148,10 +179,25 @@ test('four task groups are disjoint, cover authorized tasks and track review ret
 test('service focus starts on arrival, stays across queries and tabs and is not duplicated in the list',()=>{
   const {w,page}=fixture();assert.doesNotMatch(page('w-tasks').body(),/class="w-serving"/);
   page('w-service').body();assert.equal(w.activeTasks().length,0);w.actAction('sign');
-  const html=page('w-tasks').body();assert.equal((html.match(/陈女士/g)||[]).length,2); // accessible article label + visible heading
-  assert.doesNotMatch(html,/class="w-focus"/);assert.equal((html.match(/class="w-serving"/g)||[]).length,1);assert.match(html,/class="w-serving-shortcuts"/);
+  const html=page('w-tasks').body();assert.equal((html.match(/陈女士/g)||[]).length,3); // article label, full-card button label, visible heading
+  assert.doesNotMatch(html,/class="w-task-overview"|class="w-focus"/);assert.equal((html.match(/class="w-serving"/g)||[]).length,1);assert.doesNotMatch(html,/class="w-serving-shortcuts"/);
+  assert.match(html,new RegExp(`class="w-serving-hitarea" data-worker="resume-service" data-value="${CHEN}"`));
+  assert.doesNotMatch(html,/w-serving-actions|继续处理任务<\/button>|>详情<\/button>/);
   assert.match(html,/其中 1 单正在服务/);assert.match(html,/待处理<small>7/);assert.equal(w.filteredTasks().length,7);
   w.actAction('queue','history');w.submitAction('task-search',{search:'不匹配'});assert.equal(w.filteredTasks().length,0);assert.match(page('w-tasks').body(),/正在服务 · 陈女士/);
+});
+test('reviewer card scenario switch keeps the task card and service routes consistent',()=>{
+  const {w,page}=fixture();
+  w.setTaskCardScenario('single');
+  assert.equal(w.taskCardScenario(),'single');assert.equal(w.activeTasks().length,1);
+  assert.equal(w.actAction('resume-service',CHEN),'w-service');
+  assert.match(page('w-tasks').body(),/其中 1 单正在服务/);
+  w.setTaskCardScenario('multiple');
+  assert.equal(w.taskCardScenario(),'multiple');assert.equal(w.activeTasks().length,2);
+  assert.match(page('w-tasks').body(),/2 单需要继续处理/);
+  w.setTaskCardScenario('overview');
+  assert.equal(w.taskCardScenario(),'overview');assert.equal(w.activeTasks().length,0);
+  assert.match(page('w-tasks').body(),/class="w-task-overview"/);
 });
 test('continue restores the correct order, completion step and task-scoped draft',()=>{
   const {w,page}=fixture();w.actAction('sign');w.submitAction('service',{diagnosis:'已检查',result:'已处理',usage:'none'});
@@ -164,6 +210,7 @@ test('multiple actual service sessions remain visible without losing either resu
   const {w,page}=fixture();w.actAction('sign');w.actAction('task','AZ202609130021');w.actAction('sign');
   const html=page('w-tasks').body();assert.equal(w.activeTasks().length,2);assert.match(html,/2 单需要继续处理/);assert.equal((html.match(/class="w-serving w-serving-group"/g)||[]).length,1);
   assert.match(html,/data-worker="resume-service" data-value="WX202609130018"/);assert.match(html,/data-worker="resume-service" data-value="AZ202609130021"/);
+  assert.equal((html.match(/class="w-serving-hitarea"/g)||[]).length,2);assert.doesNotMatch(html,/w-serving-actions/);
   assert.equal(w.actAction('resume-service',CHEN),'w-service');assert.equal(w.snapshot().taskId,CHEN);
   w.actAction('resume-service','AZ202609130021');assert.equal(w.snapshot().taskId,'AZ202609130021');
 });
