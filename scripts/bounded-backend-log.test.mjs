@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -15,6 +16,22 @@ test('console output remains bounded during a long running backend', () => {
     assert.ok(statSync(path).size <= 64)
     assert.match(readFileSync(path, 'utf8'), /error 99\n$/)
   } finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('CLI drains output larger than a pipe buffer before closing', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'toto-bounded-log-'))
+  const path = join(directory, `shared-backend-${process.pid}.log`)
+  try {
+    const input = `${'startup log\n'.repeat(20_000)}ready\n`
+    execFileSync(process.execPath, [new URL('./bounded-backend-log.mjs', import.meta.url).pathname, path], {
+      input,
+      timeout: 10_000,
+    })
+    assert.match(readFileSync(path, 'utf8'), /ready\n$/)
+  }
+  finally {
     rmSync(directory, { recursive: true, force: true })
   }
 })

@@ -71,7 +71,7 @@ elif [[ -n "${TOTO_AFTER_SALES_UNI_REPO_URL:-}" ]]; then
     "$TOTO_AFTER_SALES_UNI_REPO_URL" \
     "${TOTO_AFTER_SALES_UNI_BRANCH:-main}"
 else
-  warn "gaia-after-sales-uni 当前没有已确认的远程地址。拿到地址后设置 TOTO_AFTER_SALES_UNI_REPO_URL 再运行本脚本。"
+  warn "消费者小程序未检出；远程关联已暂停，如需新检出，请从仓库关系文档取得地址并显式设置 TOTO_AFTER_SALES_UNI_REPO_URL。"
   missing_required_repo=1
 fi
 

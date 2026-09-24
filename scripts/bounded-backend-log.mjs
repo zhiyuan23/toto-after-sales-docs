@@ -75,8 +75,16 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const path = process.argv[2]
   if (!path) throw new Error('expected log path')
   const writer = createBoundedLogWriter(path)
-  pruneFinishedBackendLogs(path)
-  process.stdin.on('data', chunk => writer.write(chunk))
-  process.stdin.on('end', () => writer.close())
-  process.stdin.resume()
+  try {
+    pruneFinishedBackendLogs(path)
+    const chunk = Buffer.allocUnsafe(64 * 1024)
+    for (;;) {
+      const length = readSync(0, chunk, 0, chunk.length, null)
+      if (length === 0) break
+      writer.write(chunk.subarray(0, length))
+    }
+  }
+  finally {
+    writer.close()
+  }
 }
