@@ -1,0 +1,4 @@
+Tomcat started.
+HTTP root=200 after_sales=200 api=200
+DEPLOY_OK stamp=20260926002000-menu backup=/yundata/saas_test/backups/20260926002000-menu
+RUNTIME_CONFIGS_PRESERVED=5

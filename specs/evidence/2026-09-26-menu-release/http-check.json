@@ -1,0 +1,30 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "matchesRelease": true
+  },
+  {
+    "path": "/after-sales/",
+    "status": 200,
+    "matchesRelease": true
+  },
+  {
+    "assets": 19,
+    "allAvailable": true
+  },
+  {
+    "path": "/api/afterSales/mobile/consumer/privacy-policy",
+    "status": 200,
+    "code": 503,
+    "message": "隐私政策尚未配置，暂不能提交申报",
+    "meaning": "已有业务配置限制，不记为接口业务成功"
+  },
+  {
+    "path": "/api/afterSales/downloadCenter/scenes/tree",
+    "status": 200,
+    "code": 500,
+    "message": "无接口访问权限",
+    "meaning": "Gaia 对匿名请求的既有权限拦截响应，不返回配置数据"
+  }
+]
