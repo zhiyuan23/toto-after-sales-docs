@@ -1,0 +1,5 @@
+前端 ESLint、Knip、应用与测试 TypeScript、国际化通过。
+全量测试 326 项：296 通过、30 失败；失败名称集合与发布前菜单切换修复检查完全一致。完整门禁未全绿。
+侧栏定向 18/18、菜单包 7/7 通过。
+后端本轮定向 6/6 通过：GaiaDownloadSceneSourceTest 1 项、DownloadCenterIntegrationTest 5 项。
+售后后端 install、宿主 WAR package 成功；宿主 package 跳过其独立测试。

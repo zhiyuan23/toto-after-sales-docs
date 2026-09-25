@@ -1,0 +1,1 @@
+gaia_wh_init_wzy: hidden scene module; removed exactly 6 ordinary-role module bindings and 6 matching scene edit bindings. Administrator bindings and business import/export operations untouched.

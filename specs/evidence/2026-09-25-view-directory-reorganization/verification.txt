@@ -1,0 +1,16 @@
+scope=6 changes / 7 feature directories
+moved-files=29
+updated-reference-files=22
+navigation-manifest=byte-identical-before-after
+public-routes-and-feature-codes=unchanged
+database-changes=none
+lint-dependencies-types-i18n=passed
+tests=323; passed=293; failed=30
+new-failure-names=[]
+production-build=passed
+bundle-size-check=215 JS/CSS assets passed
+git-commit=not-requested
+shared-deployment=not-requested
+browser-original-urls=7 checked
+browser-loaded=evaluationTags,dictionary,supportChannel,installationCode,report,quality(empty)
+browser-limitation=tag page loaded; current account denied by backend operation permissions

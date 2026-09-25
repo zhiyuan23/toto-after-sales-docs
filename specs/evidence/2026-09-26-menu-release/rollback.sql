@@ -1,0 +1,18 @@
+START TRANSACTION;
+UPDATE sys_module SET name='投诉管理',ordinal=8,is_hide=0 WHERE id=2026090800000022 AND code='afsComplaint';
+UPDATE sys_module SET name='完工审核',ordinal=5,is_hide=0 WHERE id=2026090800000019 AND code='afsCompletionReview';
+UPDATE sys_module SET name='客服工作台',ordinal=2,is_hide=0 WHERE id=2026091300000801 AND code='afsDashboardCustomerService';
+UPDATE sys_module SET name='门店工作台',ordinal=4,is_hide=0 WHERE id=2026090800000014 AND code='afsDashboardDealer';
+UPDATE sys_module SET name='运营工作台',ordinal=1,is_hide=0 WHERE id=2026090800000012 AND code='afsDashboardOverview';
+UPDATE sys_module SET name='服务站工作台',ordinal=3,is_hide=0 WHERE id=2026090800000013 AND code='afsDashboardStation';
+UPDATE sys_module SET name='派单调度',ordinal=3,is_hide=0 WHERE id=2026090800000017 AND code='afsDispatch';
+UPDATE sys_module SET name='回访管理',ordinal=6,is_hide=0 WHERE id=2026090800000020 AND code='afsFollowUp';
+UPDATE sys_module SET name='服务知识库',ordinal=7,is_hide=0 WHERE id=2026090800000021 AND code='afsKnowledgeBase';
+UPDATE sys_module SET name='人员分配策略',ordinal=5,is_hide=0 WHERE id=2026091800000901 AND code='afsPersonnelAssignmentPolicy';
+UPDATE sys_module SET name='排班管理',ordinal=2,is_hide=0 WHERE id=2026090800000041 AND code='afsSchedule';
+UPDATE sys_module SET name='服务人员',ordinal=1,is_hide=0 WHERE id=2026090800000040 AND code='afsServicePersonnel';
+UPDATE sys_module SET name='服务质量',ordinal=3,is_hide=0 WHERE id=2026090800000042 AND code='afsServiceQuality';
+UPDATE sys_module SET name='服务结算',ordinal=9,is_hide=1 WHERE id=2026090800000023 AND code='afsSettlement';
+UPDATE sys_module SET name='工单分配',ordinal=4,is_hide=0 WHERE id=2026091600000043 AND code='afsWorkOrderAssignment';
+UPDATE sys_module SET name='异常工单',ordinal=4,is_hide=0 WHERE id=2026090800000018 AND code='afsWorkOrderException';
+COMMIT;

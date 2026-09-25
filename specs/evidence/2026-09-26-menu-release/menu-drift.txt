@@ -1,0 +1,4 @@
+目标：gaia_wh_init_wzy，gaia.multi-tenant=false。
+同步前差异：16；同步后差异：0。
+验证字段：名称、路径、注册父级、排序、启停、显隐。
+code	drift	expected_name	actual_name	expected_path	actual_path	parent_code	actual_parent_code	expected_ordinal	actual_ordinal	expected_enable	actual_enable	expected_is_hide	actual_is_hide

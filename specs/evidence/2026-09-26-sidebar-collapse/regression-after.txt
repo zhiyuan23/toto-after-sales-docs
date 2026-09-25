@@ -1,0 +1,26 @@
+✔ single keeps level one when the project menu has only two levels (0.986041ms)
+✔ single can hide level one through project settings (0.10175ms)
+✔ single preserves the complete tree when first-level hiding is disabled (0.069125ms)
+✔ single removes exactly one level when first-level hiding is enabled (0.067417ms)
+✔ side keeps rendering only the active group children (0.059167ms)
+✔ head keeps rendering only the active group children (0.04675ms)
+✔ returns no sidebar items when the active group is unavailable (0.041042ms)
+✔ collapsed active group stays closed across guard and route updates (accordion=false) (129.6975ms)
+✔ collapsed active group stays closed across guard and route updates (accordion=true) (21.071667ms)
+✔ single projection remains reactive to real menu and display-mode changes (13.373583ms)
+✔ head keeps every sidebar panel mounted and only changes visibility (0.868584ms)
+✔ head keeps its only sidebar panel visible when the active index is stale (0.082959ms)
+✔ single and head keep stable outer panels while switching visibility (0.116292ms)
+✔ single mode keeps one menu instance while the active child group changes (0.065375ms)
+✔ side mode remounts the projected menu when its source group changes (0.053208ms)
+✔ equivalent authorized menus do not replace the current sidebar tree (0.292042ms)
+✔ single mode changes use the side transition when the index stays unchanged (0.442625ms)
+✔ head and side retain their directional transition families (0.086167ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 869.581625

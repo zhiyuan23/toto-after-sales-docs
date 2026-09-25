@@ -1,0 +1,55 @@
+✖ collapsed active group stays closed across guard and route updates (accordion=false) (61.322208ms)
+✖ collapsed active group stays closed across guard and route updates (accordion=true) (12.153708ms)
+✔ single projection remains reactive to real menu and display-mode changes (9.778833ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 332.073083
+
+✖ failing tests:
+
+test at apps/after-sales/tests/sidebar-navigation-state.test.ts:67:3
+✖ collapsed active group stays closed across guard and route updates (accordion=false) (61.322208ms)
+  AssertionError [ERR_ASSERTION]: must not reopen the old route group before navigation commits
+  + actual - expected
+
+    [
+      '/product',
+  +   '/purchase'
+    ]
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/sidebar-navigation-state.test.ts:78:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at apps/after-sales/tests/sidebar-navigation-state.test.ts:67:3
+✖ collapsed active group stays closed across guard and route updates (accordion=true) (12.153708ms)
+  AssertionError [ERR_ASSERTION]: must not reopen the old route group before navigation commits
+  + actual - expected
+
+    [
+  +   '/purchase'
+  -   '/product'
+    ]
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/sidebar-navigation-state.test.ts:78:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
