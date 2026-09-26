@@ -1,0 +1,122 @@
+[
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-work status-published",
+    "ratios": {
+      "title": 5.43,
+      "body": 5.93,
+      "status": 5.72
+    }
+  },
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-work status-published",
+    "ratios": {
+      "title": 5.43,
+      "body": 5.93,
+      "status": 5.72
+    }
+  },
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-work status-published",
+    "ratios": {
+      "title": 5.43,
+      "body": 5.93,
+      "status": 5.72
+    }
+  },
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-rest status-published",
+    "ratios": {
+      "title": 6.35,
+      "status": 5.68
+    }
+  },
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-leave status-published",
+    "ratios": {
+      "title": 5.34,
+      "status": 5.72
+    }
+  },
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-suspended status-published",
+    "ratios": {
+      "title": 6.33,
+      "status": 5.66
+    }
+  },
+  {
+    "theme": "light",
+    "type": "schedule-calendar-item is-work status-draft",
+    "ratios": {
+      "title": 5.43,
+      "body": 5.93,
+      "status": 12.63
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-work status-published",
+    "ratios": {
+      "title": 10.86,
+      "body": 11.62,
+      "status": 9.89
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-work status-published",
+    "ratios": {
+      "title": 10.86,
+      "body": 11.62,
+      "status": 9.89
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-work status-published",
+    "ratios": {
+      "title": 10.86,
+      "body": 11.62,
+      "status": 9.89
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-rest status-published",
+    "ratios": {
+      "title": 9.92,
+      "status": 9.97
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-leave status-published",
+    "ratios": {
+      "title": 11,
+      "status": 9.87
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-suspended status-published",
+    "ratios": {
+      "title": 9.7,
+      "status": 10
+    }
+  },
+  {
+    "theme": "dark",
+    "type": "schedule-calendar-item is-work status-draft",
+    "ratios": {
+      "title": 10.86,
+      "body": 11.62,
+      "status": 14.44
+    }
+  }
+]

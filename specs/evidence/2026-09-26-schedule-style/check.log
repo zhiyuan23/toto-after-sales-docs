@@ -1,0 +1,1003 @@
+yarn run v1.22.22
+$ node scripts/frontends/after-sales.mjs check
+
+> gaia-after-sales-ui@ check /Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales
+> eslint . --cache --cache-location node_modules/.cache/eslint/.eslintcache --max-warnings 0 && knip --dependencies --no-progress --no-config-hints && vue-tsc -b && vue-tsc --noEmit -p tsconfig.test.json && node scripts/check-i18n.mjs && node --experimental-strip-types --test tests/*.test.ts
+
+i18n: 19 paired modules, 3038 keys; key/parameter checks passed. Chinese candidates in 50 files (not a coverage score).
+✔ Gaia login failures are separated from service and permission failures (0.406333ms)
+✔ a fresh access failure stops on its status page and the next entry retries once (0.094959ms)
+✔ blocked session storage still cannot create an automatic retry loop (0.074625ms)
+✔ exposes the app setting entry locally while keeping production disabled (0.457917ms)
+✔ keeps the imported setting controls available in the subsystem (0.121959ms)
+✔ return paths remain inside the child application (0.790125ms)
+✔ Gaia password encryption matches the existing DES contract (1.085083ms)
+✔ captcha, login and logout use Gaia endpoints and preserve unrelated storage (13.701875ms)
+✔ local session cleanup is scoped to authentication and after-sales keys (0.081208ms)
+✔ business query details use the current catalog-style summary and tab hierarchy (5.347708ms)
+✔ category cards preserve tree levels, full paths and string IDs (2.32025ms)
+✔ search cards show matching rows, not ancestors returned for tree context (0.135875ms)
+✔ deleted parent and cyclic historical data cannot hang category navigation (0.09575ms)
+✔ cover uses lightweight list field, ordered detail fallback, or explicit no-image state (0.080417ms)
+✔ view preference uses one persistent key for the current Gaia user and tenant (0.172541ms)
+✔ shared view preference stays isolated across Gaia users and available tenant identities (0.067792ms)
+✔ missing or malformed shared view preferences default to table without migrating old menu choices (0.080334ms)
+✔ shared view preferences and navigation or color preferences do not overwrite each other (0.112209ms)
+✔ view preference stays transient until an identity and browser storage are available (0.085667ms)
+✔ blocked storage never breaks list rendering or switching (0.147167ms)
+✔ product cards merge identical code/model, omit empty metadata and preserve relationship links (2.728791ms)
+✔ detail models preserve full source fields, ordered images and service values without inventing defaults (5.108417ms)
+✖ category detail shows readable ancestry and never exposes a raw parent ID as its name (1.105083ms)
+✔ priced detail retains zero prices and each package dimension with association permissions (1.108083ms)
+✔ detail lifecycle handles failure/retry and discards results after close or a newer request (0.9655ms)
+✔ catalog detail relations use the shared read-only list presentation (0.554917ms)
+✔ catalog transport uses same-origin raw token and detects logout/account changes (988.998041ms)
+node:internal/modules/package_json_reader:331
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/utils' imported from /Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/src/composables/useCrudDialog.ts
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:331:9)
+    at packageResolve (node:internal/modules/esm/resolve:784:25)
+    at moduleResolve (node:internal/modules/esm/resolve:873:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:276:33) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v24.21.0
+✖ tests/catalog-state.test.ts (1155.604709ms)
+✔ catalog relation links require both target read permission and a visible menu (1.127542ms)
+✔ association names navigate by exact string ID and unavailable relations remain plain text (2.390208ms)
+✔ product focus parameters preserve the same page identity and reject invalid identifiers (0.335583ms)
+✔ Gaia success/page adaptation and resolved business failures are explicit (3.56625ms)
+✖ catalog uploads use the official Gaia access and download addresses (1.036208ms)
+✔ tree retains child identity and does not recurse through malformed legacy cycles (0.150542ms)
+✔ category selectors disable stopped ancestors and the current subtree (0.177792ms)
+✖ real payloads whitelist fields and preserve false filters and optimistic versions (1.299542ms)
+✔ product series payloads are whitelisted and associations are incremental (0.160292ms)
+✔ part payloads whitelist full metadata and update applicable products incrementally (0.170041ms)
+✔ product detail uses its own status with both legacy and catalog v3 responses (3.372833ms)
+✔ anchors both theme transition directions to the theme button (0.474792ms)
+✔ protects both snapshots only while entering light mode (0.251667ms)
+▶ complaint contracts
+  ✔ keeps a retry request stable while excluding record fields from submissions (10.285375ms)
+  ✔ stops elapsed time at closure and rejects invalid or reversed dates (3.705667ms)
+✔ complaint contracts (14.828083ms)
+✔ requested service time keeps consumer guidance windows and legacy visit starts readable (0.773166ms)
+✔ assigned personnel columns only show for pending-completion work orders with a master (0.106417ms)
+✔ customer and order queries trim text and include purchase verification dimensions (0.424125ms)
+✔ registration and appointment payloads whitelist and normalize business fields (1.686958ms)
+✔ service intake payload whitelists channel, service type and protected business input (0.195792ms)
+✔ dealer service starts from a purchase record and keeps the selected fault snapshot (0.114959ms)
+✔ purchase registration edit form keeps the selected store and groups installation codes (0.414709ms)
+✔ customer, intake, appointment and work-order routes are development features (0.067542ms)
+✔ headquarters rail puts the selected scope before its on-demand trend (0.980125ms)
+✔ each perspective loads only relevant reachable permission groups and isolates group failures (2.647917ms)
+✔ menu and API read grants are both necessary; read=false makes zero business requests (2.378584ms)
+✔ service desk station assignment follows the service-order entry when dispatch menu is absent (0.226792ms)
+✔ queue queries preserve exact status, paging, date meaning and source endpoint (0.383583ms)
+✔ phone lookup is only sent to supporting endpoints and never silently dropped (0.33475ms)
+✔ detail reads use the queue resource and reject mismatched records before actions open (1.040584ms)
+✔ counts use backend totals with one size-1 request per queue and distinguish failure from real zero (0.573083ms)
+✔ cancellation prevents requests and discards unresolved permission and list results (0.634166ms)
+✔ actions require matching backend actions, API grants, feature access and perspective responsibility (0.366333ms)
+✔ dealer records expose one service entry backed by independent installation and repair permissions (0.316458ms)
+✔ complaint actions require state actions and their individual operation permissions (0.148875ms)
+✔ trend uses complete creation-date groups, enforces bounded calendar range and rejects truncation (1.701291ms)
+✔ province reporting uses the selected bounded period and rejects incomplete or duplicate groups (1.103291ms)
+✔ province names and reporting ranges stay aligned with the map contract (2.228292ms)
+✔ decoded geometry is projected into a stable SVG path without mutating its source (0.829958ms)
+✔ province drill-down keeps only the selected province without mutating the nationwide map (0.0975ms)
+✔ province reports are indexed and summed only from returned report facts (0.102083ms)
+✔ formats ISO date-time values in the local timezone with seconds (1.985667ms)
+✔ uses a stable fallback for empty or invalid values (0.166584ms)
+✔ detail routes keep long ids as strings and reject unsafe values (0.707125ms)
+✔ manual preview uses the production API context path before the protected endpoint (0.672042ms)
+✔ saved manual preview fetches the protected content with the active Gaia token (1073.816959ms)
+✔ saved product manuals delegate preview to the authenticated binary loader (0.541416ms)
+✔ task-result download requests and validates a binary spreadsheet response (1.078958ms)
+✔ task drawer loads on open, queries once per action and preserves applied filters and page on reopen (76.621292ms)
+✔ denied read access never queries tasks and permissions failures can retry (35.333583ms)
+✔ list failure can retry without remounting the workbench (9.85375ms)
+✔ download needs both resource permission and the backend row action (16.543125ms)
+✔ only an explicit main entry query selects the integrated mode (0.514084ms)
+✔ a missing entry query always defaults to standalone mode (0.07175ms)
+✔ entry URLs keep the mode before the hash route (0.104ms)
+✔ login URLs use the main system only for an explicit main entry (0.065ms)
+✔ embedded login redirects escape to the top-level system window (0.077625ms)
+✔ identity management is exposed only by a configured standalone top-level entry (0.055625ms)
+✔ switches at the agreed container breakpoints and reserves one action column (0.773958ms)
+✔ shows every field when the field count fits and avoids empty field columns (0.08ms)
+✔ uses the configured shared pixel width and falls back for invalid values (0.068292ms)
+✔ desktop columns stay above the shared minimum across all breakpoint edges (2.5055ms)
+✔ boolean search predicates use explicit select values instead of setting switches (0.094875ms)
+✔ collapse action uses consistent text and caret without a hidden-filter count (0.056166ms)
+✔ hides detail actions and removes their column space, including read-only rows (0.6245ms)
+✔ keeps authorized edit first without reordering other actions or mutating page config (0.439125ms)
+✔ uses semantic icons for known table actions (0.083625ms)
+✔ standard edit ignores conflicting page icons while status keeps explicit semantics (0.060667ms)
+✔ does not use the more icon as the fallback action icon (0.067125ms)
+✔ calculates action widths from rendered icon slots (0.089542ms)
+✔ only accepts fixedWidth as an action-column width override (0.129875ms)
+✔ uses the maximum rendered slot count across rows (0.075667ms)
+✔ does not reserve slots for hidden actions, but disabled actions still reserve one (0.076667ms)
+✔ does not guess action visibility while rows are empty (0.097166ms)
+✔ supports any and all permission matching (0.091625ms)
+✔ resolves row-level visible, disabled, and loading callbacks (0.084333ms)
+✔ partitions overflow actions into the same slots used by width calculation (0.067625ms)
+✔ wires the shared action options and event boundaries through the rendered components (7.517042ms)
+✔ resolves semantic table links without coercing long ids (3.78275ms)
+✔ table links degrade to text when hidden, empty, or unresolved (0.1845ms)
+✔ renders routed table links as real accessible anchors (3.382958ms)
+✔ ships every standard action glyph locally, including alias parents (1.158958ms)
+✔ uses the same loading mask for empty and populated tables (0.447333ms)
+✔ renders the shared illustrated empty state while preserving page descriptions (0.076167ms)
+✔ supports an opt-in minimum height that keeps illustrated empty states fully visible (0.069416ms)
+✔ service views preserve shared identity and API order without mixing inactive or opposite tags (0.806042ms)
+✔ inactive search keeps same-word historical identities distinct and does not change active capacity (0.123542ms)
+✔ preview uses the 3-to-4-star boundary and keeps unrated feedback hidden (0.070041ms)
+✔ FaIcon normalizes UnoCSS and Iconify names while retaining a safe empty fallback (0.81475ms)
+✔ FaIcon preserves URLs and local sprite names (0.071292ms)
+✔ FaIcon runtime resolver keeps a fallback for failures, races, and disposal (2.988208ms)
+✔ FaIcon renders a local glyph when both the requested icon and Iconify fallback are unavailable (0.752417ms)
+✔ image upload policy accepts supported images up to the size boundary (0.855958ms)
+✔ jpg uploads are renamed to jpeg before Gaia commontools stores file_type (0.983292ms)
+✔ image upload progress is rounded and bounded (0.091292ms)
+✔ image upload hint keeps only format and per-file size constraints (1.83375ms)
+✔ only product create, edit and detail dialogs expose fault and manual tabs (1.288459ms)
+✔ product form groups sales fields by meaning and aligns the image uploader with long-form controls (0.500958ms)
+✔ shared form dialog and image upload enforce the reusable interaction contract (0.504042ms)
+✔ shared form dialog defines one typography hierarchy for title, tabs and sections (0.262417ms)
+✔ purchase registration follows the shared list toolbar and form dialog standard (0.434875ms)
+✔ purchase registration keeps workbench items focused while the full page still supports supplied installation codes (0.420375ms)
+✔ dialog tab tables use one lightweight visual shell without replacing table behavior (78.32475ms)
+✔ relationship previews reuse the editable-list shell in read-only mode (0.334625ms)
+✔ shared form footer aligns actions and keeps the scrollbar clear of form controls (0.452542ms)
+✔ shared file upload gives every editable attachment collection one lightweight list contract (0.376333ms)
+✔ catalog and network forms share one section boundary hierarchy (0.448375ms)
+✔ single-column and two-column forms follow the shared dialog size contract (0.2495ms)
+✔ inventory document forms share the lightweight part picker and line editor (0.822875ms)
+✔ picker-first editable relations share one list and picker contract (0.55925ms)
+✖ business create and edit forms use the shared dialog shell (0.828041ms)
+✖ editable controls in shared business form dialogs provide placeholders (81.727667ms)
+✖ raw view dialogs are limited to reviewed non-standard interaction models (74.911084ms)
+✔ image forms use the shared upload with dialog-level loading (0.709125ms)
+✔ standard fullscreen APIs enter and exit while preserving their receivers (0.783292ms)
+✔ prefixed fullscreen APIs remain available for compatible desktop browsers (0.095459ms)
+✔ unsupported fullscreen APIs are detected and never fail silently (0.235375ms)
+✔ headquarters analytics pages use a viewport-bounded shell without percentage-height feedback (1.655041ms)
+✔ analytics browser fixture keeps the production shell height chain for regression QA (0.584125ms)
+✔ headquarters analytics pages keep compact typography and a white page card (0.410625ms)
+node:internal/modules/package_json_reader:331
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/utils' imported from /Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/src/composables/useCrudDialog.ts
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:331:9)
+    at packageResolve (node:internal/modules/esm/resolve:784:25)
+    at moduleResolve (node:internal/modules/esm/resolve:873:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:276:33) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v24.21.0
+✖ tests/i18n.test.ts (1090.141875ms)
+✔ identity management uses outline create actions and is the last group in the sidebar sequence (0.547208ms)
+✔ identity list tables keep organization and roles on one line and omit unavailable role counts (0.084666ms)
+✔ identity models preserve signed Gaia IDs and reject unsafe numeric IDs (1.821791ms)
+✔ user mapper keeps Gaia fields and three-state enable semantics (0.413875ms)
+✔ role mapper preserves all returned module and operation IDs for inspection (0.107125ms)
+✔ user update payload preserves hidden Gaia relationships and data scopes (0.245375ms)
+✔ after-sales user editing shows scoped roles and preserves other-system roles on save (0.255708ms)
+✔ role payload keeps complete page and operation sets with distinct tree keys (0.383834ms)
+✔ password validation follows Gaia USER_PWD_RULE configuration (0.958125ms)
+✔ identity query builders whitelist filters and preserve disabled value (0.155916ms)
+✔ identity API uses the existing Gaia endpoints and validates page/detail responses (66.389708ms)
+[Vue warn]: Unhandled error during execution of setup function
+  at <App>
+[Vue warn]: Unhandled error during execution of setup function
+  at <App>
+[Vue warn]: Unhandled error during execution of setup function
+  at <App>
+[Vue warn]: Unhandled error during execution of setup function
+  at <App>
+✔ installation code queries trim the keyword and whitelist supported API fields (1.271166ms)
+✖ installation code API permission is independent from purchase record permission and missing grants fail closed (112.840167ms)
+✖ installation code page retries permission initialization before requesting business data (11.078958ms)
+✖ installation code search, paging and reset query once and preserve the applied keyword (8.094375ms)
+✖ installation code list failure exposes retry without repeating successful permission requests (9.507458ms)
+✔ inventory document payload whitelists fields and separates stocktake counts (0.941333ms)
+✔ inventory labels and all seven menu entries are wired as development features (1.679583ms)
+✔ stock ledger movement codes display their business meaning (0.586542ms)
+✔ inventory stock filters select an authorized owner by name after choosing its type (0.283458ms)
+✔ all inventory document forms reuse the picker-first line editor (1.495041ms)
+✔ 服务知识编辑白名单只保留服务站、单个类别/商品和多附件，且不改变详情附件 (0.812625ms)
+✔ 知识筛选清空状态不把空字符串当作停用 (0.09875ms)
+✔ landing reuses an authorized list row without a detail request; clearing restores pagination without fetching (2.289875ms)
+✔ off-page long IDs use one exact lookup and a continuous loading interval (1.719667ms)
+✔ cancelled pending focus never replaces the original rows (9.078708ms)
+✔ rapid target switching ignores older responses and never reloads the list (2.2885ms)
+✔ invalid IDs and failed exact lookups have explicit errors, not first-page not-found guesses (5.013625ms)
+✔ search exits focus and issues one query while preserving normal list paging (0.879417ms)
+✔ permission loss clears cached records and blocks both list and detail requests (1.511958ms)
+✔ a mismatched lookup response cannot render a different record as the target (0.372375ms)
+✔ existing and newly opened lists share both directions of the display preference (2.049917ms)
+✔ a new app instance restores the choice and signing out preserves it for the same account (0.676167ms)
+✔ reloading the login context updates mounted lists without copying the previous account preference (0.34975ms)
+✔ other browser tabs synchronize only the current local preference without write-back (0.42975ms)
+✔ blocked persistence still allows shared in-memory switching and invalid modes are ignored (0.272167ms)
+✔ Gaia module model preserves signed category IDs and long module IDs (0.886416ms)
+✔ menu management scopes the dynamic Gaia tree to afterSales and its descendants (0.214708ms)
+✔ menu management excludes retired modules while keeping current disabled modules manageable (0.105084ms)
+✔ menu management uses an expanded after-sales root and outline create actions (1.311292ms)
+✔ module payload whitelists Gaia fields and keeps the operation aggregate (0.303333ms)
+✔ module API uses current Gaia aggregate endpoints (43.843625ms)
+✔ defaults to single-sidebar navigation and toggles between single and head navigation (0.495625ms)
+✔ groups page actions before display preferences in the toolbar (0.420375ms)
+✔ empty, ungranted and invented roles never open menus (1.421792ms)
+✔ service desk only sees explicitly granted features in its view (0.524542ms)
+✔ consumer support configuration is visible only in headquarters operations when granted (0.127ms)
+✔ administrator navigation grant does not manufacture feature grants (0.122958ms)
+✔ authorized perspectives land on their workbench without manufacturing feature grants (0.121792ms)
+✔ a granted perspective can open its own empty home without a newly distributed menu (0.182208ms)
+✔ missing, mismatched or disabled view grants cannot open a workbench shell (0.099ms)
+✔ home aliases select their owner while shared business deep links retain an authorized perspective (0.243666ms)
+✔ disabled or mismatched administrator grants do not unlock other work perspectives (0.096583ms)
+✔ disabled parents, hidden features and mismatched paths are denied (0.12425ms)
+✔ pending settlement stays outside daily navigation even for explicitly granted administrators (0.085125ms)
+✔ current system registers 56 features and exposes exactly four business work perspectives (0.19925ms)
+✔ menu preview and administrator navigation use the same four business perspectives (0.232458ms)
+✔ perspectives prioritize headquarters products and station staffing before inventory (0.131708ms)
+✔ download configuration is headquarters-only while each view retains its own task access (0.122666ms)
+✔ headquarters purchase registration and dealer work orders still require explicit feature grants (0.088625ms)
+✔ installation application query remains a service-side context route only (0.145834ms)
+✔ removed standalone functions are absent from the system registry (0.057791ms)
+✔ installation codes require their own menu grant in headquarters or service desk (0.153167ms)
+✔ completion review belongs to service desk rather than service station (0.081584ms)
+✔ global management grants remain outside the after-sales business subtree (0.102334ms)
+✔ hidden, disabled and path-mismatched global management modules are denied (0.060416ms)
+✔ embedded task access still needs an enabled exact grant in an authorized perspective (0.839792ms)
+✖ cancelled work perspective switching leaves the current home and form mounted (109.818834ms)
+✖ accepted work perspective switching applies the new view only after the form agrees (17.663583ms)
+✖ a busy form blocks leaving the dashboard for another business page (35.023083ms)
+✖ same-route query updates also respect cancellation without replacing the form (31.626167ms)
+✖ a busy form refuses perspective switching without clearing tabs (10.712792ms)
+✖ a later route guard failure restores the original perspective and preserves tabs for retry (11.573625ms)
+✖ redirecting a perspective switch to access status does not clear old tabs (11.235375ms)
+✖ a rejected navigation preserves tabs and allows retry after reporting the error (12.008875ms)
+✖ selecting the current perspective leaves all tabs intact (5.501791ms)
+✖ returning to the root home through the Logo path does not clear same-view tabs (10.02375ms)
+✖ repeated switch commands while confirmation is pending commit only the first destination (5.699125ms)
+✖ a pending external form confirmation keeps the current view and tabs until its rejection (9.03725ms)
+✔ every work perspective group and registered feature has a menu icon (0.495959ms)
+✔ each work perspective uses distinct group and entry icons (0.156875ms)
+✔ menu management tree prefers registered icons and preserves custom database icons (0.618083ms)
+✔ all menu icons are available locally before rendering without an Iconify request (0.591083ms)
+✔ normal navigation ends with system management and task tools stay outside the sidebar (1.75825ms)
+✔ store entries are direct links and ungranted entries never appear through flattening (0.153125ms)
+✔ normal one-item configuration groups retain their hierarchy and localized titles (3.838833ms)
+✔ direct unauthorized URLs cannot be opened (0.713459ms)
+✔ session request reuses raw Gaia token and fails closed on errors or account changes (18.069625ms)
+✔ session request shares an in-flight menu tree request and retries after failure (15.043791ms)
+✔ dealer read-only query keeps false and trims user filters (0.769ms)
+✔ store query whitelists independent filters without inventing status enums (0.112458ms)
+✔ dealer detail routes preserve string ids and reject invalid query values (0.163542ms)
+✔ network master labels preserve unknown independent master values (4.027291ms)
+✔ service station basic slice whitelists form and query fields (0.30175ms)
+✔ service area payload normalizes hierarchy and station priorities (0.217125ms)
+✔ network create dialogs open before optional option data is requested (1.691208ms)
+✔ service station capabilities stay compact in table rows (0.88125ms)
+✖ network master lists prioritize names and operational context (1.673125ms)
+✔ network master pages share a persistent compact card view (0.971166ms)
+✔ network details share the current catalog detail hierarchy (0.389ms)
+✔ list pages do not reserve permanent alert space for architecture or workflow guidance (7.868208ms)
+✔ necessary guidance appears at the decision that needs it (1.270542ms)
+✖ privacy, permission, and action-impact guidance remains contextual (6.097917ms)
+✔ presentation ids share page identity when added, changed and removed (1.159209ms)
+✔ unregistered queries and business filters retain their navigation identity (0.259333ms)
+✔ inventory view tabs share one page identity while preserving business filters (0.124ms)
+✔ query arrays, empty flags, encoding and hashes survive stripping the presentation id (0.10325ms)
+✖ page tabs use the shared lightweight visual hierarchy (3.284291ms)
+✖ inventory tabs only expose readable views and keep the active view in the route (0.183584ms)
+✖ inventory stock range uses a complete non-clearable select instead of a switch (0.110583ms)
+✔ role permission catalog exposes only the after-sales subtree (7.811875ms)
+✔ role permission catalog does not expose retired after-sales modules (0.297584ms)
+✔ editing visible after-sales grants preserves permissions from other systems (0.833834ms)
+✔ role permission and menu editor trees start collapsed while menu management expands its scoped root (2.198042ms)
+✔ all pending states are checked before any unsaved confirmation (5.301875ms)
+✔ cancel stops later confirmations and leaves form visibility and data untouched (0.573084ms)
+✔ accepted guards run in registration order and unmount removes every registration (0.262709ms)
+✔ workbench parent handling suppresses child guards to avoid duplicate prompts (0.301208ms)
+✔ submission starting during an asynchronous confirmation still blocks switching (0.51775ms)
+✔ real EsFormDialog awaits beforeClose consent without closing or emitting after cancel or approval (188.463959ms)
+✔ real EsFormDialog blocks loading before confirmation and applies fallback dirty consent without emits (10.417292ms)
+✔ profile display and password validation follow Gaia account rules (4.234416ms)
+✔ profile API uses Gaia self-service password endpoints and a whitelisted payload (32.69975ms)
+✔ login and header source keep the Compass UI modules wired to after-sales behavior (2.530167ms)
+✔ workspace and account menu use one soft Lucide language (0.509125ms)
+✔ report queries enforce a bounded valid calendar range and restore defaults after reset (11.730834ms)
+✔ workbasket previews use displayed time descending across queues without leaking an unauthorized queue (2.00525ms)
+✔ service intake renders the shared table page directly without a page tab shell (0.408667ms)
+✔ personnel list and form mappers preserve false filters and whitelist writable fields (0.842792ms)
+✔ availability mappers normalize IDs and reject invented state values (0.314333ms)
+✔ daily schedule prefill uses the first unscheduled date in the selected range (1.746625ms)
+✔ quality query uses normalized date snapshots and known scopes only (2.731334ms)
+✔ every built-in navigation identifier has paired titles; unknown and custom names remain unchanged (4.72075ms)
+✔ literal @ signs in validation messages compile in both locales (0.728292ms)
+✔ an already visible authentication failure translates without retrying or losing login-required state (1.445083ms)
+✔ error state preserves unknown server messages and clears classification when replaced (0.158625ms)
+✔ password feedback changes language with unchanged limits, field values and validation outcomes (0.815875ms)
+✔ single keeps level one when the project menu has only two levels (0.804209ms)
+✔ single can hide level one through project settings (0.092084ms)
+✔ single preserves the complete tree when first-level hiding is disabled (0.066ms)
+✔ single removes exactly one level when first-level hiding is enabled (0.061208ms)
+✔ side keeps rendering only the active group children (0.053416ms)
+✔ head keeps rendering only the active group children (0.054041ms)
+✔ returns no sidebar items when the active group is unavailable (0.042291ms)
+✔ collapsed active group stays closed across guard and route updates (accordion=false) (108.672458ms)
+✔ collapsed active group stays closed across guard and route updates (accordion=true) (26.464209ms)
+✔ single projection remains reactive to real menu and display-mode changes (25.211125ms)
+✔ head keeps every sidebar panel mounted and only changes visibility (0.793875ms)
+✔ head keeps its only sidebar panel visible when the active index is stale (0.083375ms)
+✔ single and head keep stable outer panels while switching visibility (0.119792ms)
+✔ single mode keeps one menu instance while the active child group changes (0.065583ms)
+✔ side mode remounts the projected menu when its source group changes (0.055667ms)
+✔ equivalent authorized menus do not replace the current sidebar tree (0.322208ms)
+✔ single mode changes use the side transition when the index stays unchanged (1.663ms)
+✔ head and side retain their directional transition families (0.12625ms)
+✔ switch reset keeps an already-added target exactly once and clears old cache and insertion position (49.953083ms)
+✔ switch reset inserts a missing target and subsequent same-perspective pages append normally (11.792625ms)
+✔ tag saves retain the original version without copying permissions or status (0.760083ms)
+✔ token resource cache reuses successful values and invalidates them when the token changes (0.767833ms)
+✔ token resource cache merges concurrent work and does not cache failures (12.589584ms)
+✔ configuration is scoped to the selected page and preserves legacy bindings without offering unsupported buttons (0.754833ms)
+✔ save keeps stable node identity and revision, permits disabling an unbound scenario (0.115375ms)
+✔ old scene links require administrator and menu management together and never appear in business navigation (0.347667ms)
+✔ stores navigation and color preferences for the current Gaia user and tenant (0.865584ms)
+✔ isolates users and rejects stale or malformed preference values (0.121583ms)
+✔ does not persist preferences until a signed-in user can be identified (0.072834ms)
+✔ settings reloads navigation, color and the shared list preference after login (0.330125ms)
+✔ future 24h slots start at floored 2h boundary and stay zero (1.273458ms)
+✔ odd hours floor down to previous even hour (0.094417ms)
+✔ service work order creation separates product selection from order submission (1.92625ms)
+✔ service product lookup invalidates stale results and product-specific fault data (0.088875ms)
+✔ service order summary cards separate their headings from details (0.178458ms)
+✔ dispatch exception and completion review routes are real development features (0.47225ms)
+✔ workflow query normalizes paging and date range without leaking fields (0.41325ms)
+✔ dispatch search defaults to pending dispatch status (0.056833ms)
+✔ workflow dictionaries cover required exception and SLA stages (2.184791ms)
+✖ customer-service dispatch keeps station assignment while station page is wired for personnel assignment (4.824208ms)
+ℹ tests 326
+ℹ suites 1
+ℹ pass 296
+ℹ fail 30
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4403.49625
+
+✖ failing tests:
+
+test at tests/catalog-detail.test.ts:19:1
+✖ category detail shows readable ancestry and never exposes a raw parent ID as its name (1.105083ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  undefined !== '卫浴'
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/catalog-detail.test.ts:22:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: '卫浴',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/catalog-state.test.ts:1:1
+✖ tests/catalog-state.test.ts (1155.604709ms)
+  'test failed'
+
+test at tests/catalog.test.ts:22:1
+✖ catalog uploads use the official Gaia access and download addresses (1.036208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      accessUrl: '/api/sys/commontools/picture?id=1',
+      downloadUrl: '/api/sys/commontools/downloadFileById?id=1',
+  +   fileId: '1'
+    }
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/catalog.test.ts:23:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { accessUrl: '/api/sys/commontools/picture?id=1', downloadUrl: '/api/sys/commontools/downloadFileById?id=1', fileId: '1' },
+    expected: { accessUrl: '/api/sys/commontools/picture?id=1', downloadUrl: '/api/sys/commontools/downloadFileById?id=1' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/catalog.test.ts:38:1
+✖ real payloads whitelist fields and preserve false filters and optimistic versions (1.299542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      code: 'C-1',
+      imageUrl: 'image.png',
+  -   kind: 'PRODUCT',
+      name: 'A',
+      parentId: '-1',
+      remark: '',
+      version: 'v'
+    }
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/catalog.test.ts:43:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { code: 'C-1', name: 'A', parentId: '-1', remark: '', imageUrl: 'image.png', version: 'v' },
+    expected: { code: 'C-1', name: 'A', parentId: '-1', kind: 'PRODUCT', remark: '', imageUrl: 'image.png', version: 'v' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/form-components.test.ts:623:1
+✖ business create and edit forms use the shared dialog shell (0.828041ms)
+  Error: ENOENT: no such file or directory, open '/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/src/views/catalog/bundle/components/ProductBundleFormDialog.vue'
+      at readFileSync (node:fs:483:20)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/form-components.test.ts:651:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/src/views/catalog/bundle/components/ProductBundleFormDialog.vue'
+  }
+
+test at tests/form-components.test.ts:657:1
+✖ editable controls in shared business form dialogs provide placeholders (81.727667ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   'customerService/followUp/components/FollowUpDialog.vue:60 <el-input>',
+  +   'customerService/followUp/components/FollowUpDialog.vue:66 <el-input>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:153 <el-input>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:155 <el-input>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:148 <el-select>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:150 <el-select>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:151 <el-select>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:156 <el-date-picker>',
+  +   'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:157 <el-date-picker>',
+  +   'dashboard/components/DealerWorkbench.vue:390 <el-select>',
+  +   'dashboard/components/DealerWorkbenchDashboard.vue:333 <el-select>'
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/form-components.test.ts:678:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'customerService/followUp/components/FollowUpDialog.vue:60 <el-input>', 'customerService/followUp/components/FollowUpDialog.vue:66 <el-input>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:153 <el-input>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:155 <el-input>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:148 <el-select>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:150 <el-select>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:151 <el-select>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:156 <el-date-picker>', 'customerService/knowledgeBase/components/AssistantKnowledgePanel.vue:157 <el-date-picker>', 'dashboard/components/DealerWorkbench.vue:390 <el-select>', 'dashboard/components/DealerWorkbenchDashboard.vue:333 <el-select>' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/form-components.test.ts:681:1
+✖ raw view dialogs are limited to reviewed non-standard interaction models (74.911084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      'catalog/part/components/PartProductsDialog.vue',
+      'catalog/series/components/ProductSeriesProductsDialog.vue',
+  +   'customer/shared/PurchaseVerificationDialog.vue',
+      'customer/shared/RegistrationPanel.vue',
+      'customerService/shared/WorkflowListPage.vue',
+      'downloadCenter/template/index.vue'
+    ]
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/form-components.test.ts:688:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'catalog/part/components/PartProductsDialog.vue', 'catalog/series/components/ProductSeriesProductsDialog.vue', 'customer/shared/PurchaseVerificationDialog.vue', 'customer/shared/RegistrationPanel.vue', 'customerService/shared/WorkflowListPage.vue', 'downloadCenter/template/index.vue' ],
+    expected: [ 'catalog/part/components/PartProductsDialog.vue', 'catalog/series/components/ProductSeriesProductsDialog.vue', 'customer/shared/RegistrationPanel.vue', 'customerService/shared/WorkflowListPage.vue', 'downloadCenter/template/index.vue' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/i18n.test.ts:1:1
+✖ tests/i18n.test.ts (1090.141875ms)
+  'test failed'
+
+test at tests/installation-code.test.ts:71:1
+✖ installation code API permission is independent from purchase record permission and missing grants fail closed (112.840167ms)
+  TypeError: (0 , errors_1.useUiErrorState) is not a function
+      at setup (eval at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:55:5), <anonymous>:24:66)
+      at callWithErrorHandling (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:19)
+      at setupStatefulComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8231:25)
+      at setupComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8193:36)
+      at mountComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6087:7)
+      at processComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6053:9)
+      at patch (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5558:11)
+      at render (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6882:7)
+      at Object.mount (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:4335:13)
+      at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:65:20)
+
+test at tests/installation-code.test.ts:83:1
+✖ installation code page retries permission initialization before requesting business data (11.078958ms)
+  TypeError: (0 , errors_1.useUiErrorState) is not a function
+      at setup (eval at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:55:5), <anonymous>:24:66)
+      at callWithErrorHandling (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:19)
+      at setupStatefulComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8231:25)
+      at setupComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8193:36)
+      at mountComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6087:7)
+      at processComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6053:9)
+      at patch (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5558:11)
+      at render (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6882:7)
+      at Object.mount (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:4335:13)
+      at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:65:20)
+
+test at tests/installation-code.test.ts:96:1
+✖ installation code search, paging and reset query once and preserve the applied keyword (8.094375ms)
+  TypeError: (0 , errors_1.useUiErrorState) is not a function
+      at setup (eval at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:55:5), <anonymous>:24:66)
+      at callWithErrorHandling (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:19)
+      at setupStatefulComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8231:25)
+      at setupComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8193:36)
+      at mountComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6087:7)
+      at processComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6053:9)
+      at patch (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5558:11)
+      at render (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6882:7)
+      at Object.mount (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:4335:13)
+      at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:65:20)
+
+test at tests/installation-code.test.ts:113:1
+✖ installation code list failure exposes retry without repeating successful permission requests (9.507458ms)
+  TypeError: (0 , errors_1.useUiErrorState) is not a function
+      at setup (eval at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:55:5), <anonymous>:24:66)
+      at callWithErrorHandling (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:19)
+      at setupStatefulComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8231:25)
+      at setupComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:8193:36)
+      at mountComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6087:7)
+      at processComponent (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6053:9)
+      at patch (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:5558:11)
+      at render (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6882:7)
+      at Object.mount (/Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/node_modules/.pnpm/@vue+runtime-core@3.5.42/node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:4335:13)
+      at mountPage (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/installation-code.test.ts:65:20)
+
+test at tests/navigation-home-leave.test.ts:148:1
+✖ cancelled work perspective switching leaves the current home and form mounted (109.818834ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:149:83)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:168:1
+✖ accepted work perspective switching applies the new view only after the form agrees (17.663583ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:169:75)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:182:1
+✖ a busy form blocks leaving the dashboard for another business page (35.023083ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:183:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:192:1
+✖ same-route query updates also respect cancellation without replacing the form (31.626167ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:193:43)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:201:1
+✖ a busy form refuses perspective switching without clearing tabs (10.712792ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:202:83)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:212:1
+✖ a later route guard failure restores the original perspective and preserves tabs for retry (11.573625ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:213:80)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:229:1
+✖ redirecting a perspective switch to access status does not clear old tabs (11.235375ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:230:73)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:239:1
+✖ a rejected navigation preserves tabs and allows retry after reporting the error (12.008875ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:240:88)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:260:1
+✖ selecting the current perspective leaves all tabs intact (5.501791ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:261:69)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:270:1
+✖ returning to the root home through the Logo path does not clear same-view tabs (10.02375ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:271:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:282:1
+✖ repeated switch commands while confirmation is pending commit only the first destination (5.699125ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:283:83)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/navigation-home-leave.test.ts:300:1
+✖ a pending external form confirmation keeps the current view and tabs until its rejection (9.03725ms)
+  AssertionError [ERR_ASSERTION]: Unexpected component import: ./components/DealerWorkbenchDashboard.vue
+      at file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:25:12
+      at eval (eval at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:3), <anonymous>:13:40)
+      at component (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:24:59)
+      at setup (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:96:21)
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/navigation-home-leave.test.ts:301:106)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/network-master.test.ts:245:1
+✖ network master lists prioritize names and operational context (1.673125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      'name',
+      'code',
+      'area',
+      'areas',
+      'serviceItems',
+  +   'dailyMaxOrders',
+      'managerName',
+      'hotline',
+      'orgName',
+      'personnelCount',
+      'enabled'
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/network-master.test.ts:254:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'name', 'code', 'area', 'areas', 'serviceItems', 'dailyMaxOrders', 'managerName', 'hotline', 'orgName', 'personnelCount', 'enabled' ],
+    expected: [ 'name', 'code', 'area', 'areas', 'serviceItems', 'managerName', 'hotline', 'orgName', 'personnelCount', 'enabled' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/page-guidance.test.ts:43:1
+✖ privacy, permission, and action-impact guidance remains contextual (6.097917ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(source('views/serviceResource/schedule/components/AvailabilityFormDialog.vue').includes('休息、请假和临时停单容量必须为 0'))
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/page-guidance.test.ts:46:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-tabs.test.ts:9:1
+✖ page tabs use the shared lightweight visual hierarchy (3.284291ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(pageSource.includes('class="es-page-tabs"'))
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/page-tabs.test.ts:10:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-tabs.test.ts:20:1
+✖ inventory tabs only expose readable views and keep the active view in the route (0.183584ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(pageSource.includes('v-for="item in availableTabs"'))
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/page-tabs.test.ts:21:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/page-tabs.test.ts:31:1
+✖ inventory stock range uses a complete non-clearable select instead of a switch (0.110583ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(pageSource.includes("label:t('inventory.stockRange'),type:'select',clearable:false"))
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/page-tabs.test.ts:32:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/work-order-workflow.test.ts:30:1
+✖ customer-service dispatch keeps station assignment while station page is wired for personnel assignment (4.824208ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(serviceDesk.groups.find(group=>group.name==='工单处理') .codes.includes('afsDispatch'))
+
+      at TestContext.<anonymous> (file:///Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales/tests/work-order-workflow.test.ts:33:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+ ELIFECYCLE  Command failed with exit code 1.
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

@@ -1,0 +1,12 @@
+yarn run v1.22.22
+$ node scripts/frontends/after-sales.mjs check
+
+> gaia-after-sales-ui@ check /Users/snow/Documents/Ehsure/Gaia/frontend/gaia-ui/apps/after-sales
+> eslint . --cache --cache-location node_modules/.cache/eslint/.eslintcache --max-warnings 0 && knip --dependencies --no-progress --no-config-hints && vue-tsc -b && vue-tsc --noEmit -p tsconfig.test.json && node scripts/check-i18n.mjs && node --experimental-strip-types --test tests/*.test.ts
+
+src/views/customerService/shared/CompletionSubmissionSummary.vue(72,188): error TS2345: Argument of type '`customerService.${string}`' is not assignable to parameter of type 'MessageKey'.
+src/views/customerService/shared/CompletionSubmissionSummary.vue(80,18): error TS2345: Argument of type '`customerService.${string}`' is not assignable to parameter of type 'MessageKey'.
+src/views/customerService/shared/CompletionSubmissionSummary.vue(86,271): error TS2345: Argument of type '`customerService.${string}`' is not assignable to parameter of type 'MessageKey'.
+ ELIFECYCLE  Command failed with exit code 2.
+error Command failed with exit code 2.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

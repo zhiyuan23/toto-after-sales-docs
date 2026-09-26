@@ -1,0 +1,8 @@
+light work: 6.97:1 (#205d3d / #eaf5ee)
+dark work: 8.26:1 (#a8e0ba / #183b2b)
+light rest: 6.85:1 (#475467 / #f0f2f5)
+dark rest: 8.01:1 (#c2cbd8 / #29313d)
+light leave: 6.11:1 (#85500b / #fff4df)
+dark leave: 8.15:1 (#efd197 / #43341d)
+light suspended: 6.27:1 (#9b3442 / #fbeef0)
+dark suspended: 7.57:1 (#efb4bd / #42282f)

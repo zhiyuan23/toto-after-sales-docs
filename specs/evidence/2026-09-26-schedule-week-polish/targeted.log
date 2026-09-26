@@ -1,0 +1,17 @@
+yarn run v1.22.22
+$ node scripts/frontends/after-sales.mjs exec node --experimental-strip-types --test tests/service-resource.test.ts
+✔ personnel list and form mappers preserve false filters and whitelist writable fields (0.700792ms)
+✔ availability mappers normalize IDs and reject invented state values (0.124708ms)
+✔ daily schedule prefill uses the first unscheduled date in the selected range (0.864458ms)
+✔ quality query uses normalized date snapshots and known scopes only (2.416125ms)
+✔ calendar does not label filtered or paginated missing records as unscheduled (0.069ms)
+✔ week navigation handles Sundays, leap days and year boundaries in local dates (0.1055ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 490.763375
+Done in 2.28s.
