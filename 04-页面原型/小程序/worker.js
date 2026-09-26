@@ -16,6 +16,7 @@
   const mineRow = (title, route) => `<button class="w-mine-row" data-go="${route}"><span>${title}</span><span aria-hidden="true">›</span></button>`;
   const resourceCard = (title, detail, route, ico) => `<button class="w-resource-card" data-go="${route}">${icon(ico)}<span><strong>${title}</strong><small>${detail}</small></span><b aria-hidden="true">›</b></button>`;
   const TODAY='2026-09-13';
+  const REVIEW_TIME='13:00'; // Fixed review clock; never a production scheduling source.
   const serviceStation={code:'SH-XH-016',name:'徐汇服务中心'};
   const queues = [['pending','待处理'],['returned','待补资料'],['review','审核中'],['history','历史任务']];
   const parts = [{id:'P001',name:'进水过滤组件',model:'DEMO-P001',price:68,stock:8},{id:'P002',name:'连接密封圈',model:'DEMO-P002',price:12,stock:12},{id:'P003',name:'连接软管',model:'DEMO-P003',price:35,stock:0}];
@@ -25,8 +26,9 @@
     {id:'AZ202609130021',name:'林女士',type:'安装',queue:'pending',flag:'已预约',date:TODAY,start:'17:00',end:'18:00',address:'徐汇区 · 漕溪示例苑 2 栋 301',product:'智能坐便器',model:'DEMO-T01',issue:'新产品安装，核对用水及电源条件。'},
     {id:'WX202609140031',name:'刘女士',type:'维修',queue:'pending',flag:'已预约',date:'2026-09-14',start:'09:00',end:'11:00',address:'徐汇区 · 示例江畔公寓 2 栋 501',product:'智能坐便器',model:'DEMO-T01',issue:'客户反馈出水异常，预约检查。'},
     {id:'AZ202609140032',name:'吴先生',type:'安装',queue:'pending',flag:'已预约',date:'2026-09-14',start:'10:00',end:'12:00',address:'徐汇区 · 示例汇景苑 6 栋 202',product:'智能坐便器',model:'DEMO-T01',issue:'安装与试运行，需联系核对时间。'},
-    {id:'ZD202609130008',name:'许先生',type:'远程指导',queue:'pending',flag:'待联系',date:'',start:'',end:'',address:'徐汇区 · 远程服务',product:'智能坐便器',model:'DEMO-T01',issue:'需要了解遥控器设置。'},
+    {id:'ZD202609130008',name:'许先生',type:'远程指导',queue:'pending',flag:'待联系',date:TODAY,start:'15:00',end:'17:00',address:'徐汇区 · 远程服务',product:'智能坐便器',model:'DEMO-T01',issue:'需要了解遥控器设置。'},
     {id:'WX202609120007',name:'周女士',type:'维修',queue:'pending',flag:'缺件',date:'',start:'',end:'',address:'徐汇区 · 田林示例小区',product:'智能坐便器',model:'DEMO-T01',issue:'待更换进水过滤组件。',reason:'待领料，到件后重新预约。'},
+    {id:'WX202609120099',name:'测试客户',type:'维修',queue:'pending',flag:'已预约',date:'2026-09-12',start:'09:00',end:'11:00',address:'徐汇区 · 预约核对示例地址',product:'智能坐便器',model:'DEMO-T01',issue:'预约时间已过，需要核对安排。'},
     {id:'WX202609120009',name:'黄先生',type:'维修',queue:'review',flag:'等待审核',date:'2026-09-12',start:'10:00',end:'12:00',address:'徐汇区 · 桂林示例新村',product:'智能坐便器',model:'DEMO-T01',issue:'维修后试运行正常。',versions:[{n:1,result:'维修后试运行正常',status:'待审核',note:'已提交客户确认记录'}]},
     {id:'AZ202609100002',name:'孙女士',type:'安装',queue:'followup',flag:'审核通过',date:'2026-09-10',completedAt:'2026-09-11',start:'09:00',end:'11:00',address:'徐汇区 · 示例华庭',product:'智能坐便器',model:'DEMO-T01',issue:'安装已完成。',versions:[{n:1,result:'安装完成',status:'审核通过',note:'审核通过，后续由服务中心跟进'}]},
     {id:'WX202609110019',name:'郑先生',type:'维修',queue:'lost',flag:'断联',date:'',start:'',end:'',address:'徐汇区 · 宜山示例社区',product:'智能坐便器',model:'DEMO-T01',issue:'无法启动。',reason:'两次电话未接听，待再次联系。'},
@@ -67,14 +69,20 @@
   const draft = (page,base={}) => ({...base,...state.drafts[taskKey(page)]});
   const history = t => `<div class="w-timeline">${[...t.history].reverse().map(h=>`<div><strong>${e(h.title)}</strong><p>${e(h.note)}</p><small>${e(h.time)}</small></div>`).join('') || '<div><strong>暂无联系与处理记录</strong></div>'}</div>`;
   const log = (t,title,note) => t.history.push({title,note,time:'09-13 · 本次演示'});
+  const workGroup=t=>!inQueue(t,'pending')?'':(['缺件','断联'].includes(t.flag)||t.queue==='lost')?'WAITING':!['已预约','改期'].includes(t.flag)||!t.date?'CONTACT':!isServing(t)&&(t.date<TODAY||(t.date===TODAY&&(t.end||t.start)&&(t.end||t.start)<REVIEW_TIME))?'OVERDUE':t.date===TODAY?'TODAY':'FUTURE';
+  const workGroupLabels={TODAY:'今日已确认预约',CONTACT:'待联系确认',FUTURE:'未来已确认预约',WAITING:'等待配件 / 待再次联系',OVERDUE:'预约时间已过 · 需核对安排'};
+  const appointmentLabel=t=>workGroup(t)==='WAITING'?(t.date?'原时间 · 待重新确认':'待重新预约'):['已预约','改期'].includes(t.flag)&&t.date?'已确认预约':t.date?'客户期望 · 待确认':'待预约';
+  const displayDate=t=>t.date===TODAY?'今天':t.date==='2026-09-14'?'明天':t.date?.slice(5).replace('-','月')+'日';
   function filteredTasks(queue=state.queue) {
     let list=visibleTasks().filter(t=>inQueue(t,queue) && [t.id,t.name,t.address].some(v=>v.toLowerCase().includes(state.search.toLowerCase())));
     if(state.filter==='returned')list=list.filter(t=>t.flag==='审核退回');
     if(state.filter==='today')list=list.filter(t=>t.date===TODAY&&t.flag==='已预约');
+    if(state.filter==='overdue')list=list.filter(t=>workGroup(t)==='OVERDUE');
     if(state.filter==='parts')list=list.filter(t=>t.flag==='缺件');
     if(['cancelled','closed'].includes(state.filter))list=list.filter(t=>t.queue===state.filter);
     if(state.filter==='processing')list=list.filter(t=>t.queue==='followup');
-    return list.sort((a,b)=>state.sort==='time'?(a.date+a.start||'9999').localeCompare(b.date+b.start||'9999'):(a.flag==='审核退回'?-1:0)-(b.flag==='审核退回'?-1:0)||(a.date+a.start||'9999').localeCompare(b.date+b.start||'9999'));
+    const ranks={TODAY:0,CONTACT:1,FUTURE:2,WAITING:3,OVERDUE:4};
+    return list.sort((a,b)=>queue==='pending'?(ranks[workGroup(a)]-ranks[workGroup(b)]||(a.date+a.start||'9999').localeCompare(b.date+b.start||'9999')||a.id.localeCompare(b.id)):(b.reviewedAt||b.submittedAt||b.completedAt||b.date||'').localeCompare(a.reviewedAt||a.submittedAt||a.completedAt||a.date||''));
   }
   const taskButton = (t,label='查看任务',cls='w-text-button') => act(label,'task',t.id,cls);
   function nextStep(t) {
@@ -86,12 +94,14 @@
     if(t.flag==='审核退回')return {label:'退回待补',hint:t.reason||'请按退回意见补充材料。',action:'补充资料',route:'w-returned',word:'待补'};
     if(t.flag==='缺件')return {label:'等待配件',hint:'查看配件进度，到件后联系客户重新预约。',action:'跟进配件',route:'w-exception',word:'待件'};
     if(t.queue==='lost')return {label:'待再次联系',hint:t.reason||'联系客户，确认是否继续安排服务。',action:'联系客户',route:'w-appointment',word:'联系'};
+    if(workGroup(t)==='OVERDUE')return {label:'需核对安排',hint:'预约时间已过，请核对是否需要改约或补记服务进度。',action:'核对安排',route:'w-detail',word:'核对'};
+    if(t.date&&!['已预约','改期'].includes(t.flag))return {label:'待联系确认',hint:'这是客户期望时间，请联系客户确认预约。',action:'联系客户',route:'w-appointment',word:'联系'};
     return {label:t.flag,hint:t.type==='远程指导'?'无需上门，联系客户后记录指导结果。':t.flag==='已预约'?`${t.date} 已确认，按预约时间上门。`:'联系客户，确认服务安排。',action:'处理任务',route:'w-detail',word:t.flag==='已预约'?t.start:'联系'};
   }
   function taskCard(t) {
     const next=nextStep(t);
-    const timing=t.flag==='已预约'&&canArrange(t)?`<div class="w-time"><strong>${e(t.start)}</strong><small>至 ${e(t.end)}</small></div>`:'';
-    return `<article class="w-ticket ${tone(t)}"><button type="button" class="w-ticket-hitarea" data-worker="task" data-value="${e(t.id)}" aria-label="查看${e(t.name)}的任务详情"></button><div class="w-ticket-top">${tag(next.label,tone(t))}<small>${e(t.type)} · ${queueName(t)}</small></div><div class="w-ticket-main">${timing}<div class="w-ticket-info"><h3>${e(t.name)}<span>${e(t.product)}</span></h3><p>${e(t.address)}</p></div><span class="w-ticket-chevron" aria-hidden="true">›</span></div><div class="w-ticket-hint">${e(next.hint)}</div></article>`;
+    const timing=t.date&&canArrange(t)?`<div class="w-time"><span class="w-time-date">${e(displayDate(t))}</span><strong>${e(t.start)}</strong><small>至 ${e(t.end)}</small></div>`:'';
+    return `<article class="w-ticket ${tone(t)}"><button type="button" class="w-ticket-hitarea" data-worker="task" data-value="${e(t.id)}" aria-label="查看${e(t.name)}的任务详情"></button><div class="w-ticket-top">${tag(next.label,tone(t))}<small>${e(t.type)} · ${queueName(t)}</small></div><div class="w-ticket-main">${timing}<div class="w-ticket-info">${inQueue(t,'pending')?`<small>${e(appointmentLabel(t))}</small>`:''}<h3>${e(t.name)}<span>${e(t.product)}</span></h3><p>${e(t.address)}</p></div><span class="w-ticket-chevron" aria-hidden="true">›</span></div><div class="w-ticket-hint">${e(next.hint)}</div></article>`;
   }
   function summary(t=task()) {return t?`<div class="w-context"><div>${icon(t.type==='安装'?'install':t.type==='远程指导'?'guidance':'repair')}<strong>${e(t.name)} · ${e(t.type)}</strong>${tag(queueName(t),tone(t))}</div><small>${e(t.id)} · ${e(t.model)}</small></div>`:empty('当前没有任务','请返回任务页。');}
   const servingProgress = step => `<div class="w-serving-progress"><span class="w-serving-stage"><strong>${step+1}<small>/3</small></strong><span><small>当前步骤</small><b>${taskSteps[step]}</b></span></span><span class="w-serving-enter">继续处理 <b aria-hidden="true">›</b></span></div><div class="w-serving-progress-track" aria-hidden="true">${taskSteps.map((_,i)=>`<i class="${i<=step?'filled':''}"></i>`).join('')}</div>`;
@@ -110,18 +120,17 @@
     const active=activeTasks(),matched=filteredTasks(),promoted=matched.filter(isServing).length,list=matched.filter(t=>!isServing(t));
     const appointmentsToday=confirmedAppointments(TODAY).length;
     const completedThisMonth=visibleTasks().filter(t=>['followup','closed'].includes(t.queue)&&t.completedAt?.startsWith(TODAY.slice(0,7))).length;
-    const pendingFilters=`<div class="w-chip-row w-pending-filters" aria-label="待处理任务筛选">${[['all','全部'],['today','今日预约'],['parts','等配件']].map(([key,label])=>act(label,'filter',key,state.filter===key?'selected':'')).join('')}</div>`;
     const overview=`<section class="w-task-overview" aria-label="工作概览"><div class="w-task-overview-summary"><span>待处理任务</span><div class="w-task-overview-total" aria-label="待处理任务 ${pending.length} 单"><strong>${pending.length}</strong><small>单</small></div></div><div class="w-task-overview-actions" aria-label="任务快捷入口"><button type="button" class="w-task-overview-action" data-go="w-schedule" aria-label="查看今日已确认预约日程" title="今日预约"><img src="assets/icons/calendar.svg" alt=""></button><button type="button" class="w-task-overview-action" data-go="w-map" aria-label="查看待处理任务地图" title="任务地图"><img src="assets/icons/map.svg" alt=""></button></div><div class="w-task-overview-stats" aria-label="今日已预约 ${appointmentsToday} 单，本月已完成 ${completedThisMonth} 单"><span>今日已预约 <strong>${appointmentsToday}</strong> 单</span><span>本月已完成 <strong>${completedThisMonth}</strong> 单</span></div></section>`;
     const taskFocus=active.length?`<section class="w-serving-area" aria-label="当前服务任务">${active.length===1?servingCard(active[0]):servingGroup(active)}</section>`:overview;
     return `${taskFocus}
       <form data-worker-form="task-search" class="w-search"><input name="search" type="search" aria-label="查询任务" placeholder="任务号 / 联系人 / 地址" value="${e(state.search)}"><button type="submit">查询</button></form>
       <div class="w-queue w-task-queues" aria-label="任务队列">${availableQueues().map(([k,v])=>act(`${v}<small>${visibleTasks().filter(t=>inQueue(t,k)).length}</small>`,'queue',k,state.queue===k?'selected':'')).join('')}</div>
-      ${state.queue==='pending'?pendingFilters:''}
+      ${state.queue==='pending'&&pending.some(t=>workGroup(t)==='OVERDUE')?act(`预约时间已过 ${pending.filter(t=>workGroup(t)==='OVERDUE').length} 单 · 需核对安排　${state.filter==='overdue'?'返回全部':'查看 ›'}`,'filter',state.filter==='overdue'?'all':'overdue','w-overdue-entry'):''}
       ${state.queue==='history'?`<div class="w-chip-row" aria-label="历史任务筛选">${[['all','全部记录'],['processing','后续跟进'],['closed','已关闭'],['cancelled','已取消']].map(([key,label])=>act(label,'history-filter',key,state.filter===key?'selected':'')).join('')}</div><p class="w-history-caption">服务后的办结进度与历史记录可在这里查看。</p>`:''}
       ${state.queue==='returned'?'<p class="w-history-caption">按审核意见补齐资料即可，无需重新走现场服务。</p>':''}
-      <div class="w-list-heading"><span>${state.filter==='all'?'全部':{today:'今日预约',returned:'待补资料',parts:'等配件',processing:'后续跟进',closed:'已关闭',cancelled:'已取消'}[state.filter]} · ${matched.length} 单 ${state.filter!=='all'||state.search?act('清除筛选','clear-filter','','w-text-button'):''}</span><label>排序 <select data-worker-sort aria-label="任务排序"><option value="priority" ${state.sort==='priority'?'selected':''}>优先处理</option><option value="time" ${state.sort==='time'?'selected':''}>预约时间</option></select></label></div>
+      <div class="w-list-heading"><span>${state.filter==='all'?'全部':{overdue:'需核对安排',today:'今日预约',returned:'待补资料',parts:'等配件',processing:'后续跟进',closed:'已关闭',cancelled:'已取消'}[state.filter]} · ${matched.length} 单 ${state.filter!=='all'||state.search?act('清除筛选','clear-filter','','w-text-button'):''}</span><small>按处理顺序</small></div>
       ${promoted?`<p class="w-promoted-note">其中 ${promoted} 单正在服务，已在上方展示</p>`:''}
-      ${list.map(taskCard).join('')||(!promoted?empty('这个队列暂时没有任务','试试其他状态或清除查询条件。'):'')}`;
+      ${list.map((t,i)=>(state.queue==='pending'&&(i===0||workGroup(t)!==workGroup(list[i-1]))?`<div class="w-list-heading">${workGroupLabels[workGroup(t)]}</div>`:'')+taskCard(t)).join('')||(!promoted?empty('这个队列暂时没有任务','试试其他状态或清除查询条件。'):'')}`;
   }
   function confirmedAppointments(date){return visibleTasks().filter(t=>inQueue(t,'pending')&&t.flag==='已预约'&&t.date===date).sort((a,b)=>a.start.localeCompare(b.start));}
   const scheduleDate=value=>new Date(`${value}T12:00:00`);
@@ -139,7 +148,7 @@
   function detail() {
     const t=task();if(!t)return summary();
     return `<div class="w-status ${tone(t)}"><small>${queueName(t)}</small><h2>${e(nextStep(t).label)}</h2><p>${e(nextStep(t).hint)}</p></div>${summary(t)}
-      ${card(`<div class="w-section-head"><h3>${canArrange(t)?'服务安排':'服务记录'}</h3>${canArrange(t)?go('联系 / 改约','w-appointment','w-text-button'):''}</div><div class="w-appointment-time">${t.date?e(`${t.date} · ${t.start}–${t.end}`):'尚未确认时间'}</div><p>${e(t.address)}</p><small class="muted">${e(t.supplement)}</small>${canArrange(t)?`<div class="w-contact">${act('拨打客户电话','phone',t.id)}${go('编辑补充信息','w-edit','w-text-button')}</div>`:''}`)}
+      ${card(`<div class="w-section-head"><h3>${canArrange(t)?'服务安排':'服务记录'}</h3>${canArrange(t)?go('联系 / 改约','w-appointment','w-text-button'):''}</div><small class="muted">${e(appointmentLabel(t))}</small><div class="w-appointment-time">${t.date?e(`${t.date} · ${t.start}–${t.end}`):'尚未确认时间'}</div><p>${e(t.address)}</p><small class="muted">${e(t.supplement)}</small>${canArrange(t)?`<div class="w-contact">${act('拨打客户电话','phone',t.id)}${go('编辑补充信息','w-edit','w-text-button')}</div>`:''}`)}
       ${card(`<div class="w-product">${icon(t.type==='安装'?'install':'repair')}<div><h3>${e(t.product)}</h3><small>${e(t.model)} · ${e(t.type)} × 1</small></div></div><p>${e(t.issue)}</p><p class="muted">${e(t.note||'暂无额外备注')}</p><div class="w-detail-links" aria-label="任务相关资料">${act('查本产品资料','task-docs','','w-text-button')}${act('本单配件记录','task-records','','w-text-button')}</div>`)}
       ${t.versions.length&&!['review','followup','closed'].includes(t.queue)?go('查看完工材料与审核记录','w-review'):''}
       ${card(`<h3>联系与处理记录</h3>${history(t)}`)}`;
@@ -217,7 +226,7 @@
   const rootNavImplementationNote='【小程序开发约束】本页是底部 Tab 根页面，真实小程序需在 pages.json 对本页配置 navigationStyle: custom。顶部不得照搬原型 92px，必须结合 uni.getWindowInfo() 的 statusBarHeight / safeArea 和微信 wx.getMenuButtonBoundingClientRect() 运行时计算导航高度及右侧避让，保留胶囊安全区。页面在顶部时使用无白底的展开标题，内容上滑后切换为白色表面与紧凑页标题，回到顶部后恢复。';
   const screens=[];
   function screen(id,title,entry,tab,body,footer,goal,note='',rootNav=null){const scopedBody=()=>state.company!=='上海示例服务企业'&&['w-part-detail','w-requisition','w-return','w-records','w-record-detail','w-technical','w-document','w-warranty','w-warranty-detail'].includes(id)?empty('当前企业暂无授权数据','可在我的页面切换企业。')+go('返回我的','w-mine','primary'):(typeof body==='function'?body():body);screens.push({id,title,entry,tab,body:scopedBody,footer,goal:goal||'在当前业务上下文完成操作，并返回关联记录。',note:[baseNote,note,rootNav?rootNavImplementationNote:''].filter(Boolean).join(' '),rootNav,navigationMode:rootNav?'custom-root':'standard'});}
-  screen('w-tasks','任务','W01','w-tasks',renderTasks,null,'用处理优先级、预约时间和下一步识别任务，三个 Tab 保留全部业务入口。','顶部概览以待处理总数为主视觉，次级展示今日已确认预约和本月通过审核的本人完成数；今日预约进入日程，任务地图进入本人待处理任务点位。本月完成数表示服务人员本次处理结束，不表示回访等后续流程已完成。待处理 Tab 下保留全部／今日预约／等配件二级筛选。正在服务时置顶展示当前客户、步骤与继续入口，多单保留各自入口。',taskRootNav);
+  screen('w-tasks','任务','W01','w-tasks',renderTasks,null,'用处理优先级、预约时间和下一步识别任务，三个 Tab 保留全部业务入口。','顶部概览以待处理总数为主视觉，次级展示今日已确认预约和本月通过审核的本人完成数；今日预约进入日程，任务地图进入本人待处理任务点位。本月完成数表示服务人员本次处理结束，不表示回访等后续流程已完成。待处理按今日已确认、待联系、未来预约、等待处理分组；过时预约提供核对入口。正在服务时置顶展示当前客户、步骤与继续入口，多单保留各自入口。',taskRootNav);
   screen('w-schedule','日程','W01','w-tasks',schedule,null,'按周切换日期，查看本人每日已确认预约并进入任务详情。','周历从周一到周日；仅以已确认预约计数，演示今日为 2026-09-13。');
   screen('w-map','任务地图','W03','w-tasks',taskMap,null,'按位置查看本人待处理的上门任务并进入详情。','地图为原型示意，不显示路线、距离或预计到达；真实小程序使用微信内置地图。');
   screen('w-detail','任务详情','W02','w-tasks',detail,detailFooter);
@@ -328,7 +337,7 @@
       case 'start-remote':if(!canArrange(t)||t.type!=='远程指导'||t.queue!=='pending')throw new Error('当前任务不可开始远程指导。');startService(t);return 'w-service';
       case 'history-filter':state.queue='history';state.filter=['all','processing','closed','cancelled'].includes(value)?value:'all';return 'w-tasks';
       case 'queue':state.queue=availableQueues().some(([k])=>k===value)?value:'pending';state.filter='all';return 'w-tasks';
-      case 'filter':if(state.queue!=='pending')return 'w-tasks';state.filter=['all','today','parts'].includes(value)?value:'all';state.search='';return 'w-tasks';
+      case 'filter':if(state.queue!=='pending')return 'w-tasks';state.filter=['all','today','parts','overdue'].includes(value)?value:'all';state.search='';return 'w-tasks';
       case 'dashboard-filter':state.queue='pending';state.filter=['today','parts'].includes(value)?value:'all';state.search='';return 'w-tasks';
       case 'clear-filter':state.filter='all';state.search='';return 'w-tasks';
       case 'part':state.partId=value;return 'w-part-detail';

@@ -380,3 +380,7 @@
 .worker-phone .pin-1{top:22%;left:29%}.worker-phone .pin-2{top:59%;left:35%}.worker-phone .pin-3{top:35%;left:62%}.worker-phone .pin-4{top:66%;left:77%}.worker-phone .pin-5{top:13%;left:83%}.worker-phone .pin-6{top:75%;left:14%}
 .worker-phone .w-map-caption{margin:8px 1px 13px;color:var(--w-muted);font-size:10px}
 .worker-phone .w-map-index{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:50%;background:var(--w-blue-soft);color:var(--w-blue-deep);font-size:11px;font-weight:700}
+
+/* 2026-09-26: task appointment fact and work priority. */
+.worker-phone .w-time-date { color: var(--w-ink); font-size: 12px; line-height: 1.4; }
+.worker-phone .w-overdue-entry { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 11px; color: #926321; background: #fff7e7; border: 0; border-radius: 12px; font-size: 12px; text-align: left; }
