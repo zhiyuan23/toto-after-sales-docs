@@ -26,3 +26,9 @@
 服务人员旧版线框、版本截图、日程与地图示意素材已于 2026-09-18 删除，避免被误作当前开发基线。当前服务人员端只允许参考 [唯一有效原型入口](../index.html?consumerVersion=0.13#w-tasks) 及其实际加载的 `worker.js` / `worker.css`。
 
 `icons/calendar.svg` 继续用于首页“今日预约”筛选按钮；图形来自 Lucide `calendar-days`，使用 ISC 许可，来源与许可见 [Lucide](https://github.com/lucide-icons/lucide/blob/main/LICENSE)。
+
+## 品牌产品中心 V1 图标补充（2026-09-27）
+
+- `icons/product-cube.svg`：来自项目已安装 `@iconify-json/mdi` 的 `cube-outline`，Pictogrammers，Apache License 2.0；用于“我的产品”Tab。
+- `icons/entry-chevron.svg`：复用消费者源码 `src/static/icons/entry-chevron.svg`，由 TDesign Icon 渲染；遵循项目 32rpx 细线进入箭头规范。
+- V1 沿用本页列出的原有产品与场景图，不增加品牌正式素材认定。

@@ -1,0 +1,82 @@
+/* Independent brand product center exploration; existing prototypes remain unchanged. */
+(() => {
+  if (window.TOTO_CONSUMER_VERSION !== 'brand-center-v1') return;
+  const app = window.TOTO_SCREENS.consumer;
+  const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const screen = id => app.screens.find(s => s.id === id);
+  const arrow = '<img class="bc-arrow" src="assets/icons/entry-chevron.svg" alt="">';
+  const icon = name => `<img class="bc-icon" src="assets/icons/${name}.svg" alt="">`;
+  const state = {pending:'c-products', history:false};
+  const note = '独立 V1 交互方案，未替换 v0.14／v0.13／v0.11，不表示正式小程序已实现。产品关系、服务资格仍沿用原契约；全部账号和服务为虚构演示。';
+  const active = ctx => ctx.visitor ? [] : (ctx.serviceOrders || []).filter(o => !['closed','completed','cancelled'].includes(o.status));
+  const hasProducts = ctx => !ctx.visitor && ctx.products?.length > 0;
+  const access = (ctx, go) => ctx.visitor ? `data-bc-access="${go}"` : `data-go="${go}"`;
+  const statusText = o => o.status === 'confirmed' ? '时间已确认' : '等待联系';
+  const appointment = o => o.status === 'confirmed' ? `${o.confirmedDate || '日期待确认'} · ${o.confirmedTime || '时段待确认'}` : '申请已收到，请留意来电确认安排';
+  const serviceCard = (ctx, compact=false) => {
+    const orders=active(ctx);
+    if (!orders.length) return '';
+    const order=orders.find(o=>o.status!=='confirmed') || orders[0];
+    return `<button class="bc-service-card ${compact?'is-compact':''}" ${orders.length===1?`data-product="${e(order.productId)}" data-go="c-progress"`:'data-go="c-service"'} aria-label="${orders.length===1?'查看服务进度':'查看全部进行中服务'}"><span class="bc-service-top">${icon('service')}<strong>${orders.length===1?'你的服务，正在跟进':`${orders.length} 项服务进行中`}</strong><span>查看进度 ${arrow}</span></span><span class="bc-service-description">${e(order.productName)} · ${e(order.serviceLabel || '售后服务')}<b>${statusText(order)}</b></span><span class="bc-service-time">${e(appointment(order))}</span></button>`;
+  };
+  const utility = `<nav class="bc-utility" aria-label="服务快捷入口"><button data-go="bc-request">${icon('repair')}<span>申请服务</span></button><button data-go="c-customer-service">${icon('guidance')}<span>联系客服</span></button><button data-go="c-outlets">${icon('map')}<span>查找网点</span></button></nav>`;
+  const title = (text, label='', go='') => `<div class="bc-section-title"><h2>${text}</h2>${go?`<button data-go="${go}">${label}${arrow}</button>`:''}</div>`;
+  const careRows = `<div class="bc-care-list"><button data-go="bc-guide"><span class="bc-care-number">01</span><span><strong>熟悉它，从使用指南开始</strong><small>说明书与常用功能，一处找到</small></span>${arrow}</button><button data-go="bc-care"><span class="bc-care-number">02</span><span><strong>把日常照护，变得简单</strong><small>了解适合产品的清洁与保养资料</small></span>${arrow}</button></div>`;
+  app.tabs = [{label:'首页',go:'c-home'},{label:'我的产品',go:'c-products'},{label:'我的',go:'c-mine'}];
+  Object.assign(screen('c-home'), {
+    title:'TOTO', nav:'compact', entry:'V1 · 品牌产品中心首页',
+    goal:'用生活场景建立品牌感；个人服务动态始终靠前，产品摘要、使用照护与一则品牌内容依次展开。无自动轮播、促销弹窗或商品瀑布流。',
+    note:note+' 默认是有两件产品、一项已确认服务的场景。右侧可切换无服务、多服务、游客及未关联状态。浴室图是既有 AI 场景素材，首页文字为待品牌审核的提案。',
+    body:ctx=>`<div class="bc-home"><section class="bc-hero"><div class="bc-hero-copy"><p>生活中的每一天</p><h1>舒适，始于日常。</h1><span>从每一次使用，到长久的陪伴。</span></div><img src="assets/product-bathtub-scene.jpg" alt="自然光下的浴室空间，生活场景示意"></section><div class="bc-home-content">${serviceCard(ctx)}<section class="bc-owned"><button class="bc-owned-link" ${access(ctx,'c-products')}><span><small>我的 TOTO</small><strong>${hasProducts(ctx)?`${ctx.products.length} 件产品，陪伴你的日常`:'为你的产品，留一处安心的位置'}</strong><span>${hasProducts(ctx)?'查看产品与使用资料':'添加产品，方便查资料、找服务'}</span></span>${hasProducts(ctx)?`<img class="bc-owned-image" src="${e(ctx.products[0].image)}" alt="">`:icon('plus')}${arrow}</button>${!hasProducts(ctx)?`<button class="bc-inline-link" ${access(ctx,'c-register')}>添加我的产品 ${arrow}</button>`:''}</section>${utility}<section class="bc-care">${title('让每一天，用得更好')}<p class="bc-section-description">${hasProducts(ctx)?'从你正在使用的产品开始。':'一点了解，让日常多一分从容。'}</p>${careRows}</section><section class="bc-journal">${title('关于更好的日常')}<button class="bc-journal-card" data-go="bc-story"><img src="assets/product-basin.jpg" alt="洗面器与龙头的空间搭配示意"><span><small>设计与生活</small><strong>留给生活的，<br>多一点从容。</strong><span>认识产品背后的细节 ${arrow}</span></span></button></section><button class="bc-discover" data-go="bc-discover"><span><small>产品新知</small><strong>发现舒适的更多可能</strong></span>${arrow}</button><p class="bc-signoff">TOTO<span>让舒适，长久相伴。</span></p></div></div>`
+  });
+  Object.assign(screen('c-products'), {
+    tab:'c-products', entry:'V1 · 一级我的产品', goal:'已购产品是一级入口。每件产品可进入档案，也可直接跟进本件服务；添加与咨询入口始终可用。', note,
+    body:ctx=>hasProducts(ctx)?`<div class="bc-products-heading"><div><h1>我的产品</h1><p>${ctx.products.length} 件产品 · 与日常相伴</p></div><button class="bc-add" data-go="c-register" aria-label="添加产品">${icon('plus')}</button></div><div class="bc-products-list">${ctx.products.map(p=>{const order=active(ctx).find(o=>(o.productIds||[o.productId]).includes(p.id));return `<article class="bc-product-card"><button class="bc-product-main" data-product="${e(p.id)}" data-go="c-product"><span class="bc-product-meta">${e(p.room || '我的产品')}<span>${p.ownershipStatus==='pending-verification'?'待核验':e(p.sourceLabel || '已关联')}</span></span><img class="bc-product-photo" src="${e(p.image)}" alt="${e(p.name)}"><span class="bc-product-caption"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small></span>${arrow}</span></button>${order?`<button class="bc-product-status" data-product="${e(p.id)}" data-go="c-progress">${icon('service')}<span>${e(order.serviceLabel || '售后服务')} · ${statusText(order)}</span>${arrow}</button>`:`<button class="bc-product-status is-quiet" data-product="${e(p.id)}" data-go="bc-guide"><span>使用指南与产品资料</span>${arrow}</button>`}</article>`}).join('')}</div><button class="bc-wide-link" data-go="c-service">我的全部服务 ${arrow}</button>`:`<section class="bc-empty">${icon('requisition')}<h1>${ctx.visitor?'让产品与你关联':'这里，留给你正在使用的产品'}</h1><p>添加后，产品资料、使用指南和服务记录<br>都可以在这里找到。</p><button class="primary" ${access(ctx,'c-register')}>${ctx.visitor?'登录并添加产品':'添加我的产品'}</button><button class="bc-wide-link" data-go="c-customer-service">找不到产品？联系客服 ${arrow}</button></section><section class="bc-care">${title('先了解，再慢慢熟悉')}${careRows}</section>`
+  });
+  const productBody=screen('c-product').body;
+  Object.assign(screen('c-product'),{parent:'c-products',note,
+    body:ctx=>`${productBody(ctx)}<div class="bc-detail-links"><button data-go="bc-guide">使用指南 ${arrow}</button><button data-go="bc-care">清洁与保养 ${arrow}</button><button data-go="bc-product-services">本件产品的服务记录 ${arrow}</button></div>`,footer:ctx=>!hasProducts(ctx)?'':ctx.order?'<button class="primary" data-go="c-progress">查看服务进度</button>':'<button class="secondary" data-go="bc-guide">使用指南</button><button class="primary" data-go="bc-request">申请服务</button>'});
+  // A direct deep link without owned products must not display a fabricated owned product.
+  const ownedProductBody=screen('c-product').body;
+  screen('c-product').body=ctx=>hasProducts(ctx)?ownedProductBody(ctx):`<section class="bc-empty"><h1>先找到你的产品</h1><p>关联后可查看本人产品档案和服务记录。</p><button class="primary" ${access(ctx,'c-register')}>添加产品</button><button class="bc-wide-link" data-go="c-customer-service">联系客服 ${arrow}</button></section>`;
+  const mineBody=screen('c-mine').body;
+  Object.assign(screen('c-mine'), {goal:'个人资料、购买信息和全部服务记录的稳定入口。首页动态收起后，历史服务仍可从这里找到。', note,
+    body:ctx=>{
+      const services=`<section class="bc-mine-services"><button class="bc-wide-link" ${access(ctx,'c-service')}><span><strong>我的服务</strong><small>${active(ctx).length?`${active(ctx).length} 项进行中 · 查看全部记录`:'服务进度与历史记录'}</small></span>${arrow}</button><button class="bc-wide-link" data-go="c-customer-service">联系 TOTO ${arrow}</button><button class="bc-wide-link" data-go="c-outlets">服务网点 ${arrow}</button></section>`;
+      return ctx.visitor?`<section class="bc-mine-guest"><h1>欢迎来到 TOTO</h1><p>登录后，查看与你有关的产品和记录。</p><button class="primary" data-bc-access="c-mine">登录</button></section>${services}`:mineBody(ctx).replace('</header>','</header>'+services).replaceAll('<span aria-hidden="true">›</span>',arrow).replaceAll('<i aria-hidden="true">›</i>',arrow).replace('个人信息 ›','个人信息 '+arrow);
+    }
+
+  });
+  const orderRow = o=>`<button class="bc-order-row" data-product="${e(o.productId)}" data-go="c-progress"><span><small>${e(o.serviceLabel || '售后服务')} · ${statusText(o)}</small><strong>${e(o.productName)}</strong><span>${e(appointment(o))}</span></span>${arrow}</button>`;
+  Object.assign(screen('c-service'), {title:'我的服务',tab:undefined,parent:'c-mine',entry:'V1 · 二级服务列表',goal:'集中查看跨产品服务，单项从首页直达详情，多项从首页进入此列表；历史服务始终可查。',note,
+    body:ctx=>`<div class="bc-page-heading"><h1>我的服务</h1><p>每一次需要，都有迹可循。</p></div><div class="bc-segments" aria-label="服务记录分类"><button data-bc-history="false" aria-pressed="${!state.history}">进行中 ${active(ctx).length}</button><button data-bc-history="true" aria-pressed="${state.history}">历史记录</button></div>${!state.history&&active(ctx).length?`<div class="bc-order-list">${active(ctx).map(orderRow).join('')}</div>`:`<section class="bc-empty is-small"><h2>${ctx.visitor?'登录后查看我的服务':state.history?'暂无历史服务记录':'暂无进行中的服务'}</h2><p>${state.history?'服务结束后，可在这里回看记录。':'需要帮助时，可以申请服务或直接联系客服。'}</p>${ctx.visitor?'<button class="primary" data-bc-access="c-service">登录查看</button>':'<button class="primary" data-go="bc-request">申请服务</button>'}</section>`}${utility}`
+  });
+  Object.assign(screen('c-progress'), {title:'服务进度',parent:'c-service',note:note+' 三阶段使用服务安排／服务处理／服务完成；期望时间不冒充预约时间。',
+    body:ctx=>{const o=ctx.order;if(ctx.visitor||!o)return '<section class="bc-empty"><h1>暂无这件产品的服务记录</h1><button class="primary" data-go="c-service">查看我的服务</button></section>';return `<div class="bc-progress-heading"><span>${e(o.serviceLabel || '售后服务')}</span><h1>${statusText(o)}</h1><p>${o.status==='confirmed'?'我们将按确认的安排为你提供服务。':'我们将与你核对需求并确认服务安排。'}</p></div><ol class="bc-stages" aria-label="服务阶段"><li aria-current="step"><b>1</b><span>服务安排</span></li><li><b>2</b><span>服务处理</span></li><li><b>3</b><span>服务完成</span></li></ol><section class="bc-arrangement"><small>${o.status==='confirmed'?'已确认预约':'接下来'}</small><h2>${o.status==='confirmed'?e(o.confirmedDate):'请留意联系来电'}</h2><p>${o.status==='confirmed'?e(o.confirmedTime):'服务时间和方式将与你沟通确认。'}</p></section><section class="bc-progress-product"><img src="${e(ctx.product.image)}" alt="${e(ctx.product.name)}"><div><strong>${e(o.productName)}</strong><span>${e(ctx.product.model)}</span></div></section><dl class="bc-facts"><div><dt>服务编号</dt><dd>${e(o.id)}</dd></div><div><dt>申请诉求</dt><dd>${e(o.description)}</dd></div><div><dt>期望日期</dt><dd>${e(o.preferredDate || '待沟通')}（以联系确认为准）</dd></div></dl><button class="bc-wide-link" data-go="c-product">查看产品档案 ${arrow}</button>`;},
+    footer:ctx=>ctx.order?'<button class="primary" data-go="c-customer-service">联系 TOTO 客服</button>':''
+  });
+  const newScreen=(id,name,goal,body,parent='c-home')=>({id,title:name,entry:'V1 · '+name,parent,goal,note,body});
+  app.screens.push(
+    newScreen('bc-request','申请服务','已有产品可选择具体产品和服务类型；无产品时仍保留客服路径。',ctx=>`<div class="bc-page-heading"><h1>需要什么帮助？</h1><p>${hasProducts(ctx)?'先选择产品，再告诉我们你的需要。':'可以先添加产品，也可以直接联系客服。'}</p></div>${hasProducts(ctx)?`<div class="bc-request-products">${ctx.products.map(p=>`<button data-product="${e(p.id)}" data-go="bc-request" aria-pressed="${ctx.product.id===p.id}"><img src="${e(p.image)}" alt=""><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small></span>${ctx.product.id===p.id?icon('check'):''}</button>`).join('')}</div>${ctx.order?`<div class="bc-info">这件产品已有服务进行中，可以继续查看进度。</div><button class="primary bc-full" data-go="c-progress">查看当前服务</button>`:`<div class="bc-request-types"><button data-service-type="install" data-go="c-install">${icon('install')}<strong>安装</strong>${arrow}</button><button data-service-type="repair" data-go="c-repair">${icon('repair')}<strong>维修</strong>${arrow}</button><button data-service-type="remote-guidance" data-go="c-repair">${icon('guidance')}<strong>使用指导</strong>${arrow}</button></div>`}`:`<button class="primary bc-full" ${access(ctx,'c-register')}>添加我的产品</button>`}<button class="bc-wide-link" data-go="c-customer-service">不确定如何选择？联系客服 ${arrow}</button>`),
+    newScreen('bc-product-services','产品服务记录','只查看当前这件产品的服务记录。',ctx=>`<div class="bc-page-heading"><h1>${hasProducts(ctx)?e(ctx.product.name):'产品服务记录'}</h1><p>${hasProducts(ctx)?e(ctx.product.model):'关联后查看本人记录'}</p></div>${ctx.order&&!ctx.visitor?orderRow(ctx.order):'<section class="bc-empty is-small"><h2>暂无服务记录</h2><p>提交服务申请后，可在这里持续跟进。</p></section>'}<button class="bc-wide-link" data-go="bc-request">申请服务 ${arrow}</button>`,'c-product'),
+    newScreen('bc-guide','使用指南','公共资料无需登录；已关联产品可带着型号查找官方说明书。',ctx=>`<article class="bc-article"><span class="bc-article-label">使用与照护</span><h1>熟悉它，<br>从使用指南开始。</h1><p class="bc-article-lead">找到对应型号，让每一次使用都更从容。</p>${hasProducts(ctx)?`<div class="bc-guide-product"><img src="${e(ctx.product.image)}" alt="${e(ctx.product.name)}"><strong>${e(ctx.product.name)}<small>${e(ctx.product.model)}</small></strong></div>`:''}<h2>先确认产品型号</h2><p>可查看产品标识或购买资料。不同型号的操作方式可能不同，请以对应说明书为准。</p><h2>查找官方使用说明</h2><p>在 TOTO 说明书下载中心输入产品品番，选择对应的使用说明书。</p><a class="primary bc-external" href="https://www.toto.com.cn/cn/instruction/instruction_search.html" target="_blank" rel="noopener noreferrer">前往官方说明书中心 ↗</a><button class="bc-wide-link" data-go="c-customer-service">找不到适用资料？联系我们 ${arrow}</button></article>`),
+    newScreen('bc-care','日常照护','以官方适用资料为准，不虚构特定产品的清洗、拆机和维修步骤。',()=>`<article class="bc-article"><span class="bc-article-label">使用与照护</span><h1>照顾好产品，<br>也是照顾日常。</h1><p class="bc-article-lead">从了解材质和适用方法开始。</p><img class="bc-article-image" src="assets/product-basin.jpg" alt="洗面器搭配场景"><h2>找到适合它的照护方式</h2><p>不同部位、材质及型号的清洁要求可能不同。请查阅对应说明书中的保养章节，再选择清洁用品和方法。</p><h2>不确定时，让我们帮助你</h2><p>如果无法确认适用方法，或产品出现异常，可直接联系 TOTO 客服，说明型号与情况。</p><button class="primary bc-full" data-go="bc-guide">查阅产品使用资料</button><button class="bc-wide-link" data-go="c-customer-service">联系 TOTO ${arrow}</button></article>`),
+    newScreen('bc-story','品牌与生活','少量精选生活内容表达品牌陪伴感，文案为设计提案，须经品牌审核。',()=>`<article class="bc-article"><span class="bc-article-label">设计与生活</span><h1>留给生活的，<br>多一点从容。</h1><p class="bc-article-lead">好的日常，藏在每一次平常的使用里。</p><img class="bc-article-image bc-scene" src="assets/product-bathtub-scene.jpg" alt="卫浴生活场景示意"><h2>从一个空间，到每天的习惯</h2><p>清晨的洗漱，归家后的放松。产品与空间共同承接着生活的节奏，也值得被慢慢了解。</p><h2>购买之后，陪伴继续</h2><p>把产品资料、日常使用和每一次服务放在一起，让需要的信息容易找到，让需要的帮助及时可见。</p><button class="bc-wide-link" data-go="bc-discover">认识更多产品 ${arrow}</button><button class="bc-wide-link" data-go="c-products">回到我的产品 ${arrow}</button></article>`),
+    newScreen('bc-discover','产品新知','演示未来新品推广的轻量位置与详情路径；当前使用已有商品，不宣称新品上市、价格或未经证实的性能。',()=>`<article class="bc-article"><span class="bc-article-label">产品新知</span><h1>从一处细节，<br>认识舒适。</h1><p class="bc-article-lead">让产品，自然融入日常的空间。</p><img class="bc-discover-product" src="assets/product-toilet.jpg" alt="诺锐斯特 LS 产品示意"><h2>诺锐斯特 LS</h2><p>品番 CES8G820GCN</p><p>了解产品外观与空间搭配，也可以到授权门店进一步咨询，找到适合自己使用需求的选择。</p><button class="primary bc-full" data-go="c-outlets">查找附近门店</button><button class="bc-wide-link" data-go="c-customer-service">咨询产品 ${arrow}</button></article>`),
+    newScreen('bc-access','登录后继续','只在访问个人产品和记录时提示登录；公开内容和客服不受影响。',()=>`<section class="bc-empty"><h1>继续了解你的产品</h1><p>登录后查看与你有关的产品、购买记录与服务进度。</p><button class="primary" data-bc-login>模拟登录并继续</button><button class="bc-wide-link" data-go="c-home">先浏览首页 ${arrow}</button></section>`)
+  );
+  // Reduce the immersive legacy floating entry on editorial home; help remains in the fixed utility row.
+  const assistant=window.TOTO_AI_ASSISTANT;
+  if(assistant){const floating=assistant.floating;assistant.floating=(id,ctx)=>id==='c-home'?'':floating.call(assistant,id,ctx);}
+  window.TOTO_BRAND={
+    reset(){state.pending='c-products';state.history=false;},
+    handle(el,{context,render,showScreen,simulateLogin}){
+      if(el.dataset.bcAccess){state.pending=el.dataset.bcAccess;showScreen(context.visitor?'bc-access':state.pending);return true;}
+      if('bcLogin' in el.dataset){simulateLogin();showScreen(state.pending);return true;}
+      if('bcHistory' in el.dataset){state.history=el.dataset.bcHistory==='true';render();return true;}
+      if(el.dataset.go==='c-service') state.history=false;
+      return false;
+    },
+    submit(){return false;}
+  };
+})();

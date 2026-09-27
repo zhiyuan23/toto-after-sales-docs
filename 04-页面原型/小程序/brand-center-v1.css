@@ -1,0 +1,164 @@
+/* Scoped to the independent consumer prototype; existing themes and entries are untouched. */
+html[data-consumer-version="brand-center-v1"] .consumer-phone {
+  --c-brand:#3a83f6; --c-blue:#286bcc; --c-blue-dark:#2059ad; --c-ink:#202d3b;
+  --c-muted:#62707f; --c-canvas:#f6f8fa; --c-soft:#edf3fb; --c-brand-soft:#eaf2ff;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+html[data-consumer-version="brand-center-v1"] .consumer-phone button { -webkit-tap-highlight-color:transparent; }
+html[data-consumer-version="brand-center-v1"] .consumer-phone button:focus-visible,
+html[data-consumer-version="brand-center-v1"] .consumer-phone a:focus-visible {outline:2px solid #286bcc;outline-offset:3px;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone .primary,
+html[data-consumer-version="brand-center-v1"] .consumer-phone .secondary {display:flex;align-items:center;justify-content:center;min-height:44px;padding:12px 18px;line-height:1.4;font-size:14px;border-radius:999px;text-align:center;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone .primary {background:var(--c-blue);color:white;border:0;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone .secondary {color:var(--c-blue);}
+html[data-consumer-version="brand-center-v1"] .consumer-phone .phone-tabs {box-shadow:none;border-top:1px solid #e8edf2;background:#fff;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone .phone-tabs button {font-size:12px;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone .phone-tabs button.selected {color:var(--c-blue);}
+html[data-consumer-version="brand-center-v1"] .consumer-phone[data-screen="c-home"] .phone-nav {background:#fff;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone[data-screen="c-home"] .phone-nav strong {font-style:italic;font-size:25px;font-weight:850;letter-spacing:-1.5px;color:#244973;}
+html[data-consumer-version="brand-center-v1"] .consumer-phone[data-screen="c-home"] .phone-body {padding:0;background:#fff;}
+.consumer-phone .bc-arrow {width:16px;height:16px;flex:none;object-fit:contain;}
+.consumer-phone .bc-icon {width:24px;height:24px;flex:none;object-fit:contain;}
+.consumer-phone .bc-hero {position:relative;height:287px;overflow:hidden;background:#e9edec;}
+.consumer-phone .bc-hero>img {display:block;width:100%;height:100%;object-fit:cover;object-position:center 59%;}
+.consumer-phone .bc-hero-copy {position:absolute;z-index:1;left:0;right:0;top:0;padding:22px 24px 60px;background:linear-gradient(180deg,rgba(245,247,247,.97),rgba(245,247,247,.86) 62%,rgba(245,247,247,0));color:#253642;}
+.consumer-phone .bc-hero-copy p {margin:0 0 8px;font-size:11px;letter-spacing:2px;color:#536571;}
+.consumer-phone .bc-hero-copy h1 {font-size:27px;letter-spacing:.02em;line-height:1.4;font-weight:550;margin:0 0 6px;}
+.consumer-phone .bc-hero-copy>span {font-size:12px;line-height:1.8;}
+.consumer-phone .bc-home-content {padding:16px 20px 8px;}
+.consumer-phone .bc-service-card {display:block;background:#eaf2ff;border-radius:16px;padding:16px;width:100%;text-align:left;overflow:hidden;color:#234567;margin:0 0 16px;border:0;}
+.consumer-phone .bc-service-top {display:flex;gap:8px;align-items:center;}
+.consumer-phone .bc-service-top>.bc-icon {width:20px;height:20px;}
+.consumer-phone .bc-service-top>strong {font-size:14px;font-weight:650;}
+.consumer-phone .bc-service-top>span {margin-left:auto;display:flex;gap:3px;align-items:center;font-size:11px;white-space:nowrap;}
+.consumer-phone .bc-service-description {display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12px;margin-top:13px;line-height:1.6;}
+.consumer-phone .bc-service-description b {font-size:11px;font-weight:500;margin-left:auto;}
+.consumer-phone .bc-service-time {display:block;margin-top:5px;font-size:11px;line-height:1.6;color:#4c6279;}
+.consumer-phone .bc-owned {padding:8px 0 0;}
+.consumer-phone .bc-owned-link {display:flex;align-items:center;gap:8px;text-align:left;width:100%;padding:0;}
+.consumer-phone .bc-owned-link>span {flex:1;min-width:0;}
+.consumer-phone .bc-owned-link small {display:block;font-size:11px;color:var(--c-muted);margin-bottom:8px;}
+.consumer-phone .bc-owned-link strong {display:block;font-size:16px;font-weight:600;line-height:1.6;}
+.consumer-phone .bc-owned-link span>span {display:block;font-size:11px;color:var(--c-muted);margin-top:5px;}
+.consumer-phone .bc-owned-image {width:66px;height:69px;object-fit:contain;}
+.consumer-phone .bc-inline-link {display:flex;align-items:center;gap:5px;min-height:44px;color:var(--c-blue);font-size:13px;}
+.consumer-phone .bc-utility {display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:#f5f7fa;border-radius:16px;overflow:hidden;padding:14px 8px;margin:20px 0 28px;}
+.consumer-phone .bc-utility button {display:flex;align-items:center;flex-direction:column;gap:7px;min-height:48px;font-size:12px;line-height:1.4;color:#435364;}
+.consumer-phone .bc-utility .bc-icon {width:22px;height:22px;opacity:.8;}
+.consumer-phone .bc-section-title {display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.consumer-phone .bc-section-title h2 {margin:0;font-size:19px;line-height:1.5;letter-spacing:-.02em;font-weight:600;}
+.consumer-phone .bc-section-title button {display:flex;align-items:center;font-size:12px;color:var(--c-muted);}
+.consumer-phone .bc-section-description {font-size:12px;line-height:1.7;color:var(--c-muted);margin:6px 0 2px;}
+.consumer-phone .bc-care-list {margin-top:8px;}
+.consumer-phone .bc-care-list>button {display:flex;align-items:center;gap:12px;text-align:left;padding:17px 0;width:100%;border-radius:0;}
+.consumer-phone .bc-care-list>button+button {border-top:1px solid #edf0f3;}
+.consumer-phone .bc-care-number {font-size:20px;font-weight:400;color:#97a6b6;font-variant-numeric:tabular-nums;}
+.consumer-phone .bc-care-list strong {display:block;font-size:14px;line-height:1.5;font-weight:550;}
+.consumer-phone .bc-care-list small {display:block;font-size:11px;color:var(--c-muted);line-height:1.6;margin-top:4px;}
+.consumer-phone .bc-care-list .bc-arrow {margin-left:auto;}
+.consumer-phone .bc-journal {margin-top:28px;}
+.consumer-phone .bc-journal-card {display:block;width:100%;padding:0;margin-top:14px;text-align:left;background:#f5f7f8;border-radius:16px;overflow:hidden;}
+.consumer-phone .bc-journal-card>img {width:100%;height:184px;display:block;object-fit:contain;background:#fff;}
+.consumer-phone .bc-journal-card>span {display:block;padding:20px;}
+.consumer-phone .bc-journal-card small {color:var(--c-muted);font-size:11px;}
+.consumer-phone .bc-journal-card strong {font-size:23px;font-weight:500;line-height:1.55;display:block;margin-top:8px;}
+.consumer-phone .bc-journal-card span>span {display:flex;align-items:center;gap:4px;font-size:12px;margin-top:17px;}
+.consumer-phone .bc-discover {display:flex;align-items:center;justify-content:space-between;width:100%;padding:24px 0 12px;text-align:left;}
+.consumer-phone .bc-discover small {display:block;color:var(--c-muted);font-size:11px;margin-bottom:6px;}
+.consumer-phone .bc-discover strong {font-size:15px;font-weight:550;}
+.consumer-phone .bc-signoff {padding:24px 0 18px;text-align:center;font-size:21px;letter-spacing:-1px;font-style:italic;font-weight:800;color:#7a8897;}
+.consumer-phone .bc-signoff span {display:block;font-size:10px;font-weight:400;font-style:normal;letter-spacing:2px;margin-top:7px;}
+.consumer-phone .bc-products-heading {display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.consumer-phone .bc-products-heading h1,.consumer-phone .bc-page-heading h1 {font-size:25px;line-height:1.5;font-weight:600;margin:0 0 8px;}
+.consumer-phone .bc-products-heading p,.consumer-phone .bc-page-heading p {font-size:12px;color:var(--c-muted);line-height:1.8;margin:0;}
+.consumer-phone .bc-add {border-radius:50%;width:44px;height:44px;background:#fff;display:flex;align-items:center;justify-content:center;}
+.consumer-phone .bc-products-list {display:grid;gap:12px;}
+.consumer-phone .bc-product-card {background:#fff;border-radius:16px;overflow:hidden;}
+.consumer-phone .bc-product-main {padding:16px;width:100%;display:block;text-align:left;}
+.consumer-phone .bc-product-meta {display:flex;justify-content:space-between;font-size:11px;color:var(--c-muted);}
+.consumer-phone .bc-product-photo {display:block;width:100%;height:190px;object-fit:contain;margin:4px auto 12px;}
+.consumer-phone .bc-product-caption {display:flex;align-items:center;justify-content:space-between;}
+.consumer-phone .bc-product-caption strong {font-size:17px;font-weight:600;display:block;}
+.consumer-phone .bc-product-caption small {display:block;font-size:11px;letter-spacing:.03em;color:var(--c-muted);margin-top:6px;}
+.consumer-phone .bc-product-status {display:flex;gap:8px;align-items:center;width:100%;padding:13px 16px;background:#eaf2ff;color:#335c87;font-size:12px;border-radius:0;}
+.consumer-phone .bc-product-status .bc-icon {height:17px;width:17px;}
+.consumer-phone .bc-product-status .bc-arrow {margin-left:auto;}
+.consumer-phone .bc-product-status.is-quiet {background:#f1f5f8;color:#536576;}
+.consumer-phone .bc-wide-link {display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:15px 0;text-align:left;color:var(--c-ink);font-size:14px;}
+.consumer-phone .bc-wide-link strong {display:block;font-size:16px;font-weight:600;}
+.consumer-phone .bc-wide-link small {display:block;font-size:12px;color:var(--c-muted);margin-top:6px;}
+.consumer-phone .bc-detail-links,.consumer-phone .bc-mine-services {padding:8px 16px;margin-top:16px;background:white;border-radius:16px;overflow:hidden;}
+.consumer-phone .bc-detail-links>button {display:flex;align-items:center;justify-content:space-between;width:100%;padding:15px 0;font-size:14px;}
+.consumer-phone .bc-mine-services .bc-wide-link+.bc-wide-link {border-top:1px solid #edf0f3;border-radius:0;}
+.consumer-phone .bc-empty {padding:38px 0;text-align:center;}
+.consumer-phone .bc-empty>.bc-icon {height:38px;width:38px;margin:0 auto 20px;opacity:.55;}
+.consumer-phone .bc-empty h1 {font-size:22px;line-height:1.6;font-weight:550;margin:0 0 12px;}
+.consumer-phone .bc-empty p {font-size:13px;line-height:1.9;color:var(--c-muted);margin:0 0 23px;}
+.consumer-phone .bc-empty .primary {width:100%;}
+.consumer-phone .bc-empty .bc-wide-link {justify-content:center;color:var(--c-blue);font-size:13px;}
+.consumer-phone .bc-empty.is-small {padding:42px 12px;background:#fff;border-radius:16px;margin-top:16px;}
+.consumer-phone .bc-empty.is-small h2 {font-size:18px;}
+.consumer-phone .bc-page-heading {margin:4px 0 22px;}
+.consumer-phone .bc-segments {display:flex;padding:4px;gap:4px;border-radius:999px;background:#e9eef5;margin-bottom:16px;}
+.consumer-phone .bc-segments button {flex:1;border-radius:999px;min-height:38px;font-size:13px;color:var(--c-muted);}
+.consumer-phone .bc-segments button[aria-pressed=true] {background:white;color:var(--c-blue);font-weight:600;}
+.consumer-phone .bc-order-list {display:grid;gap:12px;}
+.consumer-phone .bc-order-row {display:flex;align-items:center;width:100%;gap:12px;padding:20px 16px;border-radius:16px;background:#fff;text-align:left;}
+.consumer-phone .bc-order-row>span {flex:1;min-width:0;}
+.consumer-phone .bc-order-row small {font-size:12px;color:var(--c-blue);}
+.consumer-phone .bc-order-row strong {display:block;font-size:17px;font-weight:550;margin-top:12px;}
+.consumer-phone .bc-order-row span>span {display:block;font-size:12px;line-height:1.7;color:var(--c-muted);margin-top:8px;}
+.consumer-phone .bc-progress-heading>span {color:var(--c-blue);font-size:13px;}
+.consumer-phone .bc-progress-heading h1 {font-size:28px;font-weight:550;margin:12px 0;}
+.consumer-phone .bc-progress-heading p {font-size:12px;color:var(--c-muted);line-height:1.7;}
+.consumer-phone .bc-stages {list-style:none;display:flex;justify-content:space-between;padding:0;margin:27px 0;}
+.consumer-phone .bc-stages li {position:relative;display:flex;align-items:center;flex-direction:column;gap:8px;flex:1;font-size:12px;color:var(--c-muted);}
+.consumer-phone .bc-stages li+li:before {content:"";position:absolute;right:calc(50% + 19px);left:calc(-50% + 19px);top:14px;height:1px;background:#d9e1eb;}
+.consumer-phone .bc-stages b {display:flex;width:28px;height:28px;align-items:center;justify-content:center;background:#e7ecf3;border-radius:50%;font-size:12px;font-weight:500;}
+.consumer-phone .bc-stages [aria-current] {color:var(--c-blue);}
+.consumer-phone .bc-stages [aria-current] b {background:var(--c-blue);color:white;}
+.consumer-phone .bc-arrangement {background:#eaf2ff;border-radius:16px;padding:20px;}
+.consumer-phone .bc-arrangement small {font-size:12px;color:#4c6682;}
+.consumer-phone .bc-arrangement h2 {font-size:22px;font-weight:550;margin:12px 0 5px;}
+.consumer-phone .bc-arrangement p {font-size:13px;line-height:1.7;margin:0;}
+.consumer-phone .bc-progress-product {display:flex;align-items:center;gap:14px;margin-top:24px;}
+.consumer-phone .bc-progress-product>img {width:72px;height:65px;object-fit:contain;border-radius:12px;}
+.consumer-phone .bc-progress-product strong {font-size:15px;display:block;}
+.consumer-phone .bc-progress-product span {font-size:11px;display:block;color:var(--c-muted);margin-top:8px;}
+.consumer-phone .bc-facts {margin:20px 0 0;font-size:12px;}
+.consumer-phone .bc-facts div {display:flex;gap:16px;margin-bottom:17px;line-height:1.8;}
+.consumer-phone .bc-facts dt {color:var(--c-muted);white-space:nowrap;}
+.consumer-phone .bc-facts dd {margin:0;overflow-wrap:anywhere;}
+.consumer-phone .bc-request-products {display:grid;gap:12px;}
+.consumer-phone .bc-request-products button {background:white;border-radius:16px;display:flex;align-items:center;gap:12px;padding:16px;text-align:left;}
+.consumer-phone .bc-request-products button[aria-pressed=true] {box-shadow:inset 0 0 0 1.5px #79a5f8;background:#eaf2ff;}
+.consumer-phone .bc-request-products button>img:first-child {width:62px;height:60px;object-fit:contain;}
+.consumer-phone .bc-request-products button>span {flex:1;}
+.consumer-phone .bc-request-products strong {font-size:14px;display:block;}
+.consumer-phone .bc-request-products small {font-size:11px;display:block;color:var(--c-muted);margin-top:6px;}
+.consumer-phone .bc-request-types {background:white;border-radius:16px;overflow:hidden;margin-top:24px;padding:0 16px;}
+.consumer-phone .bc-request-types button {display:flex;align-items:center;gap:13px;width:100%;padding:18px 0;}
+.consumer-phone .bc-request-types strong {font-size:15px;font-weight:550;}
+.consumer-phone .bc-request-types .bc-arrow {margin-left:auto;}
+.consumer-phone .bc-info {font-size:13px;line-height:1.8;color:var(--c-muted);margin:24px 0 16px;}
+.consumer-phone .bc-full {width:100%;}
+.consumer-phone .bc-article-label {font-size:12px;color:var(--c-muted);}
+.consumer-phone .bc-article h1 {font-size:29px;line-height:1.5;font-weight:550;letter-spacing:-.02em;margin:15px 0;}
+.consumer-phone .bc-article p {font-size:14px;line-height:1.95;margin:12px 0 24px;color:#536373;}
+.consumer-phone .bc-article p.bc-article-lead {font-size:13px;}
+.consumer-phone .bc-article h2 {font-size:18px;font-weight:550;margin:28px 0 0;}
+.consumer-phone .bc-article-image {display:block;width:100%;height:230px;object-fit:contain;background:#fff;border-radius:16px;margin:20px 0;}
+.consumer-phone .bc-article-image.bc-scene {object-fit:cover;height:280px;}
+.consumer-phone .bc-discover-product {width:100%;height:280px;object-fit:contain;border-radius:16px;background:#fff;}
+.consumer-phone .bc-guide-product {display:flex;align-items:center;gap:16px;background:#fff;border-radius:16px;padding:16px;}
+.consumer-phone .bc-guide-product>img {width:86px;height:80px;object-fit:contain;}
+.consumer-phone .bc-guide-product>strong {font-size:15px;font-weight:550;}
+.consumer-phone .bc-guide-product small {display:block;color:var(--c-muted);font-size:11px;margin-top:8px;}
+.consumer-phone .bc-external {text-decoration:none;}
+.consumer-phone .bc-mine-guest {padding:28px 0;}
+.consumer-phone .bc-mine-guest h1 {font-size:25px;font-weight:550;}
+.consumer-phone .bc-mine-guest p {font-size:13px;line-height:1.8;color:var(--c-muted);margin:14px 0 20px;}
+.consumer-phone .bc-mine-guest .primary {width:100%;}
+@media (prefers-reduced-motion:reduce) {html[data-consumer-version="brand-center-v1"] .consumer-phone * {animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
+.consumer-phone .bc-mine-services {margin-bottom:16px;}
+.consumer-phone .c-profile .c-text-button,.consumer-phone .c-my-products-summary b {display:flex;align-items:center;gap:4px;}
