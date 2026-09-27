@@ -1,0 +1,45 @@
+Command: yarn after-sales:pnpm check
+Node: 24.21.0
+ESLint, Knip, application/test typecheck, i18n check: passed (reached final test stage)
+
+✖ category detail shows readable ancestry and never exposes a raw parent ID as its name (5.501708ms)
+✖ tests/catalog-state.test.ts (14752.712167ms)
+✖ catalog uploads use the official Gaia access and download addresses (4.147541ms)
+✖ real payloads whitelist fields and preserve false filters and optimistic versions (14.365084ms)
+✖ registration and appointment payloads whitelist and normalize business fields (2.663458ms)
+✖ purchase registration edit form keeps the selected store and groups installation codes (2.289958ms)
+✖ purchase registration follows the shared list toolbar and form dialog standard (13.76775ms)
+✖ purchase registration keeps workbench items focused while the full page still supports supplied installation codes (10.113542ms)
+✖ business create and edit forms use the shared dialog shell (1.841709ms)
+✖ editable controls in shared business form dialogs provide placeholders (453.282875ms)
+✖ raw view dialogs are limited to reviewed non-standard interaction models (325.676459ms)
+✖ tests/i18n.test.ts (5415.152375ms)
+✖ installation code API permission is independent from purchase record permission and missing grants fail closed (553.426458ms)
+✖ installation code page retries permission initialization before requesting business data (99.694292ms)
+✖ installation code search, paging and reset query once and preserve the applied keyword (91.1665ms)
+✖ installation code list failure exposes retry without repeating successful permission requests (128.338833ms)
+✖ cancelled work perspective switching leaves the current home and form mounted (412.947916ms)
+✖ accepted work perspective switching applies the new view only after the form agrees (65.919292ms)
+✖ a busy form blocks leaving the dashboard for another business page (56.229292ms)
+✖ same-route query updates also respect cancellation without replacing the form (50.415917ms)
+✖ a busy form refuses perspective switching without clearing tabs (51.387834ms)
+✖ a later route guard failure restores the original perspective and preserves tabs for retry (146.053458ms)
+✖ redirecting a perspective switch to access status does not clear old tabs (61.462292ms)
+✖ a rejected navigation preserves tabs and allows retry after reporting the error (65.835875ms)
+✖ selecting the current perspective leaves all tabs intact (57.286ms)
+✖ returning to the root home through the Logo path does not clear same-view tabs (101.773584ms)
+✖ repeated switch commands while confirmation is pending commit only the first destination (30.957583ms)
+✖ a pending external form confirmation keeps the current view and tabs until its rejection (54.68825ms)
+✖ network master lists prioritize names and operational context (4.454ms)
+✖ page tabs use the shared lightweight visual hierarchy (19.296375ms)
+✖ inventory tabs only expose readable views and keep the active view in the route (1.502959ms)
+✖ inventory stock range uses a complete non-clearable select instead of a switch (0.677042ms)
+✖ customer-service dispatch keeps station assignment while station page is wired for personnel assignment (10.734125ms)
+ℹ tests 349
+ℹ suites 1
+ℹ pass 316
+ℹ fail 33
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31526.852375
