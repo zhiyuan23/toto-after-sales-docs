@@ -1,0 +1,146 @@
+[
+  {
+    "width": 390,
+    "entries": [
+      {
+        "label": "个人信息",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 0,
+        "centerOffset": 0,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(58, 131, 246)"
+      },
+      {
+        "label": "我的 TOTO还没有登记产品去添加",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(0, 0, 0)"
+      },
+      {
+        "label": "产品说明与资料",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.5,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "登记信息与安装码",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.5,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "购买记录",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.5,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "隐私与账户",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.5,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "客服热线4000000000",
+        "width": 16.625,
+        "height": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "entries": [
+      {
+        "label": "个人信息",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 0,
+        "centerOffset": 0.0078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(58, 131, 246)"
+      },
+      {
+        "label": "我的 TOTO还没有登记产品去添加",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 13.640625,
+        "centerOffset": 0.0078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(0, 0, 0)"
+      },
+      {
+        "label": "产品说明与资料",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 13.640625,
+        "centerOffset": 0.5078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "登记信息与安装码",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 13.640625,
+        "centerOffset": 0.5078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "购买记录",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 13.640625,
+        "centerOffset": 0.5078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "隐私与账户",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 13.640625,
+        "centerOffset": 0.5078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      },
+      {
+        "label": "客服热线4000000000",
+        "width": 13.640625,
+        "height": 13.640625,
+        "rightInset": 13.640625,
+        "centerOffset": 0.0078125,
+        "image": "/static/icons/entry-chevron.svg",
+        "labelColor": "rgb(23, 39, 51)"
+      }
+    ]
+  },
+  {
+    "materialsNavigation": "http://127.0.0.1:52481/#/?redirect=%252Fpages%252Fmaterials%252Findex"
+  },
+  {
+    "emptyHotlineHidden": true,
+    "pageErrors": [],
+    "fixture": "isolated synthetic hotline; no real call or backend write"
+  }
+]
