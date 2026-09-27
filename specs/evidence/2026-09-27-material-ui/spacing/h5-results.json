@@ -1,0 +1,132 @@
+[
+  {
+    "kind": "consumer",
+    "passed": true,
+    "geometry": [
+      {
+        "text": "重置",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      },
+      {
+        "text": "查询",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      }
+    ],
+    "card": {
+      "border": "0px",
+      "after": "0px",
+      "overflow": "hidden"
+    },
+    "gaps": [
+      {
+        "selector": ".materials-item",
+        "viewportWidth": 390,
+        "expectedRpx": 24,
+        "actualPx": 12.46875
+      },
+      {
+        "selector": ".materials-item",
+        "viewportWidth": 375,
+        "expectedRpx": 24,
+        "actualPx": 12
+      },
+      {
+        "selector": ".materials-item",
+        "viewportWidth": 320,
+        "expectedRpx": 24,
+        "actualPx": 10.234375
+      }
+    ],
+    "cases": [
+      "two rendered material cards",
+      "390px / 375px / 320px measured gap",
+      "no horizontal overflow",
+      "long filename"
+    ],
+    "fixture": "isolated browser requests only; no server writes"
+  },
+  {
+    "kind": "personnel",
+    "passed": true,
+    "geometry": [
+      {
+        "text": "重置",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      },
+      {
+        "text": "查询",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      }
+    ],
+    "card": {
+      "border": "0px",
+      "after": "0px",
+      "overflow": "hidden"
+    },
+    "gaps": [
+      {
+        "selector": ".materials-item",
+        "viewportWidth": 390,
+        "expectedRpx": 24,
+        "actualPx": 12.46875
+      },
+      {
+        "selector": ".materials-item",
+        "viewportWidth": 375,
+        "expectedRpx": 24,
+        "actualPx": 12
+      },
+      {
+        "selector": ".materials-item",
+        "viewportWidth": 320,
+        "expectedRpx": 24,
+        "actualPx": 10.234375
+      },
+      {
+        "selector": ".material-card",
+        "viewportWidth": 390,
+        "expectedRpx": 24,
+        "actualPx": 12.46875
+      }
+    ],
+    "cases": [
+      "two rendered material cards",
+      "390px / 375px / 320px measured gap",
+      "no horizontal overflow",
+      "long filename"
+    ],
+    "fixture": "isolated browser requests only; no server writes"
+  }
+]

@@ -1,0 +1,96 @@
+[
+  {
+    "kind": "consumer",
+    "passed": true,
+    "geometry": {
+      "height": 45.75,
+      "radius": "22.88px",
+      "font": "14.56px"
+    },
+    "arrowGeometry": {
+      "size": 16.625,
+      "centerOffset": 0,
+      "bodyGap": 12.46875,
+      "hasText": false,
+      "icon": true
+    },
+    "cardGapPx": 12.46875,
+    "cases": [
+      "single search input",
+      "no edition or large buttons or helper copy",
+      "keyboard submit exactly once",
+      "compact search action exactly once",
+      "clear exactly once",
+      "query only sends keyword",
+      "product deep link prefilled into unified keyword",
+      "320px no overflow"
+    ],
+    "fixture": "isolated browser requests only; backend semantics tested separately"
+  },
+  {
+    "kind": "personnel",
+    "passed": true,
+    "geometry": {
+      "height": 45.75,
+      "radius": "22.88px",
+      "font": "14.56px"
+    },
+    "arrowGeometry": {
+      "size": 16.625,
+      "centerOffset": 0,
+      "bodyGap": 12.46875,
+      "hasText": false,
+      "icon": true
+    },
+    "cardGapPx": 12.46875,
+    "cases": [
+      "single search input",
+      "no edition or large buttons or helper copy",
+      "keyboard submit exactly once",
+      "compact search action exactly once",
+      "clear exactly once",
+      "query only sends keyword",
+      "product deep link prefilled into unified keyword",
+      "320px no overflow"
+    ],
+    "fixture": "isolated browser requests only; backend semantics tested separately"
+  },
+  {
+    "kind": "personnel-mine",
+    "passed": true,
+    "entries": [
+      {
+        "width": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.0078125,
+        "font": "16.64px",
+        "color": "rgb(102, 107, 115)",
+        "icon": true
+      },
+      {
+        "width": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.5,
+        "font": "16.64px",
+        "color": "rgb(102, 107, 115)",
+        "icon": true
+      },
+      {
+        "width": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0.5,
+        "font": "16.64px",
+        "color": "rgb(102, 107, 115)",
+        "icon": true
+      },
+      {
+        "width": 16.625,
+        "rightInset": 16.625,
+        "centerOffset": 0,
+        "font": "16.64px",
+        "color": "rgb(102, 107, 115)",
+        "icon": true
+      }
+    ]
+  }
+]

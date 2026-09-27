@@ -42,7 +42,9 @@ backend_runtime_jar="$backend_runtime_dir/gaia-web-$(date +%Y%m%d%H%M%S)-$$.jar"
 cp "$backend_build_jar" "$backend_runtime_jar"
 chmod 600 "$backend_runtime_jar"
 cd "$backend_root"
-exec java -jar "$backend_runtime_jar" \
+# Java does not understand CIDR entries inherited from the macOS proxy bypass list.
+# Keep the workspace MySQL and MinIO test hosts on their direct internal route.
+exec java '-Dhttp.nonProxyHosts=localhost|127.*|10.1.1.106|10.1.1.43' '-DsocksNonProxyHosts=localhost|127.*|10.1.1.106|10.1.1.43' -jar "$backend_runtime_jar" \
     --spring.config.additional-location=file:.local/ \
     --after-sales.mobile.single-tenant-id=1001 \
     --after-sales.consumer.support.phone=400-820-9787 \

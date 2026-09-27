@@ -1,0 +1,96 @@
+[
+  {
+    "kind": "consumer",
+    "passed": true,
+    "geometry": [
+      {
+        "text": "重置",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      },
+      {
+        "text": "查询",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      }
+    ],
+    "card": {
+      "border": "0px",
+      "after": "0px",
+      "overflow": "hidden"
+    },
+    "cases": [
+      "390px actual H5 page",
+      "320px no overflow",
+      "long filename",
+      "single search request",
+      "reset",
+      "pagination",
+      "empty",
+      "error",
+      "retry"
+    ],
+    "fixture": "isolated browser requests only; no server writes"
+  },
+  {
+    "kind": "personnel",
+    "passed": true,
+    "geometry": [
+      {
+        "text": "重置",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      },
+      {
+        "text": "查询",
+        "width": 157.59375,
+        "height": 45.75,
+        "radius": "519.48px",
+        "display": "flex",
+        "align": "center",
+        "justify": "center",
+        "font": "14.56px",
+        "lineHeight": "19.656px",
+        "afterBorder": "0px"
+      }
+    ],
+    "card": {
+      "border": "0px",
+      "after": "0px",
+      "overflow": "hidden"
+    },
+    "cases": [
+      "390px actual H5 page",
+      "320px no overflow",
+      "long filename",
+      "single search request",
+      "reset",
+      "pagination",
+      "empty",
+      "error",
+      "retry"
+    ],
+    "fixture": "isolated browser requests only; no server writes"
+  }
+]

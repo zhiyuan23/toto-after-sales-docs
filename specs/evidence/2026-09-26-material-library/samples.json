@@ -1,0 +1,55 @@
+{
+  "downloadedFiles": [
+    {
+      "fileName": "CES7H311KCN-使用说明书-D07K56R.pdf",
+      "bytes": 13238827,
+      "sha256": "86bcaf2c038383b1ec13714bde0e9799dfefc39d80c414b27fb8dbfa9d634e12",
+      "source": "https://www.toto.com.cn/cn/resource/pdf/instruction/washlet_one-piece/D07K56R.pdf",
+      "uploadStatus": "blocked_storage_full"
+    },
+    {
+      "fileName": "CES7H311KCN-安装说明书-D07K58R.pdf",
+      "bytes": 4714639,
+      "sha256": "38629629a896b935bb25c33e0f0c2e4ab6aaa671ba84ecdda1f88d7da27b2fa0",
+      "source": "https://www.toto.com.cn/cn/resource/pdf/instruction/washlet_one-piece/D07K58R.pdf",
+      "uploadStatus": "blocked_storage_full"
+    },
+    {
+      "fileName": "TCF4E360KCN-产品式样书-官方.pdf",
+      "bytes": 295261,
+      "sha256": "c7eb7d12296b5f17c6f84254c3ac50d52330e455f189139314078f3afc023833",
+      "source": "https://www.toto.com.cn/cn/resource/pdf/norm/washlets/TCF4E360KCN.pdf",
+      "uploadStatus": "blocked_storage_full"
+    },
+    {
+      "fileName": "TCF4E360KCN-使用说明书-D07G43.pdf",
+      "bytes": 13727347,
+      "sha256": "7cb6bd5c8d8aa295ce4bd01e0990dd3315bd4c248a566475cc8576cee6ab97a3",
+      "source": "https://www.toto.com.cn/cn/resource/pdf/instruction/washlets/D07G43.pdf",
+      "uploadStatus": "blocked_storage_full"
+    },
+    {
+      "fileName": "TCF4E360KCN-安装说明书-D07G62.pdf",
+      "bytes": 8724905,
+      "sha256": "0288022e816fbb27e5e6808ef88b041b6a5bfc1a713f9d4e98a9fd6493ed29c6",
+      "source": "https://www.toto.com.cn/cn/resource/pdf/instruction/washlets/D07G62.pdf",
+      "uploadStatus": "blocked_storage_full"
+    }
+  ],
+  "publishedAnswers": [
+    {
+      "id": "1",
+      "title": "CES7H311KCN 官方产品资料查询指引",
+      "productId": "20",
+      "status": "PUBLISHED",
+      "source": "https://www.toto.com.cn/cn/products/categories/washlet_one-piece/product/CES7H311KCN.html"
+    },
+    {
+      "id": "2",
+      "title": "TCF4E360KCN 官方产品资料查询指引",
+      "productId": "25",
+      "status": "PUBLISHED",
+      "source": "https://www.toto.com.cn/cn/products/categories/washlets/product/TCF4E360KCN.html"
+    }
+  ]
+}
