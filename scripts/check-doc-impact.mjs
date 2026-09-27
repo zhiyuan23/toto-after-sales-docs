@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import { execFileSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { dirname, isAbsolute, relative, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { inspectEvidence, isTextDocumentation } from './evidence-policy.mjs'
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
 const documentationRoot = resolve(scriptDirectory, '..')
@@ -119,6 +120,7 @@ function currentRepository(repositories) {
 
 function configuredRepositories(options, configuration) {
   if (options.all) return configuration.repositories
+  if (options.repository && resolve(options.repository) === documentationRoot) return []
 
   const selected = resolveRepository(options.repository, configuration.repositories)
     || currentRepository(configuration.repositories)
@@ -132,11 +134,11 @@ function configuredRepositories(options, configuration) {
 
 function listDocumentationEvidence(mode, configuration, repositoryChanges) {
   const sharedChanges = changedFiles(documentationRoot, mode)
-    .filter(filePath => matchesAny(filePath, configuration.documentationPatterns))
+    .filter(filePath => isTextDocumentation(filePath) && matchesAny(filePath, configuration.documentationPatterns))
 
   const localChanges = repositoryChanges.flatMap(({ repository, files }) =>
     files
-      .filter(filePath => matchesAny(filePath, repository.localDocumentationPatterns || []))
+      .filter(filePath => isTextDocumentation(filePath) && matchesAny(filePath, repository.localDocumentationPatterns || []))
       .map(filePath => `${repository.id}:${filePath}`)
   )
 
@@ -145,6 +147,23 @@ function listDocumentationEvidence(mode, configuration, repositoryChanges) {
 
 export function findImpactedFiles(files, impactPatterns) {
   return files.filter(filePath => matchesAny(filePath, impactPatterns))
+}
+
+export function checkEvidenceRetention(repositoryRoot, mode) {
+  const files = changedFiles(repositoryRoot, mode)
+  const read = filePath => mode === 'staged'
+    ? execFileSync('git', ['-C', repositoryRoot, 'show', `:${filePath}`], { encoding: 'utf8' })
+    : readFileSync(resolve(repositoryRoot, filePath), 'utf8')
+  // Working-tree mode can include a staged file that was subsequently deleted.
+  const present = files.filter(filePath => mode === 'staged' || existsSync(resolve(repositoryRoot, filePath)))
+  const markdown = present.filter(isTextDocumentation).map(read)
+  const evidence = present.filter(filePath => /(?:^|\/)(?:evidence|screenshots|test-results|playwright-report)\//.test(filePath))
+  return inspectEvidence(evidence.map(path => ({
+    path,
+    size: mode === 'staged'
+      ? Number(execFileSync('git', ['-C', repositoryRoot, 'cat-file', '-s', `:${path}`], { encoding: 'utf8' }))
+      : statSync(resolve(repositoryRoot, path)).size
+  })), markdown)
 }
 
 function main() {
@@ -164,6 +183,19 @@ function main() {
 
     const files = changedFiles(repositoryRoot, options.mode)
     repositoryChanges.push({ repository, files })
+  }
+
+  // Run even on documentation-only commits and before the no-impact escape hatch.
+  let retentionFailed = false
+  for (const repositoryRoot of [documentationRoot, ...repositoryChanges.map(({ repository }) => resolve(workspaceRoot, repository.path))]) {
+    const { errors, warnings } = checkEvidenceRetention(repositoryRoot, options.mode)
+    for (const warning of warnings) console.log(`证据留存复核 [${relative(workspaceRoot, repositoryRoot)}]：${warning}`)
+    for (const error of errors) console.error(`证据留存检查失败 [${relative(workspaceRoot, repositoryRoot)}]：${error}`)
+    retentionFailed ||= errors.length > 0
+  }
+  if (retentionFailed) {
+    process.exitCode = 1
+    return
   }
 
   const impacted = repositoryChanges.flatMap(({ repository, files }) =>

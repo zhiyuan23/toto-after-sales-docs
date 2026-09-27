@@ -1,2 +1,3 @@
-# Local runtime settings and credentials for this workspace.
+# Local runtime settings, credentials, and verification-artifacts (raw logs,
+# temporary screenshots, previews, traces and recordings). See collaboration rules.
 .local/

@@ -6,6 +6,7 @@ workspace_root="$(cd "$documentation_root/../.." && pwd)"
 shared_hooks_path="../../docs/toto/.githooks"
 
 repositories=(
+    "docs/toto"
     "frontend/gaia-ui"
     "backend/gaia-after-sales"
     "backend/gaia-saas-proj"
@@ -16,20 +17,26 @@ repositories=(
 for repository in "${repositories[@]}"; do
     repository_root="$workspace_root/$repository"
     [[ -d "$repository_root/.git" ]] || continue
+    target_hooks_path="$shared_hooks_path"
+    [[ "$repository" == "docs/toto" ]] && target_hooks_path=".githooks"
 
     current_hooks_path="$(git -C "$repository_root" config --local --get core.hooksPath || true)"
+    if [[ -z "$current_hooks_path" && -f "$repository_root/.git/hooks/pre-commit" ]]; then
+        printf '跳过 %s：已有默认 pre-commit，请手动串联检查脚本。\n' "$repository"
+        continue
+    fi
     if [[ "$current_hooks_path" == ".husky/_" ]] \
         && grep -q 'check-doc-impact.mjs' "$repository_root/.husky/pre-commit" 2>/dev/null; then
         printf '已确认 %s 通过现有 Husky 串联 TOTO 文档影响检查。\n' "$repository"
         continue
     fi
 
-    if [[ -n "$current_hooks_path" && "$current_hooks_path" != "$shared_hooks_path" ]]; then
+    if [[ -n "$current_hooks_path" && "$current_hooks_path" != "$target_hooks_path" ]]; then
         printf '跳过 %s：已有 core.hooksPath=%s，请按团队规范手动串联检查脚本。\n' \
             "$repository" "$current_hooks_path"
         continue
     fi
 
-    git -C "$repository_root" config --local core.hooksPath "$shared_hooks_path"
+    git -C "$repository_root" config --local core.hooksPath "$target_hooks_path"
     printf '已为 %s 启用 TOTO 文档影响检查。\n' "$repository"
 done
