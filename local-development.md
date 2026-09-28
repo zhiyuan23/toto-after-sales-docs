@@ -252,11 +252,24 @@ cd Gaia/docs/toto
 bash scripts/bootstrap-workspace.sh
 ```
 
-脚本只拉取缺失仓库，不会对已有仓库执行 `pull`、切换分支或覆盖本地修改。默认使用当前 TOTO 业务开发分支；需要更换时通过 `TOTO_WORK_BRANCH` 指定。两个现有小程序仓库当前仅使用本地 Git，远程地址及恢复步骤保存在[仓库与系统关系](00-项目资料/02-仓库与系统关系.md#小程序远程地址留存与恢复)；服务人员端已从消费者端复制共同底座，后续底座和公共配置机制变更必须同步修改并分别验证。新工作区若确需从远端首次检出消费者仓库，可显式提供地址：
+脚本只拉取缺失仓库，不会对已有仓库执行 `pull`、切换分支或覆盖本地修改。后端和 Web 默认使用当前 TOTO 业务开发分支，需要更换时通过 `TOTO_WORK_BRANCH` 指定。两个现有小程序仓库已于 2026-09-28 将 `origin` 切到个人 GitHub（HTTPS）；Codeup 地址、GitHub SSH 地址、可直接发给 Codex 的双向切换指令及检查步骤统一见[小程序远程地址留存与恢复](00-项目资料/02-仓库与系统关系.md#小程序远程地址留存与恢复)。每位同事的远程配置需在自己的工作区执行，修改文档不会自动切换本机远程；切换不自动提交或推送。
+
+新工作区拉取小程序前，先确认所选平台已有目标分支。2026-09-28 GitHub 只读验证成功但尚无分支，本地代码未推送，暂不能通过 GitHub 克隆取得业务代码。具备目标分支后，可按文档地址显式配置消费者仓库初始化（以下从 `docs/toto` 执行）：
 
 ```bash
-TOTO_AFTER_SALES_UNI_REPO_URL='https://codeup.aliyun.com/ehsure/gaia/gaia-after-sales-uni.git' bash scripts/bootstrap-workspace.sh
+TOTO_AFTER_SALES_UNI_REPO_URL='https://github.com/zhiyuan23/gaia-after-sales-uni.git' \
+TOTO_AFTER_SALES_UNI_BRANCH='feature/20260907_蓝鲸售后服务_志远_喆宇' \
+bash scripts/bootstrap-workspace.sh
 ```
+
+初始化脚本尚不自动检出服务人员仓库；目标分支存在且本地目录不存在时可单独检出：
+
+```bash
+git clone --branch 'feature/20260907_蓝鲸售后服务_志远_喆宇' \
+  https://github.com/zhiyuan23/gaia-customer-service-uni.git ../../mobile/gaia-customer-service-uni
+```
+
+使用 Codeup 时将上述 URL 替换为仓库关系文档中对应 Codeup 地址，并先核对分支。两个小程序底座和公共配置机制的变更仍须同步修改并分别验证。
 
 仓库齐备后，在本目录执行 `yarn dev:afs` 即可启动 TOTO 售后 Web、聚合后端和本地 Redis；该命令只转发到 `frontend/gaia-ui` 的同名启动器，不复制启动逻辑。也可以继续从 `frontend/gaia-ui` 执行原命令。完整环境要求和调试方式见[本地开发与联调](local-development.md)。
 
