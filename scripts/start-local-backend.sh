@@ -26,11 +26,20 @@ if [[ "$(redis-cli -h 127.0.0.1 -p 16379 ping 2>/dev/null || true)" != PONG ]]; 
     exit 1
 fi
 
+if lsof -nP -tiTCP:8080 -sTCP:LISTEN | grep -q .; then
+    printf '%s\n' '8080 已被监听；请通过统一本地启动器复用或安全重启现有后端。' >&2
+    exit 1
+fi
+
 mvn -B -f "$workspace_root/backend/gaia-sys/pom.xml" \
     -pl gaia-sys-api,gaia-sys-integrate-api,gaia-sys-open-api,gaia-log-api,gaia-sys-tools-api,gaia-sys-xcx-api \
     -am clean install -DskipTests
 mvn -B -f "$workspace_root/backend/gaia-after-sales/pom.xml" -pl gaia-after-sales-api -am install -DskipTests
 mvn -B -f "$backend_root/pom.xml" -pl gaia-saas-web-jar -am package -DskipTests
+if lsof -nP -tiTCP:8080 -sTCP:LISTEN | grep -q .; then
+    printf '%s\n' '构建期间 8080 已被监听，拒绝再启动一个后端 JVM。' >&2
+    exit 1
+fi
 mkdir -p "$backend_runtime_dir"
 for old_runtime_jar in "$backend_runtime_dir"/gaia-web-*.jar; do
     [[ -e "$old_runtime_jar" ]] || continue

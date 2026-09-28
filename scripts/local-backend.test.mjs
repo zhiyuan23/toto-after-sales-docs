@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import {
+  abandonedManagedRuntime,
   backendRuntimeIsFresh,
   fingerprintBackendFiles,
   isMobileProbeReady,
@@ -12,6 +13,7 @@ import {
   LOCAL_BACKEND_BASE_URL,
   LOCAL_BACKEND_PROBE_TIMEOUT_MS,
   managedBackendRuntime,
+  startedManagedRuntime,
 } from './local-backend.mjs'
 
 test('shared local backend uses the Gaia context path on one canonical port', () => {
@@ -67,6 +69,29 @@ test('only recognizes runtime jars owned by the configured backend workspace', (
     command: '',
     openFiles: ['/workspace/backend/gaia-saas-proj/.local/runtime/gaia-web-20260921090858-123.jar'],
   }, root), null)
+})
+
+test('only old, unbound Java runtimes owned by this workspace may be cleaned up', () => {
+  const root = '/workspace/backend/gaia-saas-proj'
+  const runtimeJar = `${root}/.local/runtime/gaia-web-20260924103348-95414.jar`
+  const info = { pid: 95414, cwd: root, command: `java -jar ${runtimeJar}` }
+  const options = { projectRoot: root, listenerPids: [23589], runtimeMtimeMs: 0, nowMs: 21 * 60 * 1000 }
+  assert.ok(abandonedManagedRuntime(info, runtimeJar, options))
+  assert.ok(!abandonedManagedRuntime(info, runtimeJar, { ...options, listenerPids: [95414] }))
+  assert.ok(!abandonedManagedRuntime(info, runtimeJar, { ...options, nowMs: 19 * 60 * 1000 }))
+  assert.ok(!abandonedManagedRuntime({ ...info, pid: 99999 }, runtimeJar, options))
+  assert.ok(!abandonedManagedRuntime({ ...info, cwd: '/workspace/other' }, runtimeJar, options))
+  assert.ok(!abandonedManagedRuntime({ ...info, command: 'java -jar another.jar' }, runtimeJar, options))
+})
+
+test('failed startup cleanup only targets the JVM launched with its own PID jar', () => {
+  const root = '/workspace/backend/gaia-saas-proj'
+  const runtimeJar = `${root}/.local/runtime/gaia-web-20260928130431-23589.jar`
+  const info = { pid: 23589, cwd: root, command: `java -jar ${runtimeJar}` }
+  assert.equal(startedManagedRuntime(info, root), runtimeJar)
+  assert.equal(startedManagedRuntime({ ...info, pid: 95414 }, root), null)
+  assert.equal(startedManagedRuntime({ ...info, cwd: '/workspace/other' }, root), null)
+  assert.equal(startedManagedRuntime({ ...info, command: 'java -jar /workspace/other/app.jar' }, root), null)
 })
 
 test('fingerprint is authoritative and legacy runtimes fall back to source time', () => {

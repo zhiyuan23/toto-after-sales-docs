@@ -71,11 +71,11 @@ elif [[ -n "${TOTO_AFTER_SALES_UNI_REPO_URL:-}" ]]; then
     "$TOTO_AFTER_SALES_UNI_REPO_URL" \
     "${TOTO_AFTER_SALES_UNI_BRANCH:-main}"
 else
-  warn "消费者小程序未检出；远程关联已暂停，如需新检出，请从仓库关系文档取得地址并显式设置 TOTO_AFTER_SALES_UNI_REPO_URL。"
+  warn "消费者小程序未检出；请从仓库关系文档选择 GitHub 或 Codeup 地址，确认远端已有目标分支，再显式设置 TOTO_AFTER_SALES_UNI_REPO_URL 和 TOTO_AFTER_SALES_UNI_BRANCH。"
   missing_required_repo=1
 fi
 
-info "gaia-customer-service-uni 尚未建仓，当前不自动创建。"
+info "服务人员仓库 gaia-customer-service-uni 已独立建仓；本脚本不自动检出，请按 local-development.md 检查或准备。"
 
 printf '\n'
 info "已完成可用仓库检查与拉取。脚本不会自动 pull、切换已有仓库分支或覆盖本地修改。"

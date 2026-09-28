@@ -37,6 +37,7 @@ const redisLog = resolve(logRoot, 'shared-redis.log')
 const redisPidFile = resolve(runtimeRoot, 'shared-redis.pid')
 const wait = milliseconds => new Promise(resolveWait => setTimeout(resolveWait, milliseconds))
 const ignoredSourceDirectories = new Set(['.git', '.local', 'node_modules', 'target'])
+const abandonedRuntimeAgeMs = 20 * 60 * 1000
 
 function commandOutput(command, args, allowEmpty = false) {
   return new Promise((resolveCommand, reject) => execFile(command, args, { encoding: 'utf8' }, (error, stdout) => {
@@ -128,6 +129,19 @@ export function managedBackendRuntime(processInfo, projectRoot = backendRoot) {
   return openedJars.length === 1 ? openedJars[0] : null
 }
 
+export function abandonedManagedRuntime(processInfo, runtimeJar, { listenerPids, runtimeMtimeMs, nowMs, projectRoot = backendRoot }) {
+  const match = /^gaia-web-\d{14}-(\d+)\.jar$/.exec(runtimeJar.slice(runtimeJar.lastIndexOf('/') + 1))
+  return Boolean(match) && Number(match[1]) === processInfo.pid
+    && !listenerPids.includes(processInfo.pid)
+    && nowMs - runtimeMtimeMs >= abandonedRuntimeAgeMs
+    && managedBackendRuntime(processInfo, projectRoot) === runtimeJar
+}
+
+export function startedManagedRuntime(processInfo, projectRoot = backendRoot) {
+  const runtimeJar = managedBackendRuntime(processInfo, projectRoot)
+  return runtimeJar?.endsWith(`-${processInfo.pid}.jar`) ? runtimeJar : null
+}
+
 export function backendRuntimeIsFresh({ currentFingerprint, recordedFingerprint, runtimeMtimeMs, latestSourceMtimeMs }) {
   if (recordedFingerprint) return recordedFingerprint === currentFingerprint
   return Number.isFinite(runtimeMtimeMs) && runtimeMtimeMs >= latestSourceMtimeMs
@@ -168,8 +182,8 @@ async function inspectLocalBackend(sourceSnapshot, knownProbes) {
   return { probes, listeners, managed, fresh, ready: isUnifiedBackendReady(probes) }
 }
 
-async function stopManagedBackend(processInfo) {
-  console.log(`[backend] 检测到本工作区旧后端（PID ${processInfo.pid}），正在安全重启`)
+async function stopManagedBackend(processInfo, { abandoned = false } = {}) {
+  console.log(`[backend] 检测到本工作区${abandoned ? '未监听端口的残留' : '旧'}后端（PID ${processInfo.pid}），正在安全停止`)
   try { process.kill(processInfo.pid, 'SIGTERM') }
   catch (error) { if (error.code !== 'ESRCH') throw error }
   try {
@@ -190,8 +204,49 @@ async function stopManagedBackend(processInfo) {
     catch (killError) { if (killError.code !== 'ESRCH') throw killError }
     await waitUntil(() => !processIsAlive(processInfo.pid), 5000, '旧 Gaia 统一后端强制退出')
   }
-  await waitUntil(async () => !(await portIsOpen(LOCAL_BACKEND_PORT)), 5000, '旧 Gaia 统一后端端口释放')
-  rmSync(backendStateFile, { force: true })
+  if (!abandoned) {
+    await waitUntil(async () => !(await portIsOpen(LOCAL_BACKEND_PORT)), 5000, '旧 Gaia 统一后端端口释放')
+    rmSync(backendStateFile, { force: true })
+  }
+}
+
+async function stopAbandonedBackends() {
+  const listenerPids = await processIdsOnPort(LOCAL_BACKEND_PORT)
+  for (const name of readdirSync(runtimeRoot).filter(name => /^gaia-web-\d{14}-\d+\.jar$/.test(name))) {
+    const runtimeJar = resolve(runtimeRoot, name)
+    const pid = Number(name.match(/-(\d+)\.jar$/)[1])
+    if (!processIsAlive(pid)) continue
+    const command = await processCommand(pid)
+    const processInfo = {
+      pid,
+      command,
+      cwd: await processWorkingDirectory(pid),
+      openFiles: command ? [] : await processOpenFiles(pid),
+    }
+    if (!abandonedManagedRuntime(processInfo, runtimeJar, {
+      listenerPids,
+      runtimeMtimeMs: statSync(runtimeJar).mtimeMs,
+      nowMs: Date.now(),
+    })) continue
+    const listening = await commandOutput('lsof', ['-nP', '-a', '-p', String(pid), '-iTCP', '-sTCP:LISTEN'], true)
+    if (listening.trim()) continue
+    await stopManagedBackend({ ...processInfo, runtimeJar }, { abandoned: true })
+  }
+}
+
+async function stopFailedStartup(pid) {
+  if (!processIsAlive(pid)) return
+  const command = await processCommand(pid)
+  const processInfo = {
+    pid,
+    command,
+    cwd: await processWorkingDirectory(pid),
+    openFiles: command ? [] : await processOpenFiles(pid),
+  }
+  const runtimeJar = startedManagedRuntime(processInfo)
+  if (!runtimeJar) return
+  const listenerPids = await processIdsOnPort(LOCAL_BACKEND_PORT)
+  await stopManagedBackend({ ...processInfo, runtimeJar }, { abandoned: !listenerPids.includes(pid) })
 }
 
 export function isWebProbeReady(response) {
@@ -403,7 +458,7 @@ export async function ensureLocalBackend() {
 
   const sourceSnapshot = backendSourceSnapshot()
   const initial = await inspectLocalBackend(sourceSnapshot)
-  if (initial.ready && initial.fresh) {
+  if (initial.ready && initial.fresh && readdirSync(runtimeRoot).filter(name => /^gaia-web-\d{14}-\d+\.jar$/.test(name)).length < 2) {
     if (!readBackendState()) writeBackendState({ fingerprint: sourceSnapshot.fingerprint, pid: initial.managed.pid, runtimeJar: initial.managed.runtimeJar })
     console.log(`[backend] 复用已运行的 Gaia 统一后端 ${LOCAL_BACKEND_BASE_URL}`)
     return
@@ -421,7 +476,9 @@ export async function ensureLocalBackend() {
   }
 
   let backendLog = backendBootstrapLog
+  let startedPid = null
   try {
+    await stopAbandonedBackends()
     const locked = await inspectLocalBackend(sourceSnapshot)
     if (locked.ready && locked.fresh) {
       console.log(`[backend] 复用已运行的 Gaia 统一后端 ${LOCAL_BACKEND_BASE_URL}`)
@@ -441,16 +498,22 @@ export async function ensureLocalBackend() {
       logFile: backendBootstrapLog,
       truncateLog: true,
     })
+    startedPid = pid
     backendLog = backendLogForPid(pid)
     console.log(`[backend] 正在装配售后模块并启动共享后端（PID ${pid}），首次启动通常需要约 1–2 分钟`)
     const readyProbes = await waitForBackend(pid)
     const started = await inspectLocalBackend(sourceSnapshot, readyProbes)
-    if (!started.ready || !started.managed) throw new Error('新后端已响应但无法确认其属于当前工作区，拒绝记录为可复用实例')
+    if (!started.ready || started.managed?.pid !== pid) throw new Error('新后端已响应但无法确认其属于本次启动的进程，拒绝记录为可复用实例')
     writeBackendState({ fingerprint: sourceSnapshot.fingerprint, pid: started.managed.pid, runtimeJar: started.managed.runtimeJar })
     console.log(`[backend] 已就绪并保持运行：${LOCAL_BACKEND_BASE_URL}`)
   }
   catch (error) {
-    throw new Error(`${error.message}；后端日志：${backendLog}；启动引导日志：${backendBootstrapLog}`)
+    let cleanupError = ''
+    if (startedPid) {
+      try { await stopFailedStartup(startedPid) }
+      catch (failure) { cleanupError = `；启动失败后清理 PID ${startedPid} 也失败：${failure.message}` }
+    }
+    throw new Error(`${error.message}${cleanupError}；后端日志：${backendLog}；启动引导日志：${backendBootstrapLog}`)
   }
   finally {
     releaseStartupLock()
