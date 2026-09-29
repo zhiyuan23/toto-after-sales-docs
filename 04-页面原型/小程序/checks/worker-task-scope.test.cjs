@@ -75,7 +75,7 @@ test('task overview links to confirmed appointments and pending task map',()=>{
   assert.match(html,/data-go="w-schedule"[^>]+查看今日已确认预约日程/);assert.match(html,/data-go="w-map"[^>]+查看待处理任务地图/);
   assert.doesNotMatch(html,/w-task-overview-schedule|已确认预约 2 单/);
   assert.doesNotMatch(html,/w-focus-actions|等待配件<\/b>/);
-  assert.match(page('w-schedule').body(),/每日待办[\s\S]*已确认 2 单/);
+  assert.match(page('w-schedule').body(),/w-schedule-list" aria-label="已确认 2 单预约"/);
   assert.match(page('w-schedule').body(),/陈女士[\s\S]*林女士/);
   assert.doesNotMatch(page('w-map').body(),/许先生/);
   assert.doesNotMatch(html,/class="w-task-nav"/);assert.match(html,/待处理任务筛选/);

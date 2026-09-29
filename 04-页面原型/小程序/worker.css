@@ -335,42 +335,47 @@
 .worker-phone .w-schedule-detail strong,.worker-phone .w-map-item strong{font-size:13px;font-weight:650}
 .worker-phone .w-schedule-detail small,.worker-phone .w-map-item small{font-size:10px;line-height:1.45}
 .worker-phone .w-schedule-item>span:last-child,.worker-phone .w-map-item>b{color:#8ca7b8;font-size:21px;font-weight:400}
-.worker-phone .w-schedule-calendar{margin:4px 0 21px;padding:17px 13px 13px;background:#fff;border:1px solid var(--w-line);border-radius:18px;box-shadow:0 5px 18px #183d5b0a}
-.worker-phone .w-schedule-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 3px 15px}
-.worker-phone .w-schedule-calendar-head>div:first-child{display:flex;flex-direction:column;gap:4px;min-width:0}
-.worker-phone .w-schedule-calendar-head small{color:var(--w-muted);font-size:10px}
-.worker-phone .w-schedule-calendar-head strong{color:var(--w-ink);font-size:17px;white-space:nowrap}
-.worker-phone .w-schedule-calendar-controls{display:flex;align-items:center;gap:4px;flex:none}
-.worker-phone .w-schedule-calendar-controls button{height:30px;margin:0;padding:0;color:var(--w-blue-deep);background:#eef5fa;border:0;border-radius:9px}
-.worker-phone .w-schedule-calendar-controls .w-schedule-week-arrow{width:29px;font-size:21px;line-height:28px}
-.worker-phone .w-schedule-calendar-controls .w-schedule-today{padding:0 7px;font-size:10px;font-weight:600}
+/* W01 schedule review: edge-to-edge week strip and a time-led agenda. */
+.worker-phone:has(.w-schedule-calendar) .phone-nav{background:#fff}
+.worker-phone .phone-body:has(>.w-schedule-calendar){padding:0 0 24px}
+.worker-phone .w-schedule-calendar{position:sticky;top:0;z-index:2;margin:0;padding:8px 18px 17px;background:#fff;border:0;border-radius:0;box-shadow:none}
+.worker-phone .w-schedule-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px}
+.worker-phone .w-schedule-calendar-head>strong{color:var(--w-ink);font-size:18px;font-weight:650;white-space:nowrap}
+.worker-phone .w-schedule-calendar-controls{display:flex;align-items:center;gap:0;flex:none}
+.worker-phone .w-schedule-calendar-controls button{display:flex;align-items:center;justify-content:center;height:44px;min-width:44px;margin:0;padding:0;color:var(--w-blue-deep);background:transparent;border:0;border-radius:999px}
+.worker-phone .w-schedule-week-arrow img{width:16px;height:16px}
+.worker-phone .w-schedule-week-arrow[data-value="-7"] img{transform:rotate(180deg)}
+.worker-phone .w-schedule-calendar-controls .w-schedule-today{font-size:12px;font-weight:600}
+.worker-phone .w-schedule-calendar-controls button:hover{background:var(--w-blue-soft)}
 .worker-phone .w-schedule-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
-.worker-phone .w-schedule-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:69px;margin:0;padding:6px 0 4px;color:var(--w-muted);background:transparent;border:0;border-radius:11px;line-height:1}
-.worker-phone .w-schedule-day span{font-size:10px;white-space:nowrap}
-.worker-phone .w-schedule-day strong{color:var(--w-ink);font-size:18px;font-weight:650;font-variant-numeric:tabular-nums}
+.worker-phone .w-schedule-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:80px;margin:0;padding:4px 0;color:var(--w-muted);background:transparent;border:0;border-radius:0;line-height:1}
+.worker-phone .w-schedule-day>span{font-size:12px;white-space:nowrap}
+.worker-phone .w-schedule-day strong{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;color:var(--w-ink);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
 .worker-phone .w-schedule-day i{width:4px;height:4px;border-radius:50%;background:transparent}
-.worker-phone .w-schedule-day i.has-plan{background:var(--w-blue-deep)}
-.worker-phone .w-schedule-day.selected{color:#fff;background:var(--w-blue-deep)}
-.worker-phone .w-schedule-day.selected strong{color:#fff}
-.worker-phone .w-schedule-day.selected i.has-plan{background:#fff}
-.worker-phone .w-schedule-day:hover:not(.selected){background:#eef5fa}
-.worker-phone .w-schedule-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 2px 12px}
-.worker-phone .w-schedule-section-head>div{display:flex;flex-direction:column;gap:4px}
-.worker-phone .w-schedule-section-head small{color:var(--w-muted);font-size:11px}
-.worker-phone .w-schedule-section-head strong{color:var(--w-ink);font-size:19px}
-.worker-phone .w-schedule-section-head>span{color:var(--w-blue-deep);font-size:11px;font-weight:600;white-space:nowrap}
-.worker-phone .w-schedule-list{display:flex;flex-direction:column;gap:10px;overflow:visible;background:transparent;border:0;border-radius:0}
-.worker-phone .w-schedule-item{min-height:91px;padding:14px;background:#fff;border:1px solid var(--w-line);border-radius:15px;box-shadow:0 4px 14px #183d5b08}
-.worker-phone .w-schedule-item:last-child{border:1px solid var(--w-line)}
-.worker-phone .w-schedule-item:hover{background:#f4f9fc}
-.worker-phone .w-schedule-time{gap:5px;width:61px;padding-right:10px}
-.worker-phone .w-schedule-time strong{font-size:19px}
-.worker-phone .w-schedule-time small{font-size:10px}
-.worker-phone .w-schedule-detail{gap:5px}
-.worker-phone .w-schedule-detail small:first-child{color:var(--w-blue-deep);font-size:10px;font-weight:600}
-.worker-phone .w-schedule-detail strong{font-size:13px}
-.worker-phone .w-schedule-chevron{color:#8ca7b8;font-size:21px}
+.worker-phone .w-schedule-day i.has-plan{background:var(--w-blue)}
+.worker-phone .w-schedule-day.is-today>span{color:var(--w-blue);font-weight:600}
+.worker-phone .w-schedule-day.is-today:not(.selected) strong{color:var(--w-blue);box-shadow:inset 0 0 0 1px var(--w-blue)}
+.worker-phone .w-schedule-day.selected strong{color:#fff;background:var(--w-blue)}
+.worker-phone .w-schedule-day:hover:not(.selected) strong{background:var(--w-blue-soft)}
+.worker-phone .w-schedule-list{display:flex;flex-direction:column;gap:12px;padding:20px 18px;overflow:visible;background:transparent;border:0;border-radius:0}
+.worker-phone .w-schedule-item{display:grid;grid-template-columns:52px minmax(0,1fr);align-items:stretch;gap:14px;min-height:120px;margin:0;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;text-align:left;line-height:1.5}
+.worker-phone .w-schedule-item:last-child{border:0}
+.worker-phone .w-schedule-item:hover{background:transparent}
+.worker-phone .w-schedule-time{position:relative;display:flex;flex-direction:column;gap:2px;width:auto;padding:13px 0 0;border:0}
+.worker-phone .w-schedule-time:after{content:"";flex:1;width:1px;min-height:20px;margin:10px auto 0;background:var(--w-line)}
+.worker-phone .w-schedule-item:last-child .w-schedule-time:after{display:none}
+.worker-phone .w-schedule-time strong{font-size:18px;font-weight:650;color:var(--w-ink);font-variant-numeric:tabular-nums}
+.worker-phone .w-schedule-time small{font-size:12px;font-variant-numeric:tabular-nums}
+.worker-phone .w-schedule-card{display:flex;align-items:center;gap:12px;padding:15px 16px;background:#fff;border-radius:16px;overflow:hidden}
+.worker-phone .w-schedule-item:hover .w-schedule-card{background:#eef5fa}
+.worker-phone .w-schedule-detail{gap:4px}
+.worker-phone .w-schedule-detail .w-schedule-service{color:var(--w-blue-deep);font-size:12px;font-weight:600}
+.worker-phone .w-schedule-detail strong{color:var(--w-ink);font-size:16px;font-weight:650}
+.worker-phone .w-schedule-detail small{font-size:12px;line-height:1.6}
+.worker-phone .w-schedule-address{margin-top:3px}
+.worker-phone .w-schedule-chevron{width:16px;height:16px;flex:none}
 .worker-phone .w-schedule-calendar button:focus-visible,.worker-phone .w-schedule-item:focus-visible{outline:2px solid var(--w-blue-deep);outline-offset:2px}
+
 .worker-phone .w-map-preview{position:relative;height:175px;overflow:hidden;background:linear-gradient(35deg,#e4f1e8 0 28%,#eef4e9 28% 56%,#dcece4 56%);border:1px solid #d6e6dd;border-radius:16px}
 .worker-phone .w-map-road{position:absolute;height:18px;width:135%;left:-15%;background:#fff;border-top:2px solid #d8e4e3;border-bottom:2px solid #d8e4e3;transform-origin:center}
 .worker-phone .road-one{top:42%;transform:rotate(-24deg)}.worker-phone .road-two{top:74%;transform:rotate(23deg)}.worker-phone .road-three{top:18%;transform:rotate(67deg)}

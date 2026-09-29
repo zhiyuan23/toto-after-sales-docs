@@ -778,7 +778,7 @@ test('late avatar reads cannot overwrite a newer choice or revive a reset profil
 test('worker overview opens confirmed appointments and the pending task map',()=>{
   const f=fixture({hash:'#w-tasks'}),body=f.get('#phone-body');
   assert.match(body.innerHTML,/class="w-task-overview"/);assert.match(body.innerHTML,/data-go="w-schedule"/);assert.match(body.innerHTML,/data-go="w-map"/);
-  f.click({go:'w-schedule'});assert.equal(f.current().id,'w-schedule');assert.match(body.innerHTML,/每日待办[\s\S]*已确认 2 单/);
+  f.click({go:'w-schedule'});assert.equal(f.current().id,'w-schedule');assert.match(body.innerHTML,/w-schedule-list" aria-label="已确认 2 单预约"/);
   f.click({go:'w-tasks'});assert.equal(f.current().id,'w-tasks');
   f.click({go:'w-map'});assert.equal(f.current().id,'w-map');assert.match(body.innerHTML,/任务地图 <b>6<\/b> 个位置/);assert.doesNotMatch(body.innerHTML,/许先生/);
 });
