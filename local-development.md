@@ -6,7 +6,7 @@
 
 本节的统一启动器和防重复 JVM 逻辑只适用于当前 macOS/Linux 本地工作区，脚本在 Windows 上会拒绝运行。Windows 同事仍使用自己的 Windows/IntelliJ 本地启动方式；下文的 `yarn dev:full`、`yarn dev:afs` 与 `start-local-backend.sh` 操作要求不作为 Windows 启动步骤。
 
-本机管理前端 `http://127.0.0.1:7004`、消费者小程序和服务人员小程序 → 同一个本机后端 `http://127.0.0.1:8080/api` → 用户指定的 MySQL 测试库。原 `10.1.1.53:8011` 是远程 HTTP 服务入口，不是数据库连接地址，本模式不经过该远程后端。
+本机售后管理前端 `http://127.0.0.1:9010/after-sales/#/`（用户明确要求时另启动 7004 主系统）、消费者小程序和服务人员小程序 → 同一个本机后端 `http://127.0.0.1:8080/api` → 用户指定的 MySQL 测试库。原 `10.1.1.53:8011` 是远程 HTTP 服务入口，不是数据库连接地址，本模式不经过该远程后端。
 
 - 后端使用 `gaia-saas-proj/gaia-saas-web-jar`，已补入 `gaia-after-sales-api` 依赖。售后仓库当前也有独立 `gaia-after-sales-web`，但它不包含完整管理端基础能力，本模式仍由聚合宿主提供接口。
 - 数据库凭据只保存在宿主 `.local/application.properties`，目录已忽略，文件权限为 `600`。不要提交、分享或把密码复制到前端环境变量。连接使用 TLS 加密；当前 `sslMode=REQUIRED` 不等同于已配置 CA 和服务器身份校验。
@@ -17,13 +17,21 @@
 
 ### 启动与断点调试
 
-日常联调只需在 `frontend/gaia-ui` 下运行一条命令：
+日常 Web 开发与验证默认在本仓库 `docs/toto` 或 `frontend/gaia-ui` 下运行：
+
+```bash
+yarn dev:afs
+```
+
+在 `http://127.0.0.1:9010/after-sales/#/` 独立入口完成页面、交互、菜单和权限验证，不启动 7004 主系统，不默认重复验证主系统 iframe 入口或角色勾选树。只有用户主动明确要求主系统验证时才扩大范围；菜单与权限变更仍需核对 Gaia 配置并验证子系统及真实接口的允许／拒绝行为。此规则不改变测试环境完整部署及发布后检查。
+
+日常启动或重启只执行所需入口的一条命令：售后 Web 默认用 `yarn dev:afs`，只用某个小程序用其对应的 `pnpm dev` 命令；用户明确要求主系统验证时，才在 `frontend/gaia-ui` 使用 `yarn dev:full`。它们共用启动器与同一个 8080 后端；不要再叠加手工执行 `start-local-backend.sh` 或 `java -jar`。已有健康且源码版本一致的后端会被复用；源码变化时由启动器先停旧实例再启动新实例。
+
+完整 Web 联调命令及行为说明：
 
 ```bash
 yarn dev:full
 ```
-
-日常启动或重启只执行所需入口的一条命令：完整 Web 用 `yarn dev:full`，只用售后子系统用下方的 `yarn dev:afs`，只用某个小程序用其对应的 `pnpm dev` 命令。它们共用启动器与同一个 8080 后端；不要再叠加手工执行 `start-local-backend.sh` 或 `java -jar`。已有健康且源码版本一致的后端会被复用；源码变化时由启动器先停旧实例再启动新实例。
 
 该命令会先关闭上一轮仍占用 7004/9010 的本工作区 Vite 进程，再调用 `scripts/local-backend.mjs`。启动器对共享 `gaia-sys`、售后模块、聚合宿主的 POM 与 `src/main` 以及后端启动脚本计算内容指纹：8080 同时具备 Web／移动能力、属于本工作区受管运行包且指纹与当前源码一致时才复用；源码变化时会在跨项目启动锁内安全关闭旧 JVM、重新安装宿主依赖的 Gaia 系统模块与售后模块并装配宿主；端口属于其他程序时明确列出 PID 并拒绝强杀。若本机限制 `ps` 读取命令行，启动器会结合进程工作目录及其已打开的本工作区运行 JAR 校验归属，无法确认时仍拒绝自动关闭。最后启动 7004 主系统和 9010 售后子系统前端。后端首次装配通常需要约 1–2 分钟；本次目标测试库冷启动包含大量类扫描和售后主键水位核对，实际更久，启动探针等待上限已调为 12 分钟。出现“已就绪”日志后访问 `http://127.0.0.1:7004/`。共享 Redis 和后端独立常驻，`Ctrl+C` 只停止本次前端，不影响同时运行的两个小程序。该入口依赖当前跨仓目录结构以及本机 bash、JDK 21、Maven、Redis、lsof，仅支持 macOS/Linux。
 
@@ -186,7 +194,8 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 | 小程序租户、请求、产物或发布脚本 | 在源码检查基础上运行 `pnpm test:tenant`、`pnpm tenant:catalog:check` |
 | 小程序共享启动链、配置或样式 | 上述适用检查及 `pnpm build [<TENANT>]`、`pnpm build:h5 [<TENANT>]`（租户默认 `TOTO`、环境默认 `test`）；需验证其他环境时显式执行 `pnpm build <TENANT> <ENV>`，并检查页面表现 |
 | 小程序依赖或锁文件 | 冻结安装及 `pnpm run audit`，兼容性变化增加双端构建；当前审计限制见小程序质量文档，不自动接受风险 |
-| 管理后台页面/API | 对修改文件执行非修复 ESLint（如 `yarn exec eslint src/views/afterSales/具体页面.vue`），执行 `yarn build` 和相关页面/权限验收；当前没有现成独立 type-check/test 脚本 |
+| 售后子系统页面/API | 使用 `apps/after-sales` 现有 lint、typecheck、相关测试及 build 命令，默认通过 `yarn dev:afs` 在独立入口验证页面、交互及权限；不启动主系统 |
+| 用户明确要求的主系统维护／验证 | 按实际改动执行主系统非修复 ESLint、相关测试及构建；需要页面联调时在 `frontend/gaia-ui` 使用 `yarn dev:full` |
 | 宿主装配或配置 | 定向 Maven verify、依赖和扫描检查；在已确认测试环境验证启动与真实接口，按风险检查权限和租户隔离 |
 
 小程序完整本地验证可使用 `pnpm verify`；它不包含真实依赖审计，需要时另跑 `pnpm run audit`。管理后台的 `lint-fix` 会修改源码，不作为只读检查。相关仓库均执行 `git diff --check`。
@@ -215,7 +224,7 @@ node scripts/frontends/after-sales.mjs install --frozen-lockfile
 
 根目录的 `after-sales.mjs` 会读取子项目 `.nvmrc`，使用 Node 24.21.0 和子项目 `packageManager` 执行命令，不改变根进程 Node。直接进入子目录执行时，先运行 `nvm use`，再使用 `corepack pnpm --ignore-workspace ...`；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
 
-回到 gaia-ui 根目录运行 `yarn dev`，主应用在 7004，子应用在 9010。独立子系统直接访问 `http://127.0.0.1:9010/after-sales/#/`；从主系统进入时由主系统链接携带 `entry=main`。`yarn dev:main` 可只启动主系统；`yarn dev:afs` 可清理旧进程后启动售后子系统及其本地 Redis、Gaia 聚合后端。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
+日常开发默认在 gaia-ui 根目录或本仓库运行 `yarn dev:afs`，启动售后子系统及其本地 Redis、Gaia 聚合后端，直接访问 `http://127.0.0.1:9010/after-sales/#/`。用户明确要求主系统验证时，可在 gaia-ui 根目录运行 `yarn dev:full`；已有 `yarn dev` 同时启动主应用 7004 和子应用 9010，`yarn dev:main` 只启动主系统。从主系统进入时由主系统链接携带 `entry=main`。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
 
 原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以 Node 22 构建主项目、以 Node 24 构建子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装也使用同一 Node 24 编排入口，构建失败会中止；上传和发布仍需单独授权。
 
