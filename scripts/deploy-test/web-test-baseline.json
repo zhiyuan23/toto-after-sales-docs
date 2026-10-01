@@ -1,5 +1,5 @@
 {
-  "source": "ae8b95e3 / 2026-10-01 完整 Web 前后端更新，400 项中 38 项既有失败",
+  "source": "2026-10-01 总部服务配置合并；ae8b95e3 的38项既有失败中已修正1项过时导航断言，当前402项测试保留37项既有失败",
   "failures": [
     "a busy form blocks leaving the dashboard for another business page",
     "a busy form refuses perspective switching without clearing tabs",
@@ -11,7 +11,6 @@
     "cancelled work perspective switching leaves the current home and form mounted",
     "catalog uploads use the official Gaia access and download addresses",
     "category detail shows readable ancestry and never exposes a raw parent ID as its name",
-    "customer-service dispatch keeps station assignment while station page is wired for personnel assignment",
     "dialog tab tables use one lightweight visual shell without replacing table behavior",
     "editable controls in shared business form dialogs provide placeholders",
     "every built-in navigation identifier has paired titles; unknown and custom names remain unchanged",
@@ -39,5 +38,8 @@
     "selecting the current perspective leaves all tabs intact",
     "tests/catalog-state.test.ts",
     "tests/i18n.test.ts"
+  ],
+  "resolvedFailures": [
+    "customer-service dispatch keeps station assignment while station page is wired for personnel assignment"
   ]
 }
