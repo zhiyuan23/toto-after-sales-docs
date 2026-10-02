@@ -1,5 +1,7 @@
 # 后台系统原型
 
+[会员详情布局（大抽屉／全屏）](member-purchase-preferences.html#member-1)：左侧头像与基础资料，右侧商品卡片及购买／保修信息，支持购买确认与保修状态筛选、更多商品信息及服务记录切换。仅用虚构数据保留布局方案；正式 Web 已落地共享详情，保修起止未核定且不提供在保／过保筛选，差异见对应 Spec 第9节；见[本次布局说明](../../specs/2026-10-01-消费者资料与品牌会员画像.md#8-会员详情大抽屉与全屏原型2026-10-02)。
+
 [会员档案与购买倾向（设计稿）](member-purchase-preferences.html) · [总部运营（现版）](index.html) · [总部运营（地图版）](headquarters-map.html) · [服务质量（新版）](service-quality-v2.html) · [服务质量（旧版）](service-quality.html) · [运营报表（新版）](operations-report-v2.html) · [运营报表（旧版）](operations-report.html) · [客服作业（现版）](customer-service.html) · [客服行动工作台](customer-service-v03.html) · [服务站作业（现版）](service-station.html) · [服务站工作台（今日安排与配件版）](service-station-v02.html) · [服务站管理卡片样式](service-station-card-prototype.html) · [配件管理](parts-management.html#inbound) · [门店业务](dealer.html) · [查看设计说明](01-四视角后台原型设计说明.md) · [返回全部原型](../README.md)
 
 2026-10-02 新增会员购买倾向设计预览：会员档案／品牌画像统计两个页签、省份与年龄筛选、三组分布及四种交叉维度、只读详情；12个账号均为虚构，不请求真实后端。对应消费者入口与正式实施边界见[设计稿](../../specs/2026-10-02-兴趣偏好与购买倾向设计.md)。
