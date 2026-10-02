@@ -47,7 +47,7 @@ function fixture({ hash = '', search = '' } = {}) {
       return Object.hasOwn(dataset,key);
     },
   }) } });
-  const change = (name, value) => events.get('change')({ target: { name, value, id: '', dataset: {}, hasAttribute: () => false } });
+  const change = (name, value, checked) => events.get('change')({ target: { name, value, checked, id: '', dataset: {}, hasAttribute: () => false } });
   const submit = (id, target, valid = true) => {
     const form = {
       id, dataset: { submitGo: target }, checkValidity: () => valid,
@@ -709,41 +709,56 @@ test('an empty service hub does not imply active service or offer a progress act
 });
 
 
-const preferenceFields = (f, selected) => {
-  f.get('#phone-body').fields = [['interests','smart-toilet'],['interests','bathtub'],['contentPreferences','care'],['contentPreferences','offers']].map(([name,value])=>({name,value,type:'checkbox',checked:selected.includes(value)}));
+const preferenceFields = (f, selected, plan = '') => {
+  f.get('#phone-body').fields = [['interests','smart-toilet'],['interests','washlet'],['interests','bathtub'],['interests','none'],['usageScenes','new-home'],['usageScenes','renovation'],['usageScenes','replacement']].map(([name,value])=>({name,value,type:'checkbox',checked:selected.includes(value)}));
+  f.get('#phone-body').fields.push({name:'purchasePlan',value:plan,type:'select-one'});
 };
-test('preference drafts survive navigation and save independently from profile and purchases', () => {
+test('preferences autosave three optional groups independently of profile and purchases', () => {
   const f=fixture({hash:'#c-profile'}), purchases=copy(f.consumer.ownedProducts);
-  f.change('userName','资料更新');
-  f.click({go:'c-preferences'});
+  f.change('userName','资料更新');f.click({go:'c-preferences'});
   assert.equal(f.account.profile().preferencesSaved,false);
   assert.deepEqual(copy(f.account.profile().interests),[]);
-  preferenceFields(f,['smart-toilet','care','offers']);
-  f.click({go:'c-profile'});
-  assert.match(f.get('#phone-body').innerHTML,/资料更新/);
-  assert.equal(f.account.profile().preferencesSaved,false);
-  f.click({go:'c-preferences'});
-  assert.match(f.get('#phone-body').innerHTML,/value="care" checked/);
-  preferenceFields(f,['smart-toilet','care','offers']);
-  f.submit('c-preferences-form');
+  assert.doesNotMatch(f.get('#phone-footer').innerHTML,/保存/);
+  preferenceFields(f,['smart-toilet','replacement'],'within-3-months');
+  f.change('interests','smart-toilet',true);
   assert.deepEqual(copy(f.account.profile().interests),['smart-toilet']);
-  assert.deepEqual(copy(f.account.profile().contentPreferences),['care','offers']);
+  assert.deepEqual(copy(f.account.profile().usageScenes),['replacement']);
+  assert.equal(f.account.profile().purchasePlan,'within-3-months');
+  assert.equal(f.account.profile().preferencesSaved,true);
   assert.equal(f.account.profile().userName,'资料更新');
-  f.click({go:'c-profile'});
-  f.change('address','单项更新地址');
-  assert.deepEqual(copy(f.account.profile().contentPreferences),['care','offers']);
+  f.click({go:'c-profile'});assert.match(f.get('#phone-body').innerHTML,/智能一体型座便器/);
+  f.change('address','单项更新地址');f.click({go:'c-preferences'});
+  assert.match(f.get('#phone-body').innerHTML,/value="smart-toilet" checked/);
+  assert.match(f.get('#phone-body').innerHTML,/value="within-3-months" selected/);
   assert.deepEqual(copy(f.consumer.ownedProducts),purchases);
 });
-test('preferences can be cleared and empty saved selections differ from an untouched profile', () => {
+test('explicitly no product preference excludes other products, while clearing restores unanswered', () => {
   const f=fixture({hash:'#c-preferences'});
-  preferenceFields(f,['smart-toilet','care']);f.submit('c-preferences-form');
-  f.click({account:'clear-preferences'});
-  assert.deepEqual(copy(f.account.profile().interests),['smart-toilet']);
-  preferenceFields(f,[]);f.submit('c-preferences-form');
+  preferenceFields(f,['smart-toilet','none']);f.change('interests','none',true);
   assert.deepEqual(copy(f.account.profile().interests),[]);
-  assert.deepEqual(copy(f.account.profile().contentPreferences),[]);
+  assert.equal(f.account.profile().interestsAnswered,true);
   assert.equal(f.account.profile().preferencesSaved,true);
-  f.resetConsumer();
+  preferenceFields(f,['none','washlet']);f.change('interests','washlet',true);
+  assert.deepEqual(copy(f.account.profile().interests),['washlet']);
+  assert.doesNotMatch(f.get('#phone-body').innerHTML,/value="none" checked/);
+  f.click({account:'clear-preferences'});
+  assert.deepEqual(copy(f.account.profile().interests),[]);
+  assert.deepEqual(copy(f.account.profile().usageScenes),[]);
+  assert.equal(f.account.profile().purchasePlan,'');
+  assert.equal(f.account.profile().interestsAnswered,false);
+  assert.equal(f.account.profile().preferencesSaved,false);
+});
+test('purchase plan alone is a response and unknown values are discarded', () => {
+  const f=fixture({hash:'#c-preferences'});
+  preferenceFields(f,[],'none');f.change('purchasePlan','none');
+  assert.equal(f.account.profile().purchasePlan,'none');
+  assert.equal(f.account.profile().preferencesSaved,true);
+  assert.equal(f.account.profile().interestsAnswered,false);
+  f.click({go:'c-profile'});assert.match(f.get('#phone-body').innerHTML,/暂无购买计划/);
+  f.click({go:'c-preferences'});preferenceFields(f,['unknown-product'],'unknown-plan');
+  f.change('purchasePlan','unknown-plan');
+  assert.equal(f.account.profile().purchasePlan,'');
+  assert.deepEqual(copy(f.account.profile().interests),[]);
   assert.equal(f.account.profile().preferencesSaved,false);
 });
 const avatarFile = {type:'image/png',size:256,data:'data:image/png;base64,DEMO'};

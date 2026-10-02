@@ -521,3 +521,15 @@ html[data-consumer-version="0.13"] .consumer-phone .c-gallery-product > img.c-pr
   .consumer-phone button { transition: none; }
   .consumer-phone button:active { transform: none; }
 }
+
+/* 2026-10-01: purchase-preference design, scoped to the consumer preference screen. */
+.consumer-phone[data-screen="c-preferences"] .c-preferences-intro { margin: 0 0 16px; font-size: 12px; line-height: 1.6; }
+.consumer-phone[data-screen="c-preferences"] .c-preference-group h2 { margin: 0 0 6px; font-size: 16px; line-height: 1.5; }
+.consumer-phone[data-screen="c-preferences"] .c-preference-group h2 small { margin-left: 8px; color: var(--c-muted); font-size: 12px; font-weight: 400; }
+.consumer-phone[data-screen="c-preferences"] .c-preference-description { margin: 0 0 14px; color: var(--c-muted); font-size: 12px; line-height: 1.5; }
+.consumer-phone[data-screen="c-preferences"] .c-preference-option > span { box-sizing: border-box; min-height: 44px; padding: 10px 12px; font-size: 13px; border-radius: 12px; }
+.consumer-phone[data-screen="c-preferences"] .c-plan-label { position: relative; display: block; }
+.consumer-phone[data-screen="c-preferences"] .c-plan-label select { width: 100%; min-height: 44px; padding: 0 36px 0 12px; border: 0; border-radius: 12px; background: var(--c-soft); color: var(--c-ink); font: inherit; font-size: 13px; appearance: none; }
+.consumer-phone[data-screen="c-preferences"] .c-plan-label > span:last-child { position: absolute; right: 14px; top: 12px; pointer-events: none; color: var(--c-muted); }
+.consumer-phone[data-screen="c-preferences"] .c-preference-footnote { margin: 14px 0 0; color: var(--c-muted); font-size: 12px; }
+.consumer-phone[data-screen="c-preferences"] .c-preference-tools { margin-top: 4px; }
