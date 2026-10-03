@@ -578,6 +578,7 @@
     if(current.id==='w-requisition' && event.target.hasAttribute('data-worker-purpose')){worker.saveDraft($('#phone-body'),current.id);worker.setRequisitionPurpose(event.target.value);render();}
     if (current.id==='c-profile' && event.target.id==='c-avatar-file') account.changeAvatar(event.target,{root:$('#phone-body'),render,showToast});
     else if (current.id==='c-profile') account.updateProfileField(event.target,{showToast});
+    else if (current.id==='c-preferences') account.updatePreferences(event.target,{root:$('#phone-body'),render});
   });
   $('#ui-state').addEventListener('change',event=>{saveDraft();renderState(event.target.value);});
   $('#phone-body').addEventListener('scroll',syncWorkerRootNavigation,{passive:true});

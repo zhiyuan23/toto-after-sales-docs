@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>会员档案与购买倾向｜TOTO 设计预览</title><link rel="stylesheet" href="admin.css"><link rel="stylesheet" href="member-purchase-preferences.css"><link rel="stylesheet" href="member-detail-prototype.css"></head>
+<body class="member-design">
+<header class="design-top"><strong>TOTO 售后服务</strong><span>总部运营</span><a href="../小程序/index.html#c-profile">查看消费者填写页面 ↗</a><small>设计预览 · 所有数据均为虚构</small></header>
+<div class="design-shell"><aside class="design-side"><span>会员运营</span><a class="active" href="member-purchase-preferences.html">会员档案</a><a href="index.html">运营工作台</a></aside>
+<main><div class="design-heading"><div><p>会员运营 / 会员档案</p><h1>会员档案</h1></div><div class="design-heading-actions"><button type="button" data-member="1">预览会员详情</button><span class="scope">总部只读</span></div></div>
+<nav class="design-tabs" aria-label="会员页面"><button type="button" data-view="archive">会员档案</button><button type="button" data-view="statistics" aria-current="page">品牌画像统计</button></nav>
+<div class="design-filter"><label>所在省份<select id="province"><option value="">全部省份</option><option>辽宁省</option><option>浙江省</option><option>广东省</option><option>未填写</option></select></label><label>年龄段<select id="age"><option value="">全部年龄段</option><option>18岁以下</option><option>18～29岁</option><option>30～39岁</option><option>40～49岁</option><option>50～59岁</option><option>60岁以上</option><option>未填写</option></select></label><button id="reset" type="button">重置</button><span id="cohort" aria-live="polite"></span></div>
+<section id="statistics-view"><div class="design-subtitle"><h2>购买倾向</h2><p>按消费者主动填写的当前偏好统计。购买计划为填写时的整体卫浴计划，未填写单列。</p></div><div id="metrics" class="design-metrics"></div>
+<div class="design-charts"><section class="design-card"><h3>关注的产品</h3><p>每个品类按会员去重，占当前全部会员的比例。</p><div id="interest-chart"></div><p id="interest-status" class="chart-foot"></p></section><section class="design-card"><h3>购买计划</h3><p>单选；与关注的产品分别统计。</p><div id="plan-chart"></div></section><section class="design-card"><h3>使用场景</h3><p>同一会员可选择多个场景。</p><div id="scene-chart"></div><p id="scene-status" class="chart-foot"></p></section></div>
+<section class="design-card matrix-card"><div class="matrix-heading"><h3 id="matrix-title">品类 × 购买计划</h3><select id="cross-dimension" aria-label="交叉统计维度"><option value="plan">购买计划</option><option value="province">所在省份</option><option value="age">年龄段</option><option value="scene">使用场景</option></select></div><p>按会员去重的交叉人数；产品、场景支持多选，各行列不可相加推算会员总数。</p><div class="table-scroll"><table id="matrix"></table></div></section>
+<p class="design-method">填写率反映调查覆盖情况，自愿填写的人群不能直接代表全部会员。兴趣产品与已关联产品分别展示，不将选择偏好计为购买事实，也不自动开启营销通知。</p></section>
+<section id="archive-view" hidden><p class="archive-intro">偏好为消费者主动填写的信息；品牌端只读查看，保留来源和填写时间。</p><div class="design-card table-scroll"><table id="archive"></table></div></section>
+<dialog id="member-detail" aria-labelledby="detail-title">
+  <header class="member-detail-header">
+    <div><h2 id="detail-title">会员档案</h2><span>原型演示 · 数据虚构</span></div>
+    <div class="member-detail-actions">
+      <button type="button" id="detail-fullscreen" aria-pressed="false">全屏查看</button>
+      <button type="button" id="close-detail" aria-label="关闭会员详情">×</button>
+    </div>
+  </header>
+  <div id="detail-body" class="member-detail-layout"></div>
+</dialog>
+</main></div><script src="member-detail-prototype.js"></script><script src="member-purchase-preferences.js"></script></body></html>

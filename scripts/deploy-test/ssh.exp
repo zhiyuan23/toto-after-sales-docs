@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+# Password is supplied in the process environment, never in argv or terminal output.
+set timeout 1200
+set authenticated 0
+log_user 0
+spawn {*}$argv
+expect {
+  -re {(?i)password:} {
+    if {$authenticated} { puts stderr "SSH_AUTH_FAILED"; exit 77 }
+    set authenticated 1
+    send -- "$env(TOTO_TEST_SSH_PASSWORD)\r"
+    exp_continue
+  }
+  -re {Host key verification failed|REMOTE HOST IDENTIFICATION HAS CHANGED} {
+    puts stderr "SSH_HOST_KEY_REJECTED"; exit 78
+  }
+  timeout { puts stderr "SSH_TIMEOUT"; exit 124 }
+  eof {
+    # Remove prompts before forwarding output; never echo the supplied password.
+    set output $expect_out(buffer)
+    regsub -all {(?i)[^\r\n]*password:[^\r\n]*} $output {} output
+    set output [string map [list $env(TOTO_TEST_SSH_PASSWORD) {<redacted>}] $output]
+    puts -nonewline $output
+    set result [wait]
+    exit [lindex $result 3]
+  }
+}

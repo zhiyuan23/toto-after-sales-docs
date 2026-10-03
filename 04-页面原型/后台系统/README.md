@@ -1,8 +1,14 @@
 # 后台系统原型
 
-[总部运营（现版）](index.html) · [总部运营（地图版）](headquarters-map.html) · [服务质量（新版）](service-quality-v2.html) · [服务质量（旧版）](service-quality.html) · [运营报表（新版）](operations-report-v2.html) · [运营报表（旧版）](operations-report.html) · [客服作业（现版）](customer-service.html) · [客服行动工作台](customer-service-v03.html) · [服务站作业（现版）](service-station.html) · [服务站工作台（今日安排与配件版）](service-station-v02.html) · [服务站管理卡片样式](service-station-card-prototype.html) · [配件管理](parts-management.html#inbound) · [门店业务](dealer.html) · [查看设计说明](01-四视角后台原型设计说明.md) · [返回全部原型](../README.md)
+[会员详情布局（大抽屉／全屏）](member-purchase-preferences.html#member-1)：左侧头像与基础资料，右侧商品卡片及购买／保修信息，支持购买确认与保修状态筛选、更多商品信息及服务记录切换。仅用虚构数据保留布局方案；正式 Web 已落地共享详情，保修起止未核定且不提供在保／过保筛选，差异见对应 Spec 第9节；见[本次布局说明](../../specs/2026-10-01-消费者资料与品牌会员画像.md#8-会员详情大抽屉与全屏原型2026-10-02)。
+
+[会员档案与购买倾向（设计稿）](member-purchase-preferences.html) · [总部运营（现版）](index.html) · [总部运营（地图版）](headquarters-map.html) · [服务质量（新版）](service-quality-v2.html) · [服务质量（旧版）](service-quality.html) · [运营报表（新版）](operations-report-v2.html) · [运营报表（旧版）](operations-report.html) · [客服作业（现版）](customer-service.html) · [客服行动工作台](customer-service-v03.html) · [服务站作业（现版）](service-station.html) · [服务站工作台（今日安排与配件版）](service-station-v02.html) · [服务站管理卡片样式](service-station-card-prototype.html) · [配件管理](parts-management.html#inbound) · [门店业务](dealer.html) · [查看设计说明](01-四视角后台原型设计说明.md) · [返回全部原型](../README.md)
+
+2026-10-02 新增会员购买倾向设计预览：会员档案／品牌画像统计两个页签、省份与年龄筛选、三组分布及四种交叉维度、只读详情；12个账号均为虚构，不请求真实后端。对应消费者入口与正式实施边界见[设计稿](../../specs/2026-10-02-兴趣偏好与购买倾向设计.md)。
 
 当前状态：总部运营现版工作台完整保留，新增以全国地图为主视觉的总部运营方案；客服现版保留，客服状态辨识优化工作台已升级为 v0.17 用于独立评审；服务质量和运营报表保留实施基线 v1.0 旧版，并新增面向总部日常运营判断的视觉新版，两版可在各自标题区直接切换；视角切换中的服务站作业默认进入今日安排与配件版，旧版从本页保留供对照；门店工作台已按“购买登记为主任务，记录查询与代客建单为后续操作”重新设计。
+
+2026-10-03 正式门店工作台已按用户新确认改为“购买登记＋四指标＋主体图表”：上方完整宽度为登记趋势，下方等宽并列商品排行和新老客构成，图例完整显示、排行商品名使用常规字重；购买记录从登记主卡的按钮打开宽抽屉，每页10条、超出可用高度时滚动。`dealer.html` 保留此前左右分栏的历史原型，不再代表当前正式布局。最新契约见[门店购买记录抽屉与首页统计展开](../../specs/2026-09-12-四视角首页工作台.md#2026-10-03-门店购买记录抽屉与首页统计展开)。
 
 用浏览器直接打开任一 HTML，无需构建或安装依赖，也不会请求真实后端。地图版使用仓库已有中国省级地理数据在前端绘制，不使用生成图片。多数页面通过右下角“原型目录”切换，门店新版从顶栏进入原型目录。
 
