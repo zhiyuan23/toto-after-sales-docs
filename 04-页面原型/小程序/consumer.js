@@ -32,7 +32,10 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
     const multiple = selected.length > 1;
     return `<div class="c-product-context"><img ${productImageAttrs(first)} src="${e(first.image)}" alt="${e(first.name)}"><div><span>${e(caption)}${multiple ? ` · ${selected.length} 件产品` : ''}</span><strong>${e(selected.map(product => product.name).join('、'))}</strong><p>${multiple ? '同一使用地址' : `${e(first.room)} · ${e(first.model)}`}</p></div></div>`;
   };
-  const hero = (ctx, small = false) => { const product=item(ctx),backgroundType=imageBackgroundType(product); return `<div class="c-product-stage is-${backgroundType}${small ? ' is-small' : ''}" data-image-background="${backgroundType}"><img ${productImageAttrs(product)} src="${e(product.image)}" alt="${e(product.name)} ${e(product.model)} 产品外观"></div>`; };
+  const hero = (ctx, small = false, interactive = false) => {
+    const product=item(ctx),backgroundType=imageBackgroundType(product),tag=interactive ? 'button' : 'div';
+    return `<${tag} class="c-product-stage is-${backgroundType}${small ? ' is-small' : ''}${interactive ? ' c-home-product-stage' : ''}" data-image-background="${backgroundType}"${interactive ? ` data-go="c-product" aria-label="查看${e(product.name)}的产品资料"` : ''}><img ${productImageAttrs(product)} src="${e(product.image)}" alt="${e(product.name)} ${e(product.model)} 产品外观"></${tag}>`;
+  };
   const switcher = ctx => `<div class="c-product-switcher" aria-label="选择产品">${allProducts(ctx).map(p => `<button data-product="${e(p.id)}" data-go="c-home" aria-pressed="${p.id === item(ctx).id}" class="${p.id === item(ctx).id ? 'is-selected' : ''}">${e(p.name)}</button>`).join('')}<button class="c-add-product" data-go="c-register" aria-label="添加产品"><span class="c-inline-icon" data-icon="plus" aria-hidden="true"></span><span>添加</span></button></div>`;
   const actions = () => `<div class="c-service-actions" aria-label="为当前产品选择服务"><button data-service-type="install" data-go="c-install">${icon('install')}<strong>安装</strong><span>新产品，安心启用</span></button><button class="c-service-primary" data-service-type="repair" data-go="c-repair">${icon('repair')}<strong>维修</strong><span>遇到问题，帮您解决</span></button><button data-service-type="remote-guidance" data-go="c-repair">${icon('guidance')}<strong>使用指导</strong><span>让好体验更简单</span></button></div>`;
   const orderSummary = (ctx, link = true) => {
@@ -111,7 +114,7 @@ window.TOTO_SCREENS = window.TOTO_SCREENS || {};
         id: 'c-home', title: '我的 TOTO', entry: 'C01 · 产品中心', tab: 'c-home', nav: 'immersive',
         goal: '先看见自己正在使用的产品，再围绕它发起安装、维修或使用指导；用产品形象建立归属感。',
         note: '产品切换同步更新名称、型号、大图和当前服务。安装为本轮探索原型，尚未确认为正式需求；前两张产品图为官方示意图，洗面器搭配图中的龙头及台面不表示随产品购买包含；“独立式浴缸”是非白底场景图兼容性样品，不代表正式商品。数据仅供原型评审。产品无活动单时不展示其他产品的服务状态。',
-        body: ctx => ctx.hasProducts === false ? welcome(ctx) : `${switcher(ctx)}<div class="c-product-heading"><p>${e(item(ctx).room)} · 已登记产品</p><h2>${e(item(ctx).name)}</h2><button data-go="c-product" aria-label="查看${e(item(ctx).name)}的产品资料">${e(item(ctx).model)} <span aria-hidden="true">›</span></button></div>${hero(ctx)}${ctx.order ? orderSummary(ctx) : ''}${actions()}${ctx.order ? '' : orderSummary(ctx)}<div class="c-home-links"><button data-go="c-product">产品资料 <span aria-hidden="true">›</span></button><button data-go="c-products">我的全部产品 <span aria-hidden="true">›</span></button></div>`,
+        body: ctx => ctx.hasProducts === false ? welcome(ctx) : `${switcher(ctx)}<div class="c-product-heading"><p>${e(item(ctx).room)} · 已登记产品</p><div class="c-product-title-slot"><h2 class="c-product-title">${e(item(ctx).name)}</h2></div><button data-go="c-product" aria-label="查看${e(item(ctx).name)}的产品资料">${e(item(ctx).model)} <span aria-hidden="true">›</span></button></div>${hero(ctx, false, true)}${ctx.order ? orderSummary(ctx) : ''}${actions()}${ctx.order ? '' : orderSummary(ctx)}`,
       },
       {
         id: 'c-service', title: '服务', entry: 'C02 · 服务聚合与进度', tab: 'c-service',
