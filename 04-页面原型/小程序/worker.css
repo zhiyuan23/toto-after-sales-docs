@@ -389,3 +389,8 @@
 /* 2026-09-26: task appointment fact and work priority. */
 .worker-phone .w-time-date { color: var(--w-ink); font-size: 12px; line-height: 1.4; }
 .worker-phone .w-overdue-entry { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 11px; color: #926321; background: #fff7e7; border: 0; border-radius: 12px; font-size: 12px; text-align: left; }
+
+/* 配件参考价：短标签弱化，金额与名称相近，详情不重复字段标签。 */
+.worker-phone .w-part-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;min-width:0;line-height:1.5}
+.worker-phone .w-part-price>small{display:inline;flex:none;font-size:12px;font-weight:400;color:var(--w-muted)}
+.worker-phone .w-part-price>b,.worker-phone .w-part-price__amount{font-size:13px;font-weight:600;color:var(--w-ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
