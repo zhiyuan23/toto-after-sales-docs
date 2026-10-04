@@ -38,6 +38,8 @@ sensitivity: internal
 
 ## 1 结论
 
+2026-10-04 图片展示契约更新：用户确认商品／配件及用户上传图片可公开读取，两个小程序和售后 Web 改为由售后 API 返回完整图片直链，数据库继续保存稳定引用；上传、业务元数据、修改和删除仍按原权限。公开基地址复用 `proj.image.attachment.server`，可由 `after-sales.images.public-base-url` 覆盖。PDF／视频等非图片附件继续原有下载契约；下文通用 Gaia 上传返回字段和路由作为平台事实保留。见[三端公开图片直链](../specs/2026-10-04-三端公开图片直链.md)。
+
 蓝鲸数字 Gaia 平台已有通用附件、图片上传下载能力，TOTO 售后不应另起一套基础上传下载服务。售后工单图片、视频、签名、导入模板等文件类需求优先复用 `gaia-saas-proj` 宿主中 `gaia-sys-tools-*` 与 `gaia-base-core` 提供的通用能力，再在售后业务表中保存业务关系、阶段、用途和权限。
 
 本地运行宿主是 Spring Boot 可执行 jar，不需要另行配置外部 Tomcat。当前宿主应用 `context-path` 为 `/api`，而通用工具 Controller 自身映射为 `/api/sys/commontools`，因此本地直连完整路径会出现双 `/api`。
