@@ -281,7 +281,7 @@
 .worker-phone .w-requisition-list-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 9px}
 .worker-phone .w-requisition-list-head h3{margin:0}
 .worker-phone .w-requisition-list-head small{font-size:10px;text-align:right}
-.worker-phone .w-requisition-list{overflow:hidden;margin-bottom:14px;background:#fff;border-radius:14px}
+.worker-phone .w-part-selector-list{overflow:hidden;margin-bottom:14px;background:#fff;border-radius:14px}
 .worker-phone .w-requisition-row{padding:13px 15px;border-bottom:1px solid var(--w-line)}
 .worker-phone .w-requisition-row:last-child{border-bottom:0}
 .worker-phone .w-requisition-row-top,.worker-phone .w-requisition-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -394,3 +394,27 @@
 .worker-phone .w-part-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;min-width:0;line-height:1.5}
 .worker-phone .w-part-price>small{display:inline;flex:none;font-size:12px;font-weight:400;color:var(--w-muted)}
 .worker-phone .w-part-price>b,.worker-phone .w-part-price__amount{font-size:13px;font-weight:600;color:var(--w-ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
+.worker-phone .w-part-detail-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px;width:100%}
+.worker-phone .w-part-detail-actions button{width:100%;margin:0}
+.worker-phone .w-part-product{display:flex;flex-direction:column;gap:4px;padding:10px 0}
+.worker-phone .w-part-product strong{font-size:14px;font-weight:400}
+.worker-phone .w-part-product small{font-size:12px;color:var(--w-muted)}
+
+/* 2026-10-04：配件图片右侧排列识别信息及库存／数量，32px视觉按钮保留44px触控区。 */
+.worker-phone .w-part-selector{display:flex;align-items:center;gap:12px;padding:14px 15px}
+.worker-phone .w-part-selector-list .w-part-selector{padding:13px 15px;border-bottom:1px solid #e8edf4}
+.worker-phone .w-part-selector-list .w-part-selector:last-child{border-bottom:0}
+.worker-phone .w-part-selector-image{display:flex;align-items:center;justify-content:center;flex:none;width:80px;height:80px;background:var(--w-blue-soft);border-radius:12px}
+.worker-phone .w-part-selector-image [data-icon]{width:32px;height:32px}
+.worker-phone .w-part-selector-info{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.worker-phone .w-part-selector-info>strong{font-size:14px;font-weight:600;line-height:1.5;overflow-wrap:anywhere}
+.worker-phone .w-part-selector-info>small{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.worker-phone .w-part-selector-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:2px 6px;min-width:0}
+.worker-phone .w-part-selector-controls>small{flex:1;min-width:0;color:var(--w-blue-deep);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.worker-phone .w-part-selector-stepper{display:flex;align-items:center;flex:none;gap:4px;margin-left:auto}
+.worker-phone .w-part-selector-stepper button{position:relative;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box;width:44px;height:44px;min-height:44px;margin:0;padding:0;color:var(--w-blue-deep);font-size:16px;line-height:1;background:transparent;border:0}
+.worker-phone .w-part-selector-stepper button::before{position:absolute;inset:6px;background:var(--w-blue-soft);border-radius:8px;content:''}
+.worker-phone .w-part-selector-stepper button>span{position:relative}
+.worker-phone .w-part-selector-stepper button:disabled{opacity:.72}
+.worker-phone .w-part-selector-stepper>b{min-width:16px;font-size:14px;font-weight:600;line-height:1.5;text-align:center;font-variant-numeric:tabular-nums}
