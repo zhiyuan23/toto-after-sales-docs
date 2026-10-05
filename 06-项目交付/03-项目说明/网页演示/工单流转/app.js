@@ -3,6 +3,8 @@
 const $ = (id) => document.getElementById(id);
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+const embedded = new URLSearchParams(location.search).get('embed') === '1';
+if (embedded) { document.body.classList.add('embedded'); document.documentElement.classList.add('embedded'); }
 const easing = { out: 'cubic-bezier(.23,1,.32,1)', move: 'cubic-bezier(.77,0,.175,1)' };
 const svgNS = 'http://www.w3.org/2000/svg';
 const phaseStart = [0, 1, 3, 5, 6];
@@ -40,6 +42,9 @@ function setMotionState() {
   const pause = motionPaused || reducedMotion.matches || step === 6 || document.hidden;
   for (const animation of streams) pause ? animation.pause() : animation.play();
   for (const animation of animations.values()) motionPaused ? animation.pause() : animation.play();
+}
+function publishState() {
+  if (embedded) parent.postMessage({ type: 'toto-flow-state', title: resolved().title, mode }, location.origin === 'null' ? '*' : location.origin);
 }
 function buildStreams() {
   for (const animation of streams) animation.cancel();
@@ -132,6 +137,7 @@ function render({ instant = false, announce = true } = {}) {
   }
   setMotionState();
   if (announce && !playing) $('announcement').textContent = data.title + '，工单状态：' + data.status;
+  publishState();
 }
 function stopSchedule() { playing = false; generation += 1; clearTimeout(timer); timer = null; }
 function updatePlayButton() {
@@ -208,6 +214,17 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && playing) pause();
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden && playing) pause(); else setMotionState(); });
+// The local report shares heading and mode controls; the standalone demo keeps its own controls.
+window.addEventListener('message', (event) => {
+  if (!embedded || event.source !== parent || (location.origin !== 'null' && event.origin !== location.origin) || event.data?.type !== 'toto-report') return;
+  if (event.data.theme === 'light' || event.data.theme === 'dark') setTheme(event.data.theme === 'dark');
+  if (event.data.action === 'pause') pause();
+  if (event.data.action === 'activate') { motionPaused = false; setMotionState(); updatePlayButton(); }
+  if (event.data.action === 'mode' && ['manual','smart'].includes(event.data.mode)) {
+    stopSchedule(); motionPaused = false; mode = event.data.mode; render({ instant: true });
+  }
+  if (event.data.action === 'activate') publishState();
+});
 setTheme(colorScheme.matches);
 buildStreams();
 render({ instant: true, announce: false });

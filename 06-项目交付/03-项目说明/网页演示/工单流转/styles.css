@@ -9,3 +9,16 @@
 @media(max-width:760px){.presentation{min-height:620px;padding:0 16px 18px}.topbar{height:58px}.brand{font-size:25px;gap:12px}.brand span{font-size:10px;padding-left:12px}.topbar-actions{gap:0}.quiet{font-size:11px;padding:9px}.intro{display:block;padding:19px 0 16px}.intro h1{font-size:26px}.mode-switch{width:230px;margin-top:16px}.mode-switch button{height:33px;font-size:12px}.mode-thumb{height:33px}.stage{border-radius:18px;min-height:280px}.stage-heading{top:18px;left:12px;right:12px}.stage-heading h2{font-size:19px}.scene-label{display:none}#flow{inset:56px 0 0;height:calc(100% - 56px)}.footer{flex-direction:column;align-items:stretch;gap:18px;padding-top:18px}.timeline{width:100%}.timeline button{font-size:11px}.controls{margin:0;justify-content:center}.primary{min-width:132px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:1ms!important;animation-duration:1ms!important}.particles{display:none}.node-wave{opacity:0!important}.inner-orbit{stroke-dasharray:none}}
 @media print{body{background:#fff}.presentation{height:auto;min-height:0;padding:0}.topbar-actions,.mode-switch,.controls{display:none}.stage{min-height:500px}.particles{display:none}.footer{padding-top:24px}}
+/* Embedded in the full report; preserve the standalone presentation. */
+html.embedded{--muted:#5c7086;--accent:#3565b6;--consumer:#227570;--customer:#3565b6;--station:#705c98;--worker:#89612a;--consumer-soft:#e1f1ed;--customer-soft:#e6eefc;--station-soft:#ede8f6;--worker-soft:#f5eddd}
+html.embedded[data-theme=dark]{--muted:#a5b7cf;--accent:#a4bfff;--consumer:#80cebd;--customer:#a4bfff;--station:#baa8e3;--worker:#e3bb82;--consumer-soft:#254d47;--customer-soft:#2b4162;--station-soft:#413858;--worker-soft:#4d412d}
+body.embedded .presentation{height:100dvh;min-height:0;width:100%;padding:0 0 13px}
+body.embedded .topbar,body.embedded .intro,body.embedded .stage-heading{display:none}
+body.embedded .stage{min-height:0;border:0;border-radius:0;background:radial-gradient(ellipse at 48% 48%,var(--current-soft),transparent 67%),var(--surface)}
+body.embedded .footer{flex-direction:row;align-items:center;gap:18px;padding:13px 20px 0}
+body.embedded .timeline{width:auto}
+body.embedded .controls{margin-left:auto;justify-content:flex-end}
+body.embedded .node-name{font-size:34px}
+body.embedded .order-status{font-size:37px}
+body.embedded #flow{inset:0;height:100%}
+@media(max-width:620px){body.embedded .footer{flex-direction:column;align-items:stretch;gap:12px}body.embedded .timeline{width:100%}body.embedded .controls{margin:0;justify-content:center}}
