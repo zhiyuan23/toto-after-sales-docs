@@ -418,3 +418,9 @@
 .worker-phone .w-part-selector-stepper button>span{position:relative}
 .worker-phone .w-part-selector-stepper button:disabled{opacity:.72}
 .worker-phone .w-part-selector-stepper>b{min-width:16px;font-size:14px;font-weight:600;line-height:1.5;text-align:center;font-variant-numeric:tabular-nums}
+
+/* 2026-10-05: automatic requisition purpose and compact task association. */
+.worker-phone .w-requisition-purpose .w-requisition-order{border-top:0;margin-top:0;padding-top:0}
+.worker-phone .w-requisition-purpose .w-requisition-order-head strong{font-size:14px}
+.worker-phone .w-requisition-purpose .w-text-button{min-height:44px;font-size:12px}
+.worker-phone .w-requisition-standby{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;color:var(--w-muted);font-size:12px;line-height:1.5}

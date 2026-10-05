@@ -144,11 +144,15 @@ test('technical and warranty resources use compact searches and grouped result c
   w.submitAction('warranty-search',{query:'不存在'});assert.doesNotMatch(page('w-warranty').body(),/class="w-warranty-card"/);assert.match(page('w-warranty').body(),/未找到延保资料/);
   assert.match(page('w-document').body(),/w-resource-detail-hero[\s\S]*w-resource-detail-body/);assert.match(page('w-warranty-detail').body(),/w-warranty-hero[\s\S]*w-warranty-scope/);
 });
-test('requisition purpose separates work-order issue from standby stock replenishment',()=>{
-  const {w,page}=fixture();let html=page('w-requisition').body();assert.match(html,/data-worker-purpose/);assert.match(html,/工单领料/);assert.match(html,/常备库存补充/);assert.match(html,/name="workOrder"/);assert.ok(html.indexOf('领料用途')<html.indexOf('关联工单')&&html.indexOf('关联工单')<html.indexOf('选择配件'));assert.doesNotMatch(html,/连接软管/);assert.doesNotMatch(html,/class="section-card w-requisition-review"/);
+test('requisition defaults to current service and keeps a lightweight reversible standby choice',()=>{
+  const {w,page}=fixture();w.setTaskCardScenario('single');let html=page('w-requisition').body();assert.doesNotMatch(html,/data-worker-purpose|领料用途/);assert.match(html,/关联工单/);assert.match(html,/正在服务/);assert.match(html,/更换工单/);assert.match(html,/改为常备补充/);assert.match(html,/name="workOrder"/);assert.ok(html.indexOf('关联工单')<html.indexOf('选择配件'));assert.doesNotMatch(html,/连接软管/);assert.doesNotMatch(html,/class="section-card w-requisition-review"/);
   w.actAction('basket-plus','P001');html=page('w-requisition').body();assert.match(html,/本次领料/);assert.match(html,/1 种 · 1 件/);
-  w.actAction('requisition-purpose','stock');html=page('w-requisition').body();assert.match(html,/补充原因/);assert.match(html,/提交补充申请/);assert.doesNotMatch(html,/name="workOrder"/);
-  w.actAction('task-parts');html=page('w-requisition').body();assert.match(html,/领料用途已锁定/);assert.doesNotMatch(html,/data-worker-purpose/);assert.match(html,/name="workOrder"/);
+  w.actAction('requisition-purpose','stock');html=page('w-requisition').body();assert.match(html,/补充原因/);assert.match(html,/提交补充申请/);assert.match(html,/改为工单领料/);assert.doesNotMatch(html,/name="workOrder"/);
+  w.actAction('task-parts');html=page('w-requisition').body();assert.match(html,/返回工单/);assert.doesNotMatch(html,/改为常备补充|更换工单/);assert.match(html,/name="workOrder"/);
+});
+test('requisition with no eligible task hides purpose switching and order association',()=>{
+  const {page}=fixture(src=>src.replace('const visibleTasks = () => state.loggedIn ?','const visibleTasks = () => false ?'));
+  const html=page('w-requisition').body();assert.match(html,/本次领料用于补充个人库存/);assert.match(html,/补充原因/);assert.match(html,/name="purpose" value="stock"/);assert.doesNotMatch(html,/关联工单|改为工单领料|name="workOrder"/);
 });
 test('review and returned-material tasks cannot be modified through stale scheduling or service links',()=>{
   const {w,page}=fixture();for(const id of [HUANG,ZHAO]){w.actAction('task',id);assert.doesNotMatch(page('w-detail').body(),/联系 \/ 改约|编辑补充信息|去这单/);assert.equal(w.guard('w-appointment'),'w-detail');assert.equal(w.guard('w-service'),'w-detail');assert.throws(()=>w.submitAction('appointment',{result:'lost',note:'不应更改'}),/不可/);assert.throws(()=>w.submitAction('edit',{note:'不应更改'}),/仅可查看/);assert.throws(()=>w.submitAction('exception',{flag:'已取消',reason:'不应更改'}),/不可/);}
