@@ -424,3 +424,12 @@
 .worker-phone .w-requisition-purpose .w-requisition-order-head strong{font-size:14px}
 .worker-phone .w-requisition-purpose .w-text-button{min-height:44px;font-size:12px}
 .worker-phone .w-requisition-standby{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;color:var(--w-muted);font-size:12px;line-height:1.5}
+
+/* 2026-10-05 统一表单输入面：选择、单行和多行输入保持同一轻量皮肤。 */
+.worker-phone .field input,.worker-phone .field textarea,.worker-phone .field select,.worker-phone .w-requisition-value,.worker-phone .w-requisition-select,.worker-phone .w-requisition-field textarea{box-sizing:border-box;background:#fbfcfe;border:1px solid #e7e9ec;border-radius:12px;color:var(--w-ink);font-size:14px;line-height:1.5}
+.worker-phone .field input{height:44px;min-height:44px;padding:0 12px}
+.worker-phone .field select,.worker-phone .w-requisition-value,.worker-phone .w-requisition-select{min-height:44px;padding:10px 12px}
+.worker-phone .field textarea,.worker-phone .w-requisition-field textarea{height:88px;min-height:88px;padding:10px 12px}
+.worker-phone .field input::placeholder,.worker-phone .field textarea::placeholder,.worker-phone .w-requisition-field textarea::placeholder{color:#666b73;font-size:14px}
+.worker-phone .w-requisition-select select{font-size:14px}
+.worker-phone .field input:disabled,.worker-phone .field textarea:disabled,.worker-phone .field select:disabled{background:#f1f2f3;color:#666b73}
