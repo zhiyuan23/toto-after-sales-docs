@@ -35,6 +35,18 @@ test('reads metadata despite the installed CI initialization banner and rejects 
   assert.throws(() => parseMobileCheck(JSON.stringify({ ...metadata, environment: 'production' })))
 })
 
+test('upload helper flushes the result and exits even with a lingering CI handle', () => {
+  const module = new URL('./deploy-test/mobile.mjs', import.meta.url).href
+  for (const code of [0, 1]) {
+    const source = `import { finishUploadProcess } from ${JSON.stringify(module)}; setInterval(() => {}, 60000); console.log('upload-result'); console.error('upload-detail'); await finishUploadProcess(${code});`
+    if (code === 0) {
+      assert.equal(execFileSync(process.execPath, ['--input-type=module', '-e', source], { timeout: 3000, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim(), 'upload-result')
+    } else {
+      assert.throws(() => execFileSync(process.execPath, ['--input-type=module', '-e', source], { timeout: 3000, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }), error => error.status === 1 && error.stdout.includes('upload-result') && error.stderr.includes('upload-detail'))
+    }
+  }
+})
+
 test('uploads sequentially and persists per-app completion', async () => {
   const calls = [], records = []
   const states = await uploadMiniPrograms(uploadPlans, {

@@ -26,6 +26,14 @@ export async function prepareUpload(root) {
   return { env, tenant, version, robot, runWechatUpload, loadCi }
 }
 
+export async function finishUploadProcess(code) {
+  // CI leaves its compiler subprocess alive after some upload failures.
+  // Flush the captured result before exiting; IPC disconnect closes that subprocess.
+  await new Promise(resolve => process.stdout.write('', resolve))
+  await new Promise(resolve => process.stderr.write('', resolve))
+  process.exit(code)
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
     const [mode, version, description, commit, fingerprint] = process.argv.slice(2)
@@ -51,4 +59,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     console.error('小程序操作失败：' + error.message)
     process.exitCode = 1
   }
+  await finishUploadProcess(process.exitCode ?? 0)
 }
