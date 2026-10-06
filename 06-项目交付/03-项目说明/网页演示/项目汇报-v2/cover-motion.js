@@ -45,6 +45,7 @@ window.createReportCoverMotion = (root, reduce) => {
     });
     particles = dots.map((dot, i) => {
       const animation = dot.animate(frames, {duration:2400, delay:i * 600, iterations:Infinity, easing:'linear', fill:'both'});
+      animation.finished.catch(() => {});
       animation.pause();
       return animation;
     });
@@ -122,6 +123,9 @@ window.createReportCoverMotion = (root, reduce) => {
   paint(); updateButton();
   return {
     sync(isActive,isBlocked) { active = isActive; blocked = isBlocked; reconcile(); },
+    themeChanged() {
+      if (particles.length) particleGroup.style.color = getComputedStyle(routes[routeSteps[current]]).stroke;
+    },
     reduced() {
       clearTimeout(timer); timer = null; running = false;
       remaining = period;
