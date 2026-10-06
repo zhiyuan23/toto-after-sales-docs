@@ -20,7 +20,7 @@
 .worker-phone .w-ticket-chevron{position:relative;z-index:2;align-self:center;flex:0 0 auto;color:#aab5c1;font-size:25px;font-weight:400;line-height:1;pointer-events:none}
 
 /* Current service shares the overview's theme blue and small edge gradients. */
-.worker-phone .w-serving{position:relative;overflow:hidden;padding:16px 18px 15px;margin-bottom:15px;color:#fff;background:radial-gradient(ellipse 96px 64px at 100% 0%,#3a84b2 0%,transparent 100%),radial-gradient(ellipse 114px 68px at 0% 100%,#205d8b 0%,transparent 100%),var(--w-blue);border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
+.worker-phone .w-serving{position:relative;overflow:hidden;padding:16px 18px 15px;margin-bottom:15px;color:#fff;background:linear-gradient(90deg,#4485b4,var(--w-blue));border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
 .worker-phone .w-serving-hitarea{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;border-radius:inherit;background:transparent;cursor:pointer}
 .worker-phone .w-serving-hitarea:hover{background:#ffffff0a}
 .worker-phone .w-serving-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
@@ -304,7 +304,7 @@
 .worker-phone .w-requisition-field textarea{box-sizing:border-box;width:100%;height:76px;padding:11px 12px;color:var(--w-ink);font-size:13px;line-height:1.5;background:#f4f7fb;border:0;border-radius:10px;resize:vertical}
 
 /* Brand blue stays dominant; two small gradients add depth only at the card edges. */
-.worker-phone .w-task-overview{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:8px;overflow:hidden;margin:0 0 15px;padding:16px 18px 14px;color:#fff;background:radial-gradient(ellipse 96px 64px at 100% 0%,#3a84b2 0%,transparent 100%),radial-gradient(ellipse 114px 68px at 0% 100%,#205d8b 0%,transparent 100%),var(--w-blue);border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
+.worker-phone .w-task-overview{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:8px;overflow:hidden;margin:0 0 15px;padding:16px 18px 14px;color:#fff;background:linear-gradient(90deg,#4485b4,var(--w-blue));border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
 .worker-phone .w-task-overview-summary{min-width:0}
 .worker-phone .w-task-overview-summary>span{color:#eaf5fb;font-size:13px;font-weight:600;line-height:1.4}
 .worker-phone .w-task-overview-total{display:flex;align-items:baseline;gap:7px;margin-top:6px;font-variant-numeric:tabular-nums;line-height:1}
