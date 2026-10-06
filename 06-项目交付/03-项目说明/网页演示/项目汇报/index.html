@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles.css">
   <script src="icons.js" defer></script>
   <script src="content.js" defer></script>
+  <script src="cover-motion.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -34,7 +35,7 @@
     </footer>
   </div>
   <aside id="notes" hidden aria-label="内部讲解备注"><div class="notes-head"><strong>讲解备注 · 仅内部准备</strong><button id="notes-close" aria-label="关闭讲解备注">关闭</button></div><h2 id="notes-title"></h2><p id="notes-body"></p><small>方向键 / 空格：逐步推进 · PageDown / PageUp：直接翻页 · Home / End：首尾 · M：目录 · N：备注 · F：全屏</small></aside>
-  <dialog id="directory" aria-labelledby="directory-title"><div class="dialog-head"><div><p class="eyebrow">PRESENTATION INDEX</p><h2 id="directory-title">汇报目录</h2></div><button id="directory-close" aria-label="关闭目录">关闭</button></div><nav id="directory-list" aria-label="选择汇报页面"></nav><p class="dialog-tip">分步页面使用“继续”依次展开。工单页面内可单独播放、暂停或切换分配模式。</p></dialog>
+  <dialog id="directory" aria-labelledby="directory-title"><div class="dialog-head"><div><p class="eyebrow">PRESENTATION INDEX</p><h2 id="directory-title">汇报目录</h2></div><button id="directory-close" aria-label="关闭目录">关闭</button></div><nav id="directory-list" aria-label="选择汇报页面"></nav><div class="directory-demo"><span>补充演示</span><a href="../工单流转/index.html" target="_blank" rel="noopener">打开完整工单协同演示 <span aria-hidden="true">↗</span></a></div><p class="dialog-tip">分步页面使用“继续”依次展开。完整工单演示在独立页面中播放。</p></dialog>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
   <noscript>请启用 JavaScript 查看分步汇报。完整文字内容见项目说明大纲。</noscript>
 </body>

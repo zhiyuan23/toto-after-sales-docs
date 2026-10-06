@@ -20,24 +20,11 @@
     section.hidden = true;
     section.setAttribute('aria-labelledby','slide-title-' + i);
     section.innerHTML = `<header class="slide-header"><p class="eyebrow">${slide.chapter}</p><h1 id="slide-title-${i}">${slide.title}</h1><p class="subtitle">${slide.subtitle}</p></header><div class="visual">${slide.html}</div>`;
-    if (slide.layout === 'flow') {
-      section.querySelector('.slide-header').insertAdjacentHTML('beforeend','<div class="flow-modes" role="group" aria-label="选择工单分配模式"><button type="button" data-flow-mode="manual" aria-pressed="false">人工分配</button><button type="button" data-flow-mode="smart" aria-pressed="true">智能分配</button></div>');
-    }
     stage.append(section);
     return section;
   });
-  const notifyFlow = (action, mode) => {
-    const frame = $('work-order-frame');
-    frame?.contentWindow?.postMessage({type:'toto-report',action,mode,theme:document.documentElement.dataset.theme}, location.origin === 'null' ? '*' : location.origin);
-  };
-  // Only the embedded local animation may update the shared heading and mode controls.
-  window.addEventListener('message',event=>{
-    if (event.source !== $('work-order-frame').contentWindow || (location.origin !== 'null' && event.origin !== location.origin) || event.data?.type !== 'toto-flow-state') return;
-    if (typeof event.data.title !== 'string' || event.data.title.length > 64 || !['manual','smart'].includes(event.data.mode)) return;
-    const section = sections.find(item=>item.dataset.slide === 'work-order');
-    section.querySelector('h1').textContent = event.data.title;
-    section.querySelectorAll('[data-flow-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.flowMode === event.data.mode)));
-  });
+  const coverMotion = window.createReportCoverMotion(sections[0], reduce);
+  const syncCover = () => coverMotion.sync(slides[page].id === 'cover', directory.open || notesOpen);
   function animateIn(elements, instant) {
     if (instant || reduce.matches) return;
     elements.forEach((element, i) => {
@@ -55,7 +42,6 @@
     const changed = mounted !== page;
     transitions.forEach(a=>a.cancel());
     transitions = [];
-    if (changed) notifyFlow('pause');
     sections.forEach((section,i)=>{ section.hidden = i !== page; });
     const section = sections[page];
     const newlyVisible = [];
@@ -81,7 +67,7 @@
     $('announcement').textContent = `${page + 1} / ${slides.length}，${strip(data.title)}`;
     document.title = `${strip(data.title)} · TOTO 项目汇报`;
     updateDirectory();
-    if (changed && data.id === 'work-order') notifyFlow('activate');
+    syncCover();
     if (changed) stage.scrollTop = 0;
     history.replaceState(null,'','#' + data.id);
   }
@@ -98,17 +84,17 @@
     if (revealed > 0) { revealed--; render(instant); }
     else if (page > 0) { page--; revealed = slides[page].steps || 0; render(instant); }
   }
-  function showDirectory() { updateDirectory(); directory.showModal(); }
+  function showDirectory() { updateDirectory(); directory.showModal(); syncCover(); }
   function toggleNotes() {
     notesOpen = !notesOpen;
     $('notes').hidden = !notesOpen;
     $('notes-toggle').setAttribute('aria-pressed',String(notesOpen));
+    syncCover();
     if (notesOpen) $('notes-close').focus(); else $('notes-toggle').focus();
   }
   function setTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     $('theme').textContent = dark ? '浅色' : '深色';
-    notifyFlow('theme');
   }
   async function fullscreen() {
     try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); }
@@ -126,8 +112,6 @@
   $('fullscreen').addEventListener('click',fullscreen);
   document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent = document.fullscreenElement ? '退出全屏' : '全屏汇报';});
   stage.addEventListener('click',event=>{
-    const modeButton = event.target.closest('[data-flow-mode]');
-    if (modeButton) notifyFlow('mode',modeButton.dataset.flowMode);
     const button=event.target.closest('[data-example]');
     if (button) $('example-feedback').textContent = button.dataset.example + '（交互示意）';
   });
@@ -146,9 +130,9 @@
     else if (event.key === 'Escape' && notesOpen) toggleNotes();
   });
   window.addEventListener('hashchange',()=>{const index=slides.findIndex(x=>x.id===location.hash.slice(1)); if(index>=0) go(index,true);});
-  $('work-order-frame').addEventListener('load',()=>notifyFlow(slides[page].id === 'work-order' ? 'activate' : 'pause'));
-  document.addEventListener('visibilitychange',()=>{if(document.hidden) notifyFlow('pause');});
-  reduce.addEventListener('change',()=>render(true));
+  directory.addEventListener('close',syncCover);
+  document.addEventListener('visibilitychange',syncCover);
+  reduce.addEventListener('change',()=>{ coverMotion.reduced(); render(true); });
   const initial = slides.findIndex(x=>x.id===location.hash.slice(1));
   go(initial >= 0 ? initial : 0);
 })();

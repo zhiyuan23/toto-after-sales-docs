@@ -175,3 +175,56 @@
 
 .direction-cell{min-height:94px;padding-top:15px;padding-bottom:15px}
 @media(max-width:760px){.cover .visual{width:100%;right:auto}.direction-cell{min-height:105px;padding-top:14px;padding-bottom:14px}}
+/* A calm explanatory loop on the existing cover composition. */
+.cover-object{color:var(--blue)}
+.cover-object[data-cover-node=customer]{color:var(--teal)}
+.cover-object[data-cover-node=service]{color:var(--purple)}
+.cover-object[data-cover-node=result]{color:var(--gold)}
+.cover-node-halo{opacity:0;transition:opacity 240ms cubic-bezier(.23,1,.32,1)}
+.cover-object.is-current .cover-node-halo{opacity:.7}
+.cover-flow-route{fill:none;stroke:var(--cover-route-color,var(--blue));stroke-width:1.8;stroke-linecap:round;opacity:.38;transition:opacity 240ms cubic-bezier(.23,1,.32,1)}
+.cover-flow-route.is-current{opacity:.95}
+.cover-flow-particles{color:var(--blue)}
+.cover-flow-dot{fill:currentColor;opacity:0}
+.cover-state{opacity:0;transition:opacity 160ms cubic-bezier(.23,1,.32,1)}
+.cover-state.is-current{opacity:1}
+.cover-stage-pips circle{fill:var(--blue);opacity:.2;transition:opacity 160ms cubic-bezier(.23,1,.32,1)}
+.cover-stage-pips circle.is-current{opacity:.95}
+.cover-motion-tools{display:flex;justify-content:center;margin-top:15px}
+#cover-motion-toggle{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--muted);font-size:10px;padding:5px 9px;border-radius:7px;cursor:pointer}
+#cover-motion-toggle .report-icon{width:13px;height:13px}
+#cover-motion-toggle:disabled{cursor:default;opacity:.7}
+.cover-play-glyph,#cover-motion-toggle.is-paused .cover-pause-glyph{display:none}
+#cover-motion-toggle.is-paused .cover-play-glyph{display:block}
+.cover-static .cover-flow-particles,.cover-static .cover-stage-pips{display:none}
+.directory-demo{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.directory-demo a{color:var(--blue);text-decoration:none;font-weight:550;padding:8px 0}
+@media(hover:hover) and (pointer:fine){#cover-motion-toggle:hover{background:var(--blue-soft);color:var(--blue)}.directory-demo a:hover{text-decoration:underline}}
+@media(prefers-reduced-motion:reduce){.cover-flow-particles,.cover-stage-pips{display:none}.cover-node-halo{opacity:0!important}}
+/* The cover now uses the same four-role handoff logic as the standalone demo. */
+.cover .slide-header{width:34%}
+.cover h1{font-size:clamp(40px,4.65vw,76px);letter-spacing:-1.7px}
+.cover .visual{top:0;right:0;width:65%;height:calc(100% - 38px)}
+.cover-art>.cover-flow-canvas{flex:1;max-height:none;min-height:0;width:100%;overflow:visible}
+.cover-art{justify-content:stretch}
+.cover-object[data-cover-node=consumer]{color:var(--teal)}
+.cover-object[data-cover-node=customer]{color:var(--blue)}
+.cover-object[data-cover-node=station]{color:var(--purple)}
+.cover-object[data-cover-node=worker]{color:var(--gold)}
+.cover-node .cover-node-halo{stroke:currentColor;stroke-width:2;fill:none}
+.cover-node text{font-size:18px}
+.cover-coordination{text-anchor:middle;fill:var(--muted);font-size:17px;letter-spacing:2px;opacity:.55}
+.cover-step-title{text-anchor:middle;fill:var(--ink);font-size:19px;font-weight:550;opacity:0;transition:opacity 160ms cubic-bezier(.23,1,.32,1)}
+.cover-step-title.is-current{opacity:1}
+.cover-order-title{font-size:23px;font-weight:600;fill:var(--ink)}
+.cover-order-status{font-size:20px;font-weight:550;fill:var(--blue)}
+.cover-order-owner{font-size:14px;fill:var(--muted)}
+.cover-stage-rail circle{fill:var(--blue);opacity:.2}
+.cover-stage-rail text{font-size:12px;fill:var(--muted);text-anchor:middle}
+.cover-stage-rail .is-current circle{opacity:1}
+.cover-stage-rail .is-current text{fill:var(--blue);font-weight:600}
+.cover .cover-bottom{left:-54%;bottom:-7px;font-size:12px;letter-spacing:.5px}
+.cover-static .cover-stage-rail{display:none}
+@media(max-width:1100px) and (min-width:761px){.cover h1{font-size:42px}.cover .cover-bottom{font-size:10px}.cover-bottom span{padding:0 8px}.cover .subtitle{font-size:12px}}
+@media(max-width:760px){.cover .slide-header{width:100%}.cover h1{font-size:43px}.cover .visual{width:100%;height:350px;top:auto;right:auto;position:relative;flex:0}.cover-art{height:330px}.cover-art>.cover-flow-canvas{max-height:290px}.cover .cover-bottom{left:0;bottom:-25px;font-size:11px}}
+.cover .hero-order .svg-label{font-size:9px;letter-spacing:1.1px}
