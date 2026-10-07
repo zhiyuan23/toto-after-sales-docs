@@ -20,7 +20,7 @@
 .worker-phone .w-ticket-chevron{position:relative;z-index:2;align-self:center;flex:0 0 auto;color:#aab5c1;font-size:25px;font-weight:400;line-height:1;pointer-events:none}
 
 /* Current service shares the overview's theme blue and small edge gradients. */
-.worker-phone .w-serving{position:relative;overflow:hidden;padding:16px 18px 15px;margin-bottom:15px;color:#fff;background:radial-gradient(ellipse 96px 64px at 100% 0%,#3a84b2 0%,transparent 100%),radial-gradient(ellipse 114px 68px at 0% 100%,#205d8b 0%,transparent 100%),var(--w-blue);border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
+.worker-phone .w-serving{position:relative;overflow:hidden;padding:16px 18px 15px;margin-bottom:15px;color:#fff;background:linear-gradient(90deg,#4485b4,var(--w-blue));border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
 .worker-phone .w-serving-hitarea{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;border-radius:inherit;background:transparent;cursor:pointer}
 .worker-phone .w-serving-hitarea:hover{background:#ffffff0a}
 .worker-phone .w-serving-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
@@ -281,7 +281,7 @@
 .worker-phone .w-requisition-list-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 9px}
 .worker-phone .w-requisition-list-head h3{margin:0}
 .worker-phone .w-requisition-list-head small{font-size:10px;text-align:right}
-.worker-phone .w-requisition-list{overflow:hidden;margin-bottom:14px;background:#fff;border-radius:14px}
+.worker-phone .w-part-selector-list{overflow:hidden;margin-bottom:14px;background:#fff;border-radius:14px}
 .worker-phone .w-requisition-row{padding:13px 15px;border-bottom:1px solid var(--w-line)}
 .worker-phone .w-requisition-row:last-child{border-bottom:0}
 .worker-phone .w-requisition-row-top,.worker-phone .w-requisition-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -304,7 +304,7 @@
 .worker-phone .w-requisition-field textarea{box-sizing:border-box;width:100%;height:76px;padding:11px 12px;color:var(--w-ink);font-size:13px;line-height:1.5;background:#f4f7fb;border:0;border-radius:10px;resize:vertical}
 
 /* Brand blue stays dominant; two small gradients add depth only at the card edges. */
-.worker-phone .w-task-overview{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:8px;overflow:hidden;margin:0 0 15px;padding:16px 18px 14px;color:#fff;background:radial-gradient(ellipse 96px 64px at 100% 0%,#3a84b2 0%,transparent 100%),radial-gradient(ellipse 114px 68px at 0% 100%,#205d8b 0%,transparent 100%),var(--w-blue);border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
+.worker-phone .w-task-overview{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:8px;overflow:hidden;margin:0 0 15px;padding:16px 18px 14px;color:#fff;background:linear-gradient(90deg,#4485b4,var(--w-blue));border:1px solid #ffffff20;border-radius:20px;box-shadow:0 9px 20px #16578624}
 .worker-phone .w-task-overview-summary{min-width:0}
 .worker-phone .w-task-overview-summary>span{color:#eaf5fb;font-size:13px;font-weight:600;line-height:1.4}
 .worker-phone .w-task-overview-total{display:flex;align-items:baseline;gap:7px;margin-top:6px;font-variant-numeric:tabular-nums;line-height:1}
@@ -389,3 +389,47 @@
 /* 2026-09-26: task appointment fact and work priority. */
 .worker-phone .w-time-date { color: var(--w-ink); font-size: 12px; line-height: 1.4; }
 .worker-phone .w-overdue-entry { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 11px; color: #926321; background: #fff7e7; border: 0; border-radius: 12px; font-size: 12px; text-align: left; }
+
+/* 配件参考价：短标签弱化，金额与名称相近，详情不重复字段标签。 */
+.worker-phone .w-part-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;min-width:0;line-height:1.5}
+.worker-phone .w-part-price>small{display:inline;flex:none;font-size:12px;font-weight:400;color:var(--w-muted)}
+.worker-phone .w-part-price>b,.worker-phone .w-part-price__amount{font-size:13px;font-weight:600;color:var(--w-ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
+.worker-phone .w-part-detail-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px;width:100%}
+.worker-phone .w-part-detail-actions button{width:100%;margin:0}
+.worker-phone .w-part-product{display:flex;flex-direction:column;gap:4px;padding:10px 0}
+.worker-phone .w-part-product strong{font-size:14px;font-weight:400}
+.worker-phone .w-part-product small{font-size:12px;color:var(--w-muted)}
+
+/* 2026-10-04：配件图片右侧排列识别信息及库存／数量，32px视觉按钮保留44px触控区。 */
+.worker-phone .w-part-selector{display:flex;align-items:center;gap:12px;padding:14px 15px}
+.worker-phone .w-part-selector-list .w-part-selector{padding:13px 15px;border-bottom:1px solid #e8edf4}
+.worker-phone .w-part-selector-list .w-part-selector:last-child{border-bottom:0}
+.worker-phone .w-part-selector-image{display:flex;align-items:center;justify-content:center;flex:none;width:80px;height:80px;background:var(--w-blue-soft);border-radius:12px}
+.worker-phone .w-part-selector-image [data-icon]{width:32px;height:32px}
+.worker-phone .w-part-selector-info{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.worker-phone .w-part-selector-info>strong{font-size:14px;font-weight:600;line-height:1.5;overflow-wrap:anywhere}
+.worker-phone .w-part-selector-info>small{font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.worker-phone .w-part-selector-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:2px 6px;min-width:0}
+.worker-phone .w-part-selector-controls>small{flex:1;min-width:0;color:var(--w-blue-deep);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.worker-phone .w-part-selector-stepper{display:flex;align-items:center;flex:none;gap:4px;margin-left:auto}
+.worker-phone .w-part-selector-stepper button{position:relative;display:flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box;width:44px;height:44px;min-height:44px;margin:0;padding:0;color:var(--w-blue-deep);font-size:16px;line-height:1;background:transparent;border:0}
+.worker-phone .w-part-selector-stepper button::before{position:absolute;inset:6px;background:var(--w-blue-soft);border-radius:8px;content:''}
+.worker-phone .w-part-selector-stepper button>span{position:relative}
+.worker-phone .w-part-selector-stepper button:disabled{opacity:.72}
+.worker-phone .w-part-selector-stepper>b{min-width:16px;font-size:14px;font-weight:600;line-height:1.5;text-align:center;font-variant-numeric:tabular-nums}
+
+/* 2026-10-05: automatic requisition purpose and compact task association. */
+.worker-phone .w-requisition-purpose .w-requisition-order{border-top:0;margin-top:0;padding-top:0}
+.worker-phone .w-requisition-purpose .w-requisition-order-head strong{font-size:14px}
+.worker-phone .w-requisition-purpose .w-text-button{min-height:44px;font-size:12px}
+.worker-phone .w-requisition-standby{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;color:var(--w-muted);font-size:12px;line-height:1.5}
+
+/* 2026-10-05 统一表单输入面：选择、单行和多行输入保持同一轻量皮肤。 */
+.worker-phone .field input,.worker-phone .field textarea,.worker-phone .field select,.worker-phone .w-requisition-value,.worker-phone .w-requisition-select,.worker-phone .w-requisition-field textarea{box-sizing:border-box;background:#fbfcfe;border:1px solid #e7e9ec;border-radius:12px;color:var(--w-ink);font-size:14px;line-height:1.5}
+.worker-phone .field input{height:44px;min-height:44px;padding:0 12px}
+.worker-phone .field select,.worker-phone .w-requisition-value,.worker-phone .w-requisition-select{min-height:44px;padding:10px 12px}
+.worker-phone .field textarea,.worker-phone .w-requisition-field textarea{height:88px;min-height:88px;padding:10px 12px}
+.worker-phone .field input::placeholder,.worker-phone .field textarea::placeholder,.worker-phone .w-requisition-field textarea::placeholder{color:#666b73;font-size:14px}
+.worker-phone .w-requisition-select select{font-size:14px}
+.worker-phone .field input:disabled,.worker-phone .field textarea:disabled,.worker-phone .field select:disabled{background:#f1f2f3;color:#666b73}

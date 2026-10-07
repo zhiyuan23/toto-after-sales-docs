@@ -16,6 +16,7 @@ const httpUrl = `http://${host}:8011`
 const hostKey = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINfb846DmE/iAOYcVviSTE1nCn+zbUYA1tFZrb5jruVb'
 export const HOST_FINGERPRINT = 'SHA256:32uCUmbKNWdximqXT8HzyEktQDv7WlZIKkSGxvBdGnI'
 const repositories = ['backend/gaia-after-sales', 'backend/gaia-saas-proj', 'frontend/gaia-ui']
+const mobileRepositories = ['mobile/gaia-after-sales-uni', 'mobile/gaia-customer-service-uni']
 const generatedTypes = /(?:^|\/)apps\/after-sales\/src\/types\/(?:auto-imports|components|env)\.d\.ts$/
 let aborted = false, activeChild
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -23,7 +24,7 @@ const save = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2)
 
 export function parseOptions(args) {
   if (!args.length || args.length === 1 && ['--help', '-h'].includes(args[0])) return { mode: 'help' }
-  let mode, release, allowKnown = false
+  let mode, release, allowKnown = false, webOnly = false
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]
     if (['--check', '--deploy', '--status'].includes(arg)) {
@@ -31,11 +32,42 @@ export function parseOptions(args) {
       mode = arg.slice(2)
       if (mode === 'status') release = args[++i]
     } else if (arg === '--allow-known-web-failures') allowKnown = true
+    else if (arg === '--web-only') webOnly = true
     else throw new Error(`未知参数：${arg}`)
   }
   if (!mode || mode === 'status' && !/^\d{14}-[a-f0-9]{8}$/.test(release || '')) throw new Error('缺少执行模式或发布编号无效')
   if (allowKnown && mode !== 'deploy') throw new Error('测试例外仅用于部署模式')
-  return { mode, release, allowKnown }
+  if (webOnly && mode === 'status') throw new Error('--web-only 仅用于检查或部署')
+  return { mode, release, allowKnown, webOnly }
+}
+
+export async function uploadMiniPrograms(plans, { upload, record, unchanged, cancelled = () => false }) {
+  const states = Object.fromEntries(plans.map(plan => [plan.repo, { version: plan.version, state: 'PENDING' }]))
+  record(states)
+  for (const plan of plans) {
+    if (cancelled() || !unchanged()) throw new Error('小程序上传已中止：执行取消或源码改变；请核对各端状态')
+    states[plan.repo].state = 'UPLOADING'
+    record(states)
+    try {
+      await upload(plan)
+      states[plan.repo].state = 'UPLOADED'
+    } catch (error) {
+      // A lost response may follow a successful remote upload: never retry automatically.
+      states[plan.repo].state = 'UNCONFIRMED'
+      states[plan.repo].error = error.message
+    }
+    record(states)
+  }
+  if (Object.values(states).some(state => state.state !== 'UPLOADED')) throw new Error('Web／后端已更新；部分小程序上传未确认成功，请核对上传日志和微信后台，勿盲目重复上传')
+  if (!unchanged()) throw new Error('两端已上传，但上传期间源码改变；上传对应本次快照，请核对后续改动')
+  return states
+}
+
+export function parseMobileCheck(output) {
+  // miniprogram-ci prints an initialization banner before the helper's final JSON line.
+  const metadata = JSON.parse(output.trim().split(/\r?\n/).at(-1))
+  if (!/^wx[a-f0-9]{16}$/i.test(metadata.appId) || !/^\d+\.\d+\.\d+$/.test(metadata.version) || metadata.environment !== 'test') throw new Error('小程序预检结果无效')
+  return metadata
 }
 
 export function parseCredentials(text) {
@@ -127,12 +159,16 @@ async function execute(options) {
   const connectionEnv = { ...process.env, TOTO_TEST_SSH_PASSWORD: secret }
   const connect = (program, args, log) => run('expect', [join(support, 'ssh.exp'), program, ...sshOptions, ...args], { env: connectionEnv, secret, log })
   const ssh = (command, log) => connect('ssh', [`root@${host}`, command], log)
-  const localSources = () => Object.fromEntries(repositories.map(repo => [repo, snapshot(join(workspace, repo))]))
+  const selectedRepositories = options.webOnly ? repositories : [...repositories, ...mobileRepositories]
+  const localSources = () => Object.fromEntries(selectedRepositories.map(repo => [repo, snapshot(join(workspace, repo))]))
   let localLock, ownsLock = false
   try {
     if (options.mode === 'status') {
       const result = await ssh(`cat ${remoteBase}/packages/${options.release}/status.json`)
       console.log(JSON.stringify(JSON.parse(result.output.trim()), null, 2))
+      const mobileState = join(docs, '.local/verification-artifacts/deploy-test', options.release, 'mini-programs.json')
+      if (existsSync(mobileState)) console.log('小程序上传状态（本机记录；UPLOADING 须到微信后台核对）：\n' + readFileSync(mobileState, 'utf8'))
+      else console.log('无本机小程序上传记录；服务端 COMPLETE 仅表示 Web／后端完成。')
       return
     }
     const sources = localSources()
@@ -146,6 +182,21 @@ async function execute(options) {
     const expectedPnpm = JSON.parse(readFileSync(join(childPackage, 'package.json'), 'utf8')).engines.pnpm
     const pnpmVersion = (await run('corepack', ['pnpm', '--version'], { cwd: childPackage, env: childToolchain.env })).output.trim()
     if (pnpmVersion !== expectedPnpm) throw new Error(`售后 pnpm 版本须为 ${expectedPnpm}，当前为 ${pnpmVersion}`)
+    const mobilePlans = []
+    if (!options.webOnly) for (const repo of mobileRepositories) {
+      const root = join(workspace, repo)
+      const nodeVersion = readFileSync(join(root, '.nvmrc'), 'utf8').trim()
+      const toolchain = resolveNodeToolchain(nodeVersion, repo)
+      toolchain.env = { ...toolchain.env, COREPACK_ENABLE_NETWORK: '0' }
+      const required = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).engines.pnpm
+      const actual = (await run('pnpm', ['--version'], { cwd: root, env: toolchain.env })).output.trim()
+      if (actual !== required) throw new Error(`${repo} pnpm 版本须为 ${required}，当前为 ${actual}`)
+      const result = await run(toolchain.nodeExecutable, [join(support, 'mobile.mjs'), 'check'], { cwd: root, env: toolchain.env, allowFailure: true })
+      if (result.code !== 0) throw new Error(`${repo} 上传预检失败：${result.output.trim()}`)
+      const metadata = parseMobileCheck(result.output)
+      mobilePlans.push({ repo, root, toolchain, ...metadata })
+    }
+    if (mobilePlans.length === 2 && mobilePlans[0].appId === mobilePlans[1].appId) throw new Error('两个小程序 AppID 不得相同')
     let javaHome = process.env.JAVA_HOME
     if (process.platform === 'darwin') javaHome = (await run('/usr/libexec/java_home', ['-v', '21'])).output.trim()
     const javaEnv = { ...process.env, ...(javaHome ? { JAVA_HOME: javaHome, PATH: join(javaHome, 'bin') + ':' + process.env.PATH } : {}) }
@@ -172,6 +223,7 @@ async function execute(options) {
       console.log(`[${releaseId}] ${label}`)
       return run(command, args, { cwd, env, log: join(release, label + '.log') })
     }
+    for (const plan of mobilePlans) await build(plan.repo.split('/')[1] + '-check', 'pnpm', ['check'], plan.root, plan.toolchain.env)
     await build('after-sales-build', 'mvn', ['-B', '-pl', 'gaia-after-sales-api', '-am', 'clean', 'install', '-DskipTests'], join(workspace, repositories[0]), javaEnv)
     await build('host-build', 'mvn', ['-B', '-pl', 'gaia-saas-web', '-am', 'package', '-DskipTests'], join(workspace, repositories[1]), javaEnv)
     const web = join(workspace, repositories[2])
@@ -214,7 +266,17 @@ async function execute(options) {
       if (state.state !== 'COMPLETE') continue
       await connect('scp', [`root@${host}:${stage}/manifest.json`, join(release, 'published-manifest.json')], join(release, 'manifest-download.log'))
       await run('python3', [join(support, 'support.py'), 'http', join(release, 'published-manifest.json'), httpUrl], { log: join(release, 'http-check.log') })
-      console.log(`部署完成：${httpUrl}\n备份：${remoteBase}/backups/${releaseId}\n证据：${release}\n后端构建跳过测试；登录后岗位及微信验收需另行执行。`)
+      console.log(`Web／后端部署已验证：${httpUrl}`)
+      if (mobilePlans.length) await uploadMiniPrograms(mobilePlans, {
+        unchanged: () => sourceUnchanged(sources, localSources()),
+        cancelled: () => aborted,
+        record: states => save(join(release, 'mini-programs.json'), { release: releaseId, web: 'COMPLETE', programs: states }),
+        upload: plan => {
+          console.log(`[${releaseId}] ${plan.repo} 构建并上传微信开发版本 ${plan.version}`)
+          return run(plan.toolchain.nodeExecutable, [join(support, 'mobile.mjs'), 'upload', plan.version, `测试环境 ${releaseId} ${sources[plan.repo].commit.slice(0, 8)}`, sources[plan.repo].commit, sources[plan.repo].fingerprint], { cwd: plan.root, env: plan.toolchain.env, log: join(release, plan.repo.split('/')[1] + '-upload.log') })
+        },
+      })
+      console.log(`更新完成：${httpUrl}${mobilePlans.length ? '；两个小程序已上传微信开发版本（test）' : '；仅 Web／后端'}\n备份：${remoteBase}/backups/${releaseId}\n证据：${release}\n后端构建跳过测试；登录后岗位及微信验收需另行执行。`)
       return
     }
     throw new Error(`等待超时，服务端可能仍在执行；用 --status ${releaseId} 核对，不要重复切换`)
@@ -228,7 +290,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { aborted = true; activeChild?.kill('SIGTERM') })
   try {
     const options = parseOptions(process.argv.slice(2))
-    if (options.mode === 'help') console.log('TOTO 测试环境部署（macOS／Linux，固定 10.1.1.53）\n  node scripts/deploy-test.mjs --check\n  node scripts/deploy-test.mjs --deploy [--allow-known-web-failures]\n  node scripts/deploy-test.mjs --status <发布编号>\n不会拉取／提交／推送代码、迁移数据库或发布小程序。')
+    if (options.mode === 'help') console.log('TOTO 测试环境更新（macOS／Linux，固定 10.1.1.53）\n  node scripts/deploy-test.mjs --check [--web-only]\n  node scripts/deploy-test.mjs --deploy [--allow-known-web-failures] [--web-only]\n  node scripts/deploy-test.mjs --status <发布编号>\n默认更新完整 Web／后端并上传两个小程序 test 开发版本；--web-only 仅更新 Web／后端。\n不会拉取／提交／推送代码、迁移数据库或提交小程序审核／正式发布。')
     else await execute(options)
   } catch (error) {
     console.error('部署未确认完成：' + error.message)

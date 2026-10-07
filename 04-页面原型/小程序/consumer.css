@@ -119,10 +119,16 @@
 .consumer-phone .c-product-heading { text-align: center; }
 .consumer-phone .c-product-heading p { color: var(--c-muted); font-size: 11px; margin: 0 0 6px; letter-spacing: .06em; }
 .consumer-phone .c-product-heading h2 { font-size: 26px; margin: 0; line-height: 1.4; font-weight: 650; letter-spacing: -.03em; }
+.consumer-phone .c-product-title-slot { display: flex; align-items: center; justify-content: center; height: 72px; min-width: 0; }
+.consumer-phone .c-product-heading .c-product-title { display: -webkit-box; width: 100%; max-height: 72px; overflow: hidden; line-height: 36px; text-align: center; overflow-wrap: anywhere; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .consumer-phone .c-product-heading > button,
 .consumer-phone .c-product-heading > span { display: inline-block; color: #7f8c96; font-size: 10px; letter-spacing: .055em; padding: 4px 8px; min-height: 44px; }
 .consumer-phone .c-product-heading > button > span { color: var(--c-blue); margin-left: 7px; font-size: 14px; }
 .consumer-phone .c-product-stage { height: 220px; position: relative; margin: 2px -4px 13px; padding: 4px 28px 22px; background: linear-gradient(180deg, #fff 0%, #f1f5f8 100%); border: 0; border-radius: 16px; box-shadow: none; overflow: hidden; }
+.consumer-phone .c-product-stage.c-home-product-stage { box-sizing: border-box; display: block; width: calc(100% + 8px); height: 250px; min-height: 0; margin: 2px -4px 13px; padding: 4px 16px 14px; border: 0; font: inherit; line-height: 1; overflow: hidden; }
+.consumer-phone .c-product-stage.c-home-product-stage.is-scene { padding: 0; }
+.consumer-phone .c-home-product-stage:active { opacity: .94; }
+.consumer-phone .c-home-product-stage:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 3px; }
 .consumer-phone .c-product-stage:before { display: none; }
 .consumer-phone .c-product-stage img { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; }
 .consumer-phone .c-product-stage.is-scene { padding:0; background:#dfe5e8; }
@@ -158,9 +164,6 @@ html[data-consumer-version="0.13"] .consumer-phone .c-gallery-product > img.c-pr
 .consumer-phone .c-order-strip > span:last-child { margin-left: auto; color: var(--c-blue); font-size: 20px; }
 .consumer-phone .c-status-dot { width: 6px; height: 6px; flex-shrink: 0; background: var(--c-blue); border-radius: 50%; display: inline-block; }
 .consumer-phone .c-assurance { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 39px; color: var(--c-muted); font-size: 11px; }
-.consumer-phone .c-home-links { display: flex; justify-content: center; border-top: 0; margin-top: 8px; padding-top: 2px; }
-.consumer-phone .c-home-links button { min-height: 44px; padding: 9px 20px; font-size: 11px; color: var(--c-muted); }
-.consumer-phone .c-home-links button span { color: #a6b3bd; margin-left: 7px; }
 
 /* A small product reference stays visible through each step. */
 .consumer-phone .c-product-context { display: flex; align-items: center; gap: 16px; background: var(--c-surface); border: 0; border-radius: 13px; padding: 12px 14px; margin: 0 0 16px; min-height: 96px; }

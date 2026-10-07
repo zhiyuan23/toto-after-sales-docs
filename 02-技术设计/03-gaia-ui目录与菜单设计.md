@@ -472,3 +472,7 @@ node scripts/after-sales-menu-package.mjs /tmp/toto-after-sales-menu.json \
 5. 关闭本地预览与临时 API 放行，用各角色真实账号验证菜单、直达、动作、租户及组织范围，再回写入口验收。
 
 2026-09-13 已将生成器从 legacy 常量切换到独立子系统清单，加入结构漂移、退役回流、跨视角重复注册和租户全量覆盖风险检查，并可生成只读预检 SQL；同日已在关闭多租户的测试环境 `gaia_wh_init_wzy` 完成首次受控事务同步。2026-09-16 因清单继续调整，再次按稳定 code 原地同步 5 项显隐／排序差异，随后将稳定权限分组名称同步为“商品管理／配件管理”；两次同步均保留全部菜单 ID、角色菜单和角色按钮关系，最终预检为 0 条差异，非售后菜单快照不变。子系统菜单管理和角色授权会依据同一清单排除已退役节点，主系统仍可按 Gaia 原逻辑处理底层停用记录。验证见[多角色菜单实施记录](../specs/2026-09-08-多角色菜单V2实施.md#v3-delivery-tool)。以上结果只代表当前测试环境，启用多租户的环境仍须按上列 `gaia-tenant` 合并式分发流程执行，不能把测试库写入方式直接套用于生产。
+
+### 2026-10-05 服务人员反馈首版
+
+A56的稳定code为`afsPersonnelFeedback`，注册父级`afsCustomerService`，路径`afterSales/customerService/personnelFeedback`，源码`apps/after-sales/src/views/customerService/personnelFeedback/`。总部运营→业务配置投影，服务站、客服及门店不默认进入；查看GET与回复完成POST独立授权。当前源码总数及角色矩阵以[后台菜单与岗位权限矩阵](09-后台菜单与岗位权限矩阵.md)为准，完整契约见[反馈首版](../specs/2026-10-05-服务人员问题反馈首版.md)。
