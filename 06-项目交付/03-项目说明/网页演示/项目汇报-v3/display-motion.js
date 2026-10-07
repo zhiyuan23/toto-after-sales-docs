@@ -51,11 +51,9 @@ window.createReportDisplayMotion = reduce => {
       ['.dispatch-results>span', 'fade', 400, 80], ['.takeaway', 'fade', 550]
     ],
     assistant: [
-      ['.v2-knowledge-strip', 'right', 100], ['.v2-assist-card', 'fade', 180, 60],
-      ['.v2-assist-card-top,.v2-assist-card h3,.v2-assist-path', 'fade', 240, 30],
-      ['.v2-assist-question', 'right', 300], ['.v2-assist-answer', 'lift', 420],
-      ['.v2-assist-parts>span', 'lift', 300, 50], ['.v2-assist-stock', 'right', 460],
-      ['.v2-assist-preview>small,.v2-assist-benefit', 'fade', 480, 30]
+      ['.v3-knowledge-source', 'fade', 100], ['.v3-knowledge-branches', 'fade', 190],
+      ['.v3-assist-card', 'lift', 210, 70], ['.v3-assist-scene', 'fade', 340, 60],
+      ['.v3-value', 'fade', 470, 40]
     ],
     'live-demo': [
       ['.v2-demo-app', 'right', 130, 90], ['.v2-demo-return', 'lift', 440],
