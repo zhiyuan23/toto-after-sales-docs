@@ -65,10 +65,6 @@ window.createReportGraphics = sections => {
           point.insertBefore(mark, copy);
         });
         break;
-      case 'smart-dispatch':
-        find('.strategy-core h3>.report-icon').remove();
-        scene(find('.strategy-core'), 'dispatch', find('.strategy-core h3'));
-        break;
     }
   });
   // Normalize presentation markup only: preserve every authored heading character.
