@@ -11,11 +11,12 @@ window.createReportCoverMotion = (root, reduce) => {
   const order = root.querySelector('[data-cover-order]');
   const owners = ['consumer', 'customer', 'station', 'worker', 'customer', 'customer', null];
   const phases = [0,1,2,3,4,5,6];
-  const positions = [[335,230],[391,215],[405,310],[355,350],[391,215],[391,215],[380,270]];
+  const positions = [[360,270],[412,255],[412,365],[355,420],[412,255],[412,255],[375,315]];
   const routeSteps = [0,1,2,3,4,-1,-1];
   const particleGroup = root.querySelector('.cover-flow-particles');
   const button = root.querySelector('#cover-motion-toggle');
   let current = 0;
+  const routeIndex = () => routeSteps[current];
   let active = false;
   let blocked = false;
   let userPaused = false;
@@ -33,8 +34,8 @@ window.createReportCoverMotion = (root, reduce) => {
   };
   function buildParticles() {
     cancelParticles();
-    if (reduce.matches || routeSteps[current] < 0) return;
-    const route = routes[routeSteps[current]];
+    if (reduce.matches || routeIndex() < 0) return;
+    const route = routes[routeIndex()];
     particleGroup.style.color = getComputedStyle(route).stroke;
     const length = route.getTotalLength();
     const frames = Array.from({length:65}, (_, i) => {
@@ -50,14 +51,18 @@ window.createReportCoverMotion = (root, reduce) => {
     });
   }
   function paint(animate = false) {
-    root.dataset.coverOwner = reduce.matches ? 'order' : owners[current] || 'order';
-    routes.forEach((route,i) => route.classList.toggle('is-current',!reduce.matches && i === routeSteps[current]));
+    const owner = owners[current];
+    root.dataset.coverOwner = reduce.matches ? 'order' : owner || 'order';
+    states[0].querySelector('.cover-order-status').textContent = reduce.matches ? '全程服务协同' : '待分站';
+    states[0].querySelector('.cover-order-owner').textContent = reduce.matches ? '消费者申请 · 总部支撑' : '消费者自主申请';
+    titles[0].textContent = reduce.matches ? '六类角色协作，消费者发起服务' : '消费者自主发起服务申请';
+    routes.forEach((route,i) => route.classList.toggle('is-current',!reduce.matches && i === routeIndex()));
     states.forEach((state,i) => state.classList.toggle('is-current',i === current));
     titles.forEach((title,i) => title.classList.toggle('is-current',i === current));
     pips.forEach((pip,i) => pip.classList.toggle('is-current',i === phases[current]));
-    nodes.forEach(node => node.classList.toggle('is-current',!reduce.matches && node.dataset.coverNode === owners[current]));
+    nodes.forEach(node => node.classList.toggle('is-current',!reduce.matches && node.dataset.coverNode === owner));
     // Place the card beside the current owner; settle at the centre after closure.
-    const [x,y] = reduce.matches ? [380,270] : positions[current];
+    const [x,y] = reduce.matches ? [375,315] : positions[current];
     const target = `translate(${x}px,${y}px)`;
     const from = getComputedStyle(order).transform || order.style.transform;
     orderMove?.cancel(); orderMove = null;
@@ -117,22 +122,16 @@ window.createReportCoverMotion = (root, reduce) => {
     }
   }
   button.addEventListener('click',() => { userPaused = !userPaused; updateButton(); reconcile(); });
-  states[0].querySelector('.cover-order-status').textContent = reduce.matches ? '全程服务协同' : '待分站';
-  states[0].querySelector('.cover-order-owner').textContent = reduce.matches ? '角色交接 · 过程留痕' : '消费者';
-  titles[0].textContent = reduce.matches ? '一张工单，连接四类办理角色' : '消费者发起服务申请';
   paint(); updateButton();
   return {
     sync(isActive,isBlocked) { active = isActive; blocked = isBlocked; reconcile(); },
     themeChanged() {
-      if (particles.length) particleGroup.style.color = getComputedStyle(routes[routeSteps[current]]).stroke;
+      if (particles.length) particleGroup.style.color = getComputedStyle(routes[routeIndex()]).stroke;
     },
     reduced() {
       clearTimeout(timer); timer = null; running = false;
       remaining = period;
       // Static mode shows the overall relationship instead of a frozen partial stage.
-      states[0].querySelector('.cover-order-status').textContent = reduce.matches ? '全程服务协同' : '待分站';
-      states[0].querySelector('.cover-order-owner').textContent = reduce.matches ? '角色交接 · 过程留痕' : '消费者';
-      titles[0].textContent = reduce.matches ? '一张工单，连接四类办理角色' : '消费者发起服务申请';
       current = 0;
       paint(); updateButton(); reconcile();
     }

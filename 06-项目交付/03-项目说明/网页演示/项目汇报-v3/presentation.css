@@ -1,4 +1,32 @@
 /* V3 presentation layer: fewer text levels, larger symbols, preserved theme and scale. */
+/* Future directions: one consumer hub, four extensions and a suggested sequence. */
+.report-v3 .v3-future .visual{flex-shrink:0}
+.v3-future-grid{display:grid;grid-template-columns:1.04fr 1.3fr;gap:calc(24 * var(--display-unit,1px))}
+.v3-future-centre{padding:calc(20 * var(--display-unit,1px));border:1px solid var(--line);border-radius:var(--report-card-radius);background:var(--surface);box-shadow:0 var(--report-card-depth) 0 var(--blue-soft),var(--shadow)}
+.v3-future-centre>header{display:flex;align-items:center;gap:calc(16 * var(--display-unit,1px))}
+.report-v3 .v3-future-centre h3{font-size:calc(30 * var(--display-unit,1px));margin-top:calc(4 * var(--display-unit,1px));color:var(--blue)}
+.v3-future-content{display:grid;gap:calc(14 * var(--display-unit,1px));margin:calc(18 * var(--display-unit,1px)) 0}
+.v3-future-content>div{display:flex;align-items:baseline;gap:calc(20 * var(--display-unit,1px))}
+.v3-future-content strong{font-size:calc(19 * var(--display-unit,1px));font-weight:500;white-space:nowrap}
+.v3-future-content span{font-size:calc(16 * var(--display-unit,1px));color:var(--muted)}
+.v3-future-commerce{display:flex;align-items:center;gap:calc(14 * var(--display-unit,1px));padding:calc(12 * var(--display-unit,1px));border-radius:calc(16 * var(--display-unit,1px));background:var(--blue-soft);color:var(--blue)}
+.v3-future-commerce>.report-icon{width:calc(30 * var(--display-unit,1px));height:calc(30 * var(--display-unit,1px));flex-shrink:0}
+.v3-future-commerce strong{font-size:calc(20 * var(--display-unit,1px));font-weight:500}
+.report-v3 .v3-future-commerce p{font-size:calc(14 * var(--display-unit,1px));margin-top:calc(3 * var(--display-unit,1px))}
+.v3-future-commerce>span{font-size:calc(26 * var(--display-unit,1px));margin-left:auto}
+.v3-future-directions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(18 * var(--display-unit,1px))}
+.v3-future-direction{padding:calc(18 * var(--display-unit,1px));border:1px solid var(--line);border-radius:var(--report-card-radius);background:var(--surface)}
+.v3-future-direction>header{display:flex;align-items:center;gap:calc(10 * var(--display-unit,1px));margin-bottom:calc(12 * var(--display-unit,1px))}
+.report-v3 .v3-future-direction header>small{margin-left:auto;white-space:nowrap;font-size:calc(11 * var(--display-unit,1px))}
+.v3-future-direction .graphic-mark{width:calc(36 * var(--display-unit,1px));height:calc(36 * var(--display-unit,1px));border-radius:calc(12 * var(--display-unit,1px));flex-shrink:0}
+.v3-future-direction .graphic-mark>.report-icon{width:calc(25 * var(--display-unit,1px));height:calc(25 * var(--display-unit,1px))}
+.report-v3 .v3-future-direction h3{font-size:calc(22 * var(--display-unit,1px));color:var(--tone);white-space:nowrap}
+.report-v3 .v3-future-direction p{font-size:calc(15 * var(--display-unit,1px));line-height:1.6;margin-top:calc(7 * var(--display-unit,1px))}
+.v3-future-path{display:flex;align-items:center;gap:calc(15 * var(--display-unit,1px));margin-top:calc(25 * var(--display-unit,1px));padding-top:calc(18 * var(--display-unit,1px));border-top:1px solid var(--line);font-size:calc(15 * var(--display-unit,1px))}
+.v3-future-path>span,.v3-future-path>b{color:var(--muted);font-weight:400}
+.v3-future-path>strong{font-weight:500}
+.v3-future-path>small{margin-left:auto}
+@media(max-width:760px){.v3-future-grid{grid-template-columns:1fr}.v3-future-path{flex-wrap:wrap}.v3-future-path>small{margin-left:0}}
 /* Match the after-sales Web header brand: shared logo, regular type and divider. */
 .report-v3 .brand{gap:10px;font-weight:400;letter-spacing:normal;flex-shrink:0}
 .report-v3 .brand span{padding:0;border:0;font-weight:400;letter-spacing:.02em}
@@ -194,9 +222,12 @@
 .report-v3 .cover-art{position:relative}
 .report-v3 .cover .cover-bottom{left:-47.0588%}
 .report-v3 .cover-motion-tools{position:absolute;top:0;right:0;margin:0;z-index:2}
-.report-v3 .cover{--teal:#087f72;--blue:#2865c7;--purple:#8050bd;--gold:#a86613;--cover-order-color:#5145c6;--cover-on-accent:#fff;--cover-active-color:var(--cover-order-color)}
-:root[data-theme=dark] .report-v3 .cover{--teal:#5dd6bd;--blue:#76a9ff;--purple:#b894f3;--gold:#f1b663;--cover-order-color:#a79aff;--cover-on-accent:#142031}
+.report-v3 .cover{--teal:#087f72;--blue:#2865c7;--purple:#8050bd;--gold:#a86613;--cover-store-color:#bd574c;--cover-hq-color:#466d9f;--cover-order-color:#5145c6;--cover-on-accent:#fff;--cover-active-color:var(--cover-order-color)}
+:root[data-theme=dark] .report-v3 .cover{--teal:#5dd6bd;--blue:#76a9ff;--purple:#b894f3;--gold:#f1b663;--cover-store-color:#ff9a86;--cover-hq-color:#9cbfff;--cover-order-color:#a79aff;--cover-on-accent:#142031}
 .report-v3 .cover[data-cover-owner=consumer]{--cover-active-color:var(--teal)}
+.report-v3 .cover-object[data-cover-node=store]{color:var(--cover-store-color)}
+.report-v3 .cover-object[data-cover-node=hq]{color:var(--cover-hq-color)}
+.report-v3 .cover-hq-support{fill:none;stroke:var(--cover-hq-color);stroke-width:1;stroke-dasharray:3 6;opacity:.42}
 .report-v3 .cover[data-cover-owner=customer]{--cover-active-color:var(--blue)}
 .report-v3 .cover[data-cover-owner=station]{--cover-active-color:var(--purple)}
 .report-v3 .cover[data-cover-owner=worker]{--cover-active-color:var(--gold)}
@@ -216,6 +247,12 @@
 .report-v3 .cover-node .cover-role-description{text-anchor:start;font-size:10.5px;font-weight:400;fill:var(--muted)}
 .report-v3 .cover-node .is-current .cover-role-name{fill:var(--cover-on-accent)}
 .report-v3 .cover-node .is-current .cover-role-description{fill:var(--cover-on-accent);opacity:.82}
+/* External roles retain their colours at a smaller visual scale. */
+.report-v3 .cover-object.cover-peripheral .cover-role-card{fill:color-mix(in srgb,currentColor 8%,var(--surface));stroke:color-mix(in srgb,currentColor 55%,var(--line));stroke-width:.8}
+.report-v3 .cover-object.cover-peripheral .cover-role-mark{fill:color-mix(in srgb,currentColor 12%,var(--surface))}
+.report-v3 .cover-object.cover-peripheral>g{stroke:currentColor;opacity:1}
+.report-v3 .cover-node .cover-peripheral .cover-role-name{fill:currentColor;font-size:14px;font-weight:450}
+.report-v3 .cover-node .cover-peripheral .cover-role-description{fill:currentColor;font-size:9.5px;opacity:.85}
 .report-v3 .cover-order-position{color:var(--cover-active-color);transition:color 240ms ease}
 .report-v3 .cover-order-edge{fill:color-mix(in srgb,currentColor 28%,var(--bg))}
 .report-v3 .cover-order-card{fill:color-mix(in srgb,currentColor 10%,var(--surface));stroke:currentColor;stroke-width:1.5}

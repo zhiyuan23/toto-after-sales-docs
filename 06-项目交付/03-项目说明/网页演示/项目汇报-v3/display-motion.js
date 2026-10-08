@@ -51,6 +51,10 @@ window.createReportDisplayMotion = reduce => {
       ['.v2-demo-app', 'right', 130, 90], ['.v2-demo-return', 'lift', 440],
       ['.v2-demo-cue', 'fade', 520]
     ],
+    future: [
+      ['.v3-future-centre', 'lift', 100], ['.v3-future-direction', 'lift', 170, 55],
+      ['.v3-future-path', 'fade', 450]
+    ],
     delivery: [
       ['.delivery-track>div', 'lift', 130, 65], ['.v2-closing-value>strong', 'lift', 380, 50],
       ['.material-links', 'fade', 520], ['.v2-signoff', 'fade', 560]
