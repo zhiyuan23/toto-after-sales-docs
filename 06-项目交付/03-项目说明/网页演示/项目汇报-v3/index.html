@@ -3,32 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="TOTO 售后服务项目汇报：项目背景、建设目标、应用角色、工单协同、智能化及交付安排。">
-  <title>TOTO 售后服务 · 项目汇报第三版</title>
+  <meta name="description" content="蓝鲸数字售后服务 · TOTO 交付：项目背景、建设目标、应用角色、工单协同、智能化及交付安排。">
+  <title>蓝鲸数字 售后服务 · TOTO 交付</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="presentation.css?v=06a92be10b">
+  <link rel="stylesheet" href="presentation.css?v=b02b7b40fe">
   <script src="icons.js" defer></script>
-  <script src="content.js?v=823495c403" defer></script>
-  <script src="cover-motion.js" defer></script>
+  <script src="content.js?v=b540a95327" defer></script>
+  <script src="cover-motion.js?v=8d5e4d1ed8" defer></script>
   <script src="display-motion.js?v=a7efc19348" defer></script>
   <script src="business-diagrams.js" defer></script>
   <script src="graph-layout.js?v=661ab2362d" defer></script>
   <script src="responsive-layout.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=26e171c6f7" defer></script>
 </head>
 <body class="report-v3">
   <div class="report">
     <header class="topbar">
-      <a class="brand" href="#cover">TOTO <span>售后服务 · 项目汇报 <b class="edition-label">V3</b></span></a>
-      <nav aria-label="演讲工具">
-        <button id="contents" type="button">目录</button>
-        <button id="notes-toggle" type="button" aria-pressed="false" aria-controls="notes">讲解备注</button>
-        <button id="theme" type="button" aria-label="切换深浅主题">深色</button>
-        <button id="fullscreen" type="button">全屏汇报</button>
+      <a class="brand" href="#cover" title="蓝鲸数字售后服务 · TOTO 交付" aria-label="蓝鲸数字售后服务 · TOTO 交付"><img class="brand-logo" src="brand-logo.png" alt="" width="34" height="34"><span class="brand-title"><span class="brand-name">蓝鲸数字</span><span class="brand-divider" aria-hidden="true"></span><span class="brand-service">售后服务</span></span></a>
+      <nav aria-label="演示工具">
+        <button id="contents" type="button" aria-label="目录" title="目录"><svg viewBox="0 0 24 24" class="report-icon" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+  <path d="M9 5a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2" />
+  <path d="M9 12l.01 0" />
+  <path d="M13 12l2 0" />
+  <path d="M9 16l.01 0" />
+  <path d="M13 16l2 0" /></svg></button>
+        <button id="notes-toggle" type="button" aria-pressed="false" aria-controls="notes" aria-label="讲解备注" title="讲解备注"><svg viewBox="0 0 24 24" class="report-icon" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+  <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+  <path d="M3 6l0 13" />
+  <path d="M12 6l0 13" />
+  <path d="M21 6l0 13" /></svg></button>
+        <button id="theme" type="button" aria-label="切换深浅主题" title="切换深浅主题" aria-pressed="false"><svg viewBox="0 0 24 24" class="report-icon" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+  <path d="M7.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+  <path d="M11.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+  <path d="M15.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg></button>
+        <button id="fullscreen" type="button" aria-label="全屏展示" title="全屏展示"><svg viewBox="0 0 24 24" class="report-icon" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10" />
+  <path d="M7 20h10" />
+  <path d="M9 16v4" />
+  <path d="M15 16v4" /></svg></button>
       </nav>
     </header>
-    <main id="stage" tabindex="-1" aria-label="项目汇报内容"></main>
+    <main id="stage" tabindex="-1" aria-label="蓝鲸数字售后服务项目说明"></main>
     <footer class="footer">
       <div class="location"><span id="chapter"></span><span id="counter"></span></div>
       <div class="progress" aria-hidden="true"><div id="progress-fill"></div></div>
@@ -40,8 +55,8 @@
     </footer>
   </div>
   <aside id="notes" hidden aria-label="内部讲解备注"><div class="notes-head"><strong>讲解备注 · 仅内部准备</strong><button id="notes-close" aria-label="关闭讲解备注">关闭</button></div><h2 id="notes-title"></h2><p id="notes-body"></p><small>方向键 / 空格：翻页 · PageDown / PageUp：翻页 · Home / End：首尾 · M：目录 · N：备注 · F：全屏</small></aside>
-  <dialog id="directory" aria-labelledby="directory-title"><div class="dialog-head"><div><p class="eyebrow">PRESENTATION INDEX</p><h2 id="directory-title">汇报目录</h2></div><button id="directory-close" aria-label="关闭目录">关闭</button></div><nav id="directory-list" aria-label="选择汇报页面"></nav><div class="directory-demo"><span>补充材料</span><a href="../项目汇报-v2/index.html" target="_blank" rel="noopener">查看第二版详细汇报 ↗</a><a href="../工单流转/index.html" target="_blank" rel="noopener">打开完整工单协同演示 <span aria-hidden="true">↗</span></a><a href="../项目汇报/index.html" target="_blank" rel="noopener">查看第一版完整汇报 ↗</a></div><p class="dialog-tip">第三版 · 七章十三屏。第一版、第二版与完整工单演示均保留独立入口。</p></dialog>
+  <dialog id="directory" aria-labelledby="directory-title"><div class="dialog-head"><div><p class="eyebrow">CONTENTS</p><h2 id="directory-title">内容目录</h2></div><button id="directory-close" aria-label="关闭目录">关闭</button></div><nav id="directory-list" aria-label="选择展示页面"></nav><div class="directory-demo"><span>补充材料</span><a href="../项目汇报-v2/index.html" target="_blank" rel="noopener">查看详细项目说明 ↗</a><a href="../工单流转/index.html" target="_blank" rel="noopener">打开完整工单协同演示 <span aria-hidden="true">↗</span></a><a href="../项目汇报/index.html" target="_blank" rel="noopener">查看完整项目说明 ↗</a></div><p class="dialog-tip">七章十三屏 · 蓝鲸数字售后服务，面向 TOTO 交付。详细说明与完整工单演示保留独立入口。</p></dialog>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
-  <noscript>请启用 JavaScript 查看项目汇报。完整文字内容见项目说明大纲。</noscript>
+  <noscript>请启用 JavaScript 查看项目说明。完整文字内容见项目说明大纲。</noscript>
 </body>
 </html>

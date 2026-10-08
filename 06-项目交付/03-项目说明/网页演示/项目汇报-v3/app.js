@@ -18,7 +18,7 @@
     section.dataset.slide = slide.id;
     section.hidden = true;
     section.setAttribute('aria-labelledby','slide-title-' + i);
-    section.innerHTML = `<header class="slide-header"><p class="eyebrow">${slide.chapter}</p><h1 id="slide-title-${i}">${slide.title}</h1><p class="subtitle">${slide.subtitle}</p></header><div class="visual">${slide.html}</div>`;
+    section.innerHTML = `<header class="slide-header">${slide.chapter ? `<p class="eyebrow">${slide.chapter}</p>` : ''}<h1 id="slide-title-${i}">${slide.title}</h1><p class="subtitle">${slide.subtitle}</p></header><div class="visual">${slide.html}</div>`;
     stage.append(section);
     return section;
   });
@@ -49,17 +49,18 @@
     mounted = page;
     const data = slides[page];
     $('chapter').textContent = data.chapter;
+    $('chapter').hidden = !data.chapter;
     $('counter').textContent = `${String(page + 1).padStart(2,'0')} / ${slides.length}`;
     $('progress-fill').style.transitionDuration = instant || reduce.matches ? '0ms' : '';
     $('progress-fill').style.transform = `scaleX(${(page + 1)/slides.length})`;
     $('previous').disabled = page === 0;
     $('next').disabled = page === slides.length - 1;
-    $('next').innerHTML = (page === slides.length - 1 ? '汇报结束' : data.nextLabel || '下一页') + ' <span aria-hidden="true">→</span>';
+    $('next').innerHTML = (page === slides.length - 1 ? '展示结束' : data.nextLabel || '下一页') + ' <span aria-hidden="true">→</span>';
     $('step-hint').textContent = '';
     $('notes-title').textContent = strip(data.title);
     $('notes-body').textContent = data.notes;
     $('announcement').textContent = `${page + 1} / ${slides.length}，${strip(data.title)}`;
-    document.title = `${strip(data.title)} · TOTO 项目汇报第三版`;
+    document.title = `${strip(data.title)} · 蓝鲸数字 售后服务 · TOTO 交付`;
     updateDirectory();
     syncMotion();
     if (changed) stage.scrollTop = 0;
@@ -87,7 +88,10 @@
   }
   function setTheme(dark) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    $('theme').textContent = dark ? '浅色' : '深色';
+    const label = dark ? '切换浅色主题' : '切换深色主题';
+    $('theme').setAttribute('aria-label',label);
+    $('theme').title = label;
+    $('theme').setAttribute('aria-pressed',String(dark));
     coverMotion.themeChanged();
   }
   async function fullscreen() {
@@ -104,7 +108,11 @@
   $('notes-close').addEventListener('click',event=>toggleNotes(event.detail === 0));
   $('theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme !== 'dark'));
   $('fullscreen').addEventListener('click',fullscreen);
-  document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent = document.fullscreenElement ? '退出全屏' : '全屏汇报';});
+  document.addEventListener('fullscreenchange',()=>{
+    const label = document.fullscreenElement ? '退出全屏' : '全屏展示';
+    $('fullscreen').setAttribute('aria-label',label);
+    $('fullscreen').title = label;
+  });
   stage.addEventListener('click',event=>{
     const button=event.target.closest('[data-example]');
     if (button) {

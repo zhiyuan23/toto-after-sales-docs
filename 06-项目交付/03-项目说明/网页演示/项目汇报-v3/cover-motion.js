@@ -1,5 +1,5 @@
 'use strict';
-// Explanatory cover loop. Three dots on one strand; no live business data.
+// Explanatory cover: the work order follows its owner through curved role handoffs.
 window.createReportCoverMotion = (root, reduce) => {
   const period = 3600;
   const routes = [...root.querySelectorAll('[data-cover-route]')];
@@ -10,8 +10,8 @@ window.createReportCoverMotion = (root, reduce) => {
   const titles = [...root.querySelectorAll('[data-cover-title]')];
   const order = root.querySelector('[data-cover-order]');
   const owners = ['consumer', 'customer', 'station', 'worker', 'customer', 'customer', null];
-  const positions = [[230,225],[530,225],[530,305],[230,305],[530,225],[530,225],[380,265]];
-  const phases = [0,1,1,2,2,3,4];
+  const phases = [0,1,2,3,4,5,6];
+  const positions = [[335,230],[391,215],[405,310],[355,350],[391,215],[391,215],[380,270]];
   const routeSteps = [0,1,2,3,4,-1,-1];
   const particleGroup = root.querySelector('.cover-flow-particles');
   const button = root.querySelector('#cover-motion-toggle');
@@ -26,7 +26,6 @@ window.createReportCoverMotion = (root, reduce) => {
   let particles = [];
   let entrance = null;
   let orderMove = null;
-  const moveEase = 'cubic-bezier(.77,0,.175,1)';
   const ease = 'cubic-bezier(.23,1,.32,1)';
   const cancelParticles = () => {
     particles.forEach(animation => animation.cancel());
@@ -38,38 +37,38 @@ window.createReportCoverMotion = (root, reduce) => {
     const route = routes[routeSteps[current]];
     particleGroup.style.color = getComputedStyle(route).stroke;
     const length = route.getTotalLength();
-    const frames = Array.from({length:41}, (_, i) => {
-      const t = i / 40;
+    const frames = Array.from({length:65}, (_, i) => {
+      const t = i / 64;
       const point = route.getPointAtLength(length * t);
       return {transform:`translate(${point.x}px, ${point.y}px)`, opacity: t === 0 || t === 1 ? 0 : Math.min(1,t * 8,(1-t) * 8), offset:t};
     });
     particles = dots.map((dot, i) => {
-      const animation = dot.animate(frames, {duration:2400, delay:i * 600, iterations:Infinity, easing:'linear', fill:'both'});
+      const animation = dot.animate(frames, {duration:2300, delay:300 + i * 120, iterations:1, easing:'linear', fill:'both'});
       animation.finished.catch(() => {});
       animation.pause();
       return animation;
     });
   }
   function paint(animate = false) {
+    root.dataset.coverOwner = reduce.matches ? 'order' : owners[current] || 'order';
     routes.forEach((route,i) => route.classList.toggle('is-current',!reduce.matches && i === routeSteps[current]));
     states.forEach((state,i) => state.classList.toggle('is-current',i === current));
     titles.forEach((title,i) => title.classList.toggle('is-current',i === current));
     pips.forEach((pip,i) => pip.classList.toggle('is-current',i === phases[current]));
     nodes.forEach(node => node.classList.toggle('is-current',!reduce.matches && node.dataset.coverNode === owners[current]));
-    const previous = getComputedStyle(order).transform;
-    orderMove?.cancel();
-    const position = reduce.matches ? [380,265] : positions[current];
-    const target = `translate(${position[0]}px, ${position[1]}px)`;
+    // Place the card beside the current owner; settle at the centre after closure.
+    const [x,y] = reduce.matches ? [380,270] : positions[current];
+    const target = `translate(${x}px,${y}px)`;
+    const from = getComputedStyle(order).transform || order.style.transform;
+    orderMove?.cancel(); orderMove = null;
     order.style.transform = target;
-    // Submission hands responsibility directly to customer service; review stays there.
-    const changesPosition = current === 0 || position.some((coordinate,i) => coordinate !== positions[current - 1][i]);
-    if (animate && !reduce.matches && changesPosition) {
-      const movement = order.animate([{transform:previous === 'none' ? target : previous},{transform:target}],{duration:1100,easing:moveEase,fill:'backwards'});
-      orderMove = movement;
-      movement.finished.then(()=>{
-        if (orderMove === movement) { movement.cancel(); orderMove = null; }
-      }).catch(()=>{});
-    } else orderMove = null;
+    if (animate && !reduce.matches && from !== target) {
+      const move = order.animate([{transform:from},{transform:target}],{duration:600,easing:ease});
+      orderMove = move;
+      move.finished.then(() => {
+        if (orderMove === move) { move.cancel(); orderMove = null; }
+      }).catch(() => {});
+    }
     entrance?.cancel();
     if (animate && !reduce.matches) {
       const fade = states[current].animate([{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:240,easing:ease});
@@ -83,8 +82,9 @@ window.createReportCoverMotion = (root, reduce) => {
   function updateButton() {
     button.disabled = reduce.matches;
     button.setAttribute('aria-pressed',String(userPaused));
-    button.setAttribute('aria-label',reduce.matches ? '减少动态效果：静态展示' : userPaused ? '继续首页自动动画' : '暂停首页自动动画');
-    button.querySelector('span').textContent = reduce.matches ? '静态展示' : userPaused ? '继续动画' : '暂停动画';
+    const label = reduce.matches ? '减少动态效果：静态展示' : userPaused ? '继续首页自动动画' : '暂停首页自动动画';
+    button.setAttribute('aria-label',label);
+    button.title = label;
     button.classList.toggle('is-paused',userPaused);
     root.classList.toggle('cover-static',reduce.matches);
   }
@@ -105,15 +105,15 @@ window.createReportCoverMotion = (root, reduce) => {
     running = shouldRun;
     if (running) {
       particles.forEach(animation => animation.play());
-      orderMove?.play();
       entrance?.play();
+      orderMove?.play();
       schedule();
     } else {
       if (timer !== null) remaining = Math.max(0,deadline - performance.now());
       clearTimeout(timer); timer = null;
       particles.forEach(animation => animation.pause());
-      orderMove?.pause();
       entrance?.pause();
+      orderMove?.pause();
     }
   }
   button.addEventListener('click',() => { userPaused = !userPaused; updateButton(); reconcile(); });
