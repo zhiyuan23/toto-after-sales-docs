@@ -36,19 +36,11 @@ window.createReportDisplayMotion = reduce => {
       ['.channel-checks>div', 'lift', 400, 50]
     ],
     experience: [
-      ['.workbench', 'fade', 100], ['.task-example', 'lift', 180],
-      ['.experience-points>div', 'right', 240, 60], ['.small-caption', 'fade', 460]
-    ],
-    notifications: [
-      ['.notification-card', 'fade', 100, 70],
-      ['.notification-todos>div', 'lift', 210, 50],
-      ['.notification-channel', 'lift', 260], ['.notification-sms', 'lift', 350],
-      ['.notification-benefit', 'fade', 460, 40]
+      ['.v3-experience-card', 'lift', 130, 70], ['.small-caption', 'fade', 460]
     ],
     'smart-dispatch': [
-      ['.candidate-list>small', 'fade', 100], ['.candidate-list>span', 'right', 130, 50],
-      ['.strategy-core', 'settle', 240], ['.dispatch-results>div', 'lift', 340, 80],
-      ['.dispatch-results>span', 'fade', 400, 80], ['.takeaway', 'fade', 550]
+      ['.v3-dispatch-intelligence', 'fade', 100],
+      ['.v3-dispatch-focus', 'lift', 170, 70], ['.v3-dispatch-policy', 'fade', 450]
     ],
     assistant: [
       ['.v3-knowledge-source', 'fade', 100], ['.v3-knowledge-branches', 'fade', 190],
