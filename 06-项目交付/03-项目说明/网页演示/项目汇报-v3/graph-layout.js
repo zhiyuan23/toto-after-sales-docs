@@ -29,7 +29,7 @@ window.createReportGraphics = sections => {
         });
         break;
       case 'saas':
-        scene(find('.platform-shell'), 'platform', find('.platform-service'));
+        window.createReportPlatformPuzzle(find('.v3-platform-puzzle'));
         break;
       case 'exceptions': {
         const panel = find('.trace-panel');

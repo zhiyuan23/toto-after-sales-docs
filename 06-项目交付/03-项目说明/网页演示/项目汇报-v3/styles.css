@@ -638,7 +638,7 @@
  --report-card-small-depth:calc(3 * var(--display-unit, 1px));
 }
 .graphic-report .visual :is(
- .v2-direction,.platform-shell,.reuse-feature,.web-app,.journey-stop,
+ .v2-direction,.platform-shell,.v3-platform-board,.reuse-feature,.web-app,.journey-stop,
  .change-card,.trace-panel,.v2-support-centre,.v2-support-card,.channel-node,
  .channel-key,.channel-checks,.workbench,.experience-points>div,.strategy-core,
  .dispatch-results>div,.v2-assist-card,.v2-demo-app,.delivery-track>div

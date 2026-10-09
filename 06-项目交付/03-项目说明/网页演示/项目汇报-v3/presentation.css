@@ -1,4 +1,49 @@
-/* V3 presentation layer: fewer text levels, larger symbols, preserved theme and scale. */
+/* V3 presentation layer: preserved brand tokens and focused slide compositions. */
+/* Platform: one continuous puzzle, a short interpretation and a quiet capability strip. */
+.report-v3 .slide.graphic-report.v3-platform .visual{flex:1 0 auto;min-height:auto;justify-content:flex-start;padding-top:calc(18 * var(--display-unit,1px))}
+.v3-platform-board{padding:calc(20 * var(--display-unit,1px));background:var(--surface);display:flex;flex-direction:column}
+.v3-platform-heading{display:flex;align-items:center;justify-content:space-between;gap:calc(16 * var(--display-unit,1px));margin-bottom:calc(16 * var(--display-unit,1px));flex-shrink:0}
+.v3-platform-heading>span{font-size:calc(18 * var(--display-unit,1px));font-weight:550;color:var(--ink)}
+.report-v3 .v3-platform .visual .v3-platform-heading>small{font-size:calc(13 * var(--display-unit,1px));color:var(--blue);white-space:nowrap}
+.v3-platform-main{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(0,1fr);gap:calc(28 * var(--display-unit,1px));align-items:stretch}
+.v3-platform-puzzle{display:block;width:100%;height:auto;min-width:0;overflow:visible}
+.v3-platform-piece{color:var(--blue);transform-box:fill-box;transform-origin:center}
+.v3-puzzle-shape{fill:color-mix(in srgb,var(--blue-soft) 65%,var(--surface));stroke:var(--line);stroke-width:1;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.v3-puzzle-base{fill:var(--report-card-edge)}
+.v3-puzzle-shadow{flood-color:var(--blue)}
+.v3-platform-piece.is-service{color:var(--bg)}
+.v3-platform-piece.is-service .v3-puzzle-shape{fill:var(--blue);stroke:var(--blue)}
+.v3-platform-puzzle text{text-anchor:middle;fill:currentColor;font-family:inherit}
+.v3-platform-piece:not(.is-service) .v3-puzzle-title{fill:var(--ink)}
+.v3-platform-piece:not(.is-service) .v3-puzzle-detail{fill:var(--muted)}
+.v3-puzzle-title{font-size:20px;font-weight:550}
+.v3-puzzle-detail{font-size:12px}
+.v3-platform-story{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.report-v3 .v3-platform .visual .v3-platform-story h3{font-size:calc(27 * var(--display-unit,1px));line-height:1.5;color:var(--ink);font-weight:550;letter-spacing:0}
+.v3-platform-story h3>em{color:var(--blue);font-style:normal}
+.report-v3 .v3-platform .visual .v3-platform-story p{font-size:calc(15 * var(--display-unit,1px));line-height:1.8;margin-top:calc(12 * var(--display-unit,1px));color:var(--muted)}
+.v3-platform-capabilities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(24 * var(--display-unit,1px));flex-shrink:0;margin-top:calc(18 * var(--display-unit,1px));padding-top:calc(16 * var(--display-unit,1px));border-top:1px solid var(--line)}
+.v3-platform-capability{display:flex;align-items:baseline;gap:calc(12 * var(--display-unit,1px));min-width:0}
+.v3-platform-capability>strong{font-size:calc(17 * var(--display-unit,1px));font-weight:550;color:var(--ink);white-space:nowrap}
+.v3-platform-capability>span{font-size:calc(13 * var(--display-unit,1px));color:var(--muted)}
+.report-v3 .v3-platform .visual .v3-platform-evidence{font-size:calc(13 * var(--display-unit,1px));margin-top:calc(14 * var(--display-unit,1px));color:var(--muted);flex-shrink:0}
+@media(min-width:761px){
+ .report-v3 .v3-platform h1{font-size:clamp(calc(28 * var(--display-unit,1px)),calc(3.1 * var(--display-vw,1vw)),calc(42 * var(--display-unit,1px)))}
+ .report-v3 .slide.graphic-report.v3-platform .visual{flex:1 1 0;min-height:0}
+ .v3-platform-board{flex:1 1 0;min-height:0}
+ .v3-platform-main{flex:1 1 0;min-height:0;grid-template-rows:minmax(0,1fr)}
+ .v3-platform-puzzle{min-height:0;height:100%;overflow:hidden}
+}
+@media(min-width:761px) and (max-height:700px){
+ .report-v3 .v3-platform h1{font-size:calc(30 * var(--display-unit,1px))}
+ .v3-platform-board{padding:calc(16 * var(--display-unit,1px))}
+ .v3-platform-heading{margin-bottom:calc(10 * var(--display-unit,1px))}
+ .v3-platform-capabilities{margin-top:calc(10 * var(--display-unit,1px));padding-top:calc(10 * var(--display-unit,1px))}
+ .report-v3 .v3-platform .visual .v3-platform-story h3{font-size:calc(24 * var(--display-unit,1px));line-height:1.4}
+ .report-v3 .v3-platform .visual .v3-platform-story p{font-size:calc(14 * var(--display-unit,1px));margin-top:calc(8 * var(--display-unit,1px))}
+}
+@media(max-width:1100px) and (min-width:761px){.v3-platform-capability{flex-direction:column;gap:calc(4 * var(--display-unit,1px))}.v3-platform-main{gap:calc(20 * var(--display-unit,1px))}.report-v3 .v3-platform .visual .v3-platform-story h3{font-size:calc(24 * var(--display-unit,1px))}}
+@media(max-width:760px){.v3-platform-main{grid-template-columns:1fr;gap:20px}.v3-platform-story{padding:8px 0}.v3-platform-heading{flex-wrap:wrap}.v3-platform-capabilities{gap:16px}.v3-platform-capability{flex-direction:column;gap:6px}.report-v3 .v3-platform .visual .v3-platform-story h3{font-size:24px}.report-v3 .v3-platform .visual .v3-platform-story p{font-size:15px}}
 /* Future directions: one consumer hub, four extensions and a suggested sequence. */
 .report-v3 .v3-future .visual{flex-shrink:0}
 .v3-future-grid{display:grid;grid-template-columns:1.04fr 1.3fr;gap:calc(24 * var(--display-unit,1px))}

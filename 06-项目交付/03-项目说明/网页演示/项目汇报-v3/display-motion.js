@@ -12,9 +12,11 @@ window.createReportDisplayMotion = reduce => {
       ['.v2-source-strip', 'right', 100], ['.v2-direction', 'right', 180, 70]
     ],
     saas: [
-      ['.platform-shell', 'fade', 100], ['.platform-service', 'lift', 170],
-      ['.reuse-feature', 'right', 240, 60], ['.platform-expansion', 'lift', 420],
-      ['.platform-evidence', 'fade', 460]
+      ['.v3-platform-board', 'fade', 100],
+      ['.v3-platform-piece:not(.is-service)', 'fade', 160, 35],
+      ['.v3-platform-piece.is-service', 'lift', 360],
+      ['.v3-platform-story', 'fade', 280],
+      ['.v3-platform-capability', 'fade', 360, 40], ['.v3-platform-evidence', 'fade', 460]
     ],
     system: [
       ['.web-app', 'fade', 100], ['.web-grid>div', 'lift', 170, 50],
