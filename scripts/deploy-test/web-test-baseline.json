@@ -1,5 +1,5 @@
 {
-  "source": "2026-10-01 总部服务配置合并；ae8b95e3 的38项既有失败中已修正1项过时导航断言，当前402项测试保留37项既有失败",
+  "source": "2026-10-09 菜单与地图发布前复核；2026-10-01 的37项既有失败中1项旧销售区域源码断言已由行为回归替代，其余36项名称保持，集合仍须完全匹配",
   "failures": [
     "a busy form blocks leaving the dashboard for another business page",
     "a busy form refuses perspective switching without clearing tabs",
@@ -33,7 +33,6 @@
     "registration and appointment payloads whitelist and normalize business fields",
     "repeated switch commands while confirmation is pending commit only the first destination",
     "returning to the root home through the Logo path does not clear same-view tabs",
-    "sales region restores saved administrative codes as names, defaults an unconfigured child, and maps subject coordinates",
     "same-route query updates also respect cancellation without replacing the form",
     "selecting the current perspective leaves all tabs intact",
     "tests/catalog-state.test.ts",
@@ -41,5 +40,11 @@
   ],
   "resolvedFailures": [
     "customer-service dispatch keeps station assignment while station page is wired for personnel assignment"
+  ],
+  "supersededFailures": [
+    {
+      "name": "sales region restores saved administrative codes as names, defaults an unconfigured child, and maps subject coordinates",
+      "source": "2026-10-09 fdb3fcf9 地图与区域重构：旧源码结构断言由保存／取消／只读／重试／继承建议及地图数据行为测试替代，8项定向回归通过；其余36项与37项原基线完全一致，无新增失败。"
+    }
   ]
 }

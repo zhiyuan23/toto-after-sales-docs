@@ -102,7 +102,7 @@ test('known-test exception rejects new failures, changed counts, static failures
   assert.ok(!knownFailureMatch(log.replace('ℹ fail 2', ''), baseline))
   assert.ok(!knownFailureMatch('typecheck error', baseline))
   const actual = readFileSync(new URL('./deploy-test/web-test-baseline.json', import.meta.url), 'utf8')
-  assert.equal(new Set(JSON.parse(actual).failures).size, 37)
+  assert.equal(new Set(JSON.parse(actual).failures).size, 36)
 })
 
 test('source snapshots preserve dirty inputs and detect same-status concurrent changes and new files', () => {

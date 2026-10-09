@@ -43,8 +43,8 @@ const configs={
   serviceDesk:{
     number:'02',perspective:'客服作业',title:'客服工作台',scope:'全国客服中心',user:'客服主管',avatar:'客',icon:'headset',
     subtitle:'把受理、分配服务站、审核和投诉处理收拢到一条连续工作流。',primary:'发起服务受理',primaryAction:'服务受理',
-    modules:['工单处理','异常与投诉','业务查询'],
-    groups:[['工单处理',['客服工作台','服务受理','服务工单','派单调度','完工审核']],['异常与投诉',['异常工单','投诉管理']],['业务查询',['顾客购买记录','安装码管理','服务知识库','商品档案']],['服务分析',['服务质量','运营报表']]],
+    modules:["工单处理","异常与投诉","业务查询与知识库"],
+    groups:[["工作台",["工作台"],true],["工单处理",["服务工单","完工审核","回访管理"],false],["异常与投诉",["异常工单","投诉管理"],false],["业务查询与知识库",["顾客购买记录","安装码查询","服务知识库"],false],["服务分析",["服务质量","运营报表"],false]],
     metrics:[
       {key:'acceptance',label:'待受理',value:18,caption:'当前状态 PENDING_ACCEPTANCE',icon:'headset',tone:''},
       {key:'dispatch',label:'待派单',value:12,caption:'已分配服务站，等待站点安排人员',icon:'building',tone:'is-amber'},
@@ -70,8 +70,8 @@ const configs={
   station:{
     number:'03',perspective:'服务站作业',title:'服务站工作台',scope:'上海浦东授权服务站',user:'站点管理员',avatar:'站',icon:'wrench',
     subtitle:'围绕今日到站任务安排师傅、跟进履约并处理配件阻塞。',primary:'打开派单调度',primaryAction:'派单调度',
-    modules:['本站工单','人员与资料','配件管理'],
-    groups:[['本站工单',['服务站工作台','服务工单','派单调度','异常工单']],['人员与资料',['服务人员','排班管理','服务知识库']],['配件管理',['配件档案','配件入库','库存台账','领料管理','工单耗用','退料管理','调拨管理','盘点管理']],['服务分析',['服务质量','运营报表']]],
+    modules:["本站工单","人员与排班","配件库存"],
+    groups:[["工作台",["工作台"],true],["本站工单",["工单分配","工单跟进","异常工单"],false],["人员与排班",["排班管理","服务人员"],false],["配件库存",["库存台账","配件入库","领料管理","退料管理","工单耗用","调拨出库","调拨入库","盘点管理","配件档案"],false],["服务知识库",["服务知识库"],true],["服务分析",["服务质量","运营报表"],false]],
     metrics:[
       {key:'dispatch',label:'待派单',value:9,caption:'当前状态 PENDING_DISPATCH',icon:'users',tone:''},
       {key:'today',label:'今日期望服务',value:14,caption:'按期望服务日期，包含各状态',icon:'clock',tone:'is-cyan'},
@@ -95,8 +95,8 @@ const configs={
   dealer:{
     number:'04',perspective:'门店业务',title:'门店工作台',scope:'上海徐汇授权门店',user:'门店店员',avatar:'店',icon:'store',
     subtitle:'从购买登记开始，在顾客购买记录中统一发起安装或维修服务。',primary:'登记购买',primaryAction:'购买登记',
-    modules:['业务办理'],
-    groups:[['业务办理',['门店工作台','购买登记','顾客购买记录']]],
+    modules:[],
+    groups:[["工作台",["工作台"],true],["业务办理",["顾客购买记录","服务工单"],true]],
     metrics:[
       {key:'notApplied',label:'未申请安装',value:23,caption:'购买记录 NOT_APPOINTED',icon:'receipt',tone:''},
       {key:'partial',label:'部分申请安装',value:8,caption:'购买记录 PARTIALLY_APPOINTED',icon:'package',tone:'is-amber'},
@@ -129,7 +129,7 @@ function prototypeCards(){
   return items.map(([number,name,page,href,id])=>`<a href="${href}" class="prototype-card${id===view?' is-current':''}"><span class="prototype-number">${number}</span><span class="prototype-copy"><span class="prototype-status is-ready">可评审</span><strong>${name}</strong><small>${page}</small></span>${icon('arrow-up-right')}</a>`).join('')
 }
 function menuMarkup(){
-  return config.groups.map((group,index)=>`<section class="menu-group${index<2?' is-open':''}"><button class="menu-group-title" type="button" aria-expanded="${index<2}"><span>${group[0]}</span>${icon('chevron-down')}</button><div class="menu-list">${group[1].map((item,itemIndex)=>`<button type="button" class="menu-item${index===0&&itemIndex===0?' is-active':''}" data-preview-link="${item}">${icon(itemIndex===0&&index===0?'gauge':item.includes('工单')?'clipboard':item.includes('配件')||item.includes('库存')?'boxes':item.includes('人员')?'users':item.includes('购买')?'receipt':'archive')}<span>${item}</span></button>`).join('')}</div></section>`).join('')
+  return config.groups.map((group,index)=>group[2]?group[1].map(item=>`<button type="button" class="menu-item${item==='工作台'?' is-active':''}" data-preview-link="${item}">${icon(item==='工作台'?'gauge':'archive')}<span>${item==='工作台'?'工作台':item}</span></button>`).join(''):`<section class="menu-group${index<2?' is-open':''}"><button class="menu-group-title" type="button" aria-expanded="${index<2}"><span>${group[0]}</span>${icon('chevron-down')}</button><div class="menu-list">${group[1].map((item,itemIndex)=>`<button type="button" class="menu-item${index===0&&itemIndex===0?' is-active':''}" data-preview-link="${item}">${icon(itemIndex===0&&index===0?'gauge':item.includes('工单')?'clipboard':item.includes('配件')||item.includes('库存')?'boxes':item.includes('人员')?'users':item.includes('购买')?'receipt':'archive')}<span>${item}</span></button>`).join('')}</div></section>`).join('')
 }
 function metricMarkup(metric,index){
   const heights=[7,12,9,15,11,16,13]

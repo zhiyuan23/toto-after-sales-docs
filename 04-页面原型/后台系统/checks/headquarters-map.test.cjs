@@ -13,7 +13,7 @@ test('现版工作台保留并提供独立地图版入口',()=>{
   assert.ok(fs.existsSync(path.join(root,'index.html')))
   assert.match(html,/href="index\.html"/)
   assert.match(html,/运营工作台（现版）/)
-  assert.match(html,/运营工作台（地图版）/)
+  assert.match(html,/href="headquarters-map\.html" class="menu-item is-active"/)
 })
 
 test('总部队列使用当前实现中的四个正式队列',()=>{
