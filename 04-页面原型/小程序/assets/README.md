@@ -32,3 +32,15 @@
 - `icons/product-cube.svg`：来自项目已安装 `@iconify-json/mdi` 的 `cube-outline`，Pictogrammers，Apache License 2.0；用于“我的产品”Tab。
 - `icons/entry-chevron.svg`：复用消费者源码 `src/static/icons/entry-chevron.svg`，由 TDesign Icon 渲染；遵循项目 32rpx 细线进入箭头规范。
 - V1 沿用本页列出的原有产品与场景图，不增加品牌正式素材认定。
+
+## 首页 v0.15 彩色帮助图标（2026-10-08）
+
+`help-icons/` 三张图片由本轮内置 Image Gen 独立生成，采用透明背景，之后按实际显示尺寸 52 × 52px 缩小，再使用 Sharp／libimagequant 做颜色与透明度量化、索引 PNG 编码与压缩。没有裁切或重绘。紫色只用于智能助手，网点使用青色，客服使用橙色。
+
+| 文件 | 实际尺寸 | 压缩后大小 |
+| --- | --- | --- |
+| [assistant-purple-v1.png](help-icons/assistant-purple-v1.png) | 52 × 52px | 2,535 字节 |
+| [outlets-teal-v1.png](help-icons/outlets-teal-v1.png) | 52 × 52px | 2,738 字节 |
+| [support-orange-v1.png](help-icons/support-orange-v1.png) | 52 × 52px | 2,794 字节 |
+
+本轮复用上述浴室场景图作为独立生活灵感影像，产品区使用原白底图，不加载此前取消的石材装饰背景。这些素材只用于原型评审，不代表获得 TOTO 品牌发布审核。

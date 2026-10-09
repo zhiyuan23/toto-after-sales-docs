@@ -5,9 +5,10 @@
   const account = window.TOTO_ACCOUNT;
   const assistant = window.TOTO_AI_ASSISTANT;
   const brand = window.TOTO_BRAND;
+  const homeDesigns = window.TOTO_HOME_DESIGNS;
   const worker = window.TOTO_WORKER;
   const consumerVersion = window.TOTO_CONSUMER_VERSION || '0.13';
-  const brandPreview = consumerVersion === '0.14';
+  const brandPreview = ['0.14','0.15'].includes(consumerVersion);
   const $ = (selector) => document.querySelector(selector);
   const escape = (text) => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const all = Object.entries(apps).flatMap(([app, value]) => value.screens.map(screen => ({...screen, app})));
@@ -162,6 +163,12 @@
     $('#worker-controls').hidden=current.app!=='worker';
     if(current.app==='worker')$('#worker-task-card-scenario').value=worker.taskCardScenario();
     $('#phone').dataset.screen = current.id;
+    $('#phone').dataset.homeStyle = current.app === 'consumer' && homeDesigns ? homeDesigns.selected() : '';
+    $('#home-design-controls').hidden = current.app !== 'consumer' || current.id !== 'c-home' || !homeDesigns;
+    if (homeDesigns && current.app === 'consumer' && current.id === 'c-home') {
+      $('#home-design-picker').innerHTML = homeDesigns.picker();
+      $('#home-design-note').textContent = homeDesigns.note();
+    }
     $('#consumer-controls').hidden = current.app !== 'consumer';
     $('#outlet-controls').hidden = !outlets?.owns(current.id);
     if (outlets?.owns(current.id)) $('#outlet-location-outcome').value=outlets.locationOutcome();
@@ -176,7 +183,7 @@
     if(workerRootNav) $('#phone-title').innerHTML = markup(current.rootNav);
     else $('#phone-title').textContent = current.title;
     $('#phone-body').innerHTML = markup(current.body);
-    $('#phone-floating').innerHTML = current.app === 'consumer' ? assistant?.floating(current.id,consumerContext()) || '' : '';
+    $('#phone-floating').innerHTML = current.app === 'consumer' && !(current.id === 'c-home' && homeDesigns) ? assistant?.floating(current.id,consumerContext()) || '' : '';
     renderedState = 'normal';
     $('#phone-body').scrollTop = 0;
     syncWorkerRootNavigation();
@@ -243,6 +250,13 @@
     if (value === 'normal') { if(current.id==='c-outlets')outlets?.recover(); render(); return; }
     if (value === 'error' && current.id==='c-outlets') {outlets.fail();render();return;}
     renderedState = value;
+    const homeStatus = current.id === 'c-home' ? homeDesigns?.statusView(value,consumerContext()) : '';
+    if (homeStatus) {
+      $('#phone-body').innerHTML = homeStatus;
+      $('#phone-footer').innerHTML = '';
+      hydrateIcons($('#phone'));
+      return;
+    }
     if (assistant?.owns(current.id) && ['loading','error'].includes(value)) {
       $('#phone-body').innerHTML=assistant.statusView(value,consumerContext());$('#phone-footer').innerHTML='';return;
     }
@@ -431,6 +445,11 @@
   document.addEventListener('click', event => {
     const el = event.target.closest('button,[data-go],[data-action]');
     if (!el || el.disabled) return;
+    if (current.id === 'c-home' && homeDesigns && el.dataset.homeDesign) {
+      event.preventDefault();
+      if (homeDesigns.choose(el.dataset.homeDesign)) {$('#ui-state').value='normal';render();}
+      return;
+    }
     if (worker?.owns(current.id) && worker.handle(el,{root:$('#phone-body'),page:current.id,render,showScreen,showToast})) {event.preventDefault();return;}
     if (brandPreview && brand?.handle(el,{context:consumerContext(),render,showScreen,showToast,simulateLogin:()=>{consumer.visitor=false;consumer.phoneAuthorized=false;consumer.phoneSyncStatus='idle';$('#consumer-scenario').value='unlinked';}})) {event.preventDefault();return;}
     if (assistant?.handle(el,{root:$('#phone-body'),context:consumerContext(),render,showScreen,showToast,selectProduct:id=>{consumer.productId=id;},prepareRequest:prepareAssistantRequest,openCustomerService})) {event.preventDefault();return;}
@@ -574,6 +593,10 @@
     if (event.target.validity?.valid) {event.target.removeAttribute('aria-invalid');event.target.parentElement.querySelector('.field-error')?.remove();}
   });
   document.addEventListener('change',event=>{
+    if (current.id==='c-home' && homeDesigns && event.target.id==='consumer-living-layout') {
+      if (homeDesigns.choose(event.target.value)) {$('#ui-state').value='normal';render();}
+      return;
+    }
     if(worker?.owns(current.id) && event.target.hasAttribute('data-worker-sort')){worker.setSort(event.target.value);render();}
     if(current.id==='w-requisition' && event.target.hasAttribute('data-worker-purpose')){worker.saveDraft($('#phone-body'),current.id);worker.setRequisitionPurpose(event.target.value);render();}
     if (current.id==='c-profile' && event.target.id==='c-avatar-file') account.changeAvatar(event.target,{root:$('#phone-body'),render,showToast});
@@ -604,16 +627,16 @@
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
   $('#consumer-scenario').addEventListener('change',event=>{const keepPage=brandPreview?(['c-service','c-mine'].includes(current.id)?current.id:null):(current.id==='c-service' || account?.owns(current.id) ? current.id : null);resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (brandPreview?'c-home':consumer.hasProducts?'c-home':'c-welcome'),false,true);});
   $('#worker-task-card-scenario').addEventListener('change',event=>{saveDraft();worker.setTaskCardScenario(event.target.value);routeHistory=[];current=null;showScreen('w-tasks',false,true);});
-  $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer(brandPreview?'visitor':'registered');routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
+  $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer(brandPreview && !homeDesigns?'visitor':'registered');routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
   $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
   const initialId=captureId;
   document.querySelectorAll?.('[data-consumer-version-link]').forEach(link=>link.setAttribute('aria-current',link.dataset.consumerVersionLink===consumerVersion?'page':'false'));
   if (brandPreview) $('#consumer-scenario').insertAdjacentHTML('afterbegin','<option value="visitor">游客 · 浏览品牌与产品</option><option value="unlinked">已登录 · 尚未关联产品</option>');
   const versionNote=$('#prototype-version-note');
-  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':brandPreview?'v0.14 · 品牌产品与服务评审':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>任务页可进入日程与任务地图原型。`;
+  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':consumerVersion==='0.15'?'v0.15 · 首页方案对比':brandPreview?'v0.14 · 品牌产品与服务评审':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>任务页可进入日程与任务地图原型。`;
   const phaseLabel=$('#consumer-phase-label');
-  if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':brandPreview?'03 v0.14 品牌产品与服务评审原型':'02 v0.13 视觉设计原型';
-  if (brandPreview) resetConsumer('visitor');
+  if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':consumerVersion==='0.15'?'04 v0.15 首页设计方案评审':brandPreview?'03 v0.14 品牌产品与服务评审原型':'02 v0.13 视觉设计原型';
+  if (brandPreview) resetConsumer(homeDesigns ? 'registered' : 'visitor');
   if(all.length) showScreen(initialId || location.hash.slice(1) || all[0].id,false);
 })();
