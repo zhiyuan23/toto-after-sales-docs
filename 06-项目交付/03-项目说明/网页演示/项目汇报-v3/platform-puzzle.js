@@ -20,17 +20,19 @@ window.createReportPlatformPuzzle = svg => {
   const tiles = Array.from(svg.querySelectorAll('.v3-platform-piece'), piece => {
     const face = piece.querySelector('.v3-puzzle-shape');
     const icon = piece.querySelector('g');
+    const iconBase = make('rect', {class: 'v3-puzzle-icon-base'});
+    icon.before(iconBase);
     const title = piece.querySelector('.v3-puzzle-title');
     const detail = piece.querySelector('.v3-puzzle-detail');
     const surface = make('g', {class: 'v3-puzzle-surface'});
     face.before(surface);
     surface.append(face);
     assembly.append(piece);
-    return {surface, face, icon, title, detail};
+    return {surface, face, iconBase, icon, title, detail};
   });
   const outline = (x, y, width, height, row, column) => {
     const cx = x + width / 2, cy = y + height / 2;
-    const corner = Math.min(10, height * .09), tab = Math.min(16, height * .13), bulge = tab * 1.45;
+    const corner = Math.min(14, height * .12), tab = Math.min(16, height * .13), bulge = tab * 1.45;
     // Round only the four exterior corners; shared edges meet without gaps.
     const tl = row === 0 && column === 0 ? corner : 0;
     const tr = row === 0 && column === 2 ? corner : 0;
@@ -62,7 +64,7 @@ window.createReportPlatformPuzzle = svg => {
     base.setAttribute('y', padding + Math.min(3, tileHeight * .025));
     base.setAttribute('width', tileWidth * 3);
     base.setAttribute('height', tileHeight * 2);
-    base.setAttribute('rx', Math.min(10, tileHeight * .09));
+    base.setAttribute('rx', Math.min(14, tileHeight * .12));
     tiles.forEach((tile, index) => {
       const row = Math.floor(index / 3), column = index % 3;
       const x = padding + column * tileWidth, y = padding + row * tileHeight;
@@ -70,6 +72,11 @@ window.createReportPlatformPuzzle = svg => {
       const scale = Math.max(.05, Math.min(1.05, (tileHeight - Math.min(36, tileHeight * .45)) / 52));
       const d = outline(x, y, tileWidth, tileHeight, row, column);
       tile.face.setAttribute('d', d);
+      tile.iconBase.setAttribute('x', cx - 64 * scale);
+      tile.iconBase.setAttribute('y', cy - 27 * scale);
+      tile.iconBase.setAttribute('width', 38 * scale);
+      tile.iconBase.setAttribute('height', 38 * scale);
+      tile.iconBase.setAttribute('rx', 12 * scale);
       tile.icon.setAttribute('transform', `translate(${cx - 58 * scale} ${cy - 21 * scale}) scale(${26 / 24 * scale})`);
       tile.title.setAttribute('x', cx + 22 * scale);
       tile.title.setAttribute('y', cy - 4 * scale);
