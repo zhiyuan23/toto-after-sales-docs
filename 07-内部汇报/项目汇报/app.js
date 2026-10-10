@@ -60,7 +60,7 @@
     $('notes-title').textContent = strip(data.title);
     $('notes-body').textContent = data.notes;
     $('announcement').textContent = `${page + 1} / ${slides.length}，${strip(data.title)}`;
-    document.title = `${strip(data.title)} · 蓝鲸数字 售后服务 · TOTO 交付`;
+    document.title = `${strip(data.title)} · 蓝鲸数字 售后服务 · TOTO 内部汇报`;
     updateDirectory();
     syncMotion();
     if (changed) stage.scrollTop = 0;

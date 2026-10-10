@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="TOTO 售后服务项目说明 · TOTO 售后服务交付材料 v0.1"><title>TOTO 售后服务项目说明 · TOTO</title><link rel="stylesheet" href="../assets/styles.css"><script src="../assets/app.js" defer></script></head><body class=""><a class="skip" href="#main">跳到正文</a><header class="topbar"><a class="brand" href="../index.html"><span class="brand-word">TOTO</span><span class="brand-label">售后服务 · 交付文档</span></a><nav class="topnav" aria-label="文档类型"><a  href="../02-角色手册/index.html">角色手册</a><a aria-current="page" class="active" href="index.html">项目说明</a><a  href="../04-交付材料/index.html">交付清单</a></nav><div class="header-end"><span class="preview-label">v0.1 · 业务复核稿</span><button class="button menu-toggle" type="button" data-menu aria-expanded="false" aria-controls="document-sidebar">目录</button><button class="button print-button" type="button" data-print>打印全文</button></div></header><div class="layout"><aside class="sidebar" id="document-sidebar"><p class="sidebar-title">八章阅读版</p><p class="doc-name">TOTO 售后服务项目说明</p><nav aria-label="章节目录"><a href="#chapter-1">1. 项目背景与平台</a><a href="#chapter-2">2. 系统全景与角色</a><a href="#chapter-3">3. 服务主线与当前变化</a><a href="#chapter-4">4. 配套业务与防窜货</a><a href="#chapter-5">5. 产品亮点与业务价值</a><a href="#chapter-6">6. 真实系统演示与培训</a><a href="#chapter-7">7. 未来规划与待确认事项</a><a href="#chapter-8">8. 交付与后续安排</a></nav></aside><main class="article" id="main"><div class="breadcrumb"><a href="../index.html">交付文档</a> / 项目说明</div><p class="eyebrow">PROJECT OVERVIEW</p><h1 class="doc-title">TOTO 售后服务项目说明</h1><div class="lead"><p>面向管理层、客户及培训讲解者，从建设背景、系统协同到交付安排介绍项目。本文是八章阅读与打印内容源；后续客户汇报网页按实际场景和交付范围另行准备。</p>
+</div><div class="meta"><span>适用：管理层、客户及培训讲解者</span><span>v0.1 · 2026-10-10</span><span class="pill blue">业务复核稿</span></div><div class="search-row no-print"><div class="field"><label for="search">搜索当前文档</label><input id="search" type="search" data-search placeholder="输入任务或业务关键词"></div><button class="button" data-clear type="button">重置</button></div><p class="search-result" data-search-result role="status" aria-live="polite"></p><p class="no-result" data-empty hidden>没有匹配内容，请调整条件或点击重置。</p><section class="content-section" id="chapter-1" data-search-item ><div class="section-heading"><span class="section-no">01</span><h2>项目背景与平台</h2></div><p>项目围绕 TOTO 产品购买、安装、维修及指导服务，把消费者、门店、客服、服务站和服务人员的资料与处理记录连接起来。建设目标是统一服务入口、明确交接责任、留存履约依据，并为质量与渠道治理提供可核对的数据。</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">建设问题</th>
+<th scope="col">项目安排</th>
+<th scope="col">可核对的业务价值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>客户、产品与服务资料分散</td>
+<td>购买、单件商品与统一工单关联</td>
+<td>找到同一产品的服务背景</td>
+</tr>
+<tr>
+<td>跨岗位安排依赖反复沟通</td>
+<td>分站、派人、预约和异常记录</td>
+<td>下一步责任人与安排明确</td>
+</tr>
+<tr>
+<td>完工依据不完整</td>
+<td>处理、证据、客户确认及审核</td>
+<td>审核与补资料有据可查</td>
+</tr>
+<tr>
+<td>配件和费用难与服务对应</td>
+<td>库存单据、实际耗用、报价及线下实收</td>
+<td>区分建议、实际发生与处理结果</td>
+</tr>
+<tr>
+<td>质量、会员与渠道缺少汇总</td>
+<td>评价回访、会员分析、疑似窜货</td>
+<td>按口径查看线索并人工核验</td>
+</tr>
+</tbody></table></div>
+<p>项目以 TOTO 现有售后系统及实际业务为需求起点，保留真实业务依据，重新梳理服务全流程。基于蓝鲸数字平台承载售后业务，补齐产品售出后的使用与服务环节。平台的生产仓储、渠道分销、门店销售、会员营销、防伪追溯等业务能力作为产品背景介绍，不代表本次已全部集成。</p>
+<p>共性售后能力沿可配置、可复用、可扩展方向演进，以 TOTO 业务验证流程，再按确认范围服务其他客户。统一认证、角色和租户平台复用 Gaia，售后业务主数据独立持有。效益目标是改善查找、协同与可追溯性；实际效果需在使用后按业务口径测量，不以演示效果承诺固定提效比例。</p>
+</section><section class="content-section" id="chapter-2" data-search-item ><div class="section-heading"><span class="section-no">02</span><h2>系统全景与角色</h2></div><p>三个应用共享同一服务业务：一个 Web 后台、消费者小程序和“TOTO客服助手”服务人员小程序。总部、客服、服务站、门店是 Web 工作视角，不是四套独立后台。</p>
+<figure class="system-map" aria-label="三个应用通过统一工单协同">
+<div class="web-head">Web 管理后台 <small>同一系统，四个工作视角</small></div>
+<div class="perspectives"><div>总部运营<small>治理与分析</small></div><div>客服作业<small>调度、审核与协同</small></div><div>服务站作业<small>派工、排班与库存</small></div><div>门店业务<small>登记与代客申请</small></div></div>
+<div class="system-connector" aria-hidden="true">↓</div><div class="system-core"><b>统一服务工单</b><span>产品、需求、预约、履约、材料与业务结果</span></div>
+<div class="mobile-apps"><div>消费者小程序<small>产品、申请、进度、评价与投诉</small></div><div>TOTO客服助手<small>任务、预约、履约、配件与资料</small></div></div>
+<figcaption class="figure-caption">业务关系示意，不代表所有规划能力已上线。</figcaption></figure>
+
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">岗位</th>
+<th scope="col">主要责任</th>
+<th scope="col">操作材料</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>总部运营</td>
+<td>商品、渠道、网络、规则及质量治理</td>
+<td><a href="../02-角色手册/01-总部运营操作手册.html">总部手册</a></td>
+</tr>
+<tr>
+<td>客服主管／专员</td>
+<td>核验、跟进、授权调度审核、回访投诉</td>
+<td><a href="../02-角色手册/02-客服操作手册.html">客服手册</a></td>
+</tr>
+<tr>
+<td>服务站管理员</td>
+<td>本站承接、派人排班、配件与异常</td>
+<td><a href="../02-角色手册/03-服务站管理员操作手册.html">服务站手册</a></td>
+</tr>
+<tr>
+<td>代理商管理员／店员</td>
+<td>授权门店购买与代客服务</td>
+<td><a href="../02-角色手册/04-门店操作手册.html">门店手册</a></td>
+</tr>
+<tr>
+<td>服务人员</td>
+<td>本人任务与真实履约</td>
+<td><a href="../02-角色手册/05-服务人员操作手册.html">人员手册</a></td>
+</tr>
+<tr>
+<td>消费者</td>
+<td>本人产品、服务与反馈</td>
+<td><a href="../02-角色手册/06-消费者使用指南.html">消费者指南</a></td>
+</tr>
+<tr>
+<td>系统管理员</td>
+<td>身份、角色、范围及平台配置</td>
+<td><a href="../02-角色手册/07-系统管理员操作手册.html">管理员手册</a></td>
+</tr>
+</tbody></table></div>
+<p>权限分为视角、功能、动作和数据范围。总部不默认办理客服或库存业务，服务站不做完工审核，门店不派站不派人，消费者与人员只处理本人授权对象。</p>
+</section><section class="content-section" id="chapter-3" data-search-item ><div class="section-heading"><span class="section-no">03</span><h2>服务主线与当前变化</h2></div><ol class="flow"><li><span>01</span><b>产品与购买</b><small>门店正式登记，消费者同步或有效码绑定</small></li><li><span>02</span><b>申请与分站</b><small>按服务资格建工单，客服或规则分站</small></li><li><span>03</span><b>站内派人</b><small>结合能力、排班与容量安排</small></li><li><span>04</span><b>联系预约</b><small>区分期望与客户确认时间</small></li><li><span>05</span><b>履约与耗用</b><small>真实处理、材料、客户确认和配件</small></li><li><span>06</span><b>完工审核</b><small>审核通过办结，缺项退回补资料</small></li><li><span>07</span><b>评价与回访</b><small>本人评价、独立抽样回访</small></li><li><span>08</span><b>治理与改进</b><small>投诉、质量、反馈及渠道线索</small></li></ol>
+
+<p><strong>入口变化：</strong> 门店在购买记录“发起服务”，选商品实例后选安装或维修，提交客服受理。消费者正式购买同步或有效唯一码绑定的可信商品直接建工单，原服务受理来源审核已退役。手工申报仍待核验，可信来源也不自动等于保修或免费资格。</p>
+<p><strong>过程变化：</strong> 服务人员在同一“联系与预约”表单确认、修改或重新预约，改约需原因；异常入口不重复改时间。人员退回站点重新派人、站点退回客服重新分站分两级处理，受履约和配件条件限制。</p>
+<div class="callout " role="note"><strong>结果变化：</strong><p> 审核通过即办结，抽样回访独立，不增加第二次关闭。消费者评价仅本人办结订单一次；投诉按处理中／已办结，客服跟进与办结分别授权。</p></div>
+</section><section class="content-section" id="chapter-4" data-search-item ><div class="section-heading"><span class="section-no">04</span><h2>配套业务与防窜货</h2></div><p>配套能力围绕服务主线组织。下表说明完整项目覆盖与首版边界，具体操作见岗位手册，运行开放和验收以实际记录为准。</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">能力域</th>
+<th scope="col">与主线的关系</th>
+<th scope="col">当前边界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>商品、分类、系列与实物</td>
+<td>型号资料和单件追溯</td>
+<td>售后独立主档，不能默认读写主系统业务数据</td>
+</tr>
+<tr>
+<td>购买、安装码与注册</td>
+<td>产品来源与本人关联</td>
+<td>安装码查询不发码不核销；手工申报待核验</td>
+</tr>
+<tr>
+<td>渠道、销售与服务区域</td>
+<td>渠道核验、资源适用</td>
+<td>销售区域与服务区域分开维护</td>
+</tr>
+<tr>
+<td>人员、容量与排班</td>
+<td>可承接资源与日程</td>
+<td>日容量在人档，总部统一人员规则</td>
+</tr>
+<tr>
+<td>配件库存</td>
+<td>领退调盘与实际耗用</td>
+<td>站点日常办理，总部以台账耗用查询为主</td>
+</tr>
+<tr>
+<td>服务资料与知识</td>
+<td>准备、故障处理和对客咨询</td>
+<td>按商品、版本与公开范围引用</td>
+</tr>
+<tr>
+<td>费用与线下收款</td>
+<td>报价、同意、实收与例外</td>
+<td>已有首版；正式细则待确认，当前免费；无在线支付结算</td>
+</tr>
+<tr>
+<td>保修与延保</td>
+<td>单件服务权益依据</td>
+<td>以有效政策和审核为准，活动管理尚未开发</td>
+</tr>
+<tr>
+<td>评价、回访与投诉</td>
+<td>服务结果及问题闭环</td>
+<td>状态、权限分别控制；总部投诉只读</td>
+</tr>
+<tr>
+<td>会员与运营分析</td>
+<td>购买、产品和服务画像</td>
+<td>本人资料及授权关联；问卷、推送等不默认已交付</td>
+</tr>
+<tr>
+<td>人员问题反馈</td>
+<td>使用问题及回复</td>
+<td>最多三图，待处理／已处理，不自动转需求</td>
+</tr>
+<tr>
+<td>服务设置与平台管理</td>
+<td>规则、身份及任务工具</td>
+<td>五页签分别授权；导入导出不等于处理成功</td>
+</tr>
+<tr>
+<td>质量、报表与渠道线索</td>
+<td>治理决策依据</td>
+<td>带统计时点与条件，疑似不直接认定窜货</td>
+</tr>
+</tbody></table></div>
+<p><strong>防窜货专题：</strong> 关联商品出库、门店购买、注册及预约上门资料；当前核验四项是购买登记是否存在、入库与登记门店是否一致、安装地址是否在登记门店区域、是否在最下级出库经销商区域。审核通过后异步判断，任一异常形成疑似，资料或区域不足保留未判断。四项是判断依据，不是四个办理步骤；外部数据接入、正式复核和规则治理按另行确认范围说明。</p>
+</section><section class="content-section" id="chapter-5" data-search-item ><div class="section-heading"><span class="section-no">05</span><h2>产品亮点与业务价值</h2></div><p><strong>视觉与交互：</strong> 工作台集中主要待办，后台采用统一信息层级，人员端突出任务、地址、预约与下一步，消费者沿产品、申请、服务记录完成操作。工作台不代表全部功能都在首页；示意图与真实系统截图须明确区分。竞品比较只使用有来源的同任务证据。</p>
+<p><strong>智能分配与审核：</strong> 合格候选范围内结合区域、距离、能力、容量和配置辅助分站及派人；人员规则总部统一。完工智能或 AI 核对按保存要求辅助检查材料，实际决策受模式、权限及运行条件约束，不保证自动判定总是正确。</p>
+<p><strong>智能售后助手：</strong> 消费者从首页帮助与支持选择本人产品并描述问题，使用适用的对客知识辅助解答；未解决时编辑摘要转合格维修申请或联系人工，仍需用户核对。不编造未知维修步骤或保证价格、权益与时效。</p>
+<p><strong>配件建议：</strong> 结合商品服务资料帮助人员准备和选择，实际配件由人员确认并随履约提交校验；建议不代表库存耗用，参考零售价不等于正式报价。</p>
+<p><strong>及时获知变化：</strong> 客服和站点工作台待办可按权限局部更新；微信订阅受本人授权、模板与发送机会影响，短信是独立渠道。订阅、短信及新任务提醒需分别核对接入和回执，不把完整方案演示当作消息已经送达。</p>
+</section><section class="content-section" id="chapter-6" data-search-item ><div class="section-heading"><span class="section-no">06</span><h2>真实系统演示与培训</h2></div><p>客户现场讲解依据本说明组织，客户汇报网页尚未准备；<a href="%E7%BD%91%E9%A1%B5%E6%BC%94%E7%A4%BA/%E5%B7%A5%E5%8D%95%E6%B5%81%E8%BD%AC/index.html">工单流转演示</a>仅作专题补充。真实系统演示使用经核对的环境、版本与脱敏业务，不在材料包放测试账号。</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">顺序</th>
+<th scope="col">展示场景</th>
+<th scope="col">核对结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>门店查询购买并发起服务</td>
+<td>商品实例、来源、统一工单及客服受理</td>
+</tr>
+<tr>
+<td>2</td>
+<td>消费者产品与可信申请</td>
+<td>本人归属、资格提示和进度</td>
+</tr>
+<tr>
+<td>3</td>
+<td>客服分站、站点派人</td>
+<td>权限、候选与承接关系</td>
+</tr>
+<tr>
+<td>4</td>
+<td>人员联系预约、服务材料与配件</td>
+<td>真实记录、客户确认和提交版本</td>
+</tr>
+<tr>
+<td>5</td>
+<td>完工审核、评价、独立回访</td>
+<td>办结与回访区分</td>
+</tr>
+<tr>
+<td>6</td>
+<td>缺件或两级退回</td>
+<td>原因、后续安排及状态限制</td>
+</tr>
+<tr>
+<td>7</td>
+<td>报表、疑似窜货与治理</td>
+<td>资料依据、口径及当前边界</td>
+</tr>
+</tbody></table></div>
+<p>按角色培训：先讲职责与交接，再用手册完成一条正常任务和一条异常任务。管理员专项验证允许与拒绝账号。培训计划、演示完成、学员操作结果及实际验收分别记录。</p>
+</section><section class="content-section" id="chapter-7" data-search-item ><div class="section-heading"><span class="section-no">07</span><h2>未来规划与待确认事项</h2></div><div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">方向</th>
+<th scope="col">当前说明</th>
+<th scope="col">开展前需要确认</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>微信订阅、短信等消息</td>
+<td>完整方案与接入／送达核对分开</td>
+<td>模板、授权、频控、回执和实际场景</td>
+</tr>
+<tr>
+<td>正式收费与权益政策</td>
+<td>线下链路首版、当前免费</td>
+<td>收费项目、政策、合同依据和对客说明</td>
+</tr>
+<tr>
+<td>延保活动</td>
+<td>尚未开发</td>
+<td>活动规则、入口、参与条件及权益衔接</td>
+</tr>
+<tr>
+<td>在线支付、服务商结算</td>
+<td>首版不纳入</td>
+<td>财务、支付、对账和结算契约</td>
+</tr>
+<tr>
+<td>外部产品追溯与渠道治理</td>
+<td>当前为关联资料和疑似线索</td>
+<td>接入来源、规则、人工复核及证据</td>
+</tr>
+<tr>
+<td>会员问卷、触达与产品中心完善</td>
+<td>按具体需求继续确认</td>
+<td>对客目的、范围、授权与运行验证</td>
+</tr>
+<tr>
+<td>监控、备份恢复及运行指标</td>
+<td>随运维范围逐项核对</td>
+<td>责任、周期、恢复验证及服务约定</td>
+</tr>
+</tbody></table></div>
+<p>规划不自动进入本次交付，不以旧功能数量或代码提交数推算验收完成率；当前事实以三个应用进度、Spec 和验收记录为准。</p>
+</section><section class="content-section" id="chapter-8" data-search-item ><div class="section-heading"><span class="section-no">08</span><h2>交付与后续安排</h2></div><p>交付材料统一为角色手册、项目说明、交付清单。HTML 是首版阅读格式，打印视图来自同一内容；本版为业务复核稿，正式接收、培训与验收结果保持待核对。</p>
+<ol class="steps">
+<li>确定交付批次、目标环境、应用版本、接收岗位及实际能力范围。</li>
+<li>按<a href="../04-交付材料/index.html">交付清单</a>核对材料、应用与环境、技术运维及未决项。</li>
+<li>按角色完成正常／异常场景培训，记录结果，核对权限与信息保护。</li>
+<li>问题按责任人、影响和关闭条件跟踪；正式签收记录另行归档。</li>
+</ol>
+<p>项目小组继续负责运行维护、问题响应和版本更新，客户资料交付不等于运维转交。正式包不附测试账号手册、密钥或演示协议生效声明；凭据经约定安全渠道交接。</p>
+</section><details class="source-note"><summary>内容依据 · 供内部复核</summary><p>依据：<a href="../../01-%E5%8A%9F%E8%83%BD%E9%9C%80%E6%B1%82/00-%E5%8A%9F%E8%83%BD%E7%BA%B5%E8%A7%88.md">完整需求</a> · <a href="../../02-%E6%8A%80%E6%9C%AF%E8%AE%BE%E8%AE%A1/09-%E5%90%8E%E5%8F%B0%E8%8F%9C%E5%8D%95%E4%B8%8E%E5%B2%97%E4%BD%8D%E6%9D%83%E9%99%90%E7%9F%A9%E9%98%B5.md">岗位权限矩阵</a> · <a href="../../05-%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B/00-%E5%94%AE%E5%90%8E%E5%85%A8%E6%B5%81%E7%A8%8B%E6%80%BB%E8%A7%88.md">业务流程</a> · <a href="../../03-%E5%BC%80%E5%8F%91%E7%AE%A1%E7%90%86/00-%E5%BC%80%E5%8F%91%E8%BF%9B%E5%BA%A6%E4%B8%8E%E4%B8%8B%E4%B8%80%E6%AD%A5.md">最新进度</a> · <a href="../../specs/2026-10-03-%E6%9C%8D%E5%8A%A1%E5%B7%A5%E5%8D%95%E7%BA%BF%E4%B8%8B%E6%94%B6%E8%B4%B9%E5%BC%80%E5%8F%91%E8%AE%A1%E5%88%92.md">收费契约</a> · <a href="../../specs/2026-09-28-%E9%98%B2%E7%AA%9C%E8%B4%A7%E6%98%8E%E7%BB%86%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%89%AB%E7%A0%81%E6%97%A0%E8%B4%AD%E4%B9%B0%E7%99%BB%E8%AE%B0%E5%BB%BA%E5%8D%95.md">防窜货判断</a></p>
+<p>依据链接需同一文档仓库；单独对外阅读包按交付清单筛选，不包含内部账号或凭据。</p></details><footer class="article-footer"><span>v0.1 · 2026-10-10 · 业务复核稿</span><a href="../index.html">返回交付文档首页 →</a></footer></main><aside class="rail"><p class="rail-label">快速进入</p><a href="#chapter-2">系统全景与角色</a><a href="#chapter-5">产品亮点与业务价值</a><a href="#chapter-8">交付与后续安排</a><div class="rail-block">先核对岗位与前提，再按实际状态办理。<br>打印按钮输出全文。</div></aside></div></body></html>

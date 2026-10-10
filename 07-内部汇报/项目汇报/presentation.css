@@ -422,7 +422,9 @@
 .report-v3 .graphic-report .material-links{align-items:center;flex-wrap:wrap;gap:calc(24 * var(--display-unit,1px));padding:calc(18 * var(--display-unit,1px)) calc(24 * var(--display-unit,1px));border:1px solid var(--line);border-radius:var(--report-card-small-radius);background:var(--blue-soft)}
 .report-v3 .graphic-report .material-links>span{color:var(--blue);font-weight:550}
 .report-v3 .graphic-report .material-links small{display:block;font-size:calc(12 * var(--display-unit,1px));font-weight:400;color:var(--muted);margin-top:calc(4 * var(--display-unit,1px))}
-.report-v3 .graphic-report .material-links>b{font-weight:500;color:var(--ink)}
+.report-v3 .graphic-report .material-links>a{font-weight:500;color:var(--blue);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:calc(4 * var(--display-unit,1px))}
+.report-v3 .graphic-report .material-links>a:hover{border-color:var(--blue)}
+.report-v3 .graphic-report .material-links>a:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:2px}
 
 /* Desktop handover: inline card headers keep work and goals inside the presentation height. */
 @media(min-width:761px){

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="系统管理员操作手册 · TOTO 售后服务交付材料 v0.1"><title>系统管理员操作手册 · TOTO</title><link rel="stylesheet" href="../assets/styles.css"><script src="../assets/app.js" defer></script></head><body class=""><a class="skip" href="#main">跳到正文</a><header class="topbar"><a class="brand" href="../index.html"><span class="brand-word">TOTO</span><span class="brand-label">售后服务 · 交付文档</span></a><nav class="topnav" aria-label="文档类型"><a aria-current="page" class="active" href="index.html">角色手册</a><a  href="../03-项目说明/index.html">项目说明</a><a  href="../04-交付材料/index.html">交付清单</a></nav><div class="header-end"><span class="preview-label">v0.1 · 业务复核稿</span><button class="button menu-toggle" type="button" data-menu aria-expanded="false" aria-controls="document-sidebar">目录</button><button class="button print-button" type="button" data-print>打印全文</button></div></header><div class="layout"><aside class="sidebar" id="document-sidebar"><p class="sidebar-title">岗位操作与培训</p><p class="doc-name">系统管理员操作手册</p><nav aria-label="章节目录"><a href="#chapter-1">1. 管理职责与系统边界</a><a href="#chapter-2">2. 账号与组织上下文</a><a href="#chapter-3">3. 角色、视角与功能授权</a><a href="#chapter-4">4. 数据范围与多角色验证</a><a href="#chapter-5">5. 菜单、参数与导入导出</a><a href="#chapter-6">6. 环境、外部服务与安全交接</a><a href="#chapter-7">7. 审计、故障与版本协同</a><a href="#chapter-8">8. 交接与常见问题</a></nav><a class="role-return" href="index.html">← 选择其他岗位手册</a></aside><main class="article" id="main"><div class="breadcrumb"><a href="../index.html">交付文档</a> / 角色手册</div><p class="eyebrow">ROLE HANDBOOK</p><h1 class="doc-title">系统管理员操作手册</h1><div class="lead"><p>面向负责售后账号、角色、授权及平台配置的管理员。使用统一认证与权限平台，按授权进入售后工作视角。业务办理权限和实际环境须在交付时核对。</p>
+</div><div class="meta"><span>适用：系统管理员</span><span>v0.1 · 2026-10-10</span><span class="pill blue">业务复核稿</span></div><div class="search-row no-print"><div class="field"><label for="search">搜索当前文档</label><input id="search" type="search" data-search placeholder="输入任务或业务关键词"></div><button class="button" data-clear type="button">重置</button></div><p class="search-result" data-search-result role="status" aria-live="polite"></p><p class="no-result" data-empty hidden>没有匹配内容，请调整条件或点击重置。</p><section class="content-section" id="chapter-1" data-search-item ><div class="section-heading"><span class="section-no">01</span><h2>管理职责与系统边界</h2></div><p>售后有 Web 管理后台、消费者小程序、TOTO客服助手三个应用。Web 包含总部、客服、服务站、门店四个工作视角，系统管理员不是第五套业务菜单。</p>
+<p>统一认证、租户和权限平台复用，售后商品、渠道、门店及服务业务数据独立持有。管理员能管理身份不等于能审批业务、跨组织读数据或调整库存。</p>
+</section><section class="content-section" id="chapter-2" data-search-item ><div class="section-heading"><span class="section-no">02</span><h2>账号与组织上下文</h2></div><p class="entry-note"><strong>入口：</strong> 授权视角“系统管理 → 用户管理”。售后主档的门店、服务站等在各业务入口维护，账号组织绑定需核对真实业务关系。</p>
+<ol class="steps">
+<li>核对人员、所属企业、组织与职责，检索已有账号避免重复。</li>
+<li>按平台提供的流程建立或维护账号，关联正确组织与角色。</li>
+<li>凭据走约定安全渠道，不附在交付 HTML、邮件正文附件清单或演示中。</li>
+<li>登录核对企业、默认视角和实际数据，停用或离职先核对承接任务及交接。</li>
+</ol>
+<p>服务人员使用手机号及独立初始密码、首登强制改密；多企业切换重新认证。消费者身份与手机号业务关联不同，不能随意修改身份解决归属问题。</p>
+</section><section class="content-section" id="chapter-3" data-search-item ><div class="section-heading"><span class="section-no">03</span><h2>角色、视角与功能授权</h2></div><p class="entry-note"><strong>入口：</strong> “系统管理 → 角色管理／菜单与权限”。用户、角色及菜单管理按身份管理门禁开放；业务字典、导入导出模板按各自业务授权。</p>
+<ol class="steps">
+<li>根据真实职责选择对应视角，核对菜单查看范围。</li>
+<li>分别授予必需功能、动作和数据范围，避免直接复制高权限角色。</li>
+<li>对审核、派单、投诉办结、库存收发、费用例外、导出及敏感明文单独核对。</li>
+<li>保存后分别用允许账号和拒绝账号验证同一业务，不能只看菜单是否出现。</li>
+</ol>
+<p><strong>权限核对：</strong> 客服专员不默认派单或审核；服务站无完工审核；总部投诉只读、库存以查询为主；门店不派站不派人。管理员确需兼任业务时另授具体动作。</p>
+</section><section class="content-section" id="chapter-4" data-search-item ><div class="section-heading"><span class="section-no">04</span><h2>数据范围与多角色验证</h2></div><div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">对象</th>
+<th scope="col">应核对的隔离边界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>总部与客服</td>
+<td>授权区域、队列及租户</td>
+</tr>
+<tr>
+<td>服务站</td>
+<td>本站工单、人员及库存</td>
+</tr>
+<tr>
+<td>门店／代理商</td>
+<td>当前门店或授权所属门店</td>
+</tr>
+<tr>
+<td>服务人员</td>
+<td>当前企业、本人承接与个人库存</td>
+</tr>
+<tr>
+<td>消费者</td>
+<td>本人产品、订单及对客资料</td>
+</tr>
+</tbody></table></div>
+<ol class="steps">
+<li>登录确认当前企业与组织，准备授权内及授权外对象。</li>
+<li>查询列表与详情，并核对可见按钮和实际请求结果。</li>
+<li>对拒绝对象核对不能读取、修改或下载，记录复现信息。</li>
+<li>切换视角、企业或重新登录后再次确认范围，清除不适用的草稿与旧上下文。</li>
+</ol>
+<p>关联会员读取不等于全量会员权限；投诉读取不自动包含原工单读取；表单受限选择器不代表主档管理授权。</p>
+</section><section class="content-section" id="chapter-5" data-search-item ><div class="section-heading"><span class="section-no">05</span><h2>菜单、参数与导入导出</h2></div><p>售后稳定功能注册和视角投影应统一维护，显示位置变化不复制第二套功能。原服务受理、独立门店安装／维修入口等退役能力不重新开放；未完成骨架保持隐藏。</p>
+<p>导入导出任务在工作台右上角宽抽屉，模板在总部“系统管理”。导入、导出、下载分别授权。先按模板检查文件、组织与字段，查看任务结果和失败明细；提交文件不等于处理成功，不盲目重复导入。</p>
+<p>业务规则在总部“服务设置”五页签，读写分别授权。服务人员规则总部统一；外部 AI、地图和消息服务的密钥及运行配置由项目组按环境管理，不放进公开文档。</p>
+</section><section class="content-section" id="chapter-6" data-search-item ><div class="section-heading"><span class="section-no">06</span><h2>环境、外部服务与安全交接</h2></div><ol class="steps">
+<li>明确本次目标是测试、微信开发版本或正式环境，记录应用版本、部署回执及实际访问入口。</li>
+<li>核对 Web 前后端与两个小程序的发布范围，微信开发上传不等于提审或正式发布。</li>
+<li>核对地图、AI、微信订阅、短信及客服渠道的账号主体、配置、授权和运行证据，配置存在不证明调用成功。</li>
+<li>凭据与密钥单独安全交接，材料仅记录接收岗位、渠道和确认结果。</li>
+</ol>
+<p><strong>运维责任：</strong> 项目小组继续负责运行维护、问题响应与版本更新，客户资料交付不转移运维责任。部署与数据库操作由对应技术规程执行，本手册不提供密码或生产变更命令。</p>
+</section><section class="content-section" id="chapter-7" data-search-item ><div class="section-heading"><span class="section-no">07</span><h2>审计、故障与版本协同</h2></div><ol class="steps">
+<li>收集应用、环境、账号职责、时间、记录编号、实际动作及错误提示，必要截图脱敏。</li>
+<li>权限问题先查身份、功能、动作与数据范围，业务错误交对应岗位和项目组。</li>
+<li>查可用操作记录及审计结果；审计范围与日志开关以实际配置为准，不宣称所有操作已有完整审计。</li>
+<li>跟踪修复版本与部署证据，再由业务确认结果。代码提交、测试通过或环境发布都不替代业务验收。</li>
+</ol>
+<p>备份、恢复、监控和应急安排按正式交付范围逐项确认；已有部署文档不等于已实施备份演练或满足某个 SLA。</p>
+</section><section class="content-section" id="chapter-8" data-search-item ><div class="section-heading"><span class="section-no">08</span><h2>交接与常见问题</h2></div><div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th scope="col">事项</th>
+<th scope="col">接收岗位</th>
+<th scope="col">核对信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>新增／变更权限</td>
+<td>业务负责人和使用人员</td>
+<td>职责、范围、动作及允许／拒绝结果</td>
+</tr>
+<tr>
+<td>业务配置调整</td>
+<td>对应业务岗</td>
+<td>有效配置、影响、时点与复核</td>
+</tr>
+<tr>
+<td>环境／外部服务</td>
+<td>项目组</td>
+<td>环境、版本、回执与未解决事项</td>
+</tr>
+<tr>
+<td>离职／停用</td>
+<td>组织负责人</td>
+<td>任务、凭据、数据及实际接收人</td>
+</tr>
+</tbody></table></div>
+<details class="faq"><summary>管理员可以自动审批所有业务吗？</summary><p>不能。身份管理与业务动作分开，业务职责需专项权限与状态条件。</p></details>
+<details class="faq"><summary>菜单隐藏就算没有权限了吗？</summary><p>还须验证实际接口、详情和下载拒绝；只看界面不能证明隔离有效。</p></details>
+<details class="faq"><summary>开发版上传成功就是交付了吗？</summary><p>不是。还须核对范围、环境、业务验收、材料接收及遗留事项。</p></details>
+</section><details class="source-note"><summary>内容依据 · 供内部复核</summary><p>依据：<a href="../../02-%E6%8A%80%E6%9C%AF%E8%AE%BE%E8%AE%A1/09-%E5%90%8E%E5%8F%B0%E8%8F%9C%E5%8D%95%E4%B8%8E%E5%B2%97%E4%BD%8D%E6%9D%83%E9%99%90%E7%9F%A9%E9%98%B5.md">权限矩阵</a> · <a href="../../02-%E6%8A%80%E6%9C%AF%E8%AE%BE%E8%AE%A1/11-gaia%E8%8F%9C%E5%8D%95%E8%A7%92%E8%89%B2%E6%8C%89%E9%92%AE%E6%9D%83%E9%99%90%E6%8E%A5%E5%85%A5%E8%B0%83%E7%A0%94.md">Gaia 权限接入</a> · <a href="../../specs/2026-09-11-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E7%8B%AC%E7%AB%8B%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B7%B2%E5%BC%80%E5%8F%91%E5%8A%9F%E8%83%BD%E6%A0%B8%E6%9F%A5.md">数据独立边界</a> · <a href="../../02-%E6%8A%80%E6%9C%AF%E8%AE%BE%E8%AE%A1/15-%E6%9C%8D%E5%8A%A1%E4%BA%BA%E5%91%98%E7%A7%BB%E5%8A%A8%E8%BA%AB%E4%BB%BD%E4%B8%8E%E4%BC%81%E4%B8%9A%E4%B8%8A%E4%B8%8B%E6%96%87.md">人员身份</a> · <a href="../../03-%E5%BC%80%E5%8F%91%E7%AE%A1%E7%90%86/09-%E6%B5%8B%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2.md">部署规程</a></p>
+<p>依据链接需同一文档仓库；单独对外阅读包按交付清单筛选，不包含内部账号或凭据。</p></details><footer class="article-footer"><span>v0.1 · 2026-10-10 · 业务复核稿</span><a href="../index.html">返回交付文档首页 →</a></footer></main><aside class="rail"><p class="rail-label">快速进入</p><a href="#chapter-2">账号与组织上下文</a><a href="#chapter-5">菜单、参数与导入导出</a><a href="#chapter-8">交接与常见问题</a><div class="rail-block">先核对岗位与前提，再按实际状态办理。<br>打印按钮输出全文。</div></aside></div></body></html>
