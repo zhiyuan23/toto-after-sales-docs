@@ -1,5 +1,7 @@
 # 售后服务 gaia-ui 目录与菜单设计
 
+2026-10-10 服务站“本站工单”依次为服务工单、工单看板、异常工单；原“工单分配／工单跟进”仅更名，列表默认待分配、派人操作及看板24小时／5分钟刷新保持。未新增角色、菜单或授权，稳定code、路径及数量不变；见[名称统一与验证](../specs/2026-10-10-服务站工单菜单名称统一.md)。
+
 2026-10-10 总部“服务运营”依次为服务工单、投诉管理、人员反馈、服务质量、运营报表。复用 `afsComplaint` 提供总部只读查询，客服跟进／办结保持；“服务人员反馈”统一更名为“人员反馈”，仍由总部接收。当前总部30项、四视角62处引用，注册59项／日常去重47项保持；测试库仅补总部投诉GET授权和反馈名称，应用未共享发布。见[实施与验证](../specs/2026-10-10-总部服务运营投诉查询与菜单优化.md)。
 
 2026-10-09 总部库存导航收敛为库存台账、工单耗用两个查询入口；隐藏入库、领料、退料、调拨出入库和盘点，耗用页在总部视角不显示新增。服务站完整库存作业、门店服务工单查询及客服主流程保持；既有角色和后端操作授权本次不清理。该次调整后总部29项、四视角61处引用，以下带日期旧数量为历史快照。见[本次实施](../specs/2026-10-09-现有角色菜单与操作权限优化计划.md)。
@@ -219,7 +221,7 @@
 | --- | --- | --- | --- | --- |
 | 服务工单 | `afsWorkOrder` | `afterSales/customerService/workOrder` | A18 | 管理员、总部、客服主管、客服专员、服务站管理员、代理商管理员、门店店员 |
 | 派单调度 | `afsDispatch` | `afterSales/customerService/dispatch` | A19 | 管理员、客服主管；仅投影到客服作业／工单处理，负责将工单分配至服务站 |
-| 工单分配 | `afsWorkOrderAssignment` | `afterSales/serviceResource/workOrderAssignment` | — | 管理员、服务站管理员；仅投影到服务站作业／本站工单，当前为待开发入口 |
+| 服务工单（服务站） | `afsWorkOrderAssignment` | `afterSales/serviceResource/workOrderAssignment` | A19（本站分配） | 管理员、服务站管理员；服务站作业／本站工单，默认待分配，可按状态查询本站工单并依操作授权派人 |
 | 异常工单 | `afsWorkOrderException` | `afterSales/customerService/exception` | A20 | 管理员、客服主管、客服专员、服务站管理员 |
 | 完工审核 | `afsCompletionReview` | `afterSales/customerService/completionReview` | A21 | 管理员、客服主管；当前只进入客服作业视角 |
 | 回访管理 | `afsFollowUp` | `afterSales/customerService/followUp` | A22 | 管理员、客服主管、客服专员 |
@@ -261,6 +263,7 @@ A11 商品图片并入“商品档案”的详情/编辑页，不再单列“商
 | 菜单名称 | 菜单代码 | path／页面目录 | 入口 ID | 建议角色 |
 | --- | --- | --- | --- | --- |
 | 服务人员 | `afsServicePersonnel` | `afterSales/serviceResource/personnel` | A26 | 管理员、服务站管理员 |
+| 工单看板 | `afsRealtimeWorkOrder` | `afterSales/serviceResource/realtimeWorkOrder` | A02（实时工单） | 管理员、服务站管理员；服务站作业／本站工单，按站点与日期展示人员24小时工单分布 |
 | 排班管理 | `afsSchedule` | `afterSales/serviceResource/schedule` | A27 | 管理员、服务站管理员 |
 | 服务质量 | `afsServiceQuality` | `afterSales/serviceResource/quality` | A28 | 管理员、总部、客服主管、客服专员、服务站管理员 |
 
