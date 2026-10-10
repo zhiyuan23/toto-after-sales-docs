@@ -1,3 +1,4 @@
 # Local runtime settings, credentials, and verification-artifacts (raw logs,
 # temporary screenshots, previews, traces and recordings). See collaboration rules.
 .local/
+__pycache__/

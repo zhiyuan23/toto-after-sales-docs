@@ -1,0 +1,422 @@
+{
+  "target": {
+    "db": "gaia_wh_init_wzy",
+    "server": "mysql84",
+    "checked_at": "2026-10-10T18:00"
+  },
+  "tables": {
+    "afs_service_station": [
+      {
+        "id": "5",
+        "name": "辽宁高歌服务站",
+        "enabled": "1",
+        "service_items": "INSTALLATION,REPAIR,GUIDANCE"
+      }
+    ],
+    "afs_consumer_product_relation": [],
+    "afs_service_personnel_skill": [
+      {
+        "personnel_id": "5",
+        "order_type": "INSTALLATION"
+      },
+      {
+        "personnel_id": "5",
+        "order_type": "REPAIR"
+      },
+      {
+        "personnel_id": "5",
+        "order_type": "GUIDANCE"
+      },
+      {
+        "personnel_id": "8",
+        "order_type": "INSTALLATION"
+      },
+      {
+        "personnel_id": "8",
+        "order_type": "REPAIR"
+      },
+      {
+        "personnel_id": "8",
+        "order_type": "GUIDANCE"
+      },
+      {
+        "personnel_id": "9",
+        "order_type": "INSTALLATION"
+      },
+      {
+        "personnel_id": "9",
+        "order_type": "REPAIR"
+      },
+      {
+        "personnel_id": "9",
+        "order_type": "GUIDANCE"
+      }
+    ],
+    "afs_dealer": [
+      {
+        "id": "1",
+        "name": "辽宁鸿润",
+        "code": "DL001",
+        "enabled": "1"
+      }
+    ],
+    "afs_service_order_item": [],
+    "afs_service_personnel": [
+      {
+        "id": "5",
+        "name": "孙志远",
+        "code": "SP000001",
+        "station_id": "5",
+        "daily_capacity": "2",
+        "mobile": "19900080001"
+      },
+      {
+        "id": "8",
+        "name": "王喆宇",
+        "code": "SP000007",
+        "station_id": "5",
+        "daily_capacity": "2",
+        "mobile": "19900080002"
+      },
+      {
+        "id": "9",
+        "name": "杨师傅",
+        "code": "SP000008",
+        "station_id": "5",
+        "daily_capacity": "2",
+        "mobile": "19900080003"
+      }
+    ],
+    "afs_order_assignment_history": [],
+    "afs_complaint": [],
+    "afs_service_order": [],
+    "afs_service_quality_daily": [],
+    "afs_order_exception_event": [],
+    "afs_order_communication": [],
+    "afs_service_evaluation": [],
+    "afs_store": [
+      {
+        "id": "3",
+        "name": "沈阳门店",
+        "code": "ST001",
+        "enabled": "1",
+        "dealer_id": "1",
+        "location_province_code": "210000",
+        "location_city_code": "210100"
+      }
+    ],
+    "afs_purchase_item": [],
+    "afs_consumer_account": [],
+    "afs_order_follow_up_task": [],
+    "afs_fee_policy": [
+      {
+        "id": "1",
+        "version_id": "1"
+      }
+    ],
+    "afs_complaint_event": [],
+    "afs_service_area": [
+      {
+        "id": "219",
+        "name": "沈阳浑南服务区",
+        "enabled": "1",
+        "scope_level": "DISTRICT",
+        "province_code": "210000",
+        "province_name": "辽宁省",
+        "city_code": "210100",
+        "city_name": "沈阳市",
+        "district_code": "210112",
+        "district_name": "浑南区",
+        "street_name": ""
+      },
+      {
+        "id": "300",
+        "name": "杭州上城服务区",
+        "enabled": "1",
+        "scope_level": "DISTRICT",
+        "province_code": "330000",
+        "province_name": "浙江省",
+        "city_code": "330100",
+        "city_name": "杭州市",
+        "district_code": "330102",
+        "district_name": "上城区",
+        "street_name": ""
+      }
+    ],
+    "afs_fee_policy_version": [
+      {
+        "id": "1",
+        "mode": "FREE_ONLY",
+        "snapshot": "{\"mode\":\"FREE_ONLY\",\"items\":[]}"
+      },
+      {
+        "id": "2",
+        "mode": "QUOTE_ALLOWED",
+        "revision": "999",
+        "snapshot": "{}"
+      }
+    ],
+    "afs_part_inventory_history": [],
+    "afs_purchase_registration": [],
+    "afs_consumer_profile": [],
+    "afs_product_instance": [],
+    "afs_service_area_station": [
+      {
+        "area_id": "219",
+        "station_id": "5"
+      }
+    ],
+    "afs_personnel_availability": [],
+    "afs_part_inventory_document": [],
+    "afs_completion_submission": [],
+    "afs_product": [
+      {
+        "id": "19",
+        "name": "电子坐便器",
+        "code": "CES-A",
+        "enabled": "1",
+        "warranty_enabled": "1",
+        "warranty_months": "12"
+      },
+      {
+        "id": "20",
+        "name": "洗面器",
+        "code": "LW-A",
+        "enabled": "1",
+        "warranty_enabled": "1",
+        "warranty_months": "12"
+      },
+      {
+        "id": "21",
+        "name": "花洒",
+        "code": "TBW-A",
+        "enabled": "1",
+        "warranty_enabled": "1",
+        "warranty_months": "12"
+      }
+    ],
+    "afs_completion_review": [],
+    "afs_order_fee": [],
+    "afs_customer": [],
+    "afs_evaluation_tag": [
+      {
+        "code": "ATTITUDE_POOR",
+        "label": "服务态度不好",
+        "dimension": "ATTITUDE",
+        "sentiment": "IMPROVEMENT",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "COMMUNICATION_DIFFICULT",
+        "label": "联系沟通不顺",
+        "dimension": "CONTACT",
+        "sentiment": "IMPROVEMENT",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "COMMUNICATION_SMOOTH",
+        "label": "沟通顺畅",
+        "dimension": "CONTACT",
+        "sentiment": "POSITIVE",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "HANDLING_UNPROFESSIONAL",
+        "label": "处理不够专业",
+        "dimension": "EXPERTISE",
+        "sentiment": "IMPROVEMENT",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "PATIENT_RESPONSIBLE",
+        "label": "耐心负责",
+        "dimension": "ATTITUDE",
+        "sentiment": "POSITIVE",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "PROFESSIONAL_HANDLING",
+        "label": "处理专业",
+        "dimension": "EXPERTISE",
+        "sentiment": "POSITIVE",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "SERVICE_TIMELY",
+        "label": "服务及时",
+        "dimension": "TIMELINESS",
+        "sentiment": "POSITIVE",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      },
+      {
+        "code": "WAIT_TOO_LONG",
+        "label": "等待时间长",
+        "dimension": "TIMELINESS",
+        "sentiment": "IMPROVEMENT",
+        "service_types": "INSTALLATION,REPAIR,GUIDANCE",
+        "enabled": "1"
+      }
+    ],
+    "afs_service_execution": [],
+    "afs_order_status_history": []
+  },
+  "keys": {
+    "afs_service_station": [
+      "id"
+    ],
+    "afs_consumer_product_relation": [
+      "id"
+    ],
+    "afs_service_personnel_skill": [
+      "personnel_id",
+      "order_type"
+    ],
+    "afs_dealer": [
+      "id"
+    ],
+    "afs_service_order_item": [
+      "order_id",
+      "instance_id"
+    ],
+    "afs_service_personnel": [
+      "id"
+    ],
+    "afs_order_assignment_history": [
+      "id"
+    ],
+    "afs_complaint": [
+      "id"
+    ],
+    "afs_service_order": [
+      "id"
+    ],
+    "afs_service_quality_daily": [
+      "id"
+    ],
+    "afs_order_exception_event": [
+      "id"
+    ],
+    "afs_order_communication": [
+      "id"
+    ],
+    "afs_service_evaluation": [
+      "order_id"
+    ],
+    "afs_store": [
+      "id"
+    ],
+    "afs_purchase_item": [
+      "id"
+    ],
+    "afs_consumer_account": [
+      "id"
+    ],
+    "afs_order_follow_up_task": [
+      "order_id"
+    ],
+    "afs_fee_policy": [
+      "id"
+    ],
+    "afs_complaint_event": [
+      "id"
+    ],
+    "afs_service_area": [
+      "id"
+    ],
+    "afs_fee_policy_version": [
+      "id"
+    ],
+    "afs_part_inventory_history": [
+      "id"
+    ],
+    "afs_purchase_registration": [
+      "id"
+    ],
+    "afs_consumer_profile": [
+      "tenant_id",
+      "account_id"
+    ],
+    "afs_product_instance": [
+      "id"
+    ],
+    "afs_service_area_station": [
+      "area_id",
+      "station_id"
+    ],
+    "afs_personnel_availability": [
+      "id"
+    ],
+    "afs_part_inventory_document": [
+      "id"
+    ],
+    "afs_completion_submission": [
+      "id"
+    ],
+    "afs_product": [
+      "id"
+    ],
+    "afs_completion_review": [
+      "id"
+    ],
+    "afs_order_fee": [
+      "order_id"
+    ],
+    "afs_customer": [
+      "id"
+    ],
+    "afs_evaluation_tag": [
+      "code"
+    ],
+    "afs_service_execution": [
+      "order_id"
+    ],
+    "afs_order_status_history": [
+      "id"
+    ]
+  },
+  "schemas": {
+    "afs_service_station": "CREATE TABLE `afs_service_station` (\n  `id` bigint NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `name` varchar(100) NOT NULL,\n  `org_id` bigint DEFAULT NULL,\n  `org_code` varchar(50) NOT NULL DEFAULT '',\n  `org_name` varchar(100) NOT NULL DEFAULT '',\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  `manager_name` varchar(100) NOT NULL DEFAULT '',\n  `manager_mobile` varchar(30) NOT NULL DEFAULT '',\n  `hotline` varchar(200) NOT NULL DEFAULT '',\n  `service_items` varchar(100) NOT NULL DEFAULT '',\n  `daily_max_orders` int NOT NULL DEFAULT '5',\n  `location_province` varchar(100) NOT NULL DEFAULT '',\n  `location_province_code` char(6) NOT NULL DEFAULT '',\n  `location_city` varchar(100) NOT NULL DEFAULT '',\n  `location_city_code` char(6) NOT NULL DEFAULT '',\n  `location_district` varchar(100) NOT NULL DEFAULT '',\n  `location_district_code` varchar(12) NOT NULL DEFAULT '',\n  `location_street` varchar(100) NOT NULL DEFAULT '',\n  `address` varchar(255) NOT NULL DEFAULT '',\n  `longitude` varchar(30) NOT NULL DEFAULT '',\n  `latitude` varchar(30) NOT NULL DEFAULT '',\n  `legal_representative` varchar(100) NOT NULL DEFAULT '',\n  `legal_representative_id` varchar(50) NOT NULL DEFAULT '',\n  `registered_date` date DEFAULT NULL,\n  `registered_capital` varchar(50) NOT NULL DEFAULT '',\n  `bank_name` varchar(100) NOT NULL DEFAULT '',\n  `bank_account_name` varchar(100) NOT NULL DEFAULT '',\n  `bank_account_no` varchar(100) NOT NULL DEFAULT '',\n  `business_license_expires_at` date DEFAULT NULL,\n  `organization_code_expires_at` date DEFAULT NULL,\n  `tax_registration_expires_at` date DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_service_station_code` (`code`),\n  KEY `idx_afs_service_station_status_name` (`enabled`,`name`),\n  KEY `idx_afs_service_station_org_id` (`org_id`),\n  CONSTRAINT `ck_afs_service_station_daily_max_orders` CHECK ((`daily_max_orders` between 1 and 9999)),\n  CONSTRAINT `ck_afs_service_station_enabled` CHECK ((`enabled` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_consumer_product_relation": "CREATE TABLE `afs_consumer_product_relation` (\n  `id` bigint NOT NULL,\n  `account_id` bigint NOT NULL,\n  `account_kind` varchar(20) NOT NULL DEFAULT 'LEGACY_GAIA',\n  `instance_id` bigint NOT NULL,\n  `relation_role` varchar(20) NOT NULL,\n  `source_type` varchar(30) NOT NULL,\n  `status` varchar(20) NOT NULL,\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_consumer_product_relation` (`account_kind`,`account_id`,`instance_id`),\n  KEY `idx_afs_consumer_product_instance` (`instance_id`,`status`),\n  CONSTRAINT `ck_afs_consumer_product_account_kind` CHECK ((`account_kind` in (_utf8mb4'LEGACY_GAIA',_utf8mb4'CONSUMER'))),\n  CONSTRAINT `ck_afs_consumer_product_role` CHECK ((`relation_role` in (_utf8mb4'OWNER',_utf8mb4'USER'))),\n  CONSTRAINT `ck_afs_consumer_product_source` CHECK ((`source_type` in (_utf8mb4'USER_REPORTED',_utf8mb4'PURCHASE_MATCH',_utf8mb4'MANUAL_VERIFICATION'))),\n  CONSTRAINT `ck_afs_consumer_product_status` CHECK ((`status` in (_utf8mb4'ACTIVE',_utf8mb4'DISPUTED',_utf8mb4'REMOVED')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_personnel_skill": "CREATE TABLE `afs_service_personnel_skill` (\n  `personnel_id` bigint NOT NULL,\n  `order_type` varchar(20) NOT NULL,\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  PRIMARY KEY (`personnel_id`,`order_type`),\n  KEY `idx_afs_service_personnel_skill_type` (`order_type`,`personnel_id`),\n  CONSTRAINT `ck_afs_service_personnel_skill_type` CHECK ((`order_type` in (_utf8mb4'INSTALLATION',_utf8mb4'REPAIR',_utf8mb4'GUIDANCE',_utf8mb4'CLEANING')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_dealer": "CREATE TABLE `afs_dealer` (\n  `id` bigint NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `type` varchar(50) DEFAULT NULL,\n  `sales_area` varchar(255) DEFAULT NULL,\n  `source` varchar(50) DEFAULT NULL,\n  `agent` varchar(50) DEFAULT NULL,\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `location_province` varchar(100) DEFAULT NULL,\n  `location_province_code` char(6) NOT NULL DEFAULT '',\n  `location_city` varchar(100) DEFAULT NULL,\n  `location_city_code` char(6) NOT NULL DEFAULT '',\n  `location_district` varchar(100) DEFAULT NULL,\n  `location_district_code` varchar(12) NOT NULL DEFAULT '',\n  `address` varchar(255) DEFAULT NULL,\n  `parent_id` bigint DEFAULT NULL,\n  `org_id` bigint DEFAULT NULL,\n  `org_code` varchar(50) NOT NULL DEFAULT '',\n  `org_name` varchar(100) NOT NULL DEFAULT '',\n  `location_street` varchar(100) NOT NULL DEFAULT '',\n  `longitude` varchar(30) NOT NULL DEFAULT '',\n  `latitude` varchar(30) NOT NULL DEFAULT '',\n  `legal_representative` varchar(100) NOT NULL DEFAULT '',\n  `legal_representative_id` varchar(50) NOT NULL DEFAULT '',\n  `registered_date` date DEFAULT NULL,\n  `registered_capital` varchar(50) NOT NULL DEFAULT '',\n  `bank_name` varchar(100) NOT NULL DEFAULT '',\n  `bank_account_name` varchar(100) NOT NULL DEFAULT '',\n  `bank_account_no` varchar(100) NOT NULL DEFAULT '',\n  `business_license_expires_at` date DEFAULT NULL,\n  `organization_code_expires_at` date DEFAULT NULL,\n  `tax_registration_expires_at` date DEFAULT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL DEFAULT '-1',\n  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `update_user` bigint NOT NULL DEFAULT '-1',\n  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_dealer_code` (`code`),\n  KEY `idx_afs_dealer_parent` (`parent_id`),\n  KEY `idx_afs_dealer_org_id` (`org_id`),\n  CONSTRAINT `ck_afs_dealer_enabled` CHECK ((`enabled` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_order_item": "CREATE TABLE `afs_service_order_item` (\n  `order_id` bigint NOT NULL,\n  `instance_id` bigint NOT NULL,\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  PRIMARY KEY (`order_id`,`instance_id`),\n  KEY `idx_afs_service_order_item_instance` (`instance_id`,`order_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_personnel": "CREATE TABLE `afs_service_personnel` (\n  `id` bigint NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `name` varchar(100) NOT NULL,\n  `mobile` varchar(30) NOT NULL,\n  `identity_no` varchar(30) NOT NULL DEFAULT '',\n  `station_id` bigint NOT NULL,\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `contract_no` varchar(100) NOT NULL DEFAULT '',\n  `employment_status` varchar(20) NOT NULL DEFAULT 'ON_JOB',\n  `entry_date` date DEFAULT NULL,\n  `bank_card_no` varchar(50) NOT NULL DEFAULT '',\n  `residential_address` varchar(255) NOT NULL DEFAULT '',\n  `daily_capacity` int NOT NULL DEFAULT '5',\n  `sys_user_id` bigint DEFAULT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_service_personnel_code` (`code`),\n  UNIQUE KEY `uk_afs_service_personnel_mobile` (`mobile`),\n  UNIQUE KEY `uk_afs_service_personnel_sys_user` (`sys_user_id`),\n  KEY `idx_afs_service_personnel_station_status` (`station_id`,`enabled`,`name`),\n  CONSTRAINT `ck_afs_service_personnel_daily_capacity` CHECK ((`daily_capacity` between 1 and 999)),\n  CONSTRAINT `ck_afs_service_personnel_enabled` CHECK ((`enabled` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_order_assignment_history": "CREATE TABLE `afs_order_assignment_history` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `assignment_type` varchar(20) NOT NULL,\n  `from_target_id` bigint DEFAULT NULL,\n  `to_target_id` bigint DEFAULT NULL,\n  `mode` varchar(20) NOT NULL,\n  `rule_result` varchar(500) NOT NULL DEFAULT '',\n  `reason` varchar(200) NOT NULL DEFAULT '',\n  `operator_id` bigint NOT NULL,\n  `created_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_order_assignment_history_order` (`order_id`,`created_at`,`id`),\n  CONSTRAINT `ck_afs_order_assignment_type` CHECK ((`assignment_type` in (_utf8mb4'STATION',_utf8mb4'PERSONNEL')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_complaint": "CREATE TABLE `afs_complaint` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `subject` varchar(200) NOT NULL,\n  `status` varchar(20) NOT NULL,\n  `content_ciphertext` text NOT NULL,\n  `actor_id` bigint NOT NULL,\n  `request_id` varchar(64) NOT NULL,\n  `request_hash` varchar(128) NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `received_at` datetime NOT NULL,\n  `created_at` datetime NOT NULL,\n  `updated_at` datetime NOT NULL,\n  `closed_at` datetime DEFAULT NULL,\n  `complaint_no` varchar(40) DEFAULT NULL,\n  `source_type` varchar(20) NOT NULL DEFAULT 'STAFF',\n  `consumer_account_id` bigint DEFAULT NULL,\n  `consumer_instance_id` bigint DEFAULT NULL,\n  `issue_category` varchar(40) NOT NULL DEFAULT '',\n  `contact_preference` varchar(20) NOT NULL DEFAULT '',\n  `resolution_ciphertext` text,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_complaint_request` (`order_id`,`request_id`),\n  UNIQUE KEY `uq_complaint_no` (`complaint_no`),\n  KEY `ix_complaint_received` (`received_at`,`id`),\n  KEY `ix_complaint_status` (`status`,`received_at`),\n  KEY `ix_complaint_consumer` (`consumer_account_id`,`received_at`,`id`),\n  KEY `ix_complaint_consumer_order` (`consumer_account_id`,`order_id`,`status`),\n  CONSTRAINT `fk_complaint_order` FOREIGN KEY (`order_id`) REFERENCES `afs_service_order` (`id`),\n  CONSTRAINT `ck_complaint_status` CHECK ((`status` in (_utf8mb4'OPEN',_utf8mb4'PROCESSING',_utf8mb4'FOLLOW_UP',_utf8mb4'CLOSED')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_order": "CREATE TABLE `afs_service_order` (\n  `id` bigint NOT NULL,\n  `order_no` varchar(50) NOT NULL,\n  `order_type` varchar(20) NOT NULL,\n  `source` varchar(20) NOT NULL,\n  `customer_id` bigint DEFAULT NULL,\n  `registration_id` bigint DEFAULT NULL,\n  `contact_name_ciphertext` varchar(1024) NOT NULL,\n  `contact_name_masked` varchar(100) NOT NULL,\n  `contact_mobile_digest` char(64) NOT NULL,\n  `contact_mobile_ciphertext` varchar(1024) NOT NULL,\n  `contact_mobile_masked` varchar(30) NOT NULL,\n  `province_name` varchar(100) NOT NULL,\n  `province_code` char(6) NOT NULL DEFAULT '',\n  `city_name` varchar(100) NOT NULL DEFAULT '',\n  `city_code` char(6) NOT NULL DEFAULT '',\n  `district_name` varchar(100) NOT NULL DEFAULT '',\n  `district_code` varchar(12) NOT NULL DEFAULT '',\n  `street_name` varchar(100) NOT NULL DEFAULT '',\n  `address_ciphertext` varchar(2048) NOT NULL,\n  `address_masked` varchar(255) NOT NULL,\n  `longitude` varchar(30) NOT NULL DEFAULT '',\n  `latitude` varchar(30) NOT NULL DEFAULT '',\n  `expected_date` date NOT NULL,\n  `expected_date_to` date NOT NULL,\n  `expected_time_window` varchar(100) NOT NULL DEFAULT '',\n  `station_id` bigint DEFAULT NULL,\n  `auto_dispatch_mode` varchar(20) NOT NULL DEFAULT 'MANUAL',\n  `auto_dispatch_status` varchar(20) NOT NULL DEFAULT 'NOT_APPLICABLE',\n  `auto_dispatch_failure_reason` varchar(500) NOT NULL DEFAULT '',\n  `auto_dispatch_attempts` int NOT NULL DEFAULT '0',\n  `status` varchar(30) NOT NULL,\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `follow_up_status` varchar(20) NOT NULL DEFAULT 'NOT_FOLLOWED_UP',\n  `satisfaction` varchar(20) NOT NULL DEFAULT '',\n  `client_request_id` varchar(64) NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  `intake_channel` varchar(20) NOT NULL DEFAULT 'DEALER',\n  `source_reference_ciphertext` varchar(1024) NOT NULL DEFAULT '',\n  `source_reference_masked` varchar(100) NOT NULL DEFAULT '',\n  `service_mode` varchar(20) NOT NULL DEFAULT 'ONSITE',\n  `problem_description` varchar(500) NOT NULL DEFAULT '',\n  `fault_id` bigint DEFAULT NULL,\n  `fault_name` varchar(100) NOT NULL DEFAULT '',\n  `fault_code` varchar(50) NOT NULL DEFAULT '',\n  `fault_summary` varchar(255) NOT NULL DEFAULT '',\n  `station_assignment_mode` varchar(20) NOT NULL DEFAULT '',\n  `station_assignment_rule` varchar(500) NOT NULL DEFAULT '',\n  `station_override_reason` varchar(200) NOT NULL DEFAULT '',\n  `personnel_id` bigint DEFAULT NULL,\n  `personnel_code` varchar(50) NOT NULL DEFAULT '',\n  `personnel_name` varchar(100) NOT NULL DEFAULT '',\n  `personnel_mobile` varchar(50) NOT NULL DEFAULT '',\n  `personnel_assignment_mode` varchar(20) NOT NULL DEFAULT 'MANUAL',\n  `personnel_assignment_status` varchar(20) NOT NULL DEFAULT 'NOT_APPLICABLE',\n  `personnel_assignment_failure_reason` varchar(500) NOT NULL DEFAULT '',\n  `personnel_assignment_attempts` int NOT NULL DEFAULT '0',\n  `dispatch_mode` varchar(20) NOT NULL DEFAULT '',\n  `dispatch_reason` varchar(200) NOT NULL DEFAULT '',\n  `status_changed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `exception_code` varchar(30) NOT NULL DEFAULT '',\n  `exception_reason` varchar(200) NOT NULL DEFAULT '',\n  `exception_escalated` tinyint NOT NULL DEFAULT '0',\n  `exception_previous_status` varchar(30) NOT NULL DEFAULT '',\n  `alternate_mobile1_ciphertext` varchar(1024) NOT NULL DEFAULT '',\n  `alternate_mobile1_masked` varchar(30) NOT NULL DEFAULT '',\n  `alternate_mobile2_ciphertext` varchar(1024) NOT NULL DEFAULT '',\n  `alternate_mobile2_masked` varchar(30) NOT NULL DEFAULT '',\n  `address_supplement_ciphertext` varchar(2048) NOT NULL DEFAULT '',\n  `address_supplement_masked` varchar(255) NOT NULL DEFAULT '',\n  `created_store_id` bigint DEFAULT NULL COMMENT '建单时创建门店',\n  `created_store_code` varchar(50) DEFAULT NULL COMMENT '创建门店编码快照',\n  `created_store_name` varchar(100) DEFAULT NULL COMMENT '创建门店名称快照',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_service_order_no` (`order_no`),\n  UNIQUE KEY `uk_afs_service_order_request` (`create_user`,`client_request_id`),\n  KEY `idx_afs_service_order_registration` (`registration_id`,`create_time`,`id`),\n  KEY `idx_afs_service_order_status` (`status`,`expected_date`,`id`),\n  KEY `idx_afs_service_order_station` (`station_id`,`status`,`id`),\n  KEY `idx_afs_service_order_mobile` (`contact_mobile_digest`),\n  KEY `idx_afs_service_order_intake` (`intake_channel`,`create_time`,`id`),\n  KEY `idx_afs_service_order_personnel` (`personnel_id`,`status`,`expected_date`,`id`),\n  KEY `idx_afs_service_order_exception` (`exception_code`,`exception_escalated`,`status`,`id`),\n  KEY `idx_afs_service_order_fault` (`fault_id`,`status`,`id`),\n  KEY `idx_afs_service_order_region_code` (`province_code`,`city_code`,`district_code`),\n  KEY `idx_afs_order_created_store` (`source`,`created_store_id`,`create_time`,`id`),\n  CONSTRAINT `ck_afs_service_order_auto_dispatch_mode` CHECK ((`auto_dispatch_mode` in (_utf8mb4'MANUAL',_utf8mb4'SMART',_utf8mb4'AI'))),\n  CONSTRAINT `ck_afs_service_order_auto_dispatch_status` CHECK ((`auto_dispatch_status` in (_utf8mb4'NOT_APPLICABLE',_utf8mb4'PENDING',_utf8mb4'PROCESSING',_utf8mb4'SUCCESS',_utf8mb4'FAILED'))),\n  CONSTRAINT `ck_afs_service_order_follow_up_status` CHECK ((`follow_up_status` in (_utf8mb4'NOT_FOLLOWED_UP',_utf8mb4'FOLLOWED_UP'))),\n  CONSTRAINT `ck_afs_service_order_intake_channel` CHECK ((`intake_channel` in (_utf8mb4'PHONE',_utf8mb4'WECHAT',_utf8mb4'CONSUMER',_utf8mb4'DEALER',_utf8mb4'API'))),\n  CONSTRAINT `ck_afs_service_order_personnel_assignment_mode` CHECK ((`personnel_assignment_mode` in (_utf8mb4'MANUAL',_utf8mb4'SMART',_utf8mb4'AI'))),\n  CONSTRAINT `ck_afs_service_order_personnel_assignment_status` CHECK ((`personnel_assignment_status` in (_utf8mb4'NOT_APPLICABLE',_utf8mb4'PENDING',_utf8mb4'PROCESSING',_utf8mb4'SUCCESS',_utf8mb4'FAILED'))),\n  CONSTRAINT `ck_afs_service_order_satisfaction` CHECK ((`satisfaction` in (_utf8mb4'',_utf8mb4'SATISFIED',_utf8mb4'UNSATISFIED'))),\n  CONSTRAINT `ck_afs_service_order_service_mode` CHECK ((`service_mode` in (_utf8mb4'REMOTE',_utf8mb4'ONSITE'))),\n  CONSTRAINT `ck_afs_service_order_source` CHECK ((`source` in (_utf8mb4'DEALER',_utf8mb4'CUSTOMER_SERVICE',_utf8mb4'CONSUMER',_utf8mb4'API'))),\n  CONSTRAINT `ck_afs_service_order_type` CHECK ((`order_type` in (_utf8mb4'INSTALLATION',_utf8mb4'REPAIR',_utf8mb4'CLEANING',_utf8mb4'GUIDANCE')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_quality_daily": "CREATE TABLE `afs_service_quality_daily` (\n  `id` bigint NOT NULL,\n  `snapshot_date` date NOT NULL,\n  `scope_type` varchar(20) NOT NULL,\n  `scope_id` varchar(50) NOT NULL,\n  `scope_name` varchar(100) NOT NULL,\n  `service_count` int NOT NULL,\n  `on_time_count` int NOT NULL,\n  `first_time_resolved_count` int NOT NULL,\n  `rated_count` int NOT NULL,\n  `rating_total` decimal(12,2) NOT NULL,\n  `complaint_count` int NOT NULL,\n  `generated_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_service_quality_daily_scope` (`snapshot_date`,`scope_type`,`scope_id`),\n  KEY `idx_afs_service_quality_daily_date` (`snapshot_date`,`scope_type`),\n  CONSTRAINT `ck_afs_service_quality_daily_counts` CHECK (((`service_count` >= 0) and (`on_time_count` between 0 and `service_count`) and (`first_time_resolved_count` between 0 and `service_count`) and (`rated_count` between 0 and `service_count`) and (`rating_total` >= 0) and (`complaint_count` >= 0))),\n  CONSTRAINT `ck_afs_service_quality_daily_scope` CHECK ((`scope_type` in (_utf8mb4'PERSONNEL',_utf8mb4'STATION',_utf8mb4'AREA')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_order_exception_event": "CREATE TABLE `afs_order_exception_event` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `action_code` varchar(30) NOT NULL,\n  `from_status` varchar(30) NOT NULL,\n  `to_status` varchar(30) NOT NULL,\n  `reason` varchar(200) NOT NULL,\n  `escalated` tinyint NOT NULL DEFAULT '0',\n  `operator_id` bigint NOT NULL,\n  `created_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_order_exception_event_order` (`order_id`,`created_at`,`id`),\n  CONSTRAINT `ck_afs_order_exception_escalated` CHECK ((`escalated` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_order_communication": "CREATE TABLE `afs_order_communication` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `channel` varchar(20) NOT NULL,\n  `content_ciphertext` text NOT NULL,\n  `occurred_at` datetime NOT NULL,\n  `corrects_id` bigint DEFAULT NULL,\n  `request_id` varchar(64) NOT NULL,\n  `request_hash` varchar(64) NOT NULL,\n  `actor_id` bigint NOT NULL,\n  `created_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `order_id` (`order_id`,`request_id`),\n  UNIQUE KEY `order_id_2` (`order_id`,`corrects_id`),\n  KEY `corrects_id` (`corrects_id`),\n  KEY `ix_afs_communication_time` (`order_id`,`occurred_at`,`id`),\n  CONSTRAINT `afs_order_communication_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `afs_service_order` (`id`),\n  CONSTRAINT `afs_order_communication_ibfk_2` FOREIGN KEY (`corrects_id`) REFERENCES `afs_order_communication` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_evaluation": "CREATE TABLE `afs_service_evaluation` (\n  `order_id` bigint NOT NULL,\n  `account_id` bigint NOT NULL,\n  `score` int NOT NULL,\n  `resolution` varchar(20) NOT NULL,\n  `tags` varchar(200) NOT NULL DEFAULT '',\n  `comment` varchar(500) NOT NULL DEFAULT '',\n  `submitted_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `tag_snapshot` text,\n  `order_type` varchar(20) DEFAULT NULL,\n  `service_mode` varchar(20) DEFAULT NULL,\n  `station_id` bigint DEFAULT NULL,\n  `personnel_id` bigint DEFAULT NULL,\n  PRIMARY KEY (`order_id`),\n  CONSTRAINT `chk_afs_evaluation_resolution` CHECK ((`resolution` in (_utf8mb4'RESOLVED',_utf8mb4'PARTIAL',_utf8mb4'UNRESOLVED'))),\n  CONSTRAINT `chk_afs_evaluation_score` CHECK ((`score` between 1 and 5))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_store": "CREATE TABLE `afs_store` (\n  `id` bigint NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `dealer_id` bigint NOT NULL,\n  `org_id` bigint DEFAULT NULL,\n  `org_code` varchar(50) NOT NULL DEFAULT '',\n  `org_name` varchar(100) NOT NULL DEFAULT '',\n  `store_type_id` bigint DEFAULT NULL,\n  `active_state` varchar(50) DEFAULT NULL,\n  `service_type` varchar(50) DEFAULT NULL,\n  `source` varchar(50) DEFAULT NULL,\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `location_province` varchar(100) DEFAULT NULL,\n  `location_province_code` char(6) NOT NULL DEFAULT '',\n  `location_city` varchar(100) DEFAULT NULL,\n  `location_city_code` char(6) NOT NULL DEFAULT '',\n  `location_district` varchar(100) DEFAULT NULL,\n  `location_district_code` varchar(12) NOT NULL DEFAULT '',\n  `address` varchar(255) DEFAULT NULL,\n  `location_street` varchar(100) NOT NULL DEFAULT '',\n  `longitude` varchar(30) NOT NULL DEFAULT '',\n  `latitude` varchar(30) NOT NULL DEFAULT '',\n  `legal_representative` varchar(100) NOT NULL DEFAULT '',\n  `legal_representative_id` varchar(50) NOT NULL DEFAULT '',\n  `registered_date` date DEFAULT NULL,\n  `registered_capital` varchar(50) NOT NULL DEFAULT '',\n  `bank_name` varchar(100) NOT NULL DEFAULT '',\n  `bank_account_name` varchar(100) NOT NULL DEFAULT '',\n  `bank_account_no` varchar(100) NOT NULL DEFAULT '',\n  `business_license_expires_at` date DEFAULT NULL,\n  `organization_code_expires_at` date DEFAULT NULL,\n  `tax_registration_expires_at` date DEFAULT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL DEFAULT '-1',\n  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `update_user` bigint NOT NULL DEFAULT '-1',\n  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `is_starred` tinyint DEFAULT NULL,\n  `is_remodel` tinyint DEFAULT NULL,\n  `store_intro` varchar(2000) DEFAULT NULL,\n  `official_remarks` varchar(2000) DEFAULT NULL,\n  `fax` varchar(100) DEFAULT NULL,\n  `map_address` varchar(500) DEFAULT NULL,\n  `source_city_en` varchar(100) DEFAULT NULL,\n  `external_system` varchar(50) DEFAULT NULL,\n  `external_store_id` varchar(100) DEFAULT NULL,\n  `external_source_url` varchar(2048) DEFAULT NULL,\n  `store_images` longtext,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_store_code` (`code`),\n  KEY `idx_afs_store_dealer` (`dealer_id`),\n  KEY `fk_afs_store_type` (`store_type_id`),\n  KEY `idx_afs_store_org_id` (`org_id`),\n  KEY `idx_afs_store_region_code` (`location_city_code`,`location_district_code`),\n  CONSTRAINT `fk_afs_store_dealer` FOREIGN KEY (`dealer_id`) REFERENCES `afs_dealer` (`id`),\n  CONSTRAINT `fk_afs_store_type` FOREIGN KEY (`store_type_id`) REFERENCES `afs_store_type` (`id`),\n  CONSTRAINT `ck_afs_store_enabled` CHECK ((`enabled` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_purchase_item": "CREATE TABLE `afs_purchase_item` (\n  `id` bigint NOT NULL,\n  `registration_id` bigint NOT NULL,\n  `product_id` bigint NOT NULL,\n  `product_code` varchar(50) NOT NULL,\n  `product_name` varchar(255) NOT NULL,\n  `quantity` int NOT NULL,\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `warranty_enabled_snapshot` tinyint DEFAULT NULL,\n  `warranty_months_snapshot` int DEFAULT NULL,\n  `warranty_type_snapshot` varchar(20) DEFAULT NULL,\n  `warranty_scope_snapshot` varchar(30) DEFAULT NULL,\n  `warranty_scope_description_snapshot` varchar(500) DEFAULT NULL,\n  `warranty_policy_reference_snapshot` varchar(500) DEFAULT NULL,\n  `warranty_limitations_snapshot` varchar(1000) DEFAULT NULL,\n  `warranty_snapshot_source` varchar(40) DEFAULT NULL,\n  `warranty_snapshot_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_purchase_item_registration` (`registration_id`,`id`),\n  CONSTRAINT `ck_afs_purchase_item_quantity` CHECK ((`quantity` between 1 and 100))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_consumer_account": "CREATE TABLE `afs_consumer_account` (\n  `id` bigint NOT NULL,\n  `openid_digest` char(64) NOT NULL,\n  `mobile_digest` char(64) DEFAULT NULL,\n  `mobile_ciphertext` varchar(500) DEFAULT NULL,\n  `mobile_masked` varchar(30) DEFAULT NULL,\n  `phone_binding_source` varchar(20) DEFAULT NULL COMMENT 'WECHAT or LOCAL_TEST; local test is not phone verification',\n  `phone_verified_at` datetime DEFAULT NULL,\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `create_time` datetime NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_consumer_account_openid` (`openid_digest`),\n  UNIQUE KEY `uk_afs_consumer_account_phone` (`mobile_digest`),\n  CONSTRAINT `ck_afs_consumer_account_enabled` CHECK ((`enabled` in (0,1))),\n  CONSTRAINT `ck_afs_consumer_account_phone_source` CHECK (((`phone_binding_source` is null) or (`phone_binding_source` in (_utf8mb4'WECHAT',_utf8mb4'MANUAL_TEMP',_utf8mb4'LOCAL_TEST'))))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_order_follow_up_task": "CREATE TABLE `afs_order_follow_up_task` (\n  `order_id` bigint NOT NULL,\n  `status` varchar(20) NOT NULL DEFAULT 'PENDING',\n  `sample_reason` varchar(200) NOT NULL,\n  `result_ciphertext` varchar(4096) NOT NULL DEFAULT '',\n  `satisfaction` varchar(20) NOT NULL DEFAULT '',\n  `selected_by` bigint NOT NULL,\n  `selected_at` datetime NOT NULL,\n  `handled_by` bigint DEFAULT NULL,\n  `handled_at` datetime DEFAULT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  PRIMARY KEY (`order_id`),\n  KEY `idx_afs_order_follow_up_status` (`status`,`selected_at`,`order_id`),\n  CONSTRAINT `fk_afs_order_follow_up_order` FOREIGN KEY (`order_id`) REFERENCES `afs_service_order` (`id`),\n  CONSTRAINT `ck_afs_order_follow_up_satisfaction` CHECK ((`satisfaction` in (_utf8mb4'',_utf8mb4'SATISFIED',_utf8mb4'UNSATISFIED'))),\n  CONSTRAINT `ck_afs_order_follow_up_status` CHECK ((`status` in (_utf8mb4'PENDING',_utf8mb4'COMPLETED',_utf8mb4'UNREACHABLE')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_fee_policy": "CREATE TABLE `afs_fee_policy` (\n  `id` bigint NOT NULL,\n  `version_id` bigint NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  KEY `fk_fee_policy_version` (`version_id`),\n  CONSTRAINT `fk_fee_policy_version` FOREIGN KEY (`version_id`) REFERENCES `afs_fee_policy_version` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_complaint_event": "CREATE TABLE `afs_complaint_event` (\n  `id` bigint NOT NULL,\n  `complaint_id` bigint NOT NULL,\n  `action_code` varchar(30) NOT NULL,\n  `from_status` varchar(20) NOT NULL,\n  `to_status` varchar(20) NOT NULL,\n  `content_ciphertext` text NOT NULL,\n  `actor_id` bigint NOT NULL,\n  `request_id` varchar(64) NOT NULL,\n  `request_hash` varchar(128) NOT NULL,\n  `created_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_complaint_event_request` (`complaint_id`,`request_id`),\n  KEY `ix_complaint_event_time` (`complaint_id`,`created_at`,`id`),\n  CONSTRAINT `fk_complaint_event` FOREIGN KEY (`complaint_id`) REFERENCES `afs_complaint` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_area": "CREATE TABLE `afs_service_area` (\n  `id` bigint NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `name` varchar(100) NOT NULL,\n  `scope_level` varchar(20) NOT NULL,\n  `province_name` varchar(100) NOT NULL,\n  `province_code` char(6) NOT NULL DEFAULT '',\n  `city_name` varchar(100) NOT NULL DEFAULT '',\n  `city_code` char(6) NOT NULL DEFAULT '',\n  `district_name` varchar(100) NOT NULL DEFAULT '',\n  `district_code` varchar(12) NOT NULL DEFAULT '',\n  `street_name` varchar(100) NOT NULL DEFAULT '',\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_service_area_code` (`code`),\n  KEY `idx_afs_service_area_location` (`enabled`,`province_name`,`city_name`,`district_name`,`street_name`),\n  KEY `idx_afs_service_area_region_code` (`enabled`,`province_code`,`city_code`,`district_code`),\n  CONSTRAINT `ck_afs_service_area_enabled` CHECK ((`enabled` in (0,1))),\n  CONSTRAINT `ck_afs_service_area_scope` CHECK ((`scope_level` in (_utf8mb4'PROVINCE',_utf8mb4'CITY',_utf8mb4'DISTRICT',_utf8mb4'STREET')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_fee_policy_version": "CREATE TABLE `afs_fee_policy_version` (\n  `id` bigint NOT NULL,\n  `revision` bigint NOT NULL,\n  `mode` varchar(20) NOT NULL,\n  `snapshot` longtext NOT NULL,\n  `operator_id` bigint NOT NULL,\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `client_request_id` varchar(64) DEFAULT NULL,\n  `request_hash` char(64) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_fee_policy_revision` (`revision`),\n  UNIQUE KEY `uk_fee_policy_request` (`client_request_id`),\n  CONSTRAINT `ck_fee_policy_mode` CHECK ((`mode` in (_utf8mb4'FREE_ONLY',_utf8mb4'QUOTE_ALLOWED')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_part_inventory_history": "CREATE TABLE `afs_part_inventory_history` (\n  `id` bigint NOT NULL,\n  `document_id` bigint NOT NULL,\n  `from_status` varchar(30) DEFAULT NULL,\n  `to_status` varchar(30) NOT NULL,\n  `action` varchar(30) NOT NULL,\n  `actor_id` bigint NOT NULL,\n  `reason` varchar(200) NOT NULL DEFAULT '',\n  `created_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_part_inventory_history_document` (`document_id`,`created_at`,`id`),\n  CONSTRAINT `fk_afs_part_inventory_history_document` FOREIGN KEY (`document_id`) REFERENCES `afs_part_inventory_document` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_purchase_registration": "CREATE TABLE `afs_purchase_registration` (\n  `id` bigint NOT NULL,\n  `registration_no` varchar(50) NOT NULL,\n  `customer_id` bigint NOT NULL,\n  `owner_user_id` bigint DEFAULT NULL,\n  `owner_consumer_account_id` bigint DEFAULT NULL,\n  `dealer_id` bigint DEFAULT NULL,\n  `dealer_code` varchar(50) NOT NULL DEFAULT '',\n  `dealer_name` varchar(255) NOT NULL DEFAULT '',\n  `store_id` bigint DEFAULT NULL,\n  `store_code` varchar(50) NOT NULL DEFAULT '',\n  `store_name` varchar(255) NOT NULL DEFAULT '',\n  `reported_store_name` varchar(255) NOT NULL DEFAULT '',\n  `use_type` varchar(20) NOT NULL DEFAULT 'SELF',\n  `source_type` varchar(20) NOT NULL,\n  `verification_status` varchar(20) NOT NULL DEFAULT 'VERIFIED',\n  `verification_method` varchar(30) NOT NULL DEFAULT 'DEALER_REGISTRATION',\n  `entitlement_status` varchar(20) NOT NULL DEFAULT 'NOT_ASSESSED',\n  `verified_by` bigint DEFAULT NULL,\n  `verified_at` datetime DEFAULT NULL,\n  `merged_registration_id` bigint DEFAULT NULL,\n  `external_source_system` varchar(50) DEFAULT NULL,\n  `external_order_no` varchar(100) DEFAULT NULL,\n  `sync_method` varchar(20) DEFAULT NULL,\n  `sync_batch_no` varchar(64) DEFAULT NULL,\n  `sync_time` datetime DEFAULT NULL,\n  `purchase_date` date NOT NULL,\n  `province_name` varchar(100) NOT NULL,\n  `province_code` char(6) NOT NULL DEFAULT '',\n  `city_name` varchar(100) NOT NULL DEFAULT '',\n  `city_code` char(6) NOT NULL DEFAULT '',\n  `district_name` varchar(100) NOT NULL DEFAULT '',\n  `district_code` varchar(12) NOT NULL DEFAULT '',\n  `street_name` varchar(100) NOT NULL DEFAULT '',\n  `address_ciphertext` varchar(2048) NOT NULL,\n  `address_masked` varchar(255) NOT NULL,\n  `vip` tinyint NOT NULL DEFAULT '0',\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `status` varchar(20) NOT NULL,\n  `client_request_id` varchar(64) NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  `longitude` varchar(30) NOT NULL DEFAULT '' COMMENT '购买登记地址经度',\n  `latitude` varchar(30) NOT NULL DEFAULT '' COMMENT '购买登记地址纬度',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_purchase_registration_no` (`registration_no`),\n  UNIQUE KEY `uk_afs_purchase_registration_request` (`create_user`,`client_request_id`),\n  UNIQUE KEY `uk_afs_purchase_registration_external` (`external_source_system`,`external_order_no`),\n  KEY `idx_afs_purchase_registration_scope` (`store_id`,`purchase_date`,`id`),\n  KEY `idx_afs_purchase_registration_customer` (`customer_id`,`purchase_date`,`id`),\n  KEY `idx_afs_purchase_registration_sync` (`sync_method`,`sync_time`,`id`),\n  KEY `idx_afs_purchase_registration_owner` (`owner_user_id`,`purchase_date`,`id`),\n  KEY `idx_afs_purchase_registration_verification` (`verification_status`,`source_type`,`purchase_date`,`id`),\n  KEY `idx_afs_purchase_registration_consumer` (`owner_consumer_account_id`,`purchase_date`,`id`),\n  CONSTRAINT `ck_afs_purchase_registration_entitlement` CHECK ((`entitlement_status` in (_utf8mb4'NOT_ASSESSED',_utf8mb4'ELIGIBLE',_utf8mb4'NEEDS_EVIDENCE',_utf8mb4'INELIGIBLE',_utf8mb4'ONSITE_CONFIRMATION'))),\n  CONSTRAINT `ck_afs_purchase_registration_source` CHECK ((`source_type` in (_utf8mb4'OFFLINE',_utf8mb4'VIRTUAL',_utf8mb4'EXTERNAL',_utf8mb4'USER_REPORTED'))),\n  CONSTRAINT `ck_afs_purchase_registration_status` CHECK ((`status` in (_utf8mb4'ACTIVE',_utf8mb4'RETURNED',_utf8mb4'CANCELLED',_utf8mb4'MERGED'))),\n  CONSTRAINT `ck_afs_purchase_registration_use_type` CHECK ((`use_type` in (_utf8mb4'SELF',_utf8mb4'OTHER'))),\n  CONSTRAINT `ck_afs_purchase_registration_verification` CHECK ((`verification_status` in (_utf8mb4'PENDING',_utf8mb4'VERIFIED',_utf8mb4'CONFLICT',_utf8mb4'REJECTED'))),\n  CONSTRAINT `ck_afs_purchase_registration_vip` CHECK ((`vip` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_consumer_profile": "CREATE TABLE `afs_consumer_profile` (\n  `tenant_id` bigint NOT NULL,\n  `account_id` bigint NOT NULL,\n  `user_name` varchar(30) NOT NULL DEFAULT '',\n  `province_code` varchar(6) NOT NULL DEFAULT '',\n  `province_name` varchar(50) NOT NULL DEFAULT '',\n  `city_code` varchar(6) NOT NULL DEFAULT '',\n  `city_name` varchar(50) NOT NULL DEFAULT '',\n  `district_code` varchar(12) NOT NULL DEFAULT '',\n  `district_name` varchar(50) NOT NULL DEFAULT '',\n  `detail_address` varchar(200) NOT NULL DEFAULT '',\n  `avatar_id` char(36) DEFAULT NULL,\n  `avatar_object_path` varchar(700) DEFAULT NULL,\n  `avatar_content_type` varchar(30) DEFAULT NULL,\n  `avatar_byte_size` bigint DEFAULT NULL,\n  `revision` bigint NOT NULL DEFAULT '0',\n  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `gender` varchar(10) NOT NULL DEFAULT '',\n  `birth_year` smallint DEFAULT NULL,\n  `birth_date` date DEFAULT NULL,\n  PRIMARY KEY (`tenant_id`,`account_id`),\n  KEY `fk_afs_consumer_profile_account` (`account_id`),\n  CONSTRAINT `fk_afs_consumer_profile_account` FOREIGN KEY (`account_id`) REFERENCES `afs_consumer_account` (`id`),\n  CONSTRAINT `ck_afs_consumer_profile_birth_year` CHECK (((`birth_year` is null) or (`birth_year` between 1900 and 9999))),\n  CONSTRAINT `ck_afs_consumer_profile_gender` CHECK ((`gender` in (_utf8mb4'',_utf8mb4'MALE',_utf8mb4'FEMALE')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_product_instance": "CREATE TABLE `afs_product_instance` (\n  `id` bigint NOT NULL,\n  `purchase_item_id` bigint NOT NULL,\n  `instance_no` varchar(50) NOT NULL,\n  `installation_code` varchar(80) DEFAULT NULL,\n  `unique_code` varchar(100) DEFAULT NULL,\n  `status` varchar(20) NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_product_instance_no` (`instance_no`),\n  UNIQUE KEY `uk_afs_product_instance_code` (`installation_code`),\n  KEY `idx_afs_product_instance_item` (`purchase_item_id`,`id`),\n  KEY `idx_afs_product_instance_unique_code` (`unique_code`),\n  CONSTRAINT `ck_afs_product_instance_status` CHECK ((`status` in (_utf8mb4'AVAILABLE',_utf8mb4'APPOINTED',_utf8mb4'RETURNED',_utf8mb4'MERGED')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_area_station": "CREATE TABLE `afs_service_area_station` (\n  `area_id` bigint NOT NULL,\n  `station_id` bigint NOT NULL,\n  `priority` int NOT NULL,\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`area_id`,`station_id`),\n  KEY `idx_afs_service_area_station_candidate` (`area_id`,`priority`,`station_id`),\n  KEY `idx_afs_service_area_station_station` (`station_id`,`area_id`),\n  CONSTRAINT `ck_afs_service_area_station_priority` CHECK ((`priority` between 1 and 999))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_personnel_availability": "CREATE TABLE `afs_personnel_availability` (\n  `id` bigint NOT NULL,\n  `personnel_id` bigint NOT NULL,\n  `schedule_date` date NOT NULL,\n  `availability` varchar(20) NOT NULL,\n  `day_type` varchar(20) NOT NULL DEFAULT 'WORK',\n  `schedule_status` varchar(20) NOT NULL DEFAULT 'DRAFT',\n  `service_items` varchar(100) NOT NULL DEFAULT '',\n  `publish_batch_id` bigint DEFAULT NULL,\n  `source_type` varchar(20) NOT NULL DEFAULT 'MANUAL',\n  `change_reason` varchar(200) NOT NULL DEFAULT '',\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_personnel_availability_date` (`personnel_id`,`schedule_date`),\n  KEY `idx_afs_personnel_availability_date` (`schedule_date`,`availability`),\n  KEY `idx_afs_personnel_availability_status` (`schedule_status`,`schedule_date`),\n  KEY `idx_afs_personnel_availability_publish` (`publish_batch_id`),\n  CONSTRAINT `ck_afs_personnel_availability_type` CHECK ((`availability` in (_utf8mb4'AVAILABLE',_utf8mb4'LEAVE',_utf8mb4'SUSPENDED')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_part_inventory_document": "CREATE TABLE `afs_part_inventory_document` (\n  `id` bigint NOT NULL,\n  `document_no` varchar(50) NOT NULL,\n  `document_type` varchar(20) NOT NULL,\n  `status` varchar(30) NOT NULL,\n  `source_type` varchar(20) DEFAULT NULL,\n  `source_id` bigint DEFAULT NULL,\n  `target_type` varchar(20) DEFAULT NULL,\n  `target_id` bigint DEFAULT NULL,\n  `work_order_id` varchar(50) NOT NULL DEFAULT '',\n  `purpose` varchar(20) NOT NULL DEFAULT '',\n  `mobile_applicant_account_id` bigint DEFAULT NULL,\n  `reason` varchar(200) NOT NULL DEFAULT '',\n  `physical_condition` varchar(30) NOT NULL DEFAULT '',\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `client_request_id` varchar(64) NOT NULL,\n  `request_fingerprint` varchar(64) NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_part_inventory_document_no` (`document_no`),\n  UNIQUE KEY `uk_afs_part_inventory_document_request` (`document_type`,`client_request_id`),\n  KEY `idx_afs_part_inventory_document_type_status` (`document_type`,`status`,`create_time`),\n  KEY `idx_afs_part_inventory_document_work_order` (`work_order_id`),\n  KEY `idx_afs_part_inventory_mobile_applicant` (`mobile_applicant_account_id`,`document_type`,`create_time`),\n  CONSTRAINT `ck_afs_part_inventory_document_type` CHECK ((`document_type` in (_utf8mb4'INBOUND',_utf8mb4'REQUISITION',_utf8mb4'RETURN',_utf8mb4'TRANSFER',_utf8mb4'CONSUMPTION',_utf8mb4'STOCKTAKE'))),\n  CONSTRAINT `ck_afs_part_inventory_owner_source` CHECK (((`source_type` is null) or (`source_type` in (_utf8mb4'WAREHOUSE',_utf8mb4'STATION',_utf8mb4'PERSONNEL')))),\n  CONSTRAINT `ck_afs_part_inventory_owner_target` CHECK (((`target_type` is null) or (`target_type` in (_utf8mb4'WAREHOUSE',_utf8mb4'STATION',_utf8mb4'PERSONNEL')))),\n  CONSTRAINT `ck_afs_part_inventory_purpose` CHECK ((`purpose` in (_utf8mb4'',_utf8mb4'WORK_ORDER',_utf8mb4'STANDBY')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_completion_submission": "CREATE TABLE `afs_completion_submission` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `version_no` int NOT NULL,\n  `service_result` varchar(1000) NOT NULL,\n  `product_code` varchar(100) NOT NULL,\n  `photo_references` varchar(2000) NOT NULL,\n  `signature_reference` varchar(500) NOT NULL,\n  `parts_summary` varchar(1000) NOT NULL DEFAULT '',\n  `submitter_id` bigint NOT NULL,\n  `submitted_at` datetime NOT NULL,\n  `process_record` varchar(2000) NOT NULL DEFAULT '',\n  `rfid_code` varchar(100) NOT NULL DEFAULT '',\n  `customer_confirmation` varchar(20) NOT NULL DEFAULT '',\n  `customer_confirmation_note` varchar(1000) NOT NULL DEFAULT '',\n  `site_evidence` text NOT NULL,\n  `nameplate_evidence` text NOT NULL,\n  `communication_evidence` text NOT NULL,\n  `confirmation_evidence` text NOT NULL,\n  `draft_revision` bigint DEFAULT NULL,\n  `parent_submission_id` bigint DEFAULT NULL,\n  `supplemented_items` varchar(500) NOT NULL DEFAULT '',\n  `supplement_note` varchar(1000) NOT NULL DEFAULT '',\n  `inventory_document_id` bigint DEFAULT NULL,\n  `client_request_id` varchar(64) DEFAULT NULL,\n  `request_hash` char(64) DEFAULT NULL,\n  `fee_quote_id` bigint DEFAULT NULL,\n  `fee_snapshot` longtext,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_completion_submission_version` (`order_id`,`version_no`),\n  UNIQUE KEY `uk_afs_completion_submission_request` (`order_id`,`client_request_id`),\n  KEY `idx_afs_completion_submission_order` (`order_id`,`submitted_at`,`id`),\n  KEY `idx_afs_completion_submission_parent` (`parent_submission_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_product": "CREATE TABLE `afs_product` (\n  `id` bigint NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `barcode` varchar(100) NOT NULL DEFAULT '',\n  `specification` varchar(255) NOT NULL DEFAULT '',\n  `category_id` bigint NOT NULL,\n  `business_category_id` bigint DEFAULT NULL,\n  `model` varchar(100) NOT NULL DEFAULT '',\n  `base_model` varchar(100) NOT NULL DEFAULT '',\n  `tank_model` varchar(100) NOT NULL DEFAULT '',\n  `color` varchar(50) NOT NULL DEFAULT '',\n  `series_id` bigint DEFAULT NULL,\n  `warranty_enabled` tinyint NOT NULL DEFAULT '1',\n  `warranty_months` int DEFAULT NULL,\n  `physical_product` tinyint NOT NULL DEFAULT '1',\n  `unit_name` varchar(50) NOT NULL DEFAULT '',\n  `listed` tinyint NOT NULL DEFAULT '1',\n  `listed_at` date DEFAULT NULL,\n  `delisted_at` date DEFAULT NULL,\n  `network_supported` tinyint NOT NULL DEFAULT '0',\n  `product_size` varchar(255) NOT NULL DEFAULT '',\n  `product_description` text,\n  `product_function` text,\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  `warranty_type` varchar(20) DEFAULT NULL,\n  `warranty_scope` varchar(30) DEFAULT NULL,\n  `warranty_scope_description` varchar(500) DEFAULT NULL,\n  `warranty_policy_reference` varchar(500) DEFAULT NULL,\n  `warranty_limitations` varchar(1000) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_afs_product_code` (`code`),\n  KEY `idx_afs_independent_product_category` (`category_id`,`enabled`),\n  KEY `idx_afs_independent_product_business_category` (`business_category_id`,`enabled`),\n  KEY `idx_afs_independent_product_series` (`series_id`,`enabled`),\n  KEY `idx_afs_independent_product_model` (`model`),\n  CONSTRAINT `ck_afs_independent_product_enabled` CHECK ((`enabled` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_completion_review": "CREATE TABLE `afs_completion_review` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `submission_id` bigint NOT NULL,\n  `decision` varchar(20) NOT NULL,\n  `reason` varchar(200) NOT NULL DEFAULT '',\n  `reviewer_id` bigint NOT NULL,\n  `reviewed_at` datetime NOT NULL,\n  `required_items` varchar(500) NOT NULL DEFAULT '',\n  `rejection_type` varchar(30) NOT NULL DEFAULT '' COMMENT 'MATERIAL_ONLY: documents only; CONTINUE_SERVICE: further service; empty: legacy',\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_completion_review_order` (`order_id`,`reviewed_at`,`id`),\n  CONSTRAINT `ck_afs_completion_review_decision` CHECK ((`decision` in (_utf8mb4'APPROVE',_utf8mb4'REJECT')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_order_fee": "CREATE TABLE `afs_order_fee` (\n  `order_id` bigint NOT NULL,\n  `policy_version_id` bigint NOT NULL,\n  `mode` varchar(20) NOT NULL,\n  `fee_type` varchar(20) NOT NULL,\n  `currency` char(3) NOT NULL DEFAULT 'CNY',\n  `policy_snapshot` longtext NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `financial_risk` tinyint NOT NULL DEFAULT '0',\n  `create_user` bigint NOT NULL,\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `current_quote_id` bigint DEFAULT NULL,\n  PRIMARY KEY (`order_id`),\n  KEY `fk_order_fee_policy` (`policy_version_id`),\n  CONSTRAINT `fk_order_fee_order` FOREIGN KEY (`order_id`) REFERENCES `afs_service_order` (`id`),\n  CONSTRAINT `fk_order_fee_policy` FOREIGN KEY (`policy_version_id`) REFERENCES `afs_fee_policy_version` (`id`),\n  CONSTRAINT `ck_order_fee_currency` CHECK ((`currency` = _utf8mb4'CNY')),\n  CONSTRAINT `ck_order_fee_mode` CHECK ((`mode` in (_utf8mb4'FREE_ONLY',_utf8mb4'QUOTE_ALLOWED'))),\n  CONSTRAINT `ck_order_fee_type` CHECK ((`fee_type` in (_utf8mb4'FREE',_utf8mb4'PENDING',_utf8mb4'PARTIAL',_utf8mb4'CHARGED')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_customer": "CREATE TABLE `afs_customer` (\n  `id` bigint NOT NULL,\n  `mobile_digest` char(64) NOT NULL,\n  `mobile_ciphertext` varchar(1024) NOT NULL,\n  `mobile_masked` varchar(30) NOT NULL,\n  `name_digest` char(64) NOT NULL,\n  `name_ciphertext` varchar(1024) NOT NULL,\n  `name_masked` varchar(100) NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_customer_mobile_digest` (`mobile_digest`),\n  KEY `idx_afs_customer_name_digest` (`name_digest`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_evaluation_tag": "CREATE TABLE `afs_evaluation_tag` (\n  `code` varchar(32) NOT NULL,\n  `label` varchar(12) NOT NULL,\n  `dimension` varchar(20) NOT NULL,\n  `sentiment` varchar(20) NOT NULL,\n  `service_types` varchar(100) NOT NULL,\n  `enabled` tinyint NOT NULL DEFAULT '1',\n  `sort_order` int NOT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `updated_by` bigint DEFAULT NULL,\n  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`code`),\n  CONSTRAINT `afs_evaluation_tag_chk_1` CHECK ((`dimension` in (_utf8mb4'CONTACT',_utf8mb4'APPOINTMENT',_utf8mb4'TIMELINESS',_utf8mb4'ATTITUDE',_utf8mb4'EXPERTISE'))),\n  CONSTRAINT `afs_evaluation_tag_chk_2` CHECK ((`sentiment` in (_utf8mb4'POSITIVE',_utf8mb4'IMPROVEMENT')))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_service_execution": "CREATE TABLE `afs_service_execution` (\n  `order_id` bigint NOT NULL,\n  `personnel_id` bigint NOT NULL,\n  `station_id` bigint NOT NULL,\n  `service_active` tinyint NOT NULL DEFAULT '0',\n  `start_mode` varchar(20) NOT NULL DEFAULT '',\n  `current_step` varchar(30) NOT NULL DEFAULT '',\n  `started_at` datetime DEFAULT NULL,\n  `ended_at` datetime DEFAULT NULL,\n  `revision` bigint NOT NULL DEFAULT '1',\n  `create_user` bigint NOT NULL,\n  `create_time` datetime NOT NULL,\n  `update_user` bigint NOT NULL,\n  `update_time` datetime NOT NULL,\n  `longitude` decimal(10,7) DEFAULT NULL,\n  `latitude` decimal(10,7) DEFAULT NULL,\n  `location_accuracy_meters` int DEFAULT NULL,\n  `location_authorized` tinyint NOT NULL DEFAULT '0',\n  `location_exception` varchar(500) NOT NULL DEFAULT '',\n  `location_source` varchar(50) NOT NULL DEFAULT '',\n  `location_address` varchar(500) NOT NULL DEFAULT '',\n  `location_province_name` varchar(100) NOT NULL DEFAULT '',\n  `location_province_code` varchar(20) NOT NULL DEFAULT '',\n  `location_city_name` varchar(100) NOT NULL DEFAULT '',\n  `location_city_code` varchar(20) NOT NULL DEFAULT '',\n  `location_district_name` varchar(100) NOT NULL DEFAULT '',\n  `location_district_code` varchar(20) NOT NULL DEFAULT '',\n  PRIMARY KEY (`order_id`),\n  KEY `idx_afs_service_execution_personnel` (`personnel_id`,`station_id`,`service_active`,`started_at`),\n  CONSTRAINT `fk_afs_service_execution_order` FOREIGN KEY (`order_id`) REFERENCES `afs_service_order` (`id`),\n  CONSTRAINT `ck_afs_service_execution_active` CHECK ((`service_active` in (0,1))),\n  CONSTRAINT `ck_afs_service_execution_location_authorized` CHECK ((`location_authorized` in (0,1)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+    "afs_order_status_history": "CREATE TABLE `afs_order_status_history` (\n  `id` bigint NOT NULL,\n  `order_id` bigint NOT NULL,\n  `from_status` varchar(30) DEFAULT NULL,\n  `to_status` varchar(30) NOT NULL,\n  `reason_code` varchar(50) NOT NULL DEFAULT '',\n  `remark` varchar(200) NOT NULL DEFAULT '',\n  `operator_id` bigint NOT NULL,\n  `source` varchar(20) NOT NULL,\n  `created_at` datetime NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_afs_order_status_history_order` (`order_id`,`created_at`,`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+  }
+}
