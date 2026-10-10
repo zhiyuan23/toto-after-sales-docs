@@ -10,6 +10,7 @@
   let mounted = -1;
   let notesOpen = false;
   const displayMotion = window.createReportDisplayMotion(reduce);
+  const closingMotion = window.createReportClosingMotion(reduce);
   const strip = html => html.replace(/<br\s*\/?\s*>/g,'').replace(/<[^>]*>/g,'');
   // Content is authored locally. Never insert API responses or user input into these templates.
   const sections = slides.map((slide, i) => {
@@ -19,6 +20,12 @@
     section.hidden = true;
     section.setAttribute('aria-labelledby','slide-title-' + i);
     section.innerHTML = `<header class="slide-header">${slide.chapter ? `<p class="eyebrow">${slide.chapter}</p>` : ''}<h1 id="slide-title-${i}">${slide.title}</h1></header><div class="visual">${slide.html}</div>`;
+    if (slide.id === 'closing') {
+      const copy = document.createElement('div');
+      copy.className = 'closing-copy';
+      copy.append(...section.childNodes);
+      section.append(copy);
+    }
     stage.append(section);
     return section;
   });
@@ -28,6 +35,7 @@
     const blocked = directory.open || notesOpen || document.hidden;
     coverMotion.sync(slides[page].id === 'cover', blocked);
     if (directory.open || document.hidden) displayMotion.cancel();
+    if (directory.open || document.hidden) closingMotion.cancel();
   };
   function updateDirectory() {
     $('directory-list').querySelectorAll('button').forEach((button,i) => {
@@ -39,6 +47,7 @@
     const direction = page < mounted ? -1 : 1;
     sections.forEach((section,i)=>{ section.hidden = i !== page; });
     const section = sections[page];
+    document.body.dataset.reportPage = slides[page].id;
     // Keep authored reveal markers for grouping; every page now opens complete.
     section.querySelectorAll('[data-reveal]').forEach(element=>{
       element.classList.remove('reveal-hidden');
@@ -46,17 +55,11 @@
       element.inert = false;
     });
     if (changed) displayMotion.enter(section, direction, instant || directory.open);
+    if (changed) closingMotion.enter(slides[page].id === 'closing', instant || directory.open);
     mounted = page;
     const data = slides[page];
-    $('chapter').textContent = data.chapter;
-    $('chapter').hidden = !data.chapter;
     $('counter').textContent = `${String(page + 1).padStart(2,'0')} / ${slides.length}`;
-    $('progress-fill').style.transitionDuration = instant || reduce.matches ? '0ms' : '';
-    $('progress-fill').style.transform = `scaleX(${(page + 1)/slides.length})`;
-    $('previous').disabled = page === 0;
-    $('next').disabled = page === slides.length - 1;
-    $('next').innerHTML = (page === slides.length - 1 ? '展示结束' : data.nextLabel || '下一页') + ' <span aria-hidden="true">→</span>';
-    $('step-hint').textContent = '';
+    $('counter').setAttribute('aria-label', `第 ${page + 1} 页，共 ${slides.length} 页`);
     $('notes-title').textContent = strip(data.title);
     $('notes-body').textContent = data.notes;
     $('announcement').textContent = `${page + 1} / ${slides.length}，${strip(data.title)}`;
@@ -102,8 +105,6 @@
   $('directory-list').addEventListener('click',event=>{const button=event.target.closest('button[data-page]'); if (!button) return; closeDirectory(event.detail === 0); go(Number(button.dataset.page)); stage.focus({preventScroll:true});});
   $('contents').addEventListener('click',event=>showDirectory(event.detail === 0));
   $('directory-close').addEventListener('click',event=>closeDirectory(event.detail === 0));
-  $('previous').addEventListener('click',()=>back());
-  $('next').addEventListener('click',()=>forward());
   $('notes-toggle').addEventListener('click',event=>toggleNotes(event.detail === 0));
   $('notes-close').addEventListener('click',event=>toggleNotes(event.detail === 0));
   $('theme').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme !== 'dark'));
@@ -118,8 +119,37 @@
     if (button) {
       $('example-feedback').textContent = button.dataset.example + '（交互示意）';
       displayMotion.feedback($('example-feedback'), event.detail === 0);
+      return;
     }
+    if (event.defaultPrevented || event.button !== 0 || event.detail === 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || directory.open || notesOpen) return;
+    if (event.target.closest('a,button,input,textarea,select,summary,[role="button"],[contenteditable]') || window.getSelection()?.toString()) return;
+    forward();
   });
+  let wheelAt = -Infinity;
+  let wheelDelta = 0;
+  let wheelUsed = false;
+  stage.addEventListener('wheel', event => {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || directory.open || notesOpen) return;
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX) || event.target.closest('a,button,input,textarea,select,[contenteditable]')) return;
+    const section = sections[page];
+    // Let a scrollable slide finish scrolling before treating the wheel as navigation.
+    const scrollable = /^(auto|scroll)$/.test(getComputedStyle(section).overflowY);
+    if (scrollable && section.scrollHeight > section.clientHeight + 1 && (event.deltaY > 0 ? section.scrollTop + section.clientHeight < section.scrollHeight - 1 : section.scrollTop > 0)) return;
+    event.preventDefault();
+    const now = performance.now();
+    if (now - wheelAt > 220) {
+      wheelDelta = 0;
+      wheelUsed = false;
+    }
+    wheelAt = now;
+    if (wheelUsed) return;
+    const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.clientHeight : 1);
+    if (Math.sign(delta) !== Math.sign(wheelDelta)) wheelDelta = 0;
+    wheelDelta += delta;
+    if (Math.abs(wheelDelta) < 48) return;
+    wheelUsed = true;
+    if (wheelDelta > 0) forward(); else back();
+  }, {passive: false});
   document.addEventListener('keydown',event=>{
     if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select') || directory.open) return;
     if (event.code === 'Space' && event.target.closest('button,a')) return;
@@ -138,7 +168,7 @@
   directory.addEventListener('cancel',()=>{ directory.dataset.instant = 'true'; });
   directory.addEventListener('close',syncMotion);
   document.addEventListener('visibilitychange',syncMotion);
-  reduce.addEventListener('change',()=>{ displayMotion.cancel(); coverMotion.reduced(); render(true); });
+  reduce.addEventListener('change',()=>{ displayMotion.cancel(); closingMotion.cancel(); coverMotion.reduced(); render(true); });
   const initial = slides.findIndex(x=>x.id===location.hash.slice(1));
   go(initial >= 0 ? initial : 0);
 })();

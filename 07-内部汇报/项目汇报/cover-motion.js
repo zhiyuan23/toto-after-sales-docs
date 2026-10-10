@@ -7,7 +7,6 @@ window.createReportCoverMotion = (root, reduce) => {
   const pips = [...root.querySelectorAll('[data-cover-pip]')];
   const dots = [...root.querySelectorAll('[data-cover-dot]')];
   const nodes = [...root.querySelectorAll('[data-cover-node]')];
-  const titles = [...root.querySelectorAll('[data-cover-title]')];
   const order = root.querySelector('[data-cover-order]');
   const owners = ['consumer', 'customer', 'station', 'worker', 'customer', 'customer', null];
   const phases = [0,1,2,3,4,5,6];
@@ -55,10 +54,8 @@ window.createReportCoverMotion = (root, reduce) => {
     root.dataset.coverOwner = reduce.matches ? 'order' : owner || 'order';
     states[0].querySelector('.cover-order-status').textContent = reduce.matches ? '全程服务协同' : '待分站';
     states[0].querySelector('.cover-order-owner').textContent = reduce.matches ? '消费者申请 · 总部支撑' : '消费者自主申请';
-    titles[0].textContent = reduce.matches ? '六类角色协作，消费者发起服务' : '消费者自主发起服务申请';
     routes.forEach((route,i) => route.classList.toggle('is-current',!reduce.matches && i === routeIndex()));
     states.forEach((state,i) => state.classList.toggle('is-current',i === current));
-    titles.forEach((title,i) => title.classList.toggle('is-current',i === current));
     pips.forEach((pip,i) => pip.classList.toggle('is-current',i === phases[current]));
     nodes.forEach(node => node.classList.toggle('is-current',!reduce.matches && node.dataset.coverNode === owner));
     // Place the card beside the current owner; settle at the centre after closure.

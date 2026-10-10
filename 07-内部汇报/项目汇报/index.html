@@ -7,19 +7,51 @@
   <title>蓝鲸数字 售后服务 · TOTO 内部汇报</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="styles.css?v=024c0e4a06">
-  <link rel="stylesheet" href="presentation.css?v=5b9cb2c4fa">
+  <link rel="stylesheet" href="presentation.css?v=97768702f3">
   <link rel="stylesheet" href="card-feedback.css?v=016f89d554">
   <script src="icons.js" defer></script>
-  <script src="content.js?v=b4732b1d72" defer></script>
-  <script src="cover-motion.js?v=377df4b25b" defer></script>
-  <script src="display-motion.js?v=9e9f306931" defer></script>
+  <script src="content.js?v=d92734beea" defer></script>
+  <script src="cover-motion.js?v=94846de3c4" defer></script>
+  <script src="display-motion.js?v=e654698860" defer></script>
+  <script src="closing-motion.js?v=58cbf2fe63" defer></script>
   <script src="business-diagrams.js" defer></script>
   <script src="platform-puzzle.js?v=df0759a536" defer></script>
   <script src="graph-layout.js?v=6c06d8e750" defer></script>
-  <script src="responsive-layout.js?v=a5e35e676b" defer></script>
-  <script src="app.js?v=65dc244513" defer></script>
+  <script src="responsive-layout.js?v=a2350ef681" defer></script>
+  <script src="app.js?v=7542df3918" defer></script>
 </head>
 <body class="report-v3">
+  <div class="report-brand-scene" aria-hidden="true" hidden>
+    <div class="report-brand-symbol">
+    <svg class="report-brand-art" viewBox="0 0 1110 1110" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+      <defs>
+        <linearGradient id="closing-brand-blue" gradientUnits="userSpaceOnUse" x1="75" y1="200" x2="1030" y2="720">
+          <stop offset="0" stop-color="#10338e"/><stop offset=".52" stop-color="#0869bb"/><stop offset="1" stop-color="#00a1e7"/>
+        </linearGradient>
+        <!-- Keep the three existing backdrop paths and their mirror direction intact. -->
+        <path id="closing-brand-tail" d="M387 677C357 626 378 586 413 550C433 529 452 508 455 493C461 463 445 435 442 410C436 379 451 347 481 330C494 324 499 327 494 336C476 374 528 411 530 445C565 443 574 468 581 486C594 514 615 530 635 529C658 527 648 539 634 548C607 570 566 579 535 556C518 540 501 533 491 534C468 536 458 560 460 595C462 621 482 643 500 651Z"/>
+        <path id="closing-brand-wave-one" d="M80 640C240 735 440 695 590 635C673 603 738 591 800 606C692 613 642 650 590 698C460 824 247 824 80 640Z"/>
+        <path id="closing-brand-wave-two" d="M240 825C515 848 658 677 899 636C815 690 751 746 727 801C690 851 649 880 561 890C415 920 307 885 240 825Z"/>
+        <path id="closing-brand-arch" d="M80 640C38 359 251 75 555 75C815 75 1025 284 1030 550C1009 452 930 389 824 408C804 301 724 227 625 216C500 202 381 287 363 410C266 383 181 435 162 524C141 623 186 689 264 719C187 709 117 684 80 640Z"/>
+        <path id="closing-brand-base" fill-rule="evenodd" d="M80 640C181 805 327 860 487 831C661 799 736 697 899 636L978 659C933 873 763 1030 555 1030C298 1030 86 871 80 640ZM413 929C546 913 657 856 721 780C782 711 846 685 881 669C818 732 793 792 767 840C691 890 559 918 413 929Z"/>
+        <g id="closing-brand-complete">
+          <use href="#closing-brand-tail"/><use href="#closing-brand-wave-one"/><use href="#closing-brand-wave-two"/>
+          <use href="#closing-brand-arch"/><use href="#closing-brand-base"/>
+        </g>
+      </defs>
+      <g class="report-brand-mirror" transform="translate(1110 0) scale(-1 1)">
+        <g fill="currentColor">
+          <use href="#closing-brand-tail"/>
+          <use href="#closing-brand-wave-one" opacity=".62"/>
+          <use href="#closing-brand-wave-two" opacity=".38"/>
+          <use class="report-brand-upper" href="#closing-brand-arch"/>
+          <use class="report-brand-lower" href="#closing-brand-base"/>
+        </g>
+        <use class="report-brand-color" href="#closing-brand-complete" fill="url(#closing-brand-blue)"/>
+      </g>
+    </svg>
+    </div>
+  </div>
   <div class="report">
     <header class="topbar">
       <a class="brand" href="#cover" title="蓝鲸数字售后服务 · TOTO 内部汇报" aria-label="蓝鲸数字售后服务 · TOTO 内部汇报"><img class="brand-logo" src="brand-logo.png" alt="" width="34" height="34"><span class="brand-title"><span class="brand-name">蓝鲸数字</span><span class="brand-divider" aria-hidden="true"></span><span class="brand-service">售后服务</span></span></a>
@@ -47,16 +79,10 @@
     </header>
     <main id="stage" tabindex="-1" aria-label="蓝鲸数字售后服务项目内部汇报"></main>
     <footer class="footer">
-      <div class="location"><span id="chapter"></span><span id="counter"></span></div>
-      <div class="progress" aria-hidden="true"><div id="progress-fill"></div></div>
-      <div class="navigation">
-        <span id="step-hint"></span>
-        <button id="previous" type="button" aria-label="上一步">←</button>
-        <button id="next" type="button">下一页 <span aria-hidden="true">→</span></button>
-      </div>
+      <span id="counter" aria-label="页码"></span>
     </footer>
   </div>
-  <aside id="notes" hidden aria-label="内部讲解备注"><div class="notes-head"><strong>讲解备注 · 仅内部准备</strong><button id="notes-close" aria-label="关闭讲解备注">关闭</button></div><h2 id="notes-title"></h2><p id="notes-body"></p><small>方向键 / 空格：翻页 · PageDown / PageUp：翻页 · Home / End：首尾 · M：目录 · N：备注 · F：全屏</small></aside>
+  <aside id="notes" hidden aria-label="内部讲解备注"><div class="notes-head"><strong>讲解备注 · 仅内部准备</strong><button id="notes-close" aria-label="关闭讲解备注">关闭</button></div><h2 id="notes-title"></h2><p id="notes-body"></p><small>滚轮：前后翻页 · 点击正文：下一页 · 方向键 / 空格：翻页 · Home / End：首尾 · M：目录 · N：备注 · F：全屏</small></aside>
   <dialog id="directory" aria-labelledby="directory-title"><div class="dialog-head"><div><p class="eyebrow">CONTENTS</p><h2 id="directory-title">内容目录</h2></div><button id="directory-close" aria-label="关闭目录">关闭</button></div><nav id="directory-list" aria-label="选择展示页面"></nav><div class="directory-demo"><span>材料与补充演示</span><a href="../../06-项目交付/02-角色手册/index.html" target="_blank" rel="noopener">角色手册目录 ↗</a><a href="../../06-项目交付/03-项目说明/index.html" target="_blank" rel="noopener">项目说明阅读版 ↗</a><a href="../../06-项目交付/04-交付材料/index.html" target="_blank" rel="noopener">交付清单 ↗</a><a href="../../06-项目交付/03-项目说明/网页演示/工单流转/index.html" target="_blank" rel="noopener">独立工单协同演示 ↗</a></div><p class="dialog-tip">八章十五屏 · 蓝鲸数字售后服务，TOTO 项目内部汇报。三项材料已有首版 HTML 与同源打印视图，业务复核和实际交接另行核对。</p></dialog>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
   <noscript>请启用 JavaScript 查看项目说明。完整文字内容见项目说明大纲。</noscript>

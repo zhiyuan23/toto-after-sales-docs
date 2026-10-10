@@ -57,9 +57,6 @@ window.createReportDisplayMotion = reduce => {
       ['.v3-future-centre', 'lift', 100], ['.v3-future-direction', 'lift', 170, 55],
       ['.v3-future-path', 'fade', 450]
     ],
-    closing: [
-      ['.closing-invitation', 'fade', 100], ['.closing-signature', 'fade', 180]
-    ],
     delivery: [
       ['.delivery-track>div', 'lift', 130, 65], ['.v2-closing-value>strong', 'lift', 380, 50],
       ['.material-links', 'fade', 520], ['.v2-signoff', 'fade', 560]
@@ -90,7 +87,8 @@ window.createReportDisplayMotion = reduce => {
   }
   function enter(section, direction, instant) {
     cancel();
-    if (instant || document.hidden) return;
+    // The closing controller owns its single, stationary text fade.
+    if (instant || document.hidden || section.dataset.slide === 'closing') return;
     if (reduce.matches) {
       // Preserve a gentle page transition without movement or stagger.
       play(section.querySelector('.slide-header'), 'fade', 0, direction, 180);

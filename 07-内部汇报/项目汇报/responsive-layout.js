@@ -4,10 +4,9 @@ window.createReportResponsiveLayout = stage => {
   function refresh() {
     const {width, height} = stage.getBoundingClientRect();
     if (width <= 0 || height <= 0) return;
-    // All desktop pages share one design scale. Extra logical height gives dense pages
-    // room for their notes and card shadows before the fixed footer begins.
-    const desktop = window.innerWidth > 760;
-    const scale = desktop ? Math.min(width / 1178, height / 620) : 1;
+    // Desktop pages share this scale; the background page also uses it in narrow
+    // presentation windows to keep its three cards on one complete canvas.
+    const scale = Math.min(width / 1178, height / 620);
     stage.style.setProperty('--report-canvas-scale', String(scale));
     stage.style.setProperty('--report-canvas-width', `${width / scale}px`);
     stage.style.setProperty('--report-canvas-height', `${height / scale}px`);
