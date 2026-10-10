@@ -1,4 +1,7 @@
 /* V3 presentation layer: preserved brand tokens and focused slide compositions. */
+/* Keep entrance transforms inside the fixed presentation canvas.
+   Clipping creates no scroll container, so temporary motion cannot shrink the slide. */
+.report-v3 #stage,.report-v3 .slide.graphic-report{overflow:clip}
 /* Platform: one continuous puzzle, a short interpretation and a quiet capability strip. */
 .report-v3 .slide.graphic-report.v3-platform .visual{flex:1 0 auto;min-height:auto;justify-content:flex-start;padding-top:calc(18 * var(--display-unit,1px))}
 .v3-platform-board{padding:calc(20 * var(--display-unit,1px));background:var(--surface);display:flex;flex-direction:column}
@@ -20,7 +23,7 @@
 .v3-platform-piece:not(.is-service) .v3-puzzle-title{fill:var(--tone,var(--blue))}
 .v3-platform-piece:not(.is-service) .v3-puzzle-detail{fill:var(--muted)}
 .v3-puzzle-title{font-size:20px;font-weight:550}
-.v3-puzzle-detail{font-size:12px}
+.v3-puzzle-detail{font-size:13px}
 .v3-platform-story{display:flex;flex-direction:column;justify-content:center;min-width:0}
 .report-v3 .v3-platform .visual .v3-platform-story h3{font-size:calc(27 * var(--display-unit,1px));line-height:1.5;color:var(--ink);font-weight:550;letter-spacing:0}
 .v3-platform-story h3>em{color:var(--blue);font-style:normal}
@@ -98,6 +101,7 @@
 .report-v3 .graphic-report .v2-problem h3{font-size:calc(19 * var(--display-unit,1px));color:var(--muted)}
 .report-v3 .graphic-report .v2-direction-arrow{margin:calc(8 * var(--display-unit,1px)) 0;font-size:calc(25 * var(--display-unit,1px))}
 .report-v3 .graphic-report .v2-solution h3{font-size:calc(28 * var(--display-unit,1px))}
+.report-v3 .graphic-report[data-slide="background"] :is(.v2-problem,.v2-solution){text-align:center}
 .report-v3 .graphic-report .platform-heading small{font-size:calc(14 * var(--display-unit,1px))}
 .report-v3 .graphic-report .platform-service{padding:calc(32 * var(--display-unit,1px)) calc(18 * var(--display-unit,1px))}
 .report-v3 .graphic-report .reuse-feature h3{font-size:calc(30 * var(--display-unit,1px))}
@@ -217,7 +221,7 @@
 .v3-dispatch-intelligence{display:flex;align-items:center;justify-content:center;gap:calc(12 * var(--display-unit,1px));align-self:center;padding:calc(9 * var(--display-unit,1px)) calc(24 * var(--display-unit,1px));margin-bottom:calc(16 * var(--display-unit,1px));border:calc(1 * var(--display-unit,1px)) solid color-mix(in srgb,var(--indigo) 25%,var(--line));border-radius:calc(30 * var(--display-unit,1px));background:var(--indigo-soft);color:var(--indigo)}
 .v3-dispatch-intelligence strong{font-size:calc(21 * var(--display-unit,1px));font-weight:550}
 .report-v3 .graphic-report .v3-dispatch-intelligence>.report-icon{width:calc(26 * var(--display-unit,1px));height:calc(26 * var(--display-unit,1px))}
-.v3-dispatch-focus{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;min-height:calc(278 * var(--display-unit,1px));padding:calc(22 * var(--display-unit,1px)) calc(18 * var(--display-unit,1px));background:var(--surface);border:calc(1 * var(--display-unit,1px)) solid var(--line);border-radius:var(--report-card-radius);box-shadow:0 var(--report-card-depth) 0 color-mix(in srgb,var(--tone) 18%,var(--bg)),var(--shadow)}
+.v3-dispatch-focus{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;min-height:calc(278 * var(--display-unit,1px));padding:calc(22 * var(--display-unit,1px)) calc(18 * var(--display-unit,1px));background:var(--surface);border:calc(1 * var(--display-unit,1px)) solid var(--line);border-radius:var(--report-card-radius);box-shadow:0 var(--report-card-depth) 0 var(--report-card-edge),var(--shadow)}
 .v3-dispatch-focus-icon{display:flex;align-items:center;justify-content:center;width:calc(64 * var(--display-unit,1px));height:calc(64 * var(--display-unit,1px));border-radius:calc(24 * var(--display-unit,1px));background:var(--tint);color:var(--tone);margin-bottom:calc(20 * var(--display-unit,1px))}
 .report-v3 .graphic-report .v3-dispatch-focus-icon>.report-icon{width:calc(42 * var(--display-unit,1px));height:calc(42 * var(--display-unit,1px))}
 .report-v3 .graphic-report .v3-dispatch-focus h3{font-size:calc(30 * var(--display-unit,1px));color:var(--tone)}
@@ -234,7 +238,7 @@
 .v3-knowledge-source>div>span{font-size:calc(16 * var(--display-unit,1px));color:var(--muted)}
 .v3-knowledge-branches{height:calc(24 * var(--display-unit,1px));display:grid;grid-template-columns:1fr 1fr;text-align:center;align-items:center;font-size:calc(22 * var(--display-unit,1px));color:var(--blue)}
 .v3-assist-cards{display:grid;grid-template-columns:1fr 1fr;gap:calc(28 * var(--display-unit,1px))}
-.v3-assist-card{padding:calc(18 * var(--display-unit,1px)) calc(28 * var(--display-unit,1px));background:var(--surface);border:calc(1 * var(--display-unit,1px)) solid var(--line);border-radius:var(--report-card-radius);box-shadow:0 var(--report-card-depth) 0 color-mix(in srgb,var(--tone) 18%,var(--bg)),var(--shadow)}
+.v3-assist-card{padding:calc(18 * var(--display-unit,1px)) calc(28 * var(--display-unit,1px));background:var(--surface);border:calc(1 * var(--display-unit,1px)) solid var(--line);border-radius:var(--report-card-radius);box-shadow:0 var(--report-card-depth) 0 var(--report-card-edge),var(--shadow)}
 .v3-card-label{display:flex;align-items:center;gap:calc(10 * var(--display-unit,1px));color:var(--tone);font-size:calc(14 * var(--display-unit,1px))}
 .report-v3 .graphic-report .v3-assist-card h3{font-size:calc(30 * var(--display-unit,1px));color:var(--tone);margin-top:calc(10 * var(--display-unit,1px))}
 .v3-assist-scene{height:calc(82 * var(--display-unit,1px));margin:calc(12 * var(--display-unit,1px)) 0}
@@ -351,12 +355,8 @@
 @media(max-width:760px){.report-v3 .cover .visual{width:100%;height:calc(350 * var(--display-unit,1px))}.report-v3 .cover .cover-bottom{left:0}}
 @media(prefers-reduced-motion:reduce){.report-v3 .cover-node-halo,.report-v3 .cover-role-card,.report-v3 .cover-flow-route,.report-v3 .cover-order-position{transition:none}}
 
-/* Give related business cards a shared tonal face; colour supplements the authored labels. */
+/* Slide-specific layout. Surface semantics are collected at the end of this file. */
 .report-v3 .graphic-report:is([data-slide="product-service"],[data-slide="exceptions"],[data-slide="delivery"]) .visual{flex:1 0 auto}
-.report-v3 .graphic-report :is(.v2-direction,.v2-journey-anchors>span,.trace-fields>div,.channel-node,.channel-check-list>div,.v3-future-centre,.v3-future-direction,.delivery-track>div){
- background:color-mix(in srgb,var(--tint) 65%,var(--surface));
- border-color:color-mix(in srgb,var(--tone) 22%,var(--line));
-}
 .report-v3 .graphic-report .v2-direction-arrow{color:var(--tone)}
 .report-v3 .graphic-report .v2-journey-anchors .report-icon{color:var(--tone)}
 .report-v3 .graphic-report .v2-journey-anchors small{grid-column:2;font-size:calc(14 * var(--display-unit,1px));line-height:1.6}
@@ -413,4 +413,186 @@
  .report-v3 .graphic-report[data-slide="delivery"] .delivery-track>div{padding:calc(18 * var(--display-unit,1px))}
  .report-v3 .graphic-report[data-slide="delivery"] .delivery-track p{margin-top:calc(12 * var(--display-unit,1px))}
  .report-v3 .graphic-report[data-slide="delivery"] .material-links{padding-top:calc(10 * var(--display-unit,1px));padding-bottom:calc(10 * var(--display-unit,1px))}
+}
+
+/* Surface language: pastel identifies a role/capability; neutral presents a process/record.
+   Preserve existing large/small card geometry and the raised bottom edge. */
+.report-v3 .graphic-report{
+ --report-face-tint-share:65%;
+ --report-neutral-edge:color-mix(in srgb,var(--line) 78%,var(--bg));
+}
+/* Roles keep their colour across pages; capabilities use colour within their labelled group. */
+.report-v3 .graphic-report .visual :is(
+ .web-grid>div,.mobile-app,.v3-assist-card,
+ .v2-direction,.v2-support-card,.v3-dispatch-focus,
+ .v2-demo-app,.v3-future-centre,.v3-future-direction,.delivery-track>div
+){
+ --report-card-edge:color-mix(in srgb,var(--tone) 18%,var(--bg));
+ background:color-mix(in srgb,var(--tint) var(--report-face-tint-share),var(--surface));
+ border-color:color-mix(in srgb,var(--tone) 22%,var(--line));
+}
+/* Work orders, steps, changes and records have neutral faces and bottom edges.
+   Heading/icon accents indicate the actor without recolouring the document. */
+.report-v3 .graphic-report .visual :is(
+ .v3-platform-board,.web-app,.journey-stop,.change-card,.trace-panel,.trace-fields>div,
+ .v2-support-centre,.channel-node,.channel-key,.channel-check-list>div,
+ .v3-knowledge-source,.v2-source-strip,.v2-journey-anchors>span,.material-links,
+ .v3-future-commerce,.v3-demo-steps>span
+){
+ --report-card-edge:var(--report-neutral-edge);
+ background:var(--surface);
+ border-color:var(--line);
+}
+.report-v3 .graphic-report .visual :is(.trace-fields>div,.channel-check-list>div){
+ border:calc(1 * var(--display-unit,1px)) solid var(--line);
+}
+.report-v3 .graphic-report .visual :is(.journey-stop,.change-card,.trace-panel,.channel-node,.channel-key,.v2-support-centre){
+ box-shadow:0 var(--report-card-depth) 0 var(--report-card-edge),var(--shadow);
+}
+.report-v3 .graphic-report .visual :is(.trace-fields>div,.channel-check-list>div,.v2-journey-anchors>span,.v3-knowledge-source,.v2-source-strip){
+ box-shadow:0 var(--report-card-small-depth) 0 var(--report-card-edge);
+}
+/* Neutral nested content has a quiet inset; pastel outer cards have white icon surfaces. */
+.report-v3 .graphic-report .change-route strong{background:var(--bg);color:var(--ink);border:calc(1 * var(--display-unit,1px)) solid var(--line)}
+.report-v3 .graphic-report .visual :is(.v3-dispatch-focus-icon,.v3-answer,.v3-parts-scene .graphic-mark){background:var(--surface)}
+.report-v3 .graphic-report .v3-dispatch-focus-icon{
+ border:calc(1 * var(--display-unit,1px)) solid color-mix(in srgb,var(--tone) 18%,var(--line));
+ box-shadow:0 var(--report-card-small-depth) 0 var(--report-card-edge);
+}
+.report-v3 .graphic-report .v3-demo-steps>span{border:calc(1 * var(--display-unit,1px)) solid var(--line)}
+/* The moving order keeps a paper face even when its owner changes. */
+.report-v3 .cover-role-card{fill:color-mix(in srgb,currentColor 8%,var(--surface))}
+.report-v3 .cover-order-edge{fill:var(--report-neutral-edge)}
+.report-v3 .cover-order-card{fill:var(--surface);stroke:var(--line)}
+/* Status colour belongs to the small badge, independently of the role colour. */
+.report-v3 .cover{--cover-status-tone:var(--blue);--cover-status-tint:var(--blue-soft)}
+.report-v3 .cover:has(.cover-state:is([data-cover-state="0"],[data-cover-state="4"]).is-current){--cover-status-tone:var(--gold);--cover-status-tint:var(--gold-soft)}
+.report-v3 .cover:has(.cover-state:is([data-cover-state="5"],[data-cover-state="6"]).is-current){--cover-status-tone:var(--teal);--cover-status-tint:var(--teal-soft)}
+.report-v3 .cover-order-status-bg{fill:var(--cover-status-tint)}
+.report-v3 .cover-order-status{fill:var(--cover-status-tone)}
+.report-v3 .cover.cover-static:has(.cover-state.is-current){--cover-status-tone:var(--blue);--cover-status-tint:var(--blue-soft)}
+/* Main stage/type cards use one pastel face; secondary records keep white faces. */
+.report-v3 .graphic-report .visual :is(.journey-map .journey-stop,.channel-map .channel-node,.change-cards .change-card){
+ --report-card-edge:color-mix(in srgb,var(--tone) 18%,var(--bg));
+ border-color:color-mix(in srgb,var(--tone) 22%,var(--line));
+}
+.report-v3 .graphic-report .visual .journey-map .journey-stop{
+ background:color-mix(in srgb,var(--tint) var(--report-face-tint-share),var(--surface));
+}
+.report-v3 .graphic-report .visual .journey-number{background:var(--surface)}
+.report-v3 .graphic-report .visual .change-cards .change-card{background:color-mix(in srgb,var(--tint) 65%,var(--surface))}
+.report-v3 .graphic-report .change-route strong{background:var(--surface)}
+.report-v3 .graphic-report .visual .channel-map .channel-node{
+ background:color-mix(in srgb,var(--tint) var(--report-face-tint-share),var(--surface));
+}
+/* Both rows stay visible at desktop presentation heights, including the bottom edges. */
+@media(min-width:761px){
+ .report-v3 .graphic-report[data-slide="exceptions"] .visual{flex:1 1 0;min-height:0;padding-top:calc(18 * var(--display-unit,1px))}
+ .report-v3 .graphic-report .change-overview{gap:calc(18 * var(--display-unit,1px))}
+ .report-v3 .graphic-report .change-card{padding:calc(20 * var(--display-unit,1px))}
+ .report-v3 .graphic-report .change-route{margin-top:calc(22 * var(--display-unit,1px))}
+ .report-v3 .graphic-report .trace-panel{padding:calc(20 * var(--display-unit,1px))}
+ .report-v3 .graphic-report .trace-fields{margin-top:calc(18 * var(--display-unit,1px))}
+}
+
+/* Shared text roles and spacing rhythm for the fourteen presentation screens.
+   Sizes follow the existing display scale; miniature UI and SVG retain their own geometry. */
+.report-v3,.report-v3 .graphic-report{
+ --report-type-display:calc(60 * var(--display-unit,1px));
+ --report-type-headline:calc(46 * var(--display-unit,1px));
+ --report-type-feature:calc(30 * var(--display-unit,1px));
+ --report-type-title:calc(26 * var(--display-unit,1px));
+ --report-type-subtitle:calc(22 * var(--display-unit,1px));
+ --report-type-body:calc(18 * var(--display-unit,1px));
+ --report-type-note:calc(16 * var(--display-unit,1px));
+ --report-type-label:calc(14 * var(--display-unit,1px));
+ --report-space-1:calc(8 * var(--display-unit,1px));
+ --report-space-2:calc(12 * var(--display-unit,1px));
+ --report-space-3:calc(16 * var(--display-unit,1px));
+ --report-space-4:calc(24 * var(--display-unit,1px));
+}
+.report-v3 .slide.graphic-report .eyebrow{font-size:var(--report-type-label);font-weight:500;line-height:1.5;letter-spacing:.12em;margin-bottom:var(--report-space-2)}
+.report-v3 .slide.graphic-report h1{font-size:var(--report-type-headline);font-weight:600;line-height:1.25;letter-spacing:-.02em}
+.report-v3 .slide.graphic-report.cover h1{font-size:var(--report-type-display);line-height:1.2}
+.report-v3 .slide.graphic-report .subtitle{font-size:var(--report-type-body);line-height:1.6;margin-top:var(--report-space-2)}
+.report-v3 .slide.graphic-report .visual h3{font-size:var(--report-type-title);font-weight:600;line-height:1.4;letter-spacing:0}
+.report-v3 .slide.graphic-report .visual h4{font-size:var(--report-type-body);font-weight:600;line-height:1.5;letter-spacing:0}
+.report-v3 .slide.graphic-report .visual p{font-size:var(--report-type-body);font-weight:400;line-height:1.6}
+.report-v3 .slide.graphic-report .visual small{font-size:var(--report-type-note);font-weight:400;line-height:1.5}
+.report-v3 .slide.graphic-report .visual :is(.v2-solution,.v3-dispatch-focus,.v3-assist-card,.v3-demo-routes,.v3-future-centre) h3{font-size:var(--report-type-feature)}
+.report-v3 .slide.graphic-report .visual :is(.journey-stop,.channel-node,.trace-panel,.channel-key,.handover-symbol) h3{font-size:var(--report-type-subtitle)}
+.report-v3 .slide.graphic-report .visual .v2-problem h3{font-size:var(--report-type-subtitle);font-weight:400}
+.report-v3 .slide.graphic-report .visual :is(.journey-stop,.v3-future-direction,.delivery-track,.v3-platform-story) p{margin-top:var(--report-space-2)}
+.report-v3 .slide.graphic-report .visual :is(.journey-stop,.web-grid,.mobile-app,.trace-fields,.v3-future-direction,.v3-future-commerce,.delivery-track) p{font-size:var(--report-type-note)}
+.report-v3 .slide.graphic-report .visual :is(.v3-experience-value,.v3-value,.v2-demo-return){font-size:var(--report-type-subtitle);font-weight:500;line-height:1.5}
+.report-v3 .slide.graphic-report .visual :is(.v3-experience-card,.v3-assist-card)>small{margin-top:var(--report-space-1)}
+.report-v3 .slide.graphic-report .visual .small-caption{font-size:var(--report-type-note)!important;line-height:1.5;margin-top:var(--report-space-2)!important}
+.report-v3 .slide.graphic-report .visual :is(.v3-card-label,.v2-demo-app-top,.v2-reserved,.v3-future-direction header>small,.v3-delivery-goal small){font-size:var(--report-type-label);font-weight:500;line-height:1.5;letter-spacing:.02em}
+.report-v3 .slide.graphic-report .visual :is(.web-grid strong,.v2-journey-anchors b,.v3-knowledge-source strong,.v3-platform-heading>span){font-size:var(--report-type-subtitle);font-weight:600;line-height:1.4}
+.report-v3 .slide.graphic-report .visual :is(.v3-platform-capability>strong,.v3-future-content strong,.v3-future-commerce strong,.v3-delivery-goal strong,.material-links>span){font-size:var(--report-type-body);font-weight:600;line-height:1.5}
+.report-v3 .slide.graphic-report .visual :is(.v3-platform-heading>small,.v3-platform-capability>span,.v3-platform-evidence,.v3-knowledge-source>div>span,.v3-future-path,.material-links small,.v2-signoff){font-size:var(--report-type-note);font-weight:400;line-height:1.5}
+.report-v3 .slide.graphic-report .visual .v3-platform-story h3{line-height:1.45}
+.report-v3 .slide.graphic-report .visual .v3-future-content span{font-size:var(--report-type-note);line-height:1.5}
+.report-v3 .slide.graphic-report .visual :is(.change-route strong,.channel-check-list strong){font-size:var(--report-type-body);font-weight:500;line-height:1.5}
+.report-v3 .slide.graphic-report .visual .channel-check-list>div>span{font-size:var(--report-type-note);line-height:1.5}
+.report-v3 .slide.graphic-report .visual .trace-fields p{margin:0}
+.report-v3 .slide.graphic-report .visual .journey-number small{font-size:var(--report-type-label);line-height:1.4;min-width:calc(24 * var(--display-unit,1px));height:auto}
+.report-v3 .slide.graphic-report .visual .v3-dispatch-intelligence strong{font-size:var(--report-type-subtitle);font-weight:500;line-height:1.5}
+.report-v3 .slide.graphic-report .visual .v3-demo-routes p{font-size:var(--report-type-subtitle);margin-top:var(--report-space-4)}
+.report-v3 .slide.graphic-report .visual :is(.v3-demo-steps,.v3-chat-scene>div,.v3-parts-scene>div){font-size:var(--report-type-body);line-height:1.5}
+.report-v3 .slide.graphic-report .visual .v3-message-row{padding:calc(6 * var(--display-unit,1px)) var(--report-space-2)}
+.report-v3 .slide.graphic-report .visual .v3-message-row strong{font-size:calc(16 * var(--display-unit,1px));font-weight:600;line-height:1.4}
+.report-v3 .slide.graphic-report .visual .v3-message-row small{font-size:calc(12 * var(--display-unit,1px));line-height:1.3}
+.report-v3 .slide.graphic-report .cover-bottom{font-size:var(--report-type-label);line-height:1.5;letter-spacing:.04em}
+.report-v3 .cover-node :is(.cover-role-name,.cover-order-title,.cover-order-status){font-weight:600}
+.report-v3 .cover-node .cover-peripheral .cover-role-name{font-weight:500}
+.report-v3 .cover-node .cover-role-description{font-size:11px}
+.report-v3 .cover-node .cover-peripheral .cover-role-description{font-size:10px}
+.report-v3 .cover-order-label{font-size:10px;letter-spacing:.04em}
+.report-v3 .cover-stage-rail text{font-size:12px;font-weight:400}
+.report-v3 .v3-puzzle-title{font-weight:600}
+.report-v3 .location{font-size:var(--report-type-label);line-height:1.5}
+.report-v3 :is(#counter,#step-hint){font-size:var(--report-type-label);font-weight:400;line-height:1.5}
+.report-v3 #next{font-size:var(--report-type-note);font-weight:500;line-height:1.5}
+.report-v3 .dialog-head h2,.report-v3 #notes h2{font-size:24px;font-weight:600;line-height:1.4;letter-spacing:0}
+.report-v3 #directory-list{gap:8px}
+.report-v3 #directory-list button{font-size:14px;font-weight:400;line-height:1.5;gap:12px;padding:12px 16px}
+.report-v3 #directory-list span{font-size:12px;line-height:1.75;font-variant-numeric:tabular-nums}
+.report-v3 :is(.dialog-tip,.directory-demo,.dialog-head button,.notes-head button,#notes small){font-size:12px;font-weight:400;line-height:1.6}
+.report-v3 #notes h2{margin:24px 0 16px}
+.report-v3 #notes p{font-size:16px;font-weight:400;line-height:1.75}
+.report-v3 .notes-head strong{font-size:12px;font-weight:500;line-height:1.5}
+/* Group gaps separate topics; smaller gaps join a heading with its explanation. */
+.report-v3 .slide.graphic-report .visual :is(.v3-experience-grid,.v3-dispatch-overview-grid,.v3-assist-cards,.v3-demo-routes,.v3-future-grid){gap:var(--report-space-4)}
+.report-v3 .slide.graphic-report .visual :is(.change-overview,.channel-story){gap:var(--report-space-4)}
+.report-v3 .slide.graphic-report .visual :is(.v3-future-directions,.trace-fields,.channel-check-list){gap:var(--report-space-3)}
+.report-v3 .slide.graphic-report .visual :is(.v3-experience-heading,.graphic-heading){gap:var(--report-space-2)}
+.report-v3 .slide.graphic-report .visual .v3-experience-demo{margin:var(--report-space-4) 0}
+.report-v3 .slide.graphic-report .visual :is(.trace-fields,.channel-check-list){margin-top:var(--report-space-3)}
+.report-v3 .slide.graphic-report .visual .change-route{margin-top:var(--report-space-4)}
+.report-v3 .slide.graphic-report .visual .v3-future-direction>header{gap:var(--report-space-1);margin-bottom:var(--report-space-2)}
+.report-v3 .slide.graphic-report .visual .v3-future-content{gap:var(--report-space-2);margin:var(--report-space-4) 0}
+.report-v3 .slide.graphic-report .visual .v3-future-path{gap:var(--report-space-3);margin-top:var(--report-space-4);padding-top:var(--report-space-3)}
+.report-v3 .slide.graphic-report .visual .material-links{gap:var(--report-space-4)}
+@media(min-width:761px){
+ .report-v3 .slide.graphic-report:not(.cover) .visual{padding-top:var(--report-space-4)}
+ .report-v3 .slide.graphic-report .visual :is(.v3-experience-card,.v3-assist-card,.v3-dispatch-focus,.v3-future-centre,.v3-demo-routes .v2-demo-app){padding:var(--report-space-4)}
+ .report-v3 .slide.graphic-report .visual .v3-future-direction{padding:var(--report-space-3)}
+ .report-v3 .slide.graphic-report .visual .handover-symbol>h3{margin:0}
+ .report-v3 .slide.graphic-report[data-slide="delivery"] .delivery-track>.gold>p{white-space:normal}
+ /* Dense diagrams preserve the enlarged type by tightening group spacing. */
+ .report-v3 .slide.graphic-report:is([data-slide="anti-diversion"],[data-slide="experience"],[data-slide="smart-dispatch"],[data-slide="future"]) .visual{padding-top:var(--report-space-3)}
+ .report-v3 .slide.graphic-report[data-slide="anti-diversion"] .channel-story{gap:var(--report-space-3)}
+ .report-v3 .slide.graphic-report .visual .v3-experience-card{padding:calc(20 * var(--display-unit,1px))}
+ .report-v3 .slide.graphic-report .visual .v3-experience-demo{margin:var(--report-space-2) 0}
+ .report-v3 .slide.graphic-report .visual .v3-future-centre{padding:var(--report-space-3)}
+ .report-v3 .slide.graphic-report .visual .v3-future-content{gap:var(--report-space-1);margin:var(--report-space-3) 0}
+ .report-v3 .slide.graphic-report .visual .v3-future-path{margin-top:var(--report-space-3);padding-top:var(--report-space-1)}
+}
+@media(max-width:1100px){
+ .report-v3,.report-v3 .graphic-report{--report-type-headline:calc(42 * var(--display-unit,1px));--report-type-display:calc(46 * var(--display-unit,1px));--report-type-feature:calc(26 * var(--display-unit,1px))}
+ .report-v3 .slide.graphic-report .visual :is(.v3-experience-grid,.v3-dispatch-overview-grid,.v3-future-grid){gap:var(--report-space-3)}
+ .report-v3 .slide.graphic-report .visual .v3-experience-card{padding:var(--report-space-3)}
+ .report-v3 .slide.graphic-report .visual .v3-experience-heading h3{font-size:var(--report-type-subtitle)}
+ .report-v3 .slide.graphic-report .visual .journey-stop p{white-space:normal;text-wrap:balance}
 }

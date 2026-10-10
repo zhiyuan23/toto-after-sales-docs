@@ -83,7 +83,7 @@ window.createReportPlatformPuzzle = svg => {
       tile.title.style.fontSize = `${20 * scale}px`;
       tile.detail.setAttribute('x', cx);
       tile.detail.setAttribute('y', cy + 26 * scale);
-      tile.detail.style.fontSize = `${12 * scale}px`;
+      tile.detail.style.fontSize = `${13 * scale}px`;
     });
   };
   // Retain an authored-sized layout for offline printing and DOM-only consumers.
