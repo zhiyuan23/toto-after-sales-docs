@@ -68,7 +68,7 @@ let contextOpen=false
 let toastTimer
 
 function menuMarkup(){
-  const groups=[["工作台",["工作台"],true],["工单处理",["服务工单","完工审核","回访管理"],false],["异常与投诉",["异常工单","投诉管理"],false],["业务查询与知识库",["顾客购买记录","安装码查询","服务知识库"],false],["服务分析",["服务质量","运营报表"],false]]
+  const groups=[["工作台",["工作台"],true],["工单处理",["服务工单","完工审核","回访管理"],false],["异常与投诉",["异常工单","投诉管理"],false],["业务查询与知识库",["购买记录","安装码查询","服务知识库"],false],["服务分析",["服务质量","服务报表"],false]]
   return groups.map((group,index)=>group[2]?group[1].map(item=>`<button type="button" class="menu-item${item==='工作台'?' is-active':''}" data-preview="${item}">${icon(item==='工作台'?'gauge':'archive')}<span>${item==='工作台'?'工作台':item}</span></button>`).join(''):`<section class="menu-group${index<2?' is-open':''}"><button class="menu-group-title" type="button" aria-expanded="${index<2}"><span>${group[0]}</span>${icon('chevron-down')}</button><div class="menu-list">${group[1].map((item,itemIndex)=>`<button type="button" class="menu-item${index===0&&itemIndex===0?' is-active':''}" data-preview="${item}">${icon(index===0&&itemIndex===0?'gauge':item.includes('工单')?'clipboard':'archive')}<span>${item}</span></button>`).join('')}</div></section>`).join('')
 }
 
@@ -364,7 +364,7 @@ function openOverlay(panel){$('scrim').hidden=false;panel.hidden=false;panel.que
 function closeOverlays(){$('scrim').hidden=true;$('prototypePanel').hidden=true;$('commandDialog').hidden=true;$('toolDialog').hidden=true}
 
 function renderCommands(keyword=''){
-  const commands=['工作台','服务工单','完工审核','回访管理','异常工单','投诉管理','顾客购买记录','安装码查询','服务知识库','服务质量','运营报表']
+  const commands=['工作台','服务工单','完工审核','回访管理','异常工单','投诉管理','购买记录','安装码查询','服务知识库','服务质量','服务报表']
   const result=commands.filter(item=>item.includes(keyword.trim()))
   $('commandResults').innerHTML=result.length?result.map(item=>`<button type="button" data-command="${item}"><strong>${item}</strong><span>客服作业</span></button>`).join(''):'<div class="cs3-empty"><div><strong>未找到功能</strong><p>请尝试其他关键词。</p></div></div>'
   document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('click',()=>{closeOverlays();showToast(`${button.dataset.command}：入口已保留`)}))

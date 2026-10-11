@@ -191,7 +191,7 @@
   function updateLegend() {
     const title=$('#mapLegend>span'), gradient=$('.legend-gradient'), subtitle=$('#mapSubtitle'), note=$('#mapBoundaryNote');
     const config={
-      orders:{title:'工单数',subtitle:`近 ${state.range} 天 · 按服务省份分组 · 颜色越深工单数越多`,note:'省份颜色来自运营报表；队列数量为全国授权范围，二者不混算。',gradient:'linear-gradient(90deg,#eaf2ff,#377ef0)'},
+      orders:{title:'工单数',subtitle:`近 ${state.range} 天 · 按服务省份分组 · 颜色越深工单数越多`,note:'省份颜色来自服务报表；队列数量为全国授权范围，二者不混算。',gradient:'linear-gradient(90deg,#eaf2ff,#377ef0)'},
       stations:{title:'站点状态',subtitle:'服务站档案点位 · 蓝色已启用 · 灰色已停用',note:'点位来自服务站经纬度；“配置日上限”不等同于实际可用产能。',gradient:'linear-gradient(90deg,#8893a7,#377ef0)'},
       quality:{title:'质量事实',subtitle:'当前服务站单日质量事实 · 点击省份筛选对象',note:'展示单个对象、单个日期的事实，不对多个对象百分比再次平均。',gradient:'linear-gradient(90deg,#54c0d2,#d99021)'},
       coverage:{title:'配置密度',subtitle:'已配置服务区域 · 颜色与范围标记仅表达现有配置',note:'仅显示已配置服务区域，不把未配置区域直接判定为服务盲区。',gradient:'linear-gradient(90deg,#dff4ea,#259a69)'}
@@ -239,7 +239,7 @@
     $('#scopeButton').addEventListener('click',event=>{event.stopPropagation();const pop=$('#scopePopover');pop.hidden=!pop.hidden;});
     document.addEventListener('click',event=>{if(!event.target.closest('#scopeButton')&&!event.target.closest('#scopePopover'))$('#scopePopover').hidden=true;});
     const prototypePanel=$('#prototypePanel'); $('#prototypeFab').addEventListener('click',()=>openOverlay(prototypePanel)); $('#perspectiveButton').addEventListener('click',()=>openOverlay(prototypePanel)); $('#closePrototypePanel').addEventListener('click',closeOverlays); $('#scrim').addEventListener('click',closeOverlays);
-    const commands=[['全国地图工作台','headquarters-map.html'],['运营工作台（现版）','index.html'],['运营报表','operations-report.html'],['服务质量','service-quality.html'],['客服行动工作台','customer-service-v03.html'],['服务站工作台','service-station-v02.html'],['门店工作台','dealer.html']];
+    const commands=[['全国地图工作台','headquarters-map.html'],['运营工作台（现版）','index.html'],['服务报表','operations-report.html'],['服务质量','service-quality.html'],['客服行动工作台','customer-service-v03.html'],['服务站工作台','service-station-v02.html'],['门店工作台','dealer.html']];
     const commandDialog=$('#commandDialog'), commandInput=$('#commandInput'), commandResults=$('#commandResults');
     const renderCommands=value=>{commandResults.innerHTML=commands.filter(([name])=>name.includes(value||'')).map(([name,url])=>`<button type="button" data-command-url="${url}"><strong>${name}</strong><span>打开页面</span></button>`).join('')||'<button type="button"><span>没有匹配功能</span></button>';};
     const openCommands=()=>{renderCommands('');openOverlay(commandDialog);setTimeout(()=>commandInput.focus(),30);};

@@ -78,7 +78,7 @@ test('地图优先获得宽屏增量且右栏保持稳定阅读宽度',()=>{
 
 test('地图统计严格使用现有报表与服务资源字段',()=>{
   for(const copy of ['按服务省份分组','当前已关闭','当前已取消','有投诉工单','已配置坐标','单条质量日事实','已配置服务区域'])assert.match(html,new RegExp(copy))
-  assert.match(html,/省份颜色来自运营报表；队列数量为全国授权范围，二者不混算/)
+  assert.match(html,/省份颜色来自服务报表；队列数量为全国授权范围，二者不混算/)
   assert.match(js,/配置日上限/)
   assert.match(js,/不等同于实际可用产能/)
   assert.match(js,/不把未配置区域直接判定为服务盲区/)
