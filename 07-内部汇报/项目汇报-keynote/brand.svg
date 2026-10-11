@@ -1,0 +1,27 @@
+<svg class="report-brand-art" style="color:#258de0" viewBox="0 0 1110 1110" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+      <defs>
+        <linearGradient id="closing-brand-blue" gradientUnits="userSpaceOnUse" x1="75" y1="200" x2="1030" y2="720">
+          <stop offset="0" stop-color="#10338e"/><stop offset=".52" stop-color="#0869bb"/><stop offset="1" stop-color="#00a1e7"/>
+        </linearGradient>
+        <!-- Keep the three existing backdrop paths and their mirror direction intact. -->
+        <path id="closing-brand-tail" d="M387 677C357 626 378 586 413 550C433 529 452 508 455 493C461 463 445 435 442 410C436 379 451 347 481 330C494 324 499 327 494 336C476 374 528 411 530 445C565 443 574 468 581 486C594 514 615 530 635 529C658 527 648 539 634 548C607 570 566 579 535 556C518 540 501 533 491 534C468 536 458 560 460 595C462 621 482 643 500 651Z"/>
+        <path id="closing-brand-wave-one" d="M80 640C240 735 440 695 590 635C673 603 738 591 800 606C692 613 642 650 590 698C460 824 247 824 80 640Z"/>
+        <path id="closing-brand-wave-two" d="M240 825C515 848 658 677 899 636C815 690 751 746 727 801C690 851 649 880 561 890C415 920 307 885 240 825Z"/>
+        <path id="closing-brand-arch" d="M80 640C38 359 251 75 555 75C815 75 1025 284 1030 550C1009 452 930 389 824 408C804 301 724 227 625 216C500 202 381 287 363 410C266 383 181 435 162 524C141 623 186 689 264 719C187 709 117 684 80 640Z"/>
+        <path id="closing-brand-base" fill-rule="evenodd" d="M80 640C181 805 327 860 487 831C661 799 736 697 899 636L978 659C933 873 763 1030 555 1030C298 1030 86 871 80 640ZM413 929C546 913 657 856 721 780C782 711 846 685 881 669C818 732 793 792 767 840C691 890 559 918 413 929Z"/>
+        <g id="closing-brand-complete">
+          <use href="#closing-brand-tail"/><use href="#closing-brand-wave-one"/><use href="#closing-brand-wave-two"/>
+          <use href="#closing-brand-arch"/><use href="#closing-brand-base"/>
+        </g>
+      </defs>
+      <g class="report-brand-mirror" transform="translate(1110 0) scale(-1 1)">
+        <g fill="currentColor">
+          <use href="#closing-brand-tail"/>
+          <use href="#closing-brand-wave-one" opacity=".62"/>
+          <use href="#closing-brand-wave-two" opacity=".38"/>
+          <use class="report-brand-upper" href="#closing-brand-arch"/>
+          <use class="report-brand-lower" href="#closing-brand-base"/>
+        </g>
+        <use class="report-brand-color" opacity="1" href="#closing-brand-complete" fill="url(#closing-brand-blue)"/>
+      </g>
+    </svg>

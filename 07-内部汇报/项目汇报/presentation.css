@@ -124,10 +124,45 @@
 .report-v3 .brand .brand-name{font-size:22px;line-height:1.4;color:var(--ink)}
 .report-v3 .brand .brand-divider{width:1px;height:20px;flex:0 0 1px;background:var(--line)}
 .report-v3 .brand .brand-service{font-size:18px;line-height:1.4;color:var(--muted)}
-.report-v3 .topbar nav{gap:6px}
-.report-v3 .topbar nav>button{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0;border-radius:50%}
-.report-v3 .topbar nav>button>.report-icon{width:20px;height:20px}
-.report-v3 .topbar nav>button[aria-pressed=true]{color:var(--blue);background:var(--blue-soft)}
+/* Color edition header and lower-centre presentation tools. */
+.report-v3 .topbar{border-bottom:0}
+.report-v3 .brand{gap:14px}
+.report-v3 .brand-logo{width:30px;height:30px}
+.report-v3 .brand .brand-name{font-size:20px;font-weight:600}
+.report-v3 .brand .brand-divider{height:15px}
+/* Keep the supplied SVG intact and load it as an image for offline playback too. */
+.report-v3 .toto-logo{
+ display:inline-block;flex-shrink:0;
+ width:calc(87 * var(--display-unit,1px));height:calc(19.5 * var(--display-unit,1px));
+ object-fit:contain;
+}
+:root[data-theme=dark] .report-v3 .toto-logo{filter:brightness(1.9) saturate(.7)}
+.report-v3 .project-label{display:flex;align-items:center}
+.report-v3 .project-label .toto-logo{width:100px;height:calc(100px * 13 / 58)}
+.report-v3 .v2-source-brand{display:inline-flex;align-items:center}
+
+.report-v3 .controls{
+ position:fixed;bottom:12px;left:50%;transform:translateX(-50%);
+ display:flex;align-items:center;gap:3px;padding:5px;
+ border:1px solid var(--line);border-radius:32px;background:var(--surface);
+ box-shadow:0 6px 25px #18375e14;z-index:10;
+ opacity:0;transition:opacity 200ms ease;
+}
+.report-v3 .controls>button:is(button,#previous,#next){
+ display:inline-flex;align-items:center;justify-content:center;
+ width:auto;min-width:0;height:36px;padding:9px 13px;
+ border:0;border-radius:24px;background:transparent;color:var(--muted);
+ font-size:12px;line-height:18px;
+}
+.report-v3 .controls>button[aria-pressed=true]{color:var(--blue);background:var(--blue-soft)}
+.report-v3 .controls:focus-within,.report-v3.tools-visible .controls{opacity:1}
+@media(hover:hover) and (pointer:fine){
+ .report-v3 .controls:hover{opacity:1}
+ .report-v3 .controls>button:hover{background:var(--blue-soft)}
+}
+@media(hover:none),(pointer:coarse){.report-v3 .controls{opacity:1}}
+@media(prefers-reduced-motion:reduce){.report-v3 .controls{transition:none}}
+@media print{.report-v3 .controls{display:none}}
 .report-v3 .subtitle:empty{display:none}
 .report-v3 .graphic-report:not(.cover) .visual{padding-top:calc(24 * var(--display-unit,1px))}
 .report-v3 .graphic-report .visual p{font-size:calc(16 * var(--display-unit,1px))}
@@ -591,6 +626,18 @@
  --report-space-4:calc(24 * var(--display-unit,1px));
 }
 .report-v3 .slide.graphic-report .eyebrow{font-size:var(--report-type-label);font-weight:500;line-height:1.5;letter-spacing:.12em;margin-bottom:var(--report-space-2)}
+/* Color edition heading accents, scaled with the first edition's canvas. */
+.report-v3 .slide-header>.eyebrow{display:flex;align-items:center;gap:calc(12 * var(--display-unit,1px))}
+.report-v3 .slide-header>.eyebrow::before{
+ content:"";flex:0 0 calc(20 * var(--display-unit,1px));
+ height:calc(4 * var(--display-unit,1px));border-radius:calc(2 * var(--display-unit,1px));
+ background:currentColor;
+}
+.report-v3 .slide h1 em{
+ background:linear-gradient(transparent 76%,var(--blue-soft) 76% 95%,transparent 95%);
+ -webkit-box-decoration-break:clone;box-decoration-break:clone;
+}
+
 .report-v3 .slide.graphic-report h1{font-size:var(--report-type-headline);font-weight:600;line-height:1.25;letter-spacing:-.02em}
 .report-v3 .slide.graphic-report.cover h1{font-size:var(--report-type-display);line-height:1.2}
 .report-v3 .slide.graphic-report .subtitle{font-size:var(--report-type-body);line-height:1.6;margin-top:var(--report-space-2)}
@@ -630,7 +677,7 @@
 .report-v3 .cover-order-label{font-size:10px;letter-spacing:.04em}
 .report-v3 .cover-stage-rail text{font-size:12px;font-weight:400}
 .report-v3 .v3-puzzle-title{font-weight:600}
-.report-v3 .footer{border:0;gap:0}
+.report-v3 .footer{border:0;gap:0;justify-content:flex-end}
 .report-v3 .footer #counter{
  font-size:12px;
  font-weight:400;
@@ -891,14 +938,14 @@
  }
 }
 
-/* A quiet closing screen for the discussion after the report. */
+/* The fish-tail completes as a pale watermark behind the centred closing message. */
 .report-brand-scene{
  position:fixed;
  z-index:-1;
  pointer-events:none;
  top:50%;
  right:4vw;
- width:min(50vw,84dvh);
+ width:min(44vw,73.92dvh);
  aspect-ratio:1;
  transform:translateY(-50%);
  color:var(--report-whale);
@@ -912,11 +959,12 @@
  transform-origin:0 0;
 }
 .report-brand-art{position:absolute;inset:0;display:block;width:100%;height:100%}
+.report-brand-color{display:none}
 .report-v3[data-report-page="closing"]::before{visibility:hidden}
 .report-v3[data-report-page="closing"]::after{opacity:0;transition:opacity 1800ms var(--ease-out)}
 .report-v3 #stage>.slide.graphic-report.closing{
  justify-content:center;
- align-items:flex-start;
+ align-items:center;
  /* Equal safe space keeps the complete text group at the stage's midpoint. */
  padding-block:var(--report-space-4);
  text-align:center;
@@ -925,9 +973,9 @@
  display:flex;
  flex-direction:column;
  align-items:center;
- gap:var(--report-space-4);
- width:46%;
- margin-left:12%;
+ gap:calc(20 * var(--display-unit,1px));
+ width:100%;
+ margin:0;
  flex:0 0 auto;
 }
 .report-v3 .slide.graphic-report.closing .closing-copy>.slide-header{
@@ -937,9 +985,11 @@
 .report-v3 .slide.graphic-report.closing h1{
  margin:0;
  color:var(--blue);
- font-size:calc(68 * var(--display-unit,1px));
+ font-size:calc(76 * var(--display-unit,1px));
+ font-weight:500;
  line-height:1.2;
- letter-spacing:.06em;
+ letter-spacing:.08em;
+ text-indent:.08em;
 }
 .report-v3 #stage>.slide.graphic-report.closing .closing-copy>.visual{
  flex:0 0 auto;
@@ -950,15 +1000,31 @@
  padding:0;
  gap:0;
 }
-.report-v3 .slide.graphic-report.closing .visual>.closing-invitation{
+.report-v3 .slide.graphic-report.closing .visual>.closing-theme{
  margin:0;
- font-size:calc(24 * var(--display-unit,1px));
+ font-size:calc(22 * var(--display-unit,1px));
+ font-weight:400;line-height:1.6;letter-spacing:.04em;
+ color:var(--muted);
+}
+.report-v3 .slide.graphic-report.closing .visual>.closing-invitation{
+ margin:calc(56 * var(--display-unit,1px)) 0 0;
+ font-size:calc(15 * var(--display-unit,1px));
+ line-height:1.5;letter-spacing:.12em;
  color:var(--muted);
 }
 .report-v3 .slide.graphic-report.closing .visual>.closing-signature{
- margin:calc(40 * var(--display-unit,1px)) 0 0;
- font-size:var(--report-type-note);
- color:var(--muted);
+ display:flex;align-items:center;justify-content:center;
+ gap:calc(22 * var(--display-unit,1px));
+ margin:calc(20 * var(--display-unit,1px)) 0 0;
+ font-size:calc(18 * var(--display-unit,1px));
+ font-weight:500;line-height:1.5;letter-spacing:.04em;
+ color:var(--blue);
+}
+.report-v3 .closing-brand{display:inline-flex;align-items:center;gap:calc(10 * var(--display-unit,1px));white-space:nowrap}
+.report-v3 .closing-brand>img{display:block;width:calc(32 * var(--display-unit,1px));height:calc(32 * var(--display-unit,1px));object-fit:contain}
+.report-v3 .closing-partner-mark{
+ font-size:calc(13 * var(--display-unit,1px));
+ color:color-mix(in srgb,var(--blue) 55%,var(--bg));
 }
 @media(prefers-reduced-motion:reduce){
  .report-v3[data-report-page="closing"]::after{transition:none}

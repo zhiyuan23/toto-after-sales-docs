@@ -9,6 +9,8 @@
   let page = 0;
   let mounted = -1;
   let notesOpen = false;
+  let paused = false;
+  let idleTimer;
   const displayMotion = window.createReportDisplayMotion(reduce);
   const closingMotion = window.createReportClosingMotion(reduce);
   const strip = html => html.replace(/<br\s*\/?\s*>/g,'').replace(/<[^>]*>/g,'');
@@ -32,20 +34,20 @@
   const coverMotion = window.createReportCoverMotion(sections[0], reduce);
   window.createReportGraphics(sections);
   const syncMotion = () => {
-    const blocked = directory.open || notesOpen || document.hidden;
+    const blocked = paused || directory.open || notesOpen || document.hidden;
     coverMotion.sync(slides[page].id === 'cover', blocked);
-    if (directory.open || document.hidden) displayMotion.cancel();
-    if (directory.open || document.hidden) closingMotion.cancel();
+    displayMotion.sync(blocked);
+    closingMotion.sync(blocked);
   };
   function updateDirectory() {
     $('directory-list').querySelectorAll('button').forEach((button,i) => {
       if (i === page) button.setAttribute('aria-current','page'); else button.removeAttribute('aria-current');
     });
   }
-  function render(instant = false) {
-    const changed = mounted !== page;
+  function render(instant = false, replay = false) {
+    const changed = mounted !== page || replay;
     const direction = page < mounted ? -1 : 1;
-    sections.forEach((section,i)=>{ section.hidden = i !== page; });
+    sections.forEach((section,i)=>{ section.hidden = i !== page; section.inert = i !== page; });
     const section = sections[page];
     document.body.dataset.reportPage = slides[page].id;
     // Keep authored reveal markers for grouping; every page now opens complete.
@@ -58,6 +60,8 @@
     if (changed) closingMotion.enter(slides[page].id === 'closing', instant || directory.open);
     mounted = page;
     const data = slides[page];
+    $('previous').disabled = page === 0;
+    $('next').disabled = page === slides.length - 1;
     $('counter').textContent = `${String(page + 1).padStart(2,'0')} / ${slides.length}`;
     $('counter').setAttribute('aria-label', `第 ${page + 1} 页，共 ${slides.length} 页`);
     $('notes-title').textContent = strip(data.title);
@@ -79,6 +83,22 @@
   function back() {
     if (page > 0) go(page-1);
   }
+  function togglePause() {
+    paused = !paused;
+    $('motion-toggle').textContent = paused ? '继续' : '暂停';
+    $('motion-toggle').setAttribute('aria-pressed', String(paused));
+    $('motion-toggle').title = paused ? '继续动画（P）' : '暂停动画（P）';
+    syncMotion();
+  }
+  function showTools() {
+    document.body.classList.add('tools-visible');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => document.body.classList.remove('tools-visible'), 2200);
+  }
+  document.addEventListener('pointermove', showTools, {passive:true});
+  document.addEventListener('pointerdown', showTools, {passive:true});
+  document.addEventListener('keydown', showTools);
+  showTools();
   function showDirectory(instant = false) { updateDirectory(); directory.dataset.instant = String(instant); directory.showModal(); syncMotion(); }
   function closeDirectory(instant = false) { directory.dataset.instant = String(instant); directory.close(); }
   function toggleNotes(instant = false) {
@@ -103,6 +123,9 @@
   }
   $('directory-list').innerHTML = slides.map((slide,i)=>`<button type="button" data-page="${i}"><span>${String(i+1).padStart(2,'0')}</span>${strip(slide.title)}</button>`).join('');
   $('directory-list').addEventListener('click',event=>{const button=event.target.closest('button[data-page]'); if (!button) return; closeDirectory(event.detail === 0); go(Number(button.dataset.page)); stage.focus({preventScroll:true});});
+  $('previous').addEventListener('click', back);
+  $('next').addEventListener('click', forward);
+  $('motion-toggle').addEventListener('click', togglePause);
   $('contents').addEventListener('click',event=>showDirectory(event.detail === 0));
   $('directory-close').addEventListener('click',event=>closeDirectory(event.detail === 0));
   $('notes-toggle').addEventListener('click',event=>toggleNotes(event.detail === 0));
@@ -113,6 +136,7 @@
     const label = document.fullscreenElement ? '退出全屏' : '全屏展示';
     $('fullscreen').setAttribute('aria-label',label);
     $('fullscreen').title = label;
+    $('fullscreen').textContent = document.fullscreenElement ? '退出全屏' : '全屏';
   });
   stage.addEventListener('click',event=>{
     const button=event.target.closest('[data-example]');
@@ -121,9 +145,7 @@
       displayMotion.feedback($('example-feedback'), event.detail === 0);
       return;
     }
-    if (event.defaultPrevented || event.button !== 0 || event.detail === 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || directory.open || notesOpen) return;
-    if (event.target.closest('a,button,input,textarea,select,summary,[role="button"],[contenteditable]') || window.getSelection()?.toString()) return;
-    forward();
+
   });
   let wheelAt = -Infinity;
   let wheelDelta = 0;
@@ -151,7 +173,11 @@
     if (wheelDelta > 0) forward(); else back();
   }, {passive: false});
   document.addEventListener('keydown',event=>{
-    if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select') || directory.open) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select,[contenteditable]') || directory.open) return;
+    if (notesOpen) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'n') toggleNotes(true);
+      return;
+    }
     if (event.code === 'Space' && event.target.closest('button,a')) return;
     if (event.key === 'ArrowRight' || event.code === 'Space') { event.preventDefault(); forward(); }
     else if (event.key === 'ArrowLeft') { event.preventDefault(); back(); }
@@ -162,7 +188,8 @@
     else if (event.key.toLowerCase() === 'm') showDirectory(true);
     else if (event.key.toLowerCase() === 'n') toggleNotes(true);
     else if (event.key.toLowerCase() === 'f') fullscreen();
-    else if (event.key === 'Escape' && notesOpen) toggleNotes(true);
+    else if (event.key.toLowerCase() === 'p') togglePause();
+    else if (event.key.toLowerCase() === 'r') render(false, true);
   });
   window.addEventListener('hashchange',()=>{const index=slides.findIndex(x=>x.id===location.hash.slice(1)); if(index>=0) go(index);});
   directory.addEventListener('cancel',()=>{ directory.dataset.instant = 'true'; });

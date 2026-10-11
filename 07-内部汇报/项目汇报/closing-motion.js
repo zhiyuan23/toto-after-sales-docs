@@ -1,17 +1,17 @@
 'use strict';
-// Keep the original mirrored SVG while completing and tinting the closing backdrop.
+// Complete the existing fish-tail directly into a pale, persistent watermark.
 window.createReportClosingMotion = reduce => {
   const scene = document.querySelector('.report-brand-scene');
   const symbol = scene.querySelector('.report-brand-symbol');
   const artwork = scene.querySelector('.report-brand-art');
   const animations = new Set();
-  const crop = 'inset(26.126126% 14.414414% 15.315315% 14.414414%)';
+  let blocked = false;
   const css = getComputedStyle(document.documentElement);
   const ease = css.getPropertyValue('--ease-out').trim();
   const morphEase = css.getPropertyValue('--ease-in-out').trim();
 
   function cancel() {
-    // Authored styles keep the full blue logo and left-hand text after interruption.
+    // Authored styles keep the centred message and completed pale watermark after interruption.
     animations.forEach(animation => animation.cancel());
     animations.clear();
   }
@@ -28,6 +28,7 @@ window.createReportClosingMotion = reduce => {
   function play(element, frames, duration, delay = 0, easing = ease) {
     const animation = element.animate(frames, {duration, delay, easing, fill: 'backwards'});
     animations.add(animation);
+    if (blocked) animation.pause();
     animation.finished.then(() => {
       animations.delete(animation);
       animation.cancel();
@@ -40,13 +41,12 @@ window.createReportClosingMotion = reduce => {
     const copy = active ? document.querySelector('.closing-copy') : null;
     if (!active || instant || document.hidden || !scene.animate) return;
     if (reduce.matches) {
-      play(scene, [{opacity: .6}, {opacity: 1}], 180);
       play(copy, [{opacity: .6}, {opacity: 1}], 180);
       return;
     }
 
     // The existing mask uses viewBox="160 290 790 650" with these mirrored paths.
-    // Expand that coordinate system to 1110 square without changing the first frame.
+    // Preserve its position and scale; complete outlines fade in without a moving crop edge.
     const backdrop = target.backdrop;
     const unit = parseFloat(backdrop.width) / 790;
     const fromSize = 1110 * unit;
@@ -56,27 +56,28 @@ window.createReportClosingMotion = reduce => {
     play(symbol, [
       {transform: from},
       {transform: `translate(0, 0) ${target.transform}`}
-    ], 2400, 0, morphEase);
-    play(artwork, [{clipPath: crop}, {clipPath: 'inset(0% 0% 0% 0%)'}], 2200, 0, morphEase);
+    ], 1600, 0, morphEase);
     play(scene.querySelector('.report-brand-upper'), [
-      {opacity: 0, clipPath: 'inset(70% 0% 0% 0%)'},
-      {opacity: 1, clipPath: 'inset(0% 0% 0% 0%)'}
-    ], 1800, 200, morphEase);
+      {opacity: 0},
+      {opacity: 1}
+    ], 1200, 100, morphEase);
     play(scene.querySelector('.report-brand-lower'), [
-      {opacity: 0, clipPath: 'inset(0% 0% 100% 0%)'},
-      {opacity: 1, clipPath: 'inset(0% 0% 0% 0%)'}
-    ], 1800, 350, morphEase);
-    // The colour layer shares the continuously visible base's five path definitions.
-    play(scene.querySelector('.report-brand-color'), [{opacity: 0}, {opacity: 1}], 2000, 2400, morphEase);
+      {opacity: 0},
+      {opacity: 1}
+    ], 1200, 150, morphEase);
     const backdropOpacity = parseFloat(backdrop.opacity) || 1;
-    if (backdropOpacity < 1) play(artwork, [{opacity: backdropOpacity}, {opacity: 1}], 2400, 0, morphEase);
+    if (backdropOpacity < 1) play(artwork, [{opacity: backdropOpacity}, {opacity: 1}], 1600, 0, morphEase);
 
-    // Reveal the stationary text group as the complete logo becomes blue.
-    play(copy, [{opacity: 0}, {opacity: 1}], 2000, 2400, morphEase);
+    // Reveal the message during the gentle completion; the pale mark stays in the background.
+    play(copy, [{opacity: 0}, {opacity: 1}], 900, 400);
+  }
+  function sync(isBlocked) {
+    blocked = isBlocked;
+    animations.forEach(animation => blocked ? animation.pause() : animation.play());
   }
   window.addEventListener('resize', () => {
     cancel();
     if (!scene.hidden) fit();
   });
-  return {enter, cancel};
+  return {enter, cancel, sync};
 };
