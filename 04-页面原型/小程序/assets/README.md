@@ -44,3 +44,23 @@
 | [support-orange-v1.png](help-icons/support-orange-v1.png) | 52 × 52px | 2,794 字节 |
 
 本轮复用上述浴室场景图作为独立生活灵感影像，产品区使用原白底图，不加载此前取消的石材装饰背景。这些素材只用于原型评审，不代表获得 TOTO 品牌发布审核。
+
+## 品牌产品中心 v0.16（2026-10-11）
+
+`brand-center/` 为本地原型运行资源：
+
+| 文件 | 来源与用途 |
+| --- | --- |
+| `neorest-ls-space.jpg` | [TOTO 官方 NEOREST 页面](https://www.toto.com.cn/2022newproduct/neorest/sp.html)的[LS 原图](https://www.toto.com.cn/2022newproduct/images/neorest_ls_pic.jpg)，1020 × 592，154,071 字节；首页主视觉，CSS 等比裁切 |
+| `neorest-nx-space.jpg` | 同页[NX 原图](https://www.toto.com.cn/2022newproduct/images/neorest_nx_pic.jpg)，1020 × 592，179,497 字节；品牌生活段，CSS 等比展示 |
+| `robot-outline.svg`／`map-marker-outline.svg`／`face-agent.svg`／`arrow-top-right.svg` | 从消费者仓库已有 `@iconify-json/mdi@1.2.3` 原始图形导出，未重画路径；Pictogrammers，Apache License 2.0，来源与许可同本页 MDI 说明 |
+
+两张照片保留官网下载原文件，未生成、合成或修改产品外观；仅用于本次原型评审，正式使用须核对品牌素材授权。产品小图继续使用本页既有两件样品，公开图不代表用户购买关系。
+
+## 探索首页 v0.17 地图装饰（2026-10-11）
+
+`brand-center/outlet-map-pattern.svg` 为本次用 SVG 绘制的原创装饰背景，展示抽象道路、绿地与水系，供首页半宽服务网点卡使用。不是在线地图、不加载位置或网点数据，点击沿用现有网点查询页。作为原型运行资源保留，定位标记复用已有 MDI 图标。
+
+## 探索商品 v0.17 目录图片（2026-10-11）
+
+`catalog/` 复用项目此前已留存的 12 张 TOTO 官网白底商品 JPEG，文件保持原始内容；分别对应离线目录样例中的 12 个品番。分类卡选择该分类下的一件商品作代表图，不增加虚构分类或商品。逐图来源地址、文件大小与 SHA-256 见 [manifest.json](catalog/manifest.json)。这些图片为原型运行资源，不属于验证截图。

@@ -7,7 +7,7 @@
   <title>TOTO · 两端小程序设计原型</title>
   <script>
     const requestedConsumerVersion = new URLSearchParams(location.search).get('consumerVersion');
-    window.TOTO_CONSUMER_VERSION = ['0.11', '0.13', '0.15'].includes(requestedConsumerVersion) ? requestedConsumerVersion : '0.14';
+    window.TOTO_CONSUMER_VERSION = ['0.11', '0.13', '0.15', '0.16', '0.17'].includes(requestedConsumerVersion) ? requestedConsumerVersion : '0.14';
     document.documentElement.dataset.consumerVersion = window.TOTO_CONSUMER_VERSION;
   </script>
   <link rel="stylesheet" href="style.css">
@@ -15,18 +15,25 @@
   <link rel="stylesheet" href="consumer-ai.css?v=0.3.0">
   <link rel="stylesheet" href="consumer-v011-legacy.css?v=0.11.3">
   <link rel="stylesheet" href="consumer-outlets.css?v=0.6.2">
-  <link rel="stylesheet" href="consumer-brand.css?v=0.1.1">
+  <link rel="stylesheet" href="consumer-brand.css?v=0.17.1">
   <link rel="stylesheet" href="consumer-home.css?v=0.1.0">
+  <link rel="stylesheet" href="consumer-brand-center.css?v=0.16.0">
+  <link rel="stylesheet" href="consumer-personal.css?v=0.17.15">
+  <link rel="stylesheet" href="consumer-catalog.css?v=0.17.2">
   <script src="consumer.js?v=0.11.6" defer></script>
   <link rel="stylesheet" href="worker.css?v=0.10.25">
   <script src="worker.js?v=0.10.25" defer></script>
   <script src="consumer-outlets.js?v=0.6.2" defer></script>
   <script src="consumer-account.js?v=0.11.1" defer></script>
   <script src="consumer-ai.js?v=0.3.0" defer></script>
-  <script src="consumer-brand.js?v=0.1.1" defer></script>
+  <script src="consumer-brand.js?v=0.17.6" defer></script>
   <script src="consumer-home-variants.js?v=0.1.0" defer></script>
   <script src="consumer-home.js?v=0.1.0" defer></script>
-  <script src="app.js?v=0.15.4" defer></script>
+  <script src="consumer-brand-center.js?v=0.16.0" defer></script>
+  <script src="consumer-personal.js?v=0.17.16" defer></script>
+  <script src="consumer-catalog-data.js?v=0.17.1" defer></script>
+  <script src="consumer-catalog.js?v=0.17.2" defer></script>
+  <script src="app.js?v=0.17.16" defer></script>
 </head>
 <body>
   <header class="workspace-header">
@@ -44,6 +51,8 @@
       <a class="screen-link" href="../后台系统/index.html">后台系统原型 · 预留 ↗</a>
       <p class="eyebrow version-heading">消费者原型版本</p>
       <nav class="version-switch" aria-label="切换消费者原型版本">
+        <a href="?consumerVersion=0.17#c-home" data-consumer-version-link="0.17">商品首页 v0.17</a>
+        <a href="?consumerVersion=0.16#c-home" data-consumer-version-link="0.16">品牌产品中心 v0.16</a>
         <a href="?consumerVersion=0.15#c-home" data-consumer-version-link="0.15">首页方案对比 v0.15</a>
         <a href="?consumerVersion=0.14#c-home" data-consumer-version-link="0.14">品牌方案 v0.14</a>
         <a href="?consumerVersion=0.13#c-home" data-consumer-version-link="0.13">新样式 v0.13</a>

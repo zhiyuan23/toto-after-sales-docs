@@ -1,0 +1,67 @@
+/* Only the v0.16 consumer homepage; inherited public pages keep their existing UI. */
+html[data-consumer-version="0.16"] .consumer-phone[data-screen="c-home"] {
+  --bp-paper: #f6f5f1;
+  --bp-ink: #232e32;
+  --bp-muted: #697174;
+  --bp-blue: #204c64;
+  background: var(--bp-paper);
+}
+html[data-consumer-version="0.16"] .consumer-phone[data-screen="c-home"] .phone-body { padding: 0; background: var(--bp-paper); scrollbar-width: none; }
+html[data-consumer-version="0.16"] .consumer-phone[data-screen="c-home"] .phone-nav { height: 72px; min-height: 72px; }
+html[data-consumer-version="0.16"] .consumer-phone[data-screen="c-home"] .miniapp-menu { color: #fff; background: #172c3280; border-color: #ffffff50; box-shadow: none; }
+html[data-consumer-version="0.16"] .consumer-phone[data-screen="c-home"] .phone-tabs { background: #fff; box-shadow: none; border-top: 1px solid #e8e8e3; }
+html[data-consumer-version="0.16"] .consumer-phone[data-screen="c-home"] .phone-tabs button.selected { color: var(--bp-blue); }
+.consumer-phone .bp-home { color: var(--bp-ink); font-family: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.consumer-phone .bp-home :is(h1,h2,p) { margin: 0; }
+.consumer-phone .bp-home button { color: inherit; border: 0; box-shadow: none; }
+.consumer-phone .bp-home button:hover { background-color: transparent; opacity: .8; }
+.consumer-phone .bp-home button:focus-visible { outline: 2px solid var(--bp-blue); outline-offset: 4px; }
+.consumer-phone .bp-home button:active { opacity: .65; }
+.consumer-phone .bp-hero { position: relative; height: 466px; color: #fff; background: #253f48; overflow: hidden; isolation: isolate; }
+.consumer-phone .bp-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #0e252a66, transparent 62%, #0e252a8c); pointer-events: none; }
+.consumer-phone .bp-hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 58% center; }
+.consumer-phone .bp-masthead { display: flex; align-items: center; gap: 14px; height: 72px; padding: 0 25px; }
+.consumer-phone .bp-wordmark { font-family: Arial, sans-serif; font-size: 30px; font-weight: 900; font-style: italic; letter-spacing: -2px; line-height: 1; }
+.consumer-phone .bp-brand-label { font-size: 10px; letter-spacing: 1.5px; padding-left: 14px; border-left: 1px solid #ffffff55; }
+.consumer-phone .bp-hero-copy { padding: 13px 26px 0; }
+.consumer-phone .bp-home .bp-eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 2px; line-height: 1.6; }
+.consumer-phone .bp-hero h1 { margin-top: 14px; font-size: 29px; font-weight: 400; line-height: 1.4; letter-spacing: .5px; }
+.consumer-phone .bp-hero-foot { position: absolute; inset: auto 26px 24px; display: flex; align-items: center; justify-content: space-between; }
+.consumer-phone .bp-hero-foot > span:first-child { font-size: 13px; letter-spacing: 1.5px; }
+.consumer-phone .bp-hero-foot small { display: block; font-size: 10px; margin-top: 5px; letter-spacing: 2px; }
+.consumer-phone .bp-photo-label { font-size: 9px; letter-spacing: 1px; color: #ffffffd9; }
+.consumer-phone .bp-discover { display: grid; grid-template-columns: 1.12fr 1fr; align-items: center; padding: 22px 25px 15px; gap: 18px; }
+.consumer-phone .bp-discover button { display: flex; align-items: center; justify-content: center; gap: 22px; min-height: 46px; padding: 10px 16px; font-size: 13px; font-weight: 500; letter-spacing: .5px; border-radius: 999px; }
+.consumer-phone .bp-discover .bp-explore { background: var(--bp-blue); color: #fff; }
+.consumer-phone .bp-discover .bp-explore:hover { background: #153f56; opacity: 1; }
+.consumer-phone .bp-home button img { width: 18px; height: 18px; object-fit: contain; }
+.consumer-phone .bp-explore img { filter: invert(1); }
+.consumer-phone .bp-support { display: grid; grid-template-columns: repeat(3,1fr); padding: 5px 16px 23px; }
+.consumer-phone .bp-support button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 97px; padding: 10px 0; border-radius: 12px; }
+.consumer-phone .bp-support button img { width: 27px; height: 27px; margin-bottom: 3px; opacity: .75; }
+.consumer-phone .bp-support strong { font-size: 13px; font-weight: 500; }
+.consumer-phone .bp-support small { font-size: 10px; color: var(--bp-muted); }
+.consumer-phone .bp-collection { padding: 29px 24px 32px; background: #fff; }
+.consumer-phone .bp-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.consumer-phone .bp-section-heading .bp-eyebrow { color: #737b7e; }
+.consumer-phone .bp-section-heading h2 { font-size: 21px; font-weight: 400; letter-spacing: .3px; margin-top: 8px; }
+.consumer-phone .bp-section-heading > button { width: 44px; height: 44px; display: grid; place-items: center; flex-shrink: 0; }
+.consumer-phone .bp-product-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.consumer-phone .bp-product { display: flex; flex-direction: column; align-items: stretch; padding: 0; text-align: left; border-radius: 0; min-width: 0; }
+.consumer-phone .bp-product-image { display: flex; align-items: center; height: 151px; margin-bottom: 17px; background: #fff; }
+.consumer-phone .bp-product-image img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
+.consumer-phone .bp-product-type { font-size: 10px; color: var(--bp-muted); }
+.consumer-phone .bp-product-name { display: flex; align-items: center; justify-content: space-between; gap: 3px; font-size: 14px; font-weight: 500; line-height: 1.5; margin-top: 6px; }
+.consumer-phone .bp-product-name img { width: 14px; height: 14px; flex-shrink: 0; }
+.consumer-phone .bp-product-model { font-size: 9px; letter-spacing: .5px; color: #727a7d; margin-top: 7px; }
+.consumer-phone .bp-journal { background: #e8eeed; }
+.consumer-phone .bp-journal-image { display: block; width: 100%; height: 246px; object-fit: cover; object-position: center; }
+.consumer-phone .bp-journal-copy { padding: 28px 26px 24px; }
+.consumer-phone .bp-journal-copy .bp-eyebrow { color: #596d70; }
+.consumer-phone .bp-journal h2 { margin: 12px 0; font-size: 27px; font-weight: 400; letter-spacing: 1px; }
+.consumer-phone .bp-journal-copy > p:not(.bp-eyebrow) { font-size: 11px; color: #59666b; line-height: 1.9; }
+.consumer-phone .bp-journal button { display: flex; gap: 22px; align-items: center; min-height: 48px; padding: 12px 0; margin-top: 10px; font-size: 12px; }
+.consumer-phone .bp-signature { display: flex; align-items: center; justify-content: space-between; padding: 32px 26px; color: #596b73; }
+.consumer-phone .bp-signature .bp-wordmark { font-size: 25px; }
+.consumer-phone .bp-signature > span:last-child { font-size: 10px; letter-spacing: 1px; }
+@media (prefers-reduced-motion: reduce) { .consumer-phone .bp-home button { transition: none; } }

@@ -1,6 +1,6 @@
 /* Consumer v0.14 exploration only. Existing service flows and older versions stay intact. */
 (() => {
-  if (!['0.14','0.15'].includes(window.TOTO_CONSUMER_VERSION)) return;
+  if (!['0.14','0.15','0.16','0.17'].includes(window.TOTO_CONSUMER_VERSION)) return;
 
   const app = window.TOTO_SCREENS.consumer;
   const e = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));

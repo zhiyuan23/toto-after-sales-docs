@@ -8,7 +8,7 @@
   const homeDesigns = window.TOTO_HOME_DESIGNS;
   const worker = window.TOTO_WORKER;
   const consumerVersion = window.TOTO_CONSUMER_VERSION || '0.13';
-  const brandPreview = ['0.14','0.15'].includes(consumerVersion);
+  const brandPreview = ['0.14','0.15','0.16','0.17'].includes(consumerVersion);
   const $ = (selector) => document.querySelector(selector);
   const escape = (text) => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const all = Object.entries(apps).flatMap(([app, value]) => value.screens.map(screen => ({...screen, app})));
@@ -70,7 +70,7 @@
   const markup = (value) => typeof value === 'function' ? value(consumerContext()) : value || '';
   function hydrateIcons(scope) {
     scope.querySelectorAll('[data-icon]').forEach(el => {
-      if (!['install','repair','guidance','home','service','mine','check','plus','camera','requisition','return'].includes(el.dataset.icon)) return;
+      if (!['install','repair','guidance','home','service','mine','check','plus','camera','requisition','return','product-cube'].includes(el.dataset.icon)) return;
       el.innerHTML = `<img src="assets/icons/${el.dataset.icon}.svg" alt="" width="24" height="24">`;
     });
   }
@@ -158,6 +158,7 @@
   function render() {
     outlets?.clearOverlay();
     const app = apps[current.app];
+    current.title = app.screens.find(screen => screen.id === current.id)?.title || current.title;
     $('#phone').classList.toggle('consumer-phone', current.app === 'consumer');
     $('#phone').classList.toggle('worker-phone', current.app === 'worker');
     $('#worker-controls').hidden=current.app!=='worker';
@@ -183,14 +184,15 @@
     if(workerRootNav) $('#phone-title').innerHTML = markup(current.rootNav);
     else $('#phone-title').textContent = current.title;
     $('#phone-body').innerHTML = markup(current.body);
-    $('#phone-floating').innerHTML = current.app === 'consumer' && !(current.id === 'c-home' && homeDesigns) ? assistant?.floating(current.id,consumerContext()) || '' : '';
+    $('#phone-floating').innerHTML = current.app === 'consumer' && !((current.id === 'c-home' && (homeDesigns || ['0.16','0.17'].includes(consumerVersion))) || (consumerVersion==='0.17' && current.id==='c-product-hub')) ? assistant?.floating(current.id,consumerContext()) || '' : '';
     renderedState = 'normal';
     $('#phone-body').scrollTop = 0;
     syncWorkerRootNavigation();
     $('#phone-footer').innerHTML = markup(current.footer);
     renderOutletOverlay();
-    const isRoot = app.tabs.some(t => t.go === current.id) || current.id==='c-welcome';
-    $('#phone-tabs').innerHTML = isRoot ? app.tabs.map((t,i) => `<button data-go="${escape(t.go)}" class="${t.go === (current.tab || current.id) ? 'selected' : ''}" ${t.go === (current.tab || current.id) ? 'aria-current="page"' : ''}><span data-icon="${current.app==='consumer'?['home','service','mine'][i]:t.icon}" aria-hidden="true"></span>${escape(t.label)}</button>`).join('') : '';
+    const tabs=current.app==='consumer' && consumerVersion==='0.17' && current.id==='c-product-hub' ? app.tabs.map(t=>t.go==='c-service'?{label:'产品',go:'c-product-hub',icon:'product-cube'}:t) : app.tabs;
+    const isRoot = tabs.some(t => t.go === current.id) || current.id==='c-welcome';
+    $('#phone-tabs').innerHTML = isRoot ? tabs.map((t,i) => `<button data-go="${escape(t.go)}" class="${t.go === (current.tab || current.id) ? 'selected' : ''}" ${t.go === (current.tab || current.id) ? 'aria-current="page"' : ''}><span data-icon="${current.app==='consumer'?(t.icon || ['home','service','mine'][i]):t.icon}" aria-hidden="true"></span>${escape(t.label)}</button>`).join('') : '';
     $('#phone-back').style.visibility = isRoot ? 'hidden' : 'visible';
     $('#review-title').textContent = current.title;
     $('#entry-id').textContent = current.entry;
@@ -294,6 +296,11 @@
         serviceLabel:'远程使用指导',status:'pending',description:'希望了解日常清洁与保养方法。',contactName:'陈女士',phone:'13800000026',
         preferredDate:'2026-09-16',preferredTime:'morning'
       });
+    }
+    window.TOTO_PERSONAL_HOME?.seed(consumer.ownedProducts,scenario);
+    if (consumerVersion==='0.17') for (const order of consumer.orders.values()) {
+      order.preferredDate='2026-10-12';
+      if(order.status==='confirmed') order.confirmedDate='2026-10-12';
     }
     $('#consumer-scenario').value=scenario;
   }
@@ -442,9 +449,47 @@
     renderOutletOverlay();
     if (summaryCopied) showToast('问题摘要已复制，请选择客服渠道。');
   }
+  // Homepage carousel keeps page scroll and never changes service/registration drafts.
+  let ownedSwipe = null;
+  let suppressOwnedClickUntil = 0;
+  function switchHomeProduct(step, productId) {
+    if(current.id!=='c-home' || !window.TOTO_PERSONAL_HOME) return false;
+    const changed=productId ? window.TOTO_PERSONAL_HOME.selectProduct(consumerContext(),productId) : window.TOTO_PERSONAL_HOME.switchProduct(consumerContext(),step);
+    if(!changed) return false;
+    const scrollTop=$('#phone-body').scrollTop;
+    render();$('#phone-body').scrollTop=scrollTop;
+    return true;
+  }
+  if(window.TOTO_PERSONAL_HOME) {
+    document.addEventListener('pointerdown',event=>{
+      ownedSwipe=current.id==='c-home' && event.isPrimary!==false && event.button===0 && event.target.closest('[data-owned-carousel]') ? {id:event.pointerId,x:event.clientX,y:event.clientY}:null;
+    });
+    document.addEventListener('pointercancel',()=>{ownedSwipe=null;});
+    document.addEventListener('pointerup',event=>{
+      const start=ownedSwipe;ownedSwipe=null;
+      if(!start || start.id!==event.pointerId) return;
+      const dx=event.clientX-start.x,dy=event.clientY-start.y;
+      if(Math.abs(dx)<48 || Math.abs(dx)<Math.abs(dy)*1.4) return;
+      suppressOwnedClickUntil=Date.now()+400;
+      switchHomeProduct(dx<0?1:-1);
+    });
+    document.addEventListener('keydown',event=>{
+      if(!event.target.closest('[data-owned-carousel]') || !['ArrowLeft','ArrowRight'].includes(event.key)) return;
+      event.preventDefault();
+      if(switchHomeProduct(event.key==='ArrowLeft'?-1:1)) $('#phone-body').querySelector('[data-owned-carousel]')?.focus({preventScroll:true});
+    });
+    document.addEventListener('click',event=>{
+      if(Date.now()<suppressOwnedClickUntil && event.target.closest('.ex-owned')) {event.preventDefault();event.stopImmediatePropagation();}
+    },true);
+  }
   document.addEventListener('click', event => {
     const el = event.target.closest('button,[data-go],[data-action]');
     if (!el || el.disabled) return;
+    if (el.dataset.homeProduct) {
+      event.preventDefault();
+      if(switchHomeProduct(0,el.dataset.homeProduct)) $('#phone-body').querySelector('[data-owned-carousel]')?.focus({preventScroll:true});
+      return;
+    }
     if (current.id === 'c-home' && homeDesigns && el.dataset.homeDesign) {
       event.preventDefault();
       if (homeDesigns.choose(el.dataset.homeDesign)) {$('#ui-state').value='normal';render();}
@@ -504,7 +549,7 @@
     else if (el.hasAttribute('data-product-info')) {
       event.preventDefault();consumer.productInfoExpanded=!consumer.productInfoExpanded;render();
     }
-    else if (el.dataset.product) {
+    else if (el.dataset.product && !el.dataset.serviceType) {
       event.preventDefault();
       if (!consumer.ownedProducts.some(p=>p.id===el.dataset.product)) return;
       saveDraft();consumer.productId=el.dataset.product;consumer.productInfoExpanded=false;
@@ -514,7 +559,10 @@
       event.preventDefault();
       if (!serviceNames[el.dataset.serviceType]) return;
       if (!consumer.hasProducts) {showScreen('c-register');showToast('还没有可选的产品，可先添加产品或联系客服。');return;}
-      saveDraft();consumer.serviceType=el.dataset.serviceType;
+      if(el.dataset.product && !consumer.ownedProducts.some(p=>p.id===el.dataset.product)) return;
+      saveDraft();
+      if(el.dataset.product) consumer.productId=el.dataset.product;
+      consumer.serviceType=el.dataset.serviceType;
       const order=consumer.orders.get(consumer.productId);
       if (order) {showScreen('c-progress',true,true);showToast('已有服务进行中，可以先查看进度或联系客服。');return;}
       showScreen(el.dataset.go || (consumer.serviceType==='install'?'c-install':'c-repair'),true,true);
@@ -625,18 +673,21 @@
   });
   $('#prev-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)-1].id);});
   $('#next-page').addEventListener('click',()=>{const screens=apps[current.app].screens;showScreen(screens[screens.findIndex(s=>s.id===current.id)+1].id);});
-  $('#consumer-scenario').addEventListener('change',event=>{const keepPage=brandPreview?(['c-service','c-mine'].includes(current.id)?current.id:null):(current.id==='c-service' || account?.owns(current.id) ? current.id : null);resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (brandPreview?'c-home':consumer.hasProducts?'c-home':'c-welcome'),false,true);});
+  $('#consumer-scenario').addEventListener('change',event=>{const keepPage=brandPreview?((['c-service','c-mine'].includes(current.id) || (consumerVersion==='0.17' && current.id==='c-product-hub'))?current.id:null):(current.id==='c-service' || account?.owns(current.id) ? current.id : null);resetConsumer(event.target.value);routeHistory=[];current=null;showScreen(keepPage || (brandPreview?'c-home':consumer.hasProducts?'c-home':'c-welcome'),false,true);});
   $('#worker-task-card-scenario').addEventListener('change',event=>{saveDraft();worker.setTaskCardScenario(event.target.value);routeHistory=[];current=null;showScreen('w-tasks',false,true);});
-  $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer(brandPreview && !homeDesigns?'visitor':'registered');routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
+  $('#reset-demo').addEventListener('click',()=>{const workerActive=current.app==='worker';worker?.reset();assistant?.reset();drafts.clear();namedDrafts.clear();submitted.clear();resetConsumer(brandPreview && !homeDesigns && consumerVersion!=='0.17'?'visitor':'registered');routeHistory=[];current=null;showScreen(workerActive?'w-tasks':all[0].id,false);showToast('本次演示已重置。');});
   $('#worker-simulate').addEventListener('click',()=>{saveDraft();try{const target=worker.simulate($('#worker-event').value);if(target)showScreen(target,true,true);else showToast('下一次添加材料将模拟上传失败，可在原位重试。');}catch(err){showToast(err.message);}});
   window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1),false));
   const initialId=captureId;
   document.querySelectorAll?.('[data-consumer-version-link]').forEach(link=>link.setAttribute('aria-current',link.dataset.consumerVersionLink===consumerVersion?'page':'false'));
   if (brandPreview) $('#consumer-scenario').insertAdjacentHTML('afterbegin','<option value="visitor">游客 · 浏览品牌与产品</option><option value="unlinked">已登录 · 尚未关联产品</option>');
+  if (consumerVersion==='0.17') $('#consumer-scenario').insertAdjacentHTML('beforeend','<option value="installed">无工单 · 维修入口</option>');
   const versionNote=$('#prototype-version-note');
-  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':consumerVersion==='0.15'?'v0.15 · 首页方案对比':brandPreview?'v0.14 · 品牌产品与服务评审':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>任务页可进入日程与任务地图原型。`;
+  if(versionNote)versionNote.innerHTML=`消费者 ${consumerVersion==='0.11'?'v0.11 · 旧样式对照':consumerVersion==='0.17'?'v0.17 · 探索／服务／我的':consumerVersion==='0.16'?'v0.16 · 品牌产品中心':consumerVersion==='0.15'?'v0.15 · 首页方案对比':brandPreview?'v0.14 · 品牌产品与服务评审':'v0.13 · 新样式设计'}<br>服务人员 · 当前定稿版<br>任务页可进入日程与任务地图原型。`;
   const phaseLabel=$('#consumer-phase-label');
-  if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':consumerVersion==='0.15'?'04 v0.15 首页设计方案评审':brandPreview?'03 v0.14 品牌产品与服务评审原型':'02 v0.13 视觉设计原型';
-  if (brandPreview) resetConsumer(homeDesigns ? 'registered' : 'visitor');
+  if(phaseLabel)phaseLabel.textContent=consumerVersion==='0.11'?'01 v0.11 原样式对照':consumerVersion==='0.17'?'06 v0.17 探索与产品':consumerVersion==='0.16'?'05 v0.16 品牌产品中心':consumerVersion==='0.15'?'04 v0.15 首页设计方案评审':brandPreview?'03 v0.14 品牌产品与服务评审原型':'02 v0.13 视觉设计原型';
+  if (brandPreview) resetConsumer(homeDesigns || consumerVersion==='0.17' ? 'registered' : 'visitor');
+  const personalScenario=new URLSearchParams(location.search).get('homeScenario');
+  if (consumerVersion==='0.17' && ['registered','installed','pending','confirmed','multiple','visitor','unlinked'].includes(personalScenario)) resetConsumer(personalScenario);
   if(all.length) showScreen(initialId || location.hash.slice(1) || all[0].id,false);
 })();
