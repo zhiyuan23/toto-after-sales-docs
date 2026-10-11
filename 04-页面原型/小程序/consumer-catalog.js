@@ -24,7 +24,19 @@
   const availableSeries=()=>series.filter(s=>categoryProducts().some(p=>p.seriesId===s.id));
   const productName=p=>p.name.endsWith(' '+p.code)?p.name.slice(0,-p.code.length-1):p.name;
   const chip=(attr,id,name,current)=>`<button data-${attr}="${e(id)}" aria-pressed="${current===id}">${e(name)}</button>`;
-  const productCard=p=>`<button class="ct-product" data-catalog-product="${e(p.id)}" aria-label="查看${e(p.name)}商品档案"><span class="ct-product-image"><img src="${e(p.image)}" alt="${e(p.name)}" loading="lazy"></span><span class="ct-product-copy"><strong>${e(productName(p))}</strong><small>${e(p.code)}</small></span></button>`;
+  // Home review copy is shortened from these catalog names; no unrecorded claims.
+  const featuredCopy={
+    '19':{name:'诺锐斯特 LS',hint:'智能全自动一体型'},
+    '20':{name:'卫洗丽 G5A',hint:'智能一体型坐便器'},
+    '27':{name:'洗面器',hint:''},
+    '28':{name:'洗面器水嘴',hint:'抽取式设计'},
+  };
+  const productCard=(p,featured=false)=>{
+    const copy=featured?featuredCopy[p.id]:null;
+    const name=copy?.name || productName(p),hint=featured?(copy?.hint || ''):p.code;
+    return `<button class="ct-product${featured?' ct-product--featured':''}" data-catalog-product="${e(p.id)}" aria-label="查看${e(p.name)}商品档案"><span class="ct-product-image"><img src="${e(p.image)}" alt="${e(p.name)}" loading="lazy"></span><span class="ct-product-copy"><strong>${e(name)}</strong>${hint?`<small>${e(hint)}</small>`:''}${featured?'<span class="ct-product-arrow" aria-hidden="true"></span>':''}</span></button>`;
+  };
+  window.TOTO_CATALOG = {cards:ids=>ids.map(id=>products.find(p=>p.id===id)).filter(Boolean).map(p=>productCard(p,true)).join('')};
   function catalog() {
     const covers={'30':'23','31':'27','32':'28','33':'30'};
     return `<div class="ct-catalog ct-category-home"><div class="ct-product-grid">${roots.map(c=>{
@@ -38,7 +50,7 @@
     const list=pool.filter(p=>state.series==='all'||(state.series==='none'?!p.seriesId:p.seriesId===state.series));
     return `<div class="ct-catalog">
       ${related.length?`<nav class="ct-series-tabs ct-chips" aria-label="商品系列">${chip('catalog-series','all','全部',state.series)}${related.map(s=>chip('catalog-series',s.id,s.name,state.series)).join('')}${pool.some(p=>!p.seriesId)?chip('catalog-series','none','其他商品',state.series):''}</nav>`:''}
-      <section class="ct-results"><div class="ct-product-grid">${list.length?list.map(productCard).join(''):'<p class="ct-empty">暂无商品</p>'}</div></section></div>`;
+      <section class="ct-results"><div class="ct-product-grid">${list.length?list.map(p=>productCard(p)).join(''):'<p class="ct-empty">暂无商品</p>'}</div></section></div>`;
   }
   function detail() {
     const p=products.find(p=>p.id===state.product)||products[0];

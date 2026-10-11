@@ -96,13 +96,17 @@ html[data-consumer-version="0.17"] .consumer-phone:is([data-screen="c-home"],[da
 .consumer-phone .ex-contact { display:flex; justify-content:center; margin:auto 20px 0; padding-top:16px; }
 .consumer-phone .ex-contact button { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:8px 16px; color:#71818d; font-size:12px; }
 .consumer-phone .ex-contact img { width:16px; height:16px; opacity:.65; }
-.consumer-phone .ex-bind { display:flex; flex-direction:column; margin:4px 20px 0; padding:20px; border-radius:20px; background:#fff; }
-.consumer-phone .ex-bind h2 { margin:0; font-size:18px; line-height:26px; font-weight:500; }
-.consumer-phone .ex-bind p { margin:6px 0 0; font-size:12px; line-height:20px; color:#84919b; }
-.consumer-phone .ex-bind-actions { display:flex; flex-direction:column; gap:12px; margin-top:20px; }
-.consumer-phone .ex-bind-actions button { display:flex; align-items:center; justify-content:center; flex:none; width:100%; min-width:0; height:48px; border-radius:24px; font-size:14px; font-weight:500; }
-.consumer-phone .ex-bind .ex-bind-primary { color:#fff; background:var(--pc-blue); }
-.consumer-phone .ex-bind .ex-bind-secondary { color:var(--pc-blue); background:#edf2f5; }
+.consumer-phone .ex-bind { display:flex; align-items:center; justify-content:space-between; gap:12px; box-sizing:border-box; min-height:96px; margin:4px 20px 0; padding:20px 16px; border-radius:20px; background:#fff; }
+.consumer-phone .ex-bind-copy { min-width:0; }
+.consumer-phone .ex-bind h2 { margin:0; font-size:16px; line-height:24px; font-weight:500; }
+.consumer-phone .ex-bind p { margin:6px 0 0; font-size:12px; line-height:20px; color:#75848e; }
+.consumer-phone .ex-bind .ex-bind-primary { display:flex; align-items:center; justify-content:center; flex-shrink:0; min-height:44px; padding:0 16px; border-radius:999px; font-size:14px; font-weight:400; color:#fff; background:var(--pc-blue); }
+.consumer-phone .ex-discover { margin:24px 20px 0; }
+.consumer-phone .ex-discover-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.consumer-phone .ex-discover-heading h2 { font-size:18px; line-height:26px; font-weight:500; }
+.consumer-phone .ex-discover-heading p { margin-top:4px; font-size:12px; line-height:20px; color:#75848e; }
+.consumer-phone .ex-discover-heading > button { display:flex; align-items:center; gap:3px; flex-shrink:0; min-height:44px; padding:0; font-size:12px; color:#607987; }
+.consumer-phone .ex-discover-heading > button img { width:15px; height:15px; }
 
 .consumer-phone .ex-owned > .ex-heading { gap:6px; }
 .consumer-phone .ex-owned > .ex-heading h2 { font-size:16px; }
@@ -110,4 +114,4 @@ html[data-consumer-version="0.17"] .consumer-phone:is([data-screen="c-home"],[da
 .consumer-phone .ex-product-tabs button { flex-shrink:0; min-height:40px; padding:8px 16px; border-radius:20px; background:transparent; color:#7b8992; font-size:13px; white-space:nowrap; }
 .consumer-phone .ex-product-tabs button[aria-pressed="true"] { background:#e1e8ec; color:#244b6b; font-weight:500; }
 
-.consumer-phone .ex-bind + .ex-contact { margin-top:4px; }
+.consumer-phone .ex-discover + .ex-contact { margin-top:8px; }

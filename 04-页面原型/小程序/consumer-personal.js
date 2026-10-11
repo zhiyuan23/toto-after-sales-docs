@@ -67,7 +67,7 @@
     return `<section class="hc-product" data-owned-carousel tabindex="0" aria-label="我的商品"><button class="hc-product-summary" data-product="${e(product.id)}" data-go="c-product" aria-label="查看${e(product.name)}资料"><span class="hc-product-visual"><img src="${e(product.image)}" alt="${e(product.name)}" draggable="false"></span><span class="hc-product-info">${product.room?`<small>${e(product.room)}</small>`:''}<strong>${e(product.seriesId==='neorest'?'诺锐斯特 LS':product.name)}</strong><span>${e(product.model)}</span></span>${arrow}</button>${homeService(ctx)}</section>`;
   }
   function summary(ctx) {
-    if(ctx.visitor || !ctx.hasProducts || !ctx.products.length) return `<section class="ex-bind"><h2>我的商品</h2><p>绑定您的 TOTO，享受专属服务</p><div class="ex-bind-actions"><button class="ex-bind-primary" ${ctx.visitor?'data-brand-access="c-register"':'data-go="c-register"'}>绑定商品</button><button class="ex-bind-secondary" data-go="c-brand-catalog">探索商品</button></div></section>`;
+    if(ctx.visitor || !ctx.hasProducts || !ctx.products.length) return `<section class="ex-bind" aria-label="绑定我的商品"><div class="ex-bind-copy"><h2>添加您的 TOTO 产品</h2><p>查看产品资料与专属服务</p></div><button class="ex-bind-primary" ${ctx.visitor?'data-brand-access="c-register"':'data-go="c-register"'}>绑定商品</button></section>`;
     const products=summaryProducts(ctx);
     const index=products.findIndex(p=>p.id===summaryProductId);
     const product=products[index];
@@ -76,11 +76,12 @@
       ${products.length>1?`<nav class="ex-product-tabs" aria-label="切换商品">${products.map((p,i)=>`<button data-home-product="${e(p.id)}" aria-label="查看第 ${i+1} 件商品：${e(p.name)}" aria-pressed="${i===index}">${e(p.name)}</button>`).join('')}</nav>`:''}
       ${homeProductCard(selectedContext)}</section>`;
   }
+  const discover=()=>`<section class="ex-discover" aria-label="探索商品"><div class="ex-discover-heading"><div><h2>探索商品</h2><p>精选产品，发现更多舒适可能</p></div><button data-go="c-brand-catalog">查看全部${arrow}</button></div><div class="ct-product-grid">${window.TOTO_CATALOG.cards(['19','20','27','28'])}</div></section>`;
   function explore(ctx) {
     return `<div class="pc-home ex-home"><header class="pc-masthead"><span class="pc-wordmark" aria-label="TOTO">TOTO</span></header>
       <button class="ex-banner" data-go="c-brand-story" aria-label="探索 TOTO 品牌与生活"><img src="assets/brand-center/neorest-nx-space.jpg" alt="TOTO 诺锐斯特卫浴空间"><span><strong>让舒适，融入日常。</strong><small>探索 TOTO ${arrow}</small></span></button>
       <nav class="ex-help" aria-label="服务与支持"><button class="ex-assistant" data-ai="start"><span><strong>智能助手</strong><small>使用问题，随时问</small></span><img src="assets/help-icons/assistant-purple-v1.png" alt=""></button><button class="ex-outlets" data-go="c-outlets"><span><strong>服务网点</strong><small>查找附近网点</small></span><span class="ex-map-pin" aria-hidden="true">${icon('map-marker-outline','brand-center')}</span></button></nav>
-      ${summary(ctx)}
+      ${summary(ctx)}${discover()}
       <div class="ex-contact"><button data-go="c-customer-service">${icon('face-agent','brand-center')}<span>联系客服</span>${arrow}</button></div></div>`;
   }
   const productHub = {id:"c-product-hub",tab:"c-product-hub"};
@@ -90,8 +91,8 @@
   app.screens.splice(1,0,productHub);
   app.tabs=[{label:'探索',go:'c-home',icon:'home'},{label:'服务',go:'c-service',icon:'service'},{label:'我的',go:'c-mine',icon:'mine'}];
   Object.assign(home,{title:'探索 TOTO',entry:'C01 · 探索首页 v0.17',nav:'immersive',
-    goal:'保留 Banner 与并排助手／网点。商品改为白色圆角卡，左侧浅灰小图、右侧房间与名称型号；下方以一行浅色入口展示服务类型和简短状态，点击查看详情；详细进度由独立服务页承接。游客及未绑定时使用上下排列的 48px 标准通栏绑定／探索按钮，卡片按内容自然高度排列，不拉伸填满剩余空间。商品卡上方展示名称切换标签，仍支持滑动；适度放大 Banner、帮助入口和商品图片，并用弹性留白让联系客服靠近底部。原服务页和产品页方案保留供比较。',
-    note:'底部为探索／服务／我的；服务页沿用原样式。工作台另保留产品页方案及其产品 Tab 预览，尚未确定最终第二 Tab。首页和产品页共用商品及工单数据；首页采用新的轻量卡片，产品页保留原方案。未接真实业务。',body:explore});
+    goal:'保留 Banner 与并排助手／网点。游客及未绑定时使用紧凑横向绑定卡片，有商品时展示本人商品切换、资料与单行服务状态；两种状态下方均保留探索商品与双列精选卡片。精选卡右下角采用品牌方案 v0.14 的斜向进入箭头，整卡点击查看档案，查看全部进入商品分类。原服务页和产品页方案保留供比较。',
+    note:'底部为探索／服务／我的。精选仅为本轮离线原型手选的四款公开目录样品，不代表正式推荐配置或实时后台数据；浏览不建立绑定，绑定沿用原登录边界。仅修改原型，待评审。',body:explore});
   const mine=app.screens.find(screen=>screen.id==='c-mine');
   const mineBody=mine.body;
   mine.body=ctx=>mineBody(ctx)+(ctx.visitor?'':`<section class="c-section"><button class="c-menu-row" data-go="c-service"><span>服务记录</span>${arrow}</button></section>`);

@@ -20,6 +20,12 @@ html[data-consumer-version="0.17"] .consumer-phone:is([data-screen="c-brand-cata
 .consumer-phone .ct-product-copy { display:flex; flex-direction:column; flex:1; align-items:flex-start; gap:8px; padding:0 14px 18px; }
 .consumer-phone .ct-product-copy strong { font-size:13px; line-height:20px; font-weight:500; overflow-wrap:anywhere; }
 .consumer-phone .ct-product-copy small { margin-top:auto; color:#82919b; font-size:11px; line-height:16px; overflow-wrap:anywhere; }
+.consumer-phone .ex-discover .ct-product--featured { box-sizing:border-box; border:1px solid #e0e5e7; }
+.consumer-phone .ct-product--featured .ct-product-image { aspect-ratio:1.3; padding:12px; background:#fff; }
+.consumer-phone .ct-product--featured .ct-product-copy { position:relative; align-self:stretch; box-sizing:border-box; min-height:64px; padding:9px 12px; gap:4px; background:#fff; }
+.consumer-phone .ct-product--featured .ct-product-copy strong { font-size:14px; line-height:22px; }
+.consumer-phone .ct-product--featured .ct-product-copy small { margin-top:0; padding-right:18px; font-size:12px; line-height:20px; color:#6b7c86; }
+.consumer-phone .ct-product-arrow { position:absolute; right:12px; bottom:12px; width:14px; height:14px; background:#2b74aa; mask:url("assets/brand-center/arrow-top-right.svg") center / contain no-repeat; pointer-events:none; }
 .consumer-phone .ct-empty { grid-column:1/-1; padding:40px 0; text-align:center; color:#82919b; font-size:14px; }
 .consumer-phone .ct-detail { padding:16px 20px 24px; }
 .consumer-phone .ct-detail-image { display:grid; place-items:center; height:260px; padding:24px; background:#fff; border-radius:20px; }

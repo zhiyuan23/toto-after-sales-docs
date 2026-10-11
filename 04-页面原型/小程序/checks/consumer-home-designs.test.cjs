@@ -622,6 +622,22 @@ test('v0.17 home and product alternative offer public exploration and binding wh
   }
 });
 
+test('v0.17 home retains exploration across ownership and opens featured archives without changing private data',()=>{
+  const codes={'19':'CES8G820GCN','20':'CES7H311KCN','27':'LW1554B','28':'TLG12303B'};
+  for(const scenario of ['visitor','unlinked','registered','confirmed','multiple']) {
+    const f=fixture({search:'?consumerVersion=0.17'});
+    f.resetConsumer(scenario);f.showScreen('c-home');const before=snapshot(f);
+    const featured=buttons(f.html()).filter(b=>b.dataset.catalogProduct);
+    assert.equal(featured.length,4);
+    for(const card of featured) {
+      f.click(card.dataset);assert.equal(f.current().id,'c-brand-product');
+      assert.match(f.html(),new RegExp(codes[card.dataset.catalogProduct]));
+      for(const key of ['products','productId','orders','forms','media','registrationDrafts','submitted']) assert.deepEqual(snapshot(f)[key],before[key]);
+      assert.equal(f.consumer.visitor,scenario==='visitor');f.showScreen('c-home');
+    }
+  }
+});
+
 test('v0.17 home summarizes service states and routes to the matching detailed order',()=>{
   const f=fixture({search:'?consumerVersion=0.17'});
   f.resetConsumer('confirmed');
