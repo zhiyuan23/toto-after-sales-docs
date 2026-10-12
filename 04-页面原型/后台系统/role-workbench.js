@@ -43,8 +43,8 @@ const configs={
   serviceDesk:{
     number:'02',perspective:'客服作业',title:'客服工作台',scope:'全国客服中心',user:'客服主管',avatar:'客',icon:'headset',
     subtitle:'把受理、分配服务站、审核和投诉处理收拢到一条连续工作流。',primary:'发起服务受理',primaryAction:'服务受理',
-    modules:["工单处理","异常与投诉","业务查询与知识库"],
-    groups:[["工作台",["工作台"],true],["工单处理",["服务工单","完工审核","回访管理"],false],["异常与投诉",["异常工单","投诉管理"],false],["业务查询与知识库",["购买记录","安装码查询","服务知识库"],false],["服务分析",["服务质量","服务报表"],false]],
+    modules:["工单处理","异常与投诉","业务支持"],
+    groups:[["工作台",["工作台"],true],["工单处理",["服务工单","完工审核","回访管理"],false],["异常与投诉",["异常工单","投诉管理"],false],["业务支持",["购买记录","服务知识库"],false],["服务分析",["服务质量","服务报表"],false]],
     metrics:[
       {key:'acceptance',label:'待受理',value:18,caption:'当前状态 PENDING_ACCEPTANCE',icon:'headset',tone:''},
       {key:'dispatch',label:'待派单',value:12,caption:'已分配服务站，等待站点安排人员',icon:'building',tone:'is-amber'},
