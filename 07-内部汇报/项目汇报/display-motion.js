@@ -7,7 +7,7 @@ window.createReportDisplayMotion = reduce => {
   const scenes = {
     cover: ['.cover-timing', '.cover-ambient', '.cover-hq-support', '.cover-flow', '[data-cover-node]'],
     background: ['.v2-source-strip', '.v2-direction'],
-    saas: ['.v3-platform-heading', '.v3-platform-piece', '.v3-platform-story', '.v3-platform-capability'],
+    saas: ['.v3-platform-heading', '.v3-platform-domain', '.v3-platform-story', '.v3-platform-capability'],
     system: ['.web-app', '.mobile-app'],
     'product-service': ['.journey-stop', '.v2-journey-anchors>span'],
     exceptions: ['.change-card', '.trace-panel'],
@@ -66,7 +66,6 @@ window.createReportDisplayMotion = reduce => {
         else if (element.matches('.change-card,.delivery-track>div')) from = `translateX(${35 * direction}px)`;
         else if (element.matches('.v2-direction')) from = 'translateY(40px) rotate(1.5deg)';
         else if (element.matches('.journey-stop')) from = 'translateY(32px) scale(.96)';
-        else if (element.matches('.v3-platform-piece')) from = 'translateY(22px) scale(.96)';
         play(element, from, 90 + count++ * 65);
       });
     });

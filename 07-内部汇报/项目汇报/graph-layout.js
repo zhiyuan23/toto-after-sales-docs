@@ -28,9 +28,6 @@ window.createReportGraphics = sections => {
           scene(card, ['data', 'coordination', 'applications'][i], card.firstChild);
         });
         break;
-      case 'saas':
-        window.createReportPlatformPuzzle(find('.v3-platform-puzzle'));
-        break;
       case 'exceptions': {
         const panel = find('.trace-panel');
         const copy = wrap(panel, 'trace-copy');
@@ -96,9 +93,9 @@ window.createReportGraphics = sections => {
   // report-card directly; existing compositions keep their layout selectors intact.
   const cardSelector = [
     '.report-card',
-    '.cover-object', '.hero-order', '.v3-platform-piece',
-    '.v2-source-strip', '.v2-direction', '.v3-platform-board',
-    '.v3-platform-story', '.v3-platform-capability', '.web-app',
+    '.cover-object', '.hero-order',
+    '.v2-source-strip', '.v2-direction',
+    '.v3-platform-domain', '.v3-platform-capability', '.web-app',
     '.web-grid>div', '.mobile-app', '.journey-stop', '.v2-journey-anchors>span',
     '.change-card', '.change-route>strong', '.trace-panel', '.trace-fields>div',
     '.v2-support-centre', '.v2-support-card', '.channel-node', '.channel-key',
