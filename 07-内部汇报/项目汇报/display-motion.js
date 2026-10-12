@@ -5,7 +5,7 @@ window.createReportDisplayMotion = reduce => {
   const animations = new Set();
   let blocked = false;
   const scenes = {
-    cover: ['.cover-ambient', '.cover-hq-support', '.cover-flow', '[data-cover-node]', '.cover-stage-rail', '.cover-bottom'],
+    cover: ['.cover-timing', '.cover-ambient', '.cover-hq-support', '.cover-flow', '[data-cover-node]'],
     background: ['.v2-source-strip', '.v2-direction'],
     saas: ['.v3-platform-heading', '.v3-platform-piece', '.v3-platform-story', '.v3-platform-capability'],
     system: ['.web-app', '.mobile-app'],

@@ -20,7 +20,7 @@
     section.dataset.slide = slide.id;
     section.hidden = true;
     section.setAttribute('aria-labelledby','slide-title-' + i);
-    section.innerHTML = `<header class="slide-header">${slide.chapter ? `<p class="eyebrow">${slide.chapter}</p>` : ''}<h1 id="slide-title-${i}">${slide.title}</h1></header><div class="visual">${slide.html}</div>`;
+    section.innerHTML = `<header class="slide-header">${slide.chapter ? `<p class="eyebrow">${slide.chapter}</p>` : ''}<h1 id="slide-title-${i}">${slide.title}</h1>${slide.duration ? `<p class="cover-timing"><svg class="cover-timing-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>预计时长</span><span class="cover-timing-divider" aria-hidden="true">·</span><strong>${slide.duration}</strong></p>` : ''}</header><div class="visual">${slide.html}</div>`;
     if (slide.id === 'closing') {
       const copy = document.createElement('div');
       copy.className = 'closing-copy';

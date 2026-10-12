@@ -4,12 +4,10 @@ window.createReportCoverMotion = (root, reduce) => {
   const period = 3600;
   const routes = [...root.querySelectorAll('[data-cover-route]')];
   const states = [...root.querySelectorAll('[data-cover-state]')];
-  const pips = [...root.querySelectorAll('[data-cover-pip]')];
   const dots = [...root.querySelectorAll('[data-cover-dot]')];
   const nodes = [...root.querySelectorAll('[data-cover-node]')];
   const order = root.querySelector('[data-cover-order]');
   const owners = ['consumer', 'customer', 'station', 'worker', 'customer', 'customer', null];
-  const phases = [0,1,2,3,4,5,6];
   const positions = [[360,270],[412,255],[412,365],[355,420],[412,255],[412,255],[375,315]];
   const routeSteps = [0,1,2,3,4,-1,-1];
   const particleGroup = root.querySelector('.cover-flow-particles');
@@ -56,7 +54,6 @@ window.createReportCoverMotion = (root, reduce) => {
     states[0].querySelector('.cover-order-owner').textContent = reduce.matches ? '消费者申请 · 总部支撑' : '消费者自主申请';
     routes.forEach((route,i) => route.classList.toggle('is-current',!reduce.matches && i === routeIndex()));
     states.forEach((state,i) => state.classList.toggle('is-current',i === current));
-    pips.forEach((pip,i) => pip.classList.toggle('is-current',i === phases[current]));
     nodes.forEach(node => node.classList.toggle('is-current',!reduce.matches && node.dataset.coverNode === owner));
     // Place the card beside the current owner; settle at the centre after closure.
     const [x,y] = reduce.matches ? [375,315] : positions[current];
