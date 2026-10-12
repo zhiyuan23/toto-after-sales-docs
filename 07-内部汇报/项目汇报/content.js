@@ -144,6 +144,6 @@ window.REPORT_SLIDES = [
     "subtitle": "",
     "notes": "汇报结束，进入交流与建议环节。主题句“让售后服务，连成一体。”呼应开场，下方以蓝鲸 Logo 加“蓝鲸数字”名称、× 合作符号及 TOTO 官方 Logo 呈现合作署名。本页作为独立尾页，不新增章节，不重复交付安排或增加服务承诺。交流时可通过目录回到相关页面，或打开配套材料与独立工单演示。",
     "layout": "closing",
-    "html": "<p class=\"closing-theme\">让售后服务，连成一体。</p><p class=\"closing-invitation\">欢迎交流与建议</p><p class=\"closing-signature\"><span class=\"closing-brand\"><span>蓝鲸数字</span></span><span class=\"closing-partner-mark\" aria-label=\"携手\">×</span><img class=\"toto-logo\" src=\"toto-logo.svg\" alt=\"TOTO\" width=\"116\" height=\"26\"></p>"
+    "html": "<p class=\"closing-theme\">让售后服务，连成一体。</p><p class=\"closing-invitation\">欢迎交流与建议</p><p class=\"closing-signature\"><span class=\"brand closing-brand\"><img class=\"brand-logo\" src=\"brand-logo.png\" alt=\"\" width=\"30\" height=\"30\"><span class=\"brand-title\"><span class=\"brand-name\">蓝鲸数字</span></span></span><span class=\"closing-partner-mark\" aria-label=\"携手\">×</span><img class=\"toto-logo\" src=\"toto-logo.svg\" alt=\"TOTO\" width=\"116\" height=\"26\"></p>"
   }
 ];

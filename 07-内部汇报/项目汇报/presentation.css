@@ -129,7 +129,7 @@
 }
 :root[data-theme=dark] .report-v3 .toto-logo{filter:brightness(1.9) saturate(.7)}
 .report-v3 .project-label{display:flex;align-items:center}
-.report-v3 .project-label .toto-logo{width:100px;height:calc(100px * 13 / 58)}
+.report-v3 :is(.project-label,.closing-signature)>.toto-logo{width:100px;height:calc(100px * 13 / 58)}
 .report-v3 .v2-source-brand{display:inline-flex;align-items:center}
 
 .report-v3 .controls{
