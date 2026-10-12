@@ -12,7 +12,6 @@
   let paused = false;
   let idleTimer;
   const displayMotion = window.createReportDisplayMotion(reduce);
-  const closingMotion = window.createReportClosingMotion(reduce);
   const strip = html => html.replace(/<br\s*\/?\s*>/g,'').replace(/<[^>]*>/g,'');
   // Content is authored locally. Never insert API responses or user input into these templates.
   const sections = slides.map((slide, i) => {
@@ -25,6 +24,7 @@
     if (slide.id === 'closing') {
       const copy = document.createElement('div');
       copy.className = 'closing-copy';
+      copy.innerHTML = '<div class="closing-mark" aria-hidden="true"><img src="brand-logo.png" alt="" width="128" height="128"></div>';
       copy.append(...section.childNodes);
       section.append(copy);
     }
@@ -37,7 +37,6 @@
     const blocked = paused || directory.open || notesOpen || document.hidden;
     coverMotion.sync(slides[page].id === 'cover', blocked);
     displayMotion.sync(blocked);
-    closingMotion.sync(blocked);
   };
   function updateDirectory() {
     $('directory-list').querySelectorAll('button').forEach((button,i) => {
@@ -50,6 +49,7 @@
     sections.forEach((section,i)=>{ section.hidden = i !== page; section.inert = i !== page; });
     const section = sections[page];
     document.body.dataset.reportPage = slides[page].id;
+    document.querySelector('.folio-index').textContent = slides[page].chapter?.slice(0, 2) || '';
     // Keep authored reveal markers for grouping; every page now opens complete.
     section.querySelectorAll('[data-reveal]').forEach(element=>{
       element.classList.remove('reveal-hidden');
@@ -57,7 +57,6 @@
       element.inert = false;
     });
     if (changed) displayMotion.enter(section, direction, instant || directory.open);
-    if (changed) closingMotion.enter(slides[page].id === 'closing', instant || directory.open);
     mounted = page;
     const data = slides[page];
     $('previous').disabled = page === 0;
@@ -195,7 +194,7 @@
   directory.addEventListener('cancel',()=>{ directory.dataset.instant = 'true'; });
   directory.addEventListener('close',syncMotion);
   document.addEventListener('visibilitychange',syncMotion);
-  reduce.addEventListener('change',()=>{ displayMotion.cancel(); closingMotion.cancel(); coverMotion.reduced(); render(true); });
+  reduce.addEventListener('change',()=>{ displayMotion.cancel(); coverMotion.reduced(); render(true); });
   const initial = slides.findIndex(x=>x.id===location.hash.slice(1));
   go(initial >= 0 ? initial : 0);
 })();

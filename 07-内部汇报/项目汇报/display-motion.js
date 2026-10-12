@@ -18,7 +18,8 @@ window.createReportDisplayMotion = reduce => {
     assistant: ['.v3-knowledge-source', '.v3-assist-card'],
     'live-demo': ['.v3-demo-role-tour', '.v2-demo-app'],
     future: ['.v3-future-centre', '.v3-future-direction'],
-    delivery: ['.delivery-track>div', '.material-links']
+    delivery: ['.delivery-track>div', '.material-links'],
+    closing: ['.closing-mark', '.closing-theme', '.closing-invitation', '.closing-signature']
   };
   function cancel() {
     // Cancellation exposes the complete resting page, including rapid navigation.
@@ -43,21 +44,24 @@ window.createReportDisplayMotion = reduce => {
   }
   function enter(section, direction, instant) {
     cancel();
-    // The original closing controller owns both the backdrop morph and text fade.
-    if (instant || document.hidden || section.dataset.slide === 'closing') return;
+    if (instant || document.hidden) return;
     if (reduce.matches) {
       // Fade the content, never the scaled slide canvas itself.
+      play(section.querySelector('.closing-mark'), '', 0, 150);
       play(section.querySelector('.slide-header'), '', 0, 150);
       play(section.querySelector('.visual'), '', 0, 150);
       return;
     }
+    document.querySelectorAll('.report-folio>div').forEach((element, index) => {
+      play(element, element.matches('.folio-index') ? '' : 'translateY(25px) rotate(-8deg)', index * 65, 1200);
+    });
     play(section.querySelector('.eyebrow'), '', 0, 450);
     play(section.querySelector('h1'), `translateY(${28 * direction}px)`);
     let count = 0;
     (scenes[section.dataset.slide] || ['.visual']).forEach(selector => {
       section.querySelectorAll(selector).forEach(element => {
         let from = `translateY(${30 * direction}px)`;
-        if (element.matches('.v2-support-centre')) from = 'scale(.94)';
+        if (element.matches('.v2-support-centre,.closing-mark')) from = 'scale(.94)';
         else if (element.matches('.mobile-app')) from = 'translateX(50px)';
         else if (element.matches('.change-card,.delivery-track>div')) from = `translateX(${35 * direction}px)`;
         else if (element.matches('.v2-direction')) from = 'translateY(40px) rotate(1.5deg)';
@@ -65,6 +69,10 @@ window.createReportDisplayMotion = reduce => {
         else if (element.matches('.v3-platform-piece')) from = 'translateY(22px) scale(.96)';
         play(element, from, 90 + count++ * 65);
       });
+    });
+    // Draw links only after the neighboring cards have started to appear.
+    section.querySelectorAll('.channel-map>.channel-arrow').forEach((element, index) => {
+      play(element, 'scaleX(0)', 430 + index * 140, 300);
     });
     section.querySelectorAll('.v3-answer,.v3-dispatch-focus-result,.v3-delivery-goal').forEach((element, index) => {
       play(element, 'translateY(12px)', 750 + index * 70, 650);

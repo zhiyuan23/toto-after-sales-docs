@@ -1,54 +1,45 @@
 /* V3 presentation layer: preserved brand tokens and focused slide compositions. */
-/* Quiet brand atmosphere: a mirrored logo-inspired whale tail and low coastal waves. */
+/* Page palettes and geometric folios follow the Color edition. */
 .report-v3{
  --bg:#f8fafc;
- --report-glow:color-mix(in srgb,var(--blue) 6%,transparent);
- --report-whale:color-mix(in srgb,var(--blue) 5%,transparent);
- --report-wave:color-mix(in srgb,var(--blue) 2.4%,transparent);
+ --page-tone:var(--blue);
+ --page-wash:var(--blue-soft);
  isolation:isolate;
- background:
-  radial-gradient(ellipse at 94% 10%,var(--report-glow),transparent 52%),
-  var(--bg);
+ background:var(--bg);
 }
-:root[data-theme=dark] .report-v3{
- --bg:#142031;
- --report-glow:color-mix(in srgb,var(--blue) 7%,transparent);
- --report-whale:color-mix(in srgb,var(--blue) 6%,transparent);
- --report-wave:color-mix(in srgb,var(--blue) 3%,transparent);
+:root[data-theme=dark] .report-v3{--bg:#142031}
+.report-v3:is([data-report-page="background"],[data-report-page="exceptions"],[data-report-page="assistant"]){--page-tone:var(--teal);--page-wash:var(--teal-soft)}
+.report-v3:is([data-report-page="system"],[data-report-page="support"],[data-report-page="experience"],[data-report-page="delivery"]){--page-tone:var(--purple);--page-wash:var(--purple-soft)}
+.report-v3[data-report-page="product-service"]{--page-tone:var(--gold);--page-wash:var(--gold-soft)}
+.report-v3:is([data-report-page="anti-diversion"],[data-report-page="live-demo"]){--page-tone:var(--coral);--page-wash:var(--coral-soft)}
+.report-folio{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;user-select:none}
+.folio-index{
+ position:absolute;right:5.75vw;top:10.5vh;
+ font-size:min(10.5vw,18.7vh);font-weight:700;line-height:1;letter-spacing:-.085em;
+ color:var(--page-wash);
 }
-.report-v3::before,.report-v3::after{
- content:"";
- position:fixed;
- z-index:-1;
- pointer-events:none;
+.folio-shape{
+ position:absolute;right:-14vw;bottom:-38vh;
+ width:49vw;height:67vh;border:5vw solid var(--page-wash);border-radius:50%;opacity:.6;
 }
-.report-v3::before{
- top:-16px;
- right:-5vw;
- width:60vw;
- aspect-ratio:790 / 650;
- background:var(--report-whale);
- mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%27160%20290%20790%20650%27%3E%3Cg%20fill%3D%27black%27%20transform%3D%27translate%281110%200%29%20scale%28-1%201%29%27%3E%3Cpath%20d%3D%27M387%20677C357%20626%20378%20586%20413%20550C433%20529%20452%20508%20455%20493C461%20463%20445%20435%20442%20410C436%20379%20451%20347%20481%20330C494%20324%20499%20327%20494%20336C476%20374%20528%20411%20530%20445C565%20443%20574%20468%20581%20486C594%20514%20615%20530%20635%20529C658%20527%20648%20539%20634%20548C607%20570%20566%20579%20535%20556C518%20540%20501%20533%20491%20534C468%20536%20458%20560%20460%20595C462%20621%20482%20643%20500%20651Z%27%2F%3E%3Cpath%20opacity%3D%27.62%27%20d%3D%27M80%20640C240%20735%20440%20695%20590%20635C673%20603%20738%20591%20800%20606C692%20613%20642%20650%20590%20698C460%20824%20247%20824%2080%20640Z%27%2F%3E%3Cpath%20opacity%3D%27.38%27%20d%3D%27M240%20825C515%20848%20658%20677%20899%20636C815%20690%20751%20746%20727%20801C690%20851%20649%20880%20561%20890C415%20920%20307%20885%20240%20825Z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat;
+.folio-orbit,.folio-dot{display:none;position:absolute}
+.report-v3[data-report-page="cover"] .folio-shape{
+ width:53vw;height:80vh;right:19vw;bottom:-18vh;border:0;background:var(--page-wash);
 }
-.report-v3::after{
- bottom:0;
- left:0;
- width:100%;
- height:min(16vh,180px);
- background:var(--report-wave);
- mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%201600%20180%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20fill%3D%27black%27%20opacity%3D%27.65%27%20d%3D%27M0%20104C260%20155%20462%2069%20737%2092S1249%20166%201600%2080V180H0Z%27%2F%3E%3Cpath%20fill%3D%27black%27%20opacity%3D%27.4%27%20d%3D%27M0%20151C279%20105%20505%20168%20812%20145S1290%2093%201600%20137V180H0Z%27%2F%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat;
+.report-v3[data-report-page="closing"] .folio-shape{
+ right:-14.4vw;bottom:-21vh;width:49vw;height:49vw;
+ border:8.75vw solid var(--teal-soft);opacity:1;
 }
-@media(max-width:760px){
- .report-v3::before{top:32px;right:-10vw;width:78vw;opacity:.65}
- .report-v3::after{opacity:.65}
+.report-v3[data-report-page="closing"] .folio-orbit{
+ display:block;left:-11.25vw;top:23.3vh;width:32vw;height:32vw;
+ border-radius:40%;background:var(--purple-soft);transform:rotate(25deg);
 }
-/* The opening collaboration graphic needs its own clear background. */
-.report-v3:has(#stage>[data-slide="cover"]:not([hidden]))::before,
-.report-v3:has(#stage>[data-slide="cover"]:not([hidden]))::after{display:none}
-@media print{
- .report-v3{background:var(--bg)}
- .report-v3::before,.report-v3::after{display:none}
+.report-v3[data-report-page="closing"] .folio-dot{
+ display:block;left:17.5vw;bottom:-12.2vh;width:16.25vw;height:16.25vw;
+ border-radius:50%;background:var(--gold-soft);
 }
+@media(prefers-contrast:more){.report-folio{display:none}}
+@media print{.report-folio{display:none}}
 /* Keep entrance transforms inside the fixed presentation canvas.
    Clipping creates no scroll container, so temporary motion cannot shrink the slide. */
 .report-v3 #stage,.report-v3 .slide.graphic-report{overflow:clip}
@@ -406,6 +397,13 @@
 }
 
 .report-v3 .channel-map{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:calc(16 * var(--display-unit,1px))}
+/* These short links express association between records, without a directional arrow. */
+.report-v3 .channel-map>.channel-arrow{
+ align-self:center;justify-self:center;display:block;
+ width:calc(24 * var(--display-unit,1px));height:calc(1.5 * var(--display-unit,1px));
+ border-radius:999px;background:color-mix(in srgb,var(--page-tone) 35%,var(--line));
+ transform-origin:left center;
+}
 @media(max-width:760px){.report-v3 .channel-map{grid-template-columns:1fr auto 1fr}.report-v3 .channel-map>.channel-arrow:nth-child(4){display:none}.report-v3 .channel-map>.channel-node:nth-child(5){grid-column:1}.report-v3 .channel-map>.channel-arrow:nth-child(6){grid-column:2}.report-v3 .channel-map>.channel-node:nth-child(7){grid-column:3}}
 
 /* Cover: an open curved collaboration ring with a work order following its owner.
@@ -627,14 +625,15 @@
 }
 .report-v3 .slide.graphic-report .eyebrow{font-size:var(--report-type-label);font-weight:500;line-height:1.5;letter-spacing:.12em;margin-bottom:var(--report-space-2)}
 /* Color edition heading accents, scaled with the first edition's canvas. */
-.report-v3 .slide-header>.eyebrow{display:flex;align-items:center;gap:calc(12 * var(--display-unit,1px))}
+.report-v3 .slide-header>.eyebrow{color:var(--page-tone);display:flex;align-items:center;gap:calc(12 * var(--display-unit,1px))}
 .report-v3 .slide-header>.eyebrow::before{
  content:"";flex:0 0 calc(20 * var(--display-unit,1px));
  height:calc(4 * var(--display-unit,1px));border-radius:calc(2 * var(--display-unit,1px));
  background:currentColor;
 }
-.report-v3 .slide h1 em{
- background:linear-gradient(transparent 76%,var(--blue-soft) 76% 95%,transparent 95%);
+.report-v3 .slide.graphic-report .slide-header h1 em{
+ color:var(--page-tone);
+ background:linear-gradient(transparent 76%,var(--page-wash) 76% 95%,transparent 95%);
  -webkit-box-decoration-break:clone;box-decoration-break:clone;
 }
 
@@ -938,105 +937,40 @@
  }
 }
 
-/* The fish-tail completes as a pale watermark behind the centred closing message. */
-.report-brand-scene{
- position:fixed;
- z-index:-1;
- pointer-events:none;
- top:50%;
- right:4vw;
- width:min(44vw,73.92dvh);
- aspect-ratio:1;
- transform:translateY(-50%);
- color:var(--report-whale);
-}
-.report-brand-symbol{
- position:absolute;
- top:0;
- left:0;
- width:100%;
- aspect-ratio:1;
- transform-origin:0 0;
-}
-.report-brand-art{position:absolute;inset:0;display:block;width:100%;height:100%}
-.report-brand-color{display:none}
-.report-v3[data-report-page="closing"]::before{visibility:hidden}
-.report-v3[data-report-page="closing"]::after{opacity:0;transition:opacity 1800ms var(--ease-out)}
+/* An open closing composition: brand, message and invitation, framed by three colors. */
 .report-v3 #stage>.slide.graphic-report.closing{
- justify-content:center;
- align-items:center;
- /* Equal safe space keeps the complete text group at the stage's midpoint. */
- padding-block:var(--report-space-4);
- text-align:center;
+ justify-content:center;align-items:center;padding-block:var(--report-space-4);text-align:center;
 }
 .report-v3 .closing-copy{
- display:flex;
- flex-direction:column;
- align-items:center;
- gap:calc(20 * var(--display-unit,1px));
- width:100%;
- margin:0;
- flex:0 0 auto;
+ display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;margin:0;flex:0 0 auto;
 }
-.report-v3 .slide.graphic-report.closing .closing-copy>.slide-header{
- width:auto;
- margin:0;
-}
+.report-v3 .closing-mark{width:128px;height:128px;flex-shrink:0;margin-bottom:8px}
+.report-v3 .closing-mark img{display:block;width:100%;height:100%;object-fit:contain}
+.report-v3 .slide.graphic-report.closing .closing-copy>.slide-header{width:auto;margin:0}
 .report-v3 .slide.graphic-report.closing h1{
- margin:0;
- color:var(--blue);
- font-size:calc(76 * var(--display-unit,1px));
- font-weight:500;
- line-height:1.2;
- letter-spacing:.08em;
- text-indent:.08em;
+ margin:0;color:var(--ink);font-size:88px;font-weight:600;line-height:1.2;letter-spacing:.02em;text-indent:.02em;
 }
 .report-v3 #stage>.slide.graphic-report.closing .closing-copy>.visual{
- flex:0 0 auto;
- min-height:0;
- width:100%;
- justify-content:flex-start;
- align-items:center;
- padding:0;
- gap:0;
+ flex:0 0 auto;min-height:0;width:100%;justify-content:flex-start;align-items:center;padding:0;gap:0;
 }
 .report-v3 .slide.graphic-report.closing .visual>.closing-theme{
- margin:0;
- font-size:calc(22 * var(--display-unit,1px));
- font-weight:400;line-height:1.6;letter-spacing:.04em;
- color:var(--muted);
+ margin:0;font-size:22px;font-weight:400;line-height:1.6;letter-spacing:.04em;color:var(--muted);
 }
 .report-v3 .slide.graphic-report.closing .visual>.closing-invitation{
- margin:calc(56 * var(--display-unit,1px)) 0 0;
- font-size:calc(15 * var(--display-unit,1px));
- line-height:1.5;letter-spacing:.12em;
- color:var(--muted);
+ margin:22px 0 0;font-size:27px;line-height:1.5;letter-spacing:.08em;color:var(--muted);
 }
 .report-v3 .slide.graphic-report.closing .visual>.closing-signature{
- display:flex;align-items:center;justify-content:center;
- gap:calc(22 * var(--display-unit,1px));
- margin:calc(20 * var(--display-unit,1px)) 0 0;
- font-size:calc(18 * var(--display-unit,1px));
- font-weight:500;line-height:1.5;letter-spacing:.04em;
- color:var(--blue);
+ display:flex;align-items:center;justify-content:center;gap:22px;margin:36px 0 0;
+ font-size:18px;font-weight:500;line-height:1.5;letter-spacing:.04em;color:var(--blue);
 }
-.report-v3 .closing-brand{display:inline-flex;align-items:center;gap:calc(10 * var(--display-unit,1px));white-space:nowrap}
-.report-v3 .closing-brand>img{display:block;width:calc(32 * var(--display-unit,1px));height:calc(32 * var(--display-unit,1px));object-fit:contain}
-.report-v3 .closing-partner-mark{
- font-size:calc(13 * var(--display-unit,1px));
- color:color-mix(in srgb,var(--blue) 55%,var(--bg));
-}
-@media(prefers-reduced-motion:reduce){
- .report-v3[data-report-page="closing"]::after{transition:none}
-}
+.report-v3 .closing-brand{display:inline-flex;align-items:center;white-space:nowrap}
+.report-v3 .closing-partner-mark{font-size:13px;color:var(--muted)}
 @media(max-width:760px){
- .report-v3 .closing-copy{margin-left:0}
- .report-v3 .slide.graphic-report.closing h1{font-size:clamp(30px,5.3vw,46px)}
+ .report-v3 .closing-mark{width:96px;height:96px}
+ .report-v3 .slide.graphic-report.closing h1{font-size:clamp(30px,7vw,54px)}
+ .report-v3 .slide.graphic-report.closing .visual>.closing-invitation{font-size:22px}
 }
-@media print{
- .report-brand-scene{display:none}
- .report-v3 .closing-copy{width:100%;margin-left:0;transform:none!important}
-}
+@media print{.report-v3 .closing-copy{width:100%;transform:none!important}}
 
 /* Supporting capabilities share equal rows and a vertically centred text group. */
 .report-v3 .slide.graphic-report[data-slide="support"] .v2-support-card{
@@ -1071,24 +1005,38 @@
  .report-v3 #stage>.slide.graphic-report[data-slide="anti-diversion"] .channel-key{padding-top:calc(14 * var(--display-unit));padding-bottom:calc(14 * var(--display-unit))}
 }
 
-/* Tinted outer panels separate their original white record cards. */
-.report-v3 .slide.graphic-report[data-slide="anti-diversion"] .visual .channel-key,
-.report-v3 .slide.graphic-report[data-slide="exceptions"] .visual .trace-panel{
- --report-card-edge:color-mix(in srgb,var(--blue) 18%,var(--bg));
- background:color-mix(in srgb,var(--blue-soft) 72%,var(--surface));
- border:calc(1 * var(--display-unit,1px)) solid color-mix(in srgb,var(--blue) 22%,var(--surface));
+/* Summary panels and the service centre follow their page theme. */
+.report-v3 .slide.graphic-report[data-slide="exceptions"] .visual .trace-panel,
+.report-v3 .slide.graphic-report[data-slide="support"] .visual .v2-support-centre,
+.report-v3 .slide.graphic-report[data-slide="anti-diversion"] .visual .channel-key{
+ --report-card-edge:color-mix(in srgb,var(--page-tone) 18%,var(--bg));
+ background:color-mix(in srgb,var(--page-wash) 60%,var(--surface));
+ border:calc(1 * var(--display-unit,1px)) solid color-mix(in srgb,var(--page-tone) 18%,var(--surface));
 }
 
-/* Main cards use distinct warmer/green hues above the blue evidence panels. */
+.report-v3 .slide.graphic-report[data-slide="anti-diversion"] .channel-key h3,
+.report-v3 .slide.graphic-report[data-slide="exceptions"] .trace-panel h3,
+.report-v3 .slide.graphic-report[data-slide="support"] .v2-support-centre>h3{color:var(--page-tone)}
+.report-v3 .slide.graphic-report[data-slide="anti-diversion"] .channel-check-list>div,
+.report-v3 .slide.graphic-report[data-slide="exceptions"] .trace-fields>div{
+ --report-card-edge:color-mix(in srgb,var(--page-tone) 10%,var(--surface));
+}
+
+/* Reserve two lines so descriptions of different lengths share a common baseline. */
+.report-v3 .slide.graphic-report[data-slide="anti-diversion"] .visual .channel-check-list>div>span{
+ min-height:3em;align-self:start;
+}
+
+/* Main cards use distinct hues above the evidence panels. */
 .report-v3 .slide.graphic-report[data-slide="anti-diversion"] .visual .channel-map .channel-node,
 .report-v3 .slide.graphic-report[data-slide="exceptions"] .visual .change-cards .change-card{
  background:color-mix(in srgb,var(--tint) 85%,var(--surface));
 }
 
-/* Two experience highlights lead; notification channels remain supporting content. */
+/* Three horizontal modules; notification channels occupy a narrower supporting column. */
 .report-v3 .slide.graphic-report[data-slide="experience"] .v3-experience-grid{
- grid-template-columns:repeat(2,minmax(0,1fr));
- grid-template-rows:minmax(0,1fr) auto;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.78fr);
+ grid-template-rows:minmax(0,1fr);
  gap:var(--report-space-3);
 }
 .report-v3 .slide.graphic-report[data-slide="experience"] .v3-experience-card{
@@ -1114,8 +1062,8 @@
  margin-top:var(--report-space-1)!important;font-size:calc(12 * var(--display-unit,1px))!important;
 }
 .report-v3 .slide.graphic-report[data-slide="experience"] .v3-experience-notices{
- grid-column:1/-1;display:flex;align-items:center;gap:var(--report-space-3);
- padding:var(--report-space-2) var(--report-space-3);
+ display:flex;flex-direction:column;align-items:stretch;min-width:0;min-height:0;gap:var(--report-space-3);
+ padding:var(--report-space-3);
  border-radius:var(--report-card-radius);
  border:calc(1 * var(--display-unit,1px)) solid var(--line);
  background:color-mix(in srgb,var(--gold-soft) 30%,var(--surface));
@@ -1124,13 +1072,27 @@
  box-shadow:0 var(--report-card-depth) 0 var(--report-card-edge),var(--shadow);
 }
 .report-v3 .slide.graphic-report[data-slide="experience"] .v3-experience-notices>h3{
- font-size:var(--report-type-body);color:var(--muted);white-space:nowrap;flex-shrink:0;
+ font-size:var(--report-type-body);color:var(--gold);white-space:nowrap;flex-shrink:0;
 }
-.v3-experience-notice-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--report-space-2);flex:1;min-width:0}
+.v3-experience-notice-list{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(3,minmax(0,1fr));gap:var(--report-space-2);flex:1;min-width:0;min-height:0}
 .report-v3 .slide.graphic-report[data-slide="experience"] .v3-message-row{
- background:transparent;padding:var(--report-space-1) 0;
+ display:grid;grid-template-columns:calc(40 * var(--display-unit,1px)) minmax(0,1fr);
+ gap:var(--report-space-2);padding:calc(10 * var(--display-unit,1px));min-height:0;
+ background:color-mix(in srgb,var(--tint) 45%,var(--surface));
+ border-radius:calc(16 * var(--display-unit,1px));
 }
 .report-v3 .slide.graphic-report[data-slide="experience"] .v3-message-row strong{color:var(--ink)}
+.report-v3 .slide.graphic-report[data-slide="experience"] .v3-message-row>.report-icon{
+ width:calc(40 * var(--display-unit,1px));height:calc(40 * var(--display-unit,1px));
+ padding:calc(9 * var(--display-unit,1px));border-radius:calc(13 * var(--display-unit,1px));background:var(--tint);color:var(--tone);
+}
+.report-v3 .slide.graphic-report[data-slide="experience"] .v3-message-row small{
+ font-size:calc(11 * var(--display-unit,1px));line-height:1.45;margin-top:calc(4 * var(--display-unit,1px));
+}
+.v3-notice-context{
+ display:inline-block;margin-top:calc(5 * var(--display-unit,1px));padding:calc(2 * var(--display-unit,1px)) calc(8 * var(--display-unit,1px));
+ border-radius:999px;background:var(--tint);color:var(--tone);font-size:calc(10 * var(--display-unit,1px));line-height:1.4;
+}
 @media(max-width:760px){
  .report-v3 .slide.graphic-report[data-slide="experience"] .v3-experience-grid{grid-template-columns:1fr;grid-template-rows:auto}
  .report-v3 .slide.graphic-report[data-slide="experience"] .v3-experience-demo{flex:auto;height:calc(160 * var(--display-unit,1px))}
