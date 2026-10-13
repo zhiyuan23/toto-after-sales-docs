@@ -1,14 +1,9 @@
 {
-  "source": "2026-10-09 菜单与地图发布前复核；2026-10-01 的37项既有失败中1项旧销售区域源码断言已由行为回归替代，其余36项名称保持，集合仍须完全匹配",
-  "failures": [
-    "a busy form blocks leaving the dashboard for another business page",
-    "a busy form refuses perspective switching without clearing tabs",
-    "a later route guard failure restores the original perspective and preserves tabs for retry",
-    "a pending external form confirmation keeps the current view and tabs until its rejection",
-    "a rejected navigation preserves tabs and allows retry after reporting the error",
-    "accepted work perspective switching applies the new view only after the form agrees",
+  "source": "2026-10-13 Web历史测试失败逐项修复：原36项逐项核对；导航12项沿用e1c89463当前契约并补Logo／异步拒绝／失败重试，剩余24项修复测试适配或功能。全量0失败，历史例外集合清零；任一新增失败仍禁止发布。详见specs/2026-10-13-Web历史测试失败逐项修复.md",
+  "failures": [],
+  "resolvedFailures": [
+    "customer-service dispatch keeps station assignment while station page is wired for personnel assignment",
     "business create and edit forms use the shared dialog shell",
-    "cancelled work perspective switching leaves the current home and form mounted",
     "catalog uploads use the official Gaia access and download addresses",
     "category detail shows readable ancestry and never exposes a raw parent ID as its name",
     "dialog tab tables use one lightweight visual shell without replacing table behavior",
@@ -29,22 +24,62 @@
     "purchase registration keeps workbench items focused while the full page still supports supplied installation codes",
     "raw view dialogs are limited to reviewed non-standard interaction models",
     "real payloads whitelist fields and preserve false filters and optimistic versions",
-    "redirecting a perspective switch to access status does not clear old tabs",
     "registration and appointment payloads whitelist and normalize business fields",
-    "repeated switch commands while confirmation is pending commit only the first destination",
-    "returning to the root home through the Logo path does not clear same-view tabs",
-    "same-route query updates also respect cancellation without replacing the form",
-    "selecting the current perspective leaves all tabs intact",
     "tests/catalog-state.test.ts",
     "tests/i18n.test.ts"
-  ],
-  "resolvedFailures": [
-    "customer-service dispatch keeps station assignment while station page is wired for personnel assignment"
   ],
   "supersededFailures": [
     {
       "name": "sales region restores saved administrative codes as names, defaults an unconfigured child, and maps subject coordinates",
       "source": "2026-10-09 fdb3fcf9 地图与区域重构：旧源码结构断言由保存／取消／只读／重试／继承建议及地图数据行为测试替代，8项定向回归通过；其余36项与37项原基线完全一致，无新增失败。"
+    },
+    {
+      "name": "cancelled work perspective switching leaves the current home and form mounted",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "accepted work perspective switching applies the new view only after the form agrees",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "a busy form blocks leaving the dashboard for another business page",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "same-route query updates also respect cancellation without replacing the form",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "a busy form refuses perspective switching without clearing tabs",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "a later route guard failure restores the original perspective and preserves tabs for retry",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "redirecting a perspective switch to access status does not clear old tabs",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "a rejected navigation preserves tabs and allows retry after reporting the error",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "selecting the current perspective leaves all tabs intact",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "returning to the root home through the Logo path does not clear same-view tabs",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "repeated switch commands while confirmation is pending commit only the first destination",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
+    },
+    {
+      "name": "a pending external form confirmation keeps the current view and tabs until its rejection",
+      "source": "2026-10-13 e1c89463 navigation-home-leave.test.ts：旧夹具曾缺失门店组件替身，后按确认的视角切换契约替换；当前16项骨架保持／权限并行／表单保护／缓存／拒绝回归通过。见角色操作权限Spec 6.4及6.10和部署记录baseline-review-20261013，不将旧用例删除记为故障修复。"
     }
   ]
 }
