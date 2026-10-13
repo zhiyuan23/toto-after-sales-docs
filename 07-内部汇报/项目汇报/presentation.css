@@ -100,7 +100,19 @@
 .report-v3 .brand .brand-divider{width:1px;height:20px;flex:0 0 1px;background:var(--line)}
 .report-v3 .brand .brand-service{font-size:18px;line-height:1.4;color:var(--muted)}
 /* Color edition header and lower-centre presentation tools. */
-.report-v3 .topbar{border-bottom:0}
+.report-v3 .topbar{
+ border-bottom:0;opacity:1;visibility:visible;
+ transition:opacity 250ms var(--ease-out),visibility 0s;
+}
+/* Keep the header's space while the closing signature takes over the branding. */
+.report-v3[data-report-page="closing"] .topbar{
+ opacity:0;visibility:hidden;pointer-events:none;
+ transition-delay:0s,250ms;
+}
+@media(prefers-reduced-motion:reduce){
+ .report-v3 .topbar{transition-duration:150ms,0s}
+ .report-v3[data-report-page="closing"] .topbar{transition-delay:0s,150ms}
+}
 .report-v3 .brand{gap:14px}
 .report-v3 .brand-logo{width:30px;height:30px}
 .report-v3 .brand .brand-name{font-size:20px;font-weight:600}
