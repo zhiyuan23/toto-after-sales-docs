@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-system-context"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：02-技术设计/05-gaia-ui售后服务UI样式规范.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "02-技术设计"
+schema_version: "2"
+id: "kb:project:toto-doc-cdfd21e2cd9dc80e"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # gaia-ui 售后独立子系统 UI 与前端复用规范
 
 - 更新日期：2026-09-23

@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-spec"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：04-页面原型/后台系统/design-qa.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "04-页面原型"
+schema_version: "2"
+id: "kb:project:toto-doc-6d7cfbd626f78e86"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 总部专业分析视觉新版 Design QA
 
 - Source visual truth: `/Users/snow/.codex/generated_images/01a0c6b3-b731-7c63-ae58-5b6d9c884215/exec-6f9d1ee8-12a4-4d8b-a50e-1399b462569a.png`

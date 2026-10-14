@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-operation"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：local-development.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "开发入口"
+schema_version: "2"
+id: "kb:project:toto-doc-207282be2a41e073"
+created: "2026-09-07"
+sensitivity: "internal"
+---
+
 # TOTO 全栈联调手册
 
 本页维护跨仓运行顺序和验收入口。各仓库具体技术约定与命令以源码、配置及其 README 为准。2026-09-18 已将管理后台、消费者小程序和服务人员小程序收敛到同一个本地后端启动链；本页不声明真实业务联调已通过。

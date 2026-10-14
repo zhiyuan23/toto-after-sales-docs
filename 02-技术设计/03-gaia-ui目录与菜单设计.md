@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-system-context"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：02-技术设计/03-gaia-ui目录与菜单设计.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "02-技术设计"
+schema_version: "2"
+id: "kb:project:toto-doc-163a37542116dfec"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 售后服务 gaia-ui 目录与菜单设计
 
 2026-10-12 按用户要求暂时隐藏业务标签与安装码查询日常入口；客服“业务查询与知识库”缩短为“业务支持”，保留购买记录和服务知识库。稳定功能注册、页面、数据及历史接口／角色授权保留；正常认证的两个旧直达路由由导航守卫拒绝。当前注册61项、日常47项、上下文2项、导航外12项，61处日常引用（总部30／客服10／服务站18／门店3）。本次为前端投影调整，不写测试库，不代表共享应用已发布；验证见[菜单调整记录](../specs/2026-09-10-标签定义与来源管理.md#navigation-hide-20261012)。

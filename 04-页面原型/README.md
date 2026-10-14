@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-spec"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：04-页面原型/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "04-页面原型"
+schema_version: "2"
+id: "kb:project:toto-doc-08e5252455a76e3f"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 页面原型
 
 [会员详情布局原型（大抽屉／全屏）](后台系统/member-purchase-preferences.html#member-1)：左侧会员资料，右侧购买商品及保修信息；已作为共享详情实施参考，演示保修规则与正式实现的差异见对应 Spec。

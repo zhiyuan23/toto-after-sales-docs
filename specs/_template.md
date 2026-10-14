@@ -2,6 +2,8 @@
 
 > 复制为 `YYYY-MM-DD-功能名.md` 后填写。按实际风险删减不适用项并注明原因，不为填模板虚构角色、接口或数据。本文是模板，不是业务授权。
 
+复制后执行 `node scripts/prepare-wiki-page.mjs specs/YYYY-MM-DD-功能名.md` 添加独立的 Schema v2 身份，补齐真实来源；更新说明必须位于 YAML 文件头结束之后。提交前运行 `node scripts/validate-knowledge-base.mjs --kb-root .`。知识页的 `active` 不表示本 Spec 已经业务确认或验收。
+
 - 状态：草稿 / 待确认 / 已确认 / 开发中 / 待验收 / 已验收 / 暂缓（选择一项）
 - 日期、版本：待填写
 - 应用载体：Web 管理后台 / 消费者小程序 / 服务人员小程序

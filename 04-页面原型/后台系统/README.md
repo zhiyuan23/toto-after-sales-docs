@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-spec"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：04-页面原型/后台系统/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "04-页面原型"
+schema_version: "2"
+id: "kb:project:toto-doc-477489629370da52"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 后台系统原型
 
 2026-10-09 当前完整侧栏原型（总部现版／地图版、新版质量／报表、客服两版及通用角色工作台）按正式 `manifest.json` 同步四视角名称、分组、顺序和一级直达入口；完整目录见[后台菜单与岗位权限矩阵](../../02-技术设计/09-后台菜单与岗位权限矩阵.md#full-catalog)。今日安排与配件版、门店版的页内定位导航仍服务于该页演示，旧版质量／报表为历史对照。原型使用演示数据与占位提示，不生成真实授权或表示功能已验收。

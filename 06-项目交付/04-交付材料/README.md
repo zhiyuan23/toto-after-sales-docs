@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-overview"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：06-项目交付/04-交付材料/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "06-项目交付"
+schema_version: "2"
+id: "kb:project:toto-doc-b66621dd44d40a79"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 交付材料
 
 [HTML 交付清单](index.html)与 [内容源](00-交付清单.md)共用 39 项材料及交接核对、9 个培训场景。版本 v0.1（2026-10-10），业务复核稿。按项目说明、角色培训、应用环境、技术运维、范围边界五类组织。

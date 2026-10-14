@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-overview"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：06-项目交付/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "06-项目交付"
+schema_version: "2"
+id: "kb:project:toto-doc-08dd04f461b1c1b6"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 项目交付
 
 三项正式材料为角色手册、项目说明、交付清单。首版 v0.1（2026-10-10）已形成七本岗位正文、八章项目说明及 39 项交付核对，统一以 HTML 阅读，打印来自同一内容。本版为业务复核稿，不预填培训、验收或签收结果。

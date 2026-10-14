@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-system-context"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：02-技术设计/11-gaia菜单角色按钮权限接入调研.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "02-技术设计"
+schema_version: "2"
+id: "kb:project:toto-doc-f0b111771fff6087"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # Gaia 菜单角色按钮权限接入调研
 
 2026-10-14 当前契约：按用户最新要求恢复管理员账号完整权限，四视角切换不撤权、不重新请求权限，工作台及普通业务页面统一按账号真实授权；总部建单等入口恢复。普通岗位配置、业务数据范围与单据校验保持。前后端恢复源码已完成，尚未共享发布，见[完整恢复记录](../specs/2026-10-12-现有角色操作权限第一版.md#administrator-account-restore-20261014)。

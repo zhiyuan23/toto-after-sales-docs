@@ -1,29 +1,29 @@
 ---
-type: llm-wiki-system-context
-topic: TOTO售后服务
-status: source-verified
-updated: 2026-09-08
-owner: codex
-confidence: high
-scope: Gaia 运行宿主中蓝鲸数字通用图片、附件上传下载能力的 jar 包定位、接口路径、权限和 TOTO 售后接入建议。
+type: "llm-wiki-system-context"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "high"
+scope: "Gaia 运行宿主中蓝鲸数字通用图片、附件上传下载能力的 jar 包定位、接口路径、权限和 TOTO 售后接入建议。"
 belongs_to:
-  - kb:project:toto-after-sales-service
+  - "kb:project:toto-after-sales-docs"
 sources:
-  - E:/workspace/gaia-saas-proj/gaia-saas-web-jar/target/gaia-web.jar
-  - E:/workspace/gaia-saas-proj/gaia-saas-web-jar/src/main/resources/application.properties
-  - E:/workspace/gaia-saas-proj/gaia-saas-web-jar/src/main/java/com/ehsure/gaia/config/WebConfig.java
-  - E:/workspace/gaia-saas-proj/gaia-saas-web-jar/src/main/java/com/ehsure/gaia/config/ShiroConfig.java
+  - "E:/workspace/gaia-saas-proj/gaia-saas-web-jar/target/gaia-web.jar"
+  - "E:/workspace/gaia-saas-proj/gaia-saas-web-jar/src/main/resources/application.properties"
+  - "E:/workspace/gaia-saas-proj/gaia-saas-web-jar/src/main/java/com/ehsure/gaia/config/WebConfig.java"
+  - "E:/workspace/gaia-saas-proj/gaia-saas-web-jar/src/main/java/com/ehsure/gaia/config/ShiroConfig.java"
 tags:
-  - llm-wiki
-  - 蓝鲸数字
-  - TOTO
-  - Gaia
-  - 附件上传
-  - 图片下载
-schema_version: 2
-id: kb:project:toto-after-sales-gaia-common-upload-download
-created: 2026-09-08
-sensitivity: internal
+  - "llm-wiki"
+  - "蓝鲸数字"
+  - "TOTO"
+  - "Gaia"
+  - "附件上传"
+  - "图片下载"
+schema_version: "2"
+id: "kb:project:toto-after-sales-gaia-common-upload-download"
+created: "2026-09-08"
+sensitivity: "internal"
 ---
 
 # Gaia 通用附件上传下载接口调研

@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-overview"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：06-项目交付/01-业务指南/协议文稿/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "06-项目交付"
+schema_version: "2"
+id: "kb:project:toto-doc-cdd627ff5620ffd9"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 消费者协议演示文稿
 
 2026-09-27 用户明确：运营主体尚未确定，本次内容仅用于演示查看，以格式清晰为目标。以下两份为按售后场景编写的演示稿，不是品牌官方条款，未生效，不作正式上线或合规结论。

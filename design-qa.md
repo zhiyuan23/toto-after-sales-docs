@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-overview"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：design-qa.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "开发入口"
+schema_version: "2"
+id: "kb:project:toto-doc-d1a4c07405fe4c3d"
+created: "2026-09-19"
+sensitivity: "internal"
+---
+
 # 客服工作台 v0.17 设计 QA
 
 - source visual truth path: `/var/folders/78/23fns3y125d9zqbst97h0d980000gn/T/codex-clipboard-19879659-babd-49a3-912b-35ee9c1b6b71.png`

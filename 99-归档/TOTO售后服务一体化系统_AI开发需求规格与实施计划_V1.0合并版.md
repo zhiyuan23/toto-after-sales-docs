@@ -1,29 +1,29 @@
 ---
-type: llm-wiki-project-spec
-topic: TOTO售后服务
-status: deprecated
-updated: 2026-09-07
-owner: snow
-confidence: medium
-scope: TOTO售后服务 V1.0 合并版需求规格与实施计划归档，仅供历史追溯。
+type: "llm-wiki-project-spec"
+topic: "TOTO售后服务"
+status: "deprecated"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+scope: "TOTO售后服务 V1.0 合并版需求规格与实施计划归档，仅供历史追溯。"
 belongs_to:
-  - kb:project:toto-after-sales-service
+  - "kb:project:toto-after-sales-docs"
 superseded_by:
-  - kb:project:toto-after-sales-function-overview
+  - "kb:project:toto-after-sales-function-overview"
 sources:
-  - /Users/snow/Documents/Ehsure/TOTO/TOTO售后服务/99-归档/TOTO售后服务一体化系统_AI开发需求规格与实施计划_V1.0合并版.md
-  - https://www.processon.com/f/6a681a83e50b43092180ded9#TOTO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94
+  - "/Users/snow/Documents/Ehsure/TOTO/TOTO售后服务/99-归档/TOTO售后服务一体化系统_AI开发需求规格与实施计划_V1.0合并版.md"
+  - "https://www.processon.com/f/6a681a83e50b43092180ded9#TOTO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94"
 tags:
-  - llm-wiki
-  - 蓝鲸数字
-  - TOTO
-  - 售后服务
-  - 需求基线
-  - 归档
-schema_version: 2
-id: kb:project:toto-after-sales-combined-requirements-v1-archive
-created: 2026-09-07
-sensitivity: internal
+  - "llm-wiki"
+  - "蓝鲸数字"
+  - "TOTO"
+  - "售后服务"
+  - "需求基线"
+  - "归档"
+schema_version: "2"
+id: "kb:project:toto-after-sales-combined-requirements-v1-archive"
+created: "2026-09-07"
+sensitivity: "internal"
 ---
 
 # TOTO售后服务一体化系统 AI开发需求规格与实施计划

@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-overview"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：06-项目交付/03-项目说明/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "06-项目交付"
+schema_version: "2"
+id: "kb:project:toto-doc-df71d99a225e60ba"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 项目说明
 
 共同内容源已整理为八章首版 v0.1（2026-10-10），提供 [HTML 阅读与打印版](index.html)。当前为业务复核稿；当前提供客户阅读与打印内容，客户汇报网页待准备后再加入本目录。

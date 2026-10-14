@@ -1,3 +1,24 @@
+---
+type: "llm-wiki-project-spec"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-14"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "本仓库既有文档：04-页面原型/小程序/README.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "04-页面原型"
+schema_version: "2"
+id: "kb:project:toto-doc-e0470b3a4bca795f"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
 # 小程序原型 · 查看与修改指南
 
 > **2026-09-27 独立新版：** [品牌产品中心 V1](brand-center-v1.html#c-home) · [方案与验证说明](品牌产品中心-v1说明.md)。采用“首页／我的产品／我的”，服务进入二级页面，首页按状态展示进度卡。原 v0.14／v0.13／v0.11 入口和默认行为保留，不替换原版，不改变业务实现或验收状态。

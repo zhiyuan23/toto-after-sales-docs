@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 2,
+  "projectId": "kb:project:toto-after-sales-docs",
+  "roots": [
+    "00-项目资料",
+    "01-功能需求",
+    "02-技术设计",
+    "03-开发管理",
+    "04-页面原型",
+    "05-业务流程",
+    "06-项目交付",
+    "specs"
+  ],
+  "files": [
+    "README.md",
+    "local-development.md",
+    "design-qa.md"
+  ],
+  "exclude": [
+    "00-项目资料/原始摘录/",
+    "specs/evidence/",
+    "specs/support/",
+    "specs/_template.md"
+  ],
+  "historyRoots": [
+    "99-归档"
+  ],
+  "allowDuplicateBasenames": [
+    "README.md",
+    "design-qa.md"
+  ],
+  "workspaceReferences": [
+    "backend",
+    "frontend",
+    "mobile"
+  ]
+}

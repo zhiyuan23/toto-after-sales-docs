@@ -2,8 +2,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { markdownBody } from './knowledge-base-core.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const base = path.join(root, '06-项目交付');
+const outputIndex = process.argv.indexOf('--output-root');
+if (outputIndex !== -1 && !process.argv[outputIndex + 1]) throw new Error('--output-root 需要输出目录');
+const outputRoot = outputIndex === -1 ? base : path.resolve(process.argv[outputIndex + 1]);
+async function writePage(relativePath, html) {
+ const destination = path.join(outputRoot, relativePath);
+ await fs.mkdir(path.dirname(destination), { recursive: true });
+ await fs.writeFile(destination, html);
+}
 // 优先使用调用方安装的 marked；Codex 桌面环境可用其已捆绑的模块路径。
 let marked;
 try { ({ marked } = await import('marked')); }
@@ -45,7 +54,7 @@ function search(type) {
 }
 const footer=output=>`<footer class="article-footer"><span>v0.1 · 2026-10-10 · 业务复核稿</span><a href="${relative(output,'index.html')}">返回交付文档首页 →</a></footer>`;
 for (const doc of documents) {
- const source=await fs.readFile(path.join(base,doc.source),'utf8');
+ const source=markdownBody(await fs.readFile(path.join(base,doc.source),'utf8'));
  const title=source.match(/^# (.+)$/m)[1];
  const withoutTitle=source.replace(/^# .+\n+/,'');
  const sourceLine=withoutTitle.match(/^依据：.+$/m)?.[0]||'';
@@ -70,10 +79,10 @@ for (const doc of documents) {
  const sources=sourceLine?`<details class="source-note"><summary>内容依据 · 供内部复核</summary>${marked.parse(sourceLine)}<p>依据链接需同一文档仓库；单独对外阅读包按交付清单筛选，不包含内部账号或凭据。</p></details>`:'';
  let content=`<div class="layout">${sidebar}<main class="article" id="main"><div class="breadcrumb"><a href="${relative(doc.output,'index.html')}">交付文档</a> / ${doc.type==='role'?'角色手册':doc.type==='project'?'项目说明':'交付清单'}</div><p class="eyebrow">${doc.type==='role'?'ROLE HANDBOOK':doc.type==='project'?'PROJECT OVERVIEW':'DELIVERY CHECKLIST'}</p><h1 class="doc-title">${esc(title)}</h1><div class="lead">${introHtml}</div><div class="meta"><span>适用：${esc(doc.audience)}</span><span>v0.1 · 2026-10-10</span><span class="pill blue">业务复核稿</span></div>${search(doc.type)}${body}${sources}${footer(doc.output)}</main>${quick}</div>`;
  content=rewriteLinks(content,doc.source,doc.output);
- await fs.writeFile(path.join(base,doc.output),shell(doc.output,title,doc.type,content));
+ await writePage(doc.output,shell(doc.output,title,doc.type,content));
 }
 const roleEntries=roles.map(([name,audience,description],i)=>`<a class="document-entry" data-search-item href="${name}.html"><span class="doc-number">${String(i+1).padStart(2,'0')}</span><div><h2>${esc(name.slice(3))}</h2><p>${esc(description)}</p><small>${esc(audience)}</small></div><span class="entry-action">阅读手册 →</span></a>`).join('');
-await fs.writeFile(path.join(base,'02-角色手册/index.html'),shell('02-角色手册/index.html','选择岗位手册','role',`<main class="landing role-index" id="main"><p class="eyebrow">ROLE HANDBOOKS</p><h1 class="doc-title">按岗位找到工作方法</h1><p class="lead">七本手册统一说明职责、入口、办理步骤、结果核对与异常交接。先选择实际职责；主管、专员和兼任岗位的动作仍按账号独立授权。</p><div class="landing-meta"><span>7 类岗位</span><span>v0.1 · 2026-10-10</span><span>业务复核稿</span></div>${search('role-index')}<div class="document-list">${roleEntries}</div>${footer('02-角色手册/index.html')}</main>`,false));
+await writePage('02-角色手册/index.html',shell('02-角色手册/index.html','选择岗位手册','role',`<main class="landing role-index" id="main"><p class="eyebrow">ROLE HANDBOOKS</p><h1 class="doc-title">按岗位找到工作方法</h1><p class="lead">七本手册统一说明职责、入口、办理步骤、结果核对与异常交接。先选择实际职责；主管、专员和兼任岗位的动作仍按账号独立授权。</p><div class="landing-meta"><span>7 类岗位</span><span>v0.1 · 2026-10-10</span><span>业务复核稿</span></div>${search('role-index')}<div class="document-list">${roleEntries}</div>${footer('02-角色手册/index.html')}</main>`,false));
 const entries=[['01','角色手册','七类岗位：从日常任务到异常交接','02-角色手册/index.html','选择岗位'],['02','项目说明','八章阅读：建设目标、协同方式、能力边界与交付安排','03-项目说明/index.html','开始阅读'],['03','交付清单','39 项材料与交接核对，9 个培训场景，实际结果待填写','04-交付材料/index.html','核对材料']];
-await fs.writeFile(path.join(base,'index.html'),shell('index.html','项目交付文档','portal',`<main class="landing" id="main"><p class="eyebrow">TOTO AFTER-SALES SERVICE</p><h1 class="doc-title">把服务方法与交付范围<br>放在同一份文档中。</h1><p class="lead">面向业务使用、项目介绍和交付核对。以完整项目为基础，按当前规则说明职责、操作及边界，帮助各岗位找到下一步。</p><div class="landing-meta"><span>3 个应用 · 7 类岗位</span><span>v0.1 · 2026-10-10</span><span class="pill blue">业务复核稿</span></div><div class="document-list">${entries.map(([id,title,desc,target,action])=>`<a class="document-entry" href="${target}"><span class="doc-number">${id}</span><div><h2>${title}</h2><p>${desc}</p></div><span class="entry-action">${action} →</span></a>`).join('')}</div><div class="review-grid"><div><h3>按一个完整场景复核</h3><p>先看项目全景，再由各岗位完成一条正常任务及一条异常任务。核对入口、动作权限、办理结果和交接信息。</p></div><div><h3>把材料与签收分开记录</h3><p>本版正文与网页已形成，业务复核、培训、运行开放和实际签收各自核对。打印与阅读使用同一内容，不预填完成结果。</p></div></div><div class="reading-path"><p>现场讲解：<a href="03-项目说明/网页演示/工单流转/index.html">工单流转专题 →</a></p></div>${footer('index.html')}</main>`,false));
+await writePage('index.html',shell('index.html','项目交付文档','portal',`<main class="landing" id="main"><p class="eyebrow">TOTO AFTER-SALES SERVICE</p><h1 class="doc-title">把服务方法与交付范围<br>放在同一份文档中。</h1><p class="lead">面向业务使用、项目介绍和交付核对。以完整项目为基础，按当前规则说明职责、操作及边界，帮助各岗位找到下一步。</p><div class="landing-meta"><span>3 个应用 · 7 类岗位</span><span>v0.1 · 2026-10-10</span><span class="pill blue">业务复核稿</span></div><div class="document-list">${entries.map(([id,title,desc,target,action])=>`<a class="document-entry" href="${target}"><span class="doc-number">${id}</span><div><h2>${title}</h2><p>${desc}</p></div><span class="entry-action">${action} →</span></a>`).join('')}</div><div class="review-grid"><div><h3>按一个完整场景复核</h3><p>先看项目全景，再由各岗位完成一条正常任务及一条异常任务。核对入口、动作权限、办理结果和交接信息。</p></div><div><h3>把材料与签收分开记录</h3><p>本版正文与网页已形成，业务复核、培训、运行开放和实际签收各自核对。打印与阅读使用同一内容，不预填完成结果。</p></div></div><div class="reading-path"><p>现场讲解：<a href="03-项目说明/网页演示/工单流转/index.html">工单流转专题 →</a></p></div>${footer('index.html')}</main>`,false));
 console.log('已生成 11 个交付 HTML 页面：7 本手册、八章说明、39 项清单及 2 个导航页。');
