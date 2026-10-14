@@ -17,6 +17,7 @@ window.createReportDisplayMotion = reduce => {
     'smart-dispatch': ['.v3-dispatch-intelligence', '.v3-dispatch-focus'],
     assistant: ['.v3-knowledge-source', '.v3-assist-card'],
     'live-demo': ['.v3-demo-role-tour', '.v2-demo-app'],
+    'mobile-plan': ['.v3-mobile-plan-brand', '.v3-mobile-plan-app', '.v3-mobile-plan-directions', '.v3-mobile-plan-caption'],
     future: ['.v3-future-centre', '.v3-future-direction'],
     delivery: ['.delivery-track>div', '.material-links'],
     closing: ['.closing-mark', '.closing-theme', '.closing-invitation', '.closing-signature']

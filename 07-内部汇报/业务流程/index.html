@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="TOTO 售后业务流程汇报地图：主线、七个阶段与线下收费专题。">
+  <title>TOTO 售后业务流程地图</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="flow.css?v=e401af374f">
+  <script src="content.js?v=15854cf4a3" defer></script>
+  <script src="flow.js?v=b2e10604c4" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="../项目汇报/index.html"><img src="../项目汇报/brand-logo.png" alt="" width="30" height="30"><strong>蓝鲸数字</strong><span>售后服务</span></a>
+    <div class="masthead-actions"><a id="return-report" href="../项目汇报/index.html">返回汇报</a><button id="fullscreen" type="button">全屏</button><img src="../项目汇报/toto-logo.svg" alt="TOTO" width="100" height="24"></div>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar"><p class="eyebrow">业务流程地图</p><nav id="chapters" aria-label="流程阶段"></nav><div class="sidebar-foot">主线 → 阶段 → 条件专题<br>按责任交接讲解业务</div></aside>
+    <main>
+      <header class="page-heading"><div><p id="kicker" class="eyebrow"></p><h1 id="title"></h1><p id="subtitle"></p></div><span id="page-number"></span></header>
+      <div class="diagram-tools"><div class="legend" aria-label="图形说明"><span><i class="step"></i>业务步骤</span><span><i class="decision"></i>条件判断</span><span><i class="handoff"></i>结果／交接</span><span><i class="exception"></i>异常处理</span><span class="conditional">虚线：条件支线</span></div><div class="zoom-tools"><button id="zoom-out" type="button" aria-label="缩小流程图">−</button><output id="zoom" aria-live="polite"></output><button id="zoom-in" type="button" aria-label="放大流程图">＋</button><button id="fit" type="button">适应屏幕</button></div></div>
+      <div id="viewport" class="diagram-viewport" aria-label="业务流程图，可放大并滚动查看"><div id="diagram"></div></div>
+      <div id="takeaways" class="takeaways" aria-label="讲解要点"></div>
+      <footer class="page-footer"><span id="boundary"></span><a id="source" target="_blank" rel="noopener">查看流程原文 ↗</a><button id="basis" type="button">依据与口径</button></footer>
+    </main>
+  </div>
+  <nav class="pagination" aria-label="讲解翻页"><button id="previous" type="button">← 上一阶段</button><span>点击节点看规则 · ← → 翻页 · F 全屏</span><button id="next" type="button">下一阶段 →</button></nav>
+  <dialog id="details" aria-labelledby="detail-title"><div class="dialog-head"><p class="eyebrow" id="detail-kicker"></p><button id="close-details" type="button" aria-label="关闭节点说明">关闭</button></div><h2 id="detail-title"></h2><p id="detail-body"></p><div id="detail-notes"></div><div class="dialog-actions"><a id="detail-source" target="_blank" rel="noopener">查看文档依据 ↗</a><button id="jump" type="button" hidden>进入相关阶段 →</button></div></dialog>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+  <noscript>请启用 JavaScript 查看流程地图；完整流程保存在 05-业务流程目录。</noscript>
+</body>
+</html>
