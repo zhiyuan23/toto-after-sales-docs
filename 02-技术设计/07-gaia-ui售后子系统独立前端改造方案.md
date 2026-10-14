@@ -1,10 +1,12 @@
 # gaia-ui 售后子系统独立前端改造方案
 
 - 版本：V1.5
-- 更新日期：2026-09-30
+- 更新日期：2026-10-14
 - 文档状态：独立底座、统一运行／构建、菜单会话适配、独立登录及用户／角色可写代码已有实施记录；主系统 iframe 接入已完成本机代表性研发验证，正式岗位权限与会话失效验收仍待完成
 - 适用范围：`gaia-ui` 主系统、售后服务 Web 子系统、PC SaaS 前端构建与部署
 - 关联文档：[gaia-ui 目录与菜单设计](03-gaia-ui目录与菜单设计.md)、[售后服务 UI 样式规范](05-gaia-ui售后服务UI样式规范.md)、[本地开发与联调](../local-development.md)
+
+2026-10-14当前工具链：主系统与售后子项目均固定Node24.21.0，分别使用Yarn1.22.22／pnpm10.8.1及独立锁文件。下文带日期的Node22验证为历史证据，不作为当前安装要求；当前命令以[本地联调手册](../local-development.md#1-环境与命令入口)及各仓package.json为准。
 
 本文确定将售后服务 Web 功能从 `gaia-ui` 主 SPA 中迁移为同仓库独立前端子系统的目标架构，并在迁移期保留 `legacy`、`embedded`、`standalone` 三种确定性展示模式。子系统复用 `gaoge-compass` 的前端工程底座、布局、通用 UI，以及登录、用户和角色权限管理的前端页面与交互；认证和权限统一适配 Gaia，不引入 Compass JWT、RBAC 后端、业务 API 或数据库模型。2026-09-09 确认的双入口方案见第 5.5～5.9 节。
 
@@ -109,7 +111,7 @@ gaia-ui/
         ├── pnpm-lock.yaml               # 子系统独立锁文件
         ├── pnpm-workspace.yaml          # 仅确需内部 packages 时保留
         ├── .npmrc                       # pnpm 行为约束
-        ├── .nvmrc                       # Node 22
+        ├── .nvmrc                       # 当前 Node 24.21.0
         ├── vite.config.ts               # base=/after-sales/
         ├── index.html
         ├── public/
@@ -419,7 +421,7 @@ yarn install --frozen-lockfile
 pnpm --dir apps/after-sales --ignore-workspace install --frozen-lockfile
 ```
 
-两套依赖、缓存和锁文件互不覆盖。当前 gaia-ui 已固定 Node 22.23.1 和 Yarn 1.22.22，子系统也采用 Node 22，通常不需要切换 Node；pnpm 版本由子系统 `packageManager` 或 Corepack 固定。
+两套依赖、缓存和锁文件互不覆盖。当前 gaia-ui 与子系统均固定 Node 24.21.0，根项目使用 Yarn 1.22.22；pnpm 版本由子系统 `packageManager` 或 Corepack 固定。
 
 生产服务器只接收静态产物，不安装 Yarn、pnpm 或 `node_modules`。
 
@@ -715,7 +717,7 @@ ROOT.tar.gz
 
 ### 2026-09-13 补充：主、子前端 Node 工具链隔离
 
-- Gaia 主系统继续固定 Node 22.23.1 / Yarn 1.22.22；售后子项目升级并固定为 Node 24.21.0 LTS / pnpm 10.8.1，`@types/node` 同步到 24 系列。子项目继续使用独立锁文件和依赖目录，不改变根项目的 Vite 2、Vue、Yarn 或 Node 基线。
+- 2026-09-30实施时Gaia主系统固定Node22.23.1／Yarn1.22.22（截至2026-10-14根项目已更新Node24.21.0）；售后子项目升级并固定为 Node 24.21.0 LTS / pnpm 10.8.1，`@types/node` 同步到 24 系列。子项目继续使用独立锁文件和依赖目录，不改变根项目的 Vite 2、Vue、Yarn 或 Node 基线。
 - 根编排器不再全局改写 PATH。`yarn dev`、`dev:full`、`dev:afs` 及五种根构建模式分别给主系统和售后子进程注入精确 Node 路径；`push.sh` 的子项目冻结安装使用相同入口。目标版本缺失时明确失败，不自动下载或改变系统默认 Node。
 - 根目录新增 `yarn after-sales:pnpm <命令>` 作为售后独立命令入口；子目录直跑仍要求先 `nvm use`，并通过 Corepack 选择固定 pnpm。子项目 `build` 内部也使用 Corepack，避免再次落回 PATH 中其他 pnpm 版本。
 - Node 24.21.0 下，子项目冻结安装、完整 `check`（233 项 Node 测试）和 production build 通过，工具链解析测试同时在调用端 Node 22 与 Node 26 下通过。根 `yarn build` 已确认主系统由 Node 22.23.1 完成构建并随后进入 Node 24.21.0 子构建；最终组合构建被工作区内并行业务改动的未登记 i18n 类型键阻断，未将该业务失败归因于工具链，也未修改对应业务文件。

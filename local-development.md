@@ -10,13 +10,13 @@
 
 - 后端使用 `gaia-saas-proj/gaia-saas-web-jar`，已补入 `gaia-after-sales-api` 依赖。售后仓库当前也有独立 `gaia-after-sales-web`，但它不包含完整管理端基础能力，本模式仍由聚合宿主提供接口。
 - 数据库凭据只保存在宿主 `.local/application.properties`，目录已忽略，文件权限为 `600`。不要提交、分享或把密码复制到前端环境变量。连接使用 TLS 加密；当前 `sslMode=REQUIRED` 不等同于已配置 CA 和服务器身份校验。
-- 新版两端小程序及Web地址解析共用外部服务配置中的高德Web服务Key 和售后后端 `AmapReverseGeocodeClient`；消费者接口从结果取当前城市，服务人员地图逆解析接口取完整地址；现场签到只保存 GCJ-02 经纬度及精度／授权事实，不调用逆解析、不要求省市区和详细地址。后续需要签到位置地址时可由后端按已保存坐标调用公共客户端，解析结果不得自动覆盖工单地址。Key保存在加密配置表，不进入小程序或前端制品；保存后下一次调用生效。旧包仍读取私密文件，升级前后的边界见[外部配置指南](specs/2026-09-18-售后AI外部配置与部署指南.md)。
+- 新版两端小程序及Web地址解析共用外部服务配置中的高德Web服务Key 和售后后端 `AmapReverseGeocodeClient`；消费者接口从结果取当前城市，服务人员地图逆解析接口取完整地址；现场签到只保存 GCJ-02 经纬度及精度／授权事实，不调用逆解析、不要求省市区和详细地址。后续需要签到位置地址时可由后端按已保存坐标调用公共客户端，解析结果不得自动覆盖工单地址。当前默认SERVER模式从后端私密文件读取Web服务Key，不进入小程序或前端制品；修改凭证须重启实际宿主，页面开关／模型保存后下一次调用生效。DATABASE网页凭证管理仅供未来运维显式启用，缺失不跨来源回退；升级边界见[外部配置指南](specs/2026-09-18-售后AI外部配置与部署指南.md)。
 - Web 使用 `VITE_API_URL=http://127.0.0.1:8080/api/`；两个小程序的 `pnpm dev`／`pnpm dev:h5` 默认注入 `GAIA_API_BASE_URL=http://127.0.0.1:8080/api/api`。宿主部署 context 为 `/api`、控制器路径也以 `/api` 开头；小程序通用请求合并重复完整段后，实际请求仍为 `/api/api/...`。本机已有 `.env.development.local` 的旧 `/api` 基址需同步更新；Web 基址和代理规则独立，不能用单层 HTTP 200 判断接口存在。
 - Redis 使用独立本地端口 `16379`，不连接共享测试 Redis，也不占用已有的 `6379`。自动改表、业务启动初始化、日志消费者、租户同步订阅和通知已在本机配置中关闭。
 
 2026-10-10 本机授权快照 15 秒超时排查：实际测试库连接曾被 Clash gVisor TUN 接管，即便策略为 DIRECT、系统代理有内网例外也仍走 `utun0`。经用户授权，仅将 `10.1.1.106/32` 加入 Clash Verge 的「虚拟网卡模式 → 排除自定义网段」，路由已改走 `en0`；授权复测成功但仍耗时 32.565 秒，物理网关亦有延迟抖动，故障尚未关闭。用户选择先保留诊断，待稳定内网连接后复测；详见[诊断与恢复方式](specs/2026-09-30-Web统一账号授权快照.md#local-authorization-timeout-20261010)。
 - 本机与共享测试服务器连接同一测试库时，完工审核、自动派站／派人等任务会被各自活跃的后台执行器竞争领取；任务由本机接口创建，不保证由本机执行。修复此类任务后须核对所有共库执行实例的实际规则版本，本机重建成功不能替代共享发布。未经发布／协调授权，不停止其他实例或改写历史审核记录。2026-10-03 事实与处理见[无配件审核复验](specs/2026-10-01-完工智能与AI审核.md#shared-worker-version-check)。
-- 新版AI分站／派人／完工审核／消费者助手统一读取加密表中的一把Key，更新无需重启；同库新版实例必须使用同一私密加密主密钥。未升级共享包仍读取旧文件属性，2026-10-13缺失排查保留为历史记录；当前配置与上线方式见[外部配置指南](specs/2026-09-18-售后AI外部配置与部署指南.md)。
+- 当前新版AI分站／派人／完工审核／消费者助手统一读取后端私密配置中的 `gaia.after-sales.ai.api-key`，默认来源为 `SERVER`；更换凭证须重启实际宿主，网页只维护开关／模型和测试连接。加密表保留非敏感设置及历史密文，同库新版实例仍须使用同一私密加密主密钥。未升级共享包仍读取旧文件属性，2026-10-13缺失排查保留为历史记录；当前配置与上线方式见[外部配置指南](specs/2026-09-18-售后AI外部配置与部署指南.md)。
 - 普通开发连接具有写权限，页面的保存、删除会真实影响共享测试库。正常功能开发所需的测试库迁移、对应菜单／操作权限和可追踪测试数据，已获持续授权；执行前必须确认当前连接的目标库、核对脚本影响与依赖、准备适用备份或回退方案，执行后回读并记入功能 Spec。清库、大范围破坏性或跨功能批量修改及生产库操作仍须单独明确授权；建议后续由 DBA 提供限定库权限的开发账号替代 root。
 
 ### 启动与断点调试
@@ -74,14 +74,14 @@ bash scripts/start-local-backend.sh
 
 本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用自己的 Logback 文件仍在 `.local/logs/gaia_saas/` 按大小滚动。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log`；旧版无上限的 `shared-backend.log` 不再使用。
 
-在 `frontend/gaia-ui` 下启动前端；根项目使用 Node 22 / Yarn，编排脚本为售后子项目单独使用 Node 24 / pnpm：
+在 `frontend/gaia-ui` 下启动前端；当前根项目和售后子项目均使用 Node 24.21.0；根项目使用 Yarn，子项目使用 pnpm：
 
 ```bash
 yarn dev --host 127.0.0.1 --port 7004 --strictPort
 # 根命令现在同时启动 9010 售后底座；仅主系统可用 yarn dev:main
 ```
 
-`yarn dev` 会分别解析两套固定工具链：Gaia 主系统使用 Node 22.23.1，售后子项目使用 Node 24.21.0。启动器优先从当前进程、PATH、NVM、Volta 及 Homebrew 版本目录查找精确版本，只给对应子进程注入独立 PATH，不切换或改动全局默认 Node。首次使用前需分别安装 `nvm install 22.23.1` 和 `nvm install 24.21.0`；任一版本缺失时会明确失败。
+`yarn dev` 分别读取主系统和售后子项目的工具配置；当前两者均固定 Node 24.21.0。启动器优先从当前进程、PATH、NVM、Volta 及 Homebrew 版本目录查找精确版本，只给对应子进程注入独立 PATH，不切换或改动全局默认 Node。首次使用前安装 `nvm install 24.21.0`；指定版本缺失时会明确失败。包管理器及锁文件继续分别维护。
 
 后端断点调试：先停止占用 `8080` 的后端，在 VS Code 中打开 `gaia-saas-proj`，选择本机新增的 `TOTO 本地后端 · 测试数据库` 启动项。不要选择未加载 `.local/` 的旧启动项。断点入口与 JAR 启动二选一；修改售后模块后重新安装模块并重启宿主。前端页面变更由 Vite 热更新。
 
@@ -151,7 +151,7 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 | --- | --- | --- |
 | `gaia-after-sales` | JDK 21、Maven 3.9.x、Gaia 父 POM `3.5.0-SNAPSHOT` | `mvn -B -o verify`；缓存不全时配置好内部制品源后使用 `mvn -B verify` |
 | `gaia-after-sales-uni` | Node `>=24.19.0 <25`，`.nvmrc` 为 `24.19.0`；pnpm `10.34.5` | `pnpm install --frozen-lockfile`；`pnpm tenant:check TOTO`；`pnpm dev TOTO` 或 `pnpm dev:h5 TOTO` |
-| `gaia-ui` 主系统 | `package.json` 的 Volta 固定 Node `22.23.1`、Yarn `1.22.22`，有 `yarn.lock` | `yarn install --frozen-lockfile`；`yarn dev`；`yarn build`；根编排命令会为售后子项目选择其独立 Node |
+| `gaia-ui` 主系统 | `package.json` 的 Volta 固定 Node `24.21.0`、Yarn `1.22.22`，有 `yarn.lock` | `yarn install --frozen-lockfile`；`yarn dev`；`yarn build`；根编排命令会为售后子项目选择其独立 Node |
 | `gaia-ui/apps/after-sales` | Node `>=24.21.0 <25`，`.nvmrc`／Volta 固定 `24.21.0`；pnpm `10.8.1` | 子目录先 `nvm use` 再执行 `corepack pnpm --ignore-workspace ...`；或在根目录执行 `yarn after-sales:pnpm <命令>` |
 | `gaia-saas-proj` | JDK 21、内部 Gaia 制品；Web JAR 为默认售后宿主 | 装配前提满足后执行 `mvn -B -pl gaia-saas-web-jar -am verify`；入口 `com.ehsure.gaia.WebApplication` |
 
@@ -230,7 +230,7 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 
 ## 售后独立前端底座（2026-09-08）
 
-`gaia-ui/apps/after-sales` 已建立单包独立工程。Gaia 主系统固定 Node 22.23.1 / Yarn 1.22.22，售后子项目固定 Node 24.21.0 LTS / pnpm 10.8.1，先分别安装：
+`gaia-ui/apps/after-sales` 已建立单包独立工程。当前 Gaia 主系统固定 Node 24.21.0 / Yarn 1.22.22，售后子项目固定 Node 24.21.0 LTS / pnpm 10.8.1；各自安装依赖：
 
 ```bash
 # gaia-ui 根目录
@@ -242,7 +242,7 @@ node scripts/frontends/after-sales.mjs install --frozen-lockfile
 
 日常开发默认在 gaia-ui 根目录或本仓库运行 `yarn dev:afs`，启动售后子系统及其本地 Redis、Gaia 聚合后端，直接访问 `http://127.0.0.1:9010/after-sales/#/`。用户明确要求主系统验证时，可在 gaia-ui 根目录运行 `yarn dev:full`；已有 `yarn dev` 同时启动主应用 7004 和子应用 9010，`yarn dev:main` 只启动主系统。从主系统进入时由主系统链接携带 `entry=main`。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
 
-原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以 Node 22 构建主项目、以 Node 24 构建子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装也使用同一 Node 24 编排入口，构建失败会中止；上传和发布仍需单独授权。
+原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以各自配置的 Node 24.21.0 构建主项目和子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装也使用同一 Node 24 编排入口，构建失败会中止；上传和发布仍需单独授权。
 
 验证通过：子系统冻结安装、typecheck、production build、仓库外隔离构建、31 项底座测试、原主构建、统一 production:saas、静态产物校验、双服务访问、HMR 和 SIGINT 清理。Chrome 售后入口的品牌、布局及控制台验证通过。原 legacy 页面和主路由无修改。
 
