@@ -1,5 +1,7 @@
 """Standard-library helpers shared by local and remote TOTO test deployment."""
 import hashlib
+import base64
+import io
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -12,6 +14,7 @@ import time
 from urllib.parse import urljoin, urlparse, unquote
 from urllib.request import build_opener, ProxyHandler, Request
 import zipfile
+import xml.etree.ElementTree as ET
 
 BASE = Path('/yundata/saas_test')
 CONFIGS = [
@@ -49,6 +52,30 @@ def save(path, value):
     temporary.replace(path)
 
 
+def strip_embedded_external_credentials(data):
+    """Private external credentials must not be reintroduced by runtime-config preservation."""
+    secret = re.compile(r'^\s*gaia\.after-sales\.(?:(?:ai|dispatch\.ai|assistant\.ai|completion-audit\.ai)\.api-key|amap\.(?:web-service-key|js-api-key|js-security-code)|external-services\.encryption-key)\s*[:=]')
+    return b''.join(line for line in data.splitlines(keepends=True)
+                    if not secret.match(line.decode('utf-8', errors='strict')))
+
+
+AMAP_ROOT_RULE = 'RewriteRule ^/_AMapService(/.*)$ /api/api/afterSales/external-services/_AMapService$1 [L]'
+
+def map_root_ready(tomcat):
+    try:
+        tree = ET.parse(tomcat / 'conf/server.xml')
+        for engine in tree.findall('.//Engine'):
+            for host in engine.findall('Host'):
+                if not any(v.get('className') == 'org.apache.catalina.valves.rewrite.RewriteValve' for v in host.findall('Valve')):
+                    continue
+                rules = tomcat / 'conf' / engine.get('name', 'Catalina') / host.get('name', 'localhost') / 'rewrite.config'
+                if rules.exists() and AMAP_ROOT_RULE in [line.strip() for line in rules.read_text().splitlines() if not line.lstrip().startswith('#')]:
+                    return True
+        return False
+    except (OSError, ET.ParseError):
+        return False
+
+
 def probe(base=BASE):
     catalina = base / 'tomcat11'
     web = catalina / 'webapps'
@@ -71,7 +98,13 @@ def probe(base=BASE):
     tenants = re.findall(r'^\s*gaia.multi-tenant\s*=\s*(\S+)', properties, re.M)
     require(tenants and all(t == 'false' for t in tenants), 'Unexpected tenant mode')
     require(shutil.disk_usage(base).free > 2 * 1024 ** 3, 'Insufficient backup space')
-    return {'pid': pids[0], 'war': digest(web / 'api.war'),
+    external_text = (catalina / 'conf/gaia-after-sales.properties').read_text()
+    master = re.findall(r'^\s*gaia\.after-sales\.external-services\.encryption-key\s*=\s*(\S+)', external_text, re.M)
+    try:
+        encryption_ready = bool(master) and len(base64.b64decode(master[-1], validate=True)) == 32
+    except (ValueError, TypeError):
+        encryption_ready = False
+    return {'pid': pids[0], 'war': digest(web / 'api.war'), 'externalEncryptionReady': encryption_ready, 'mapRootReady': map_root_ready(catalina),
             'externalConfig': digest(catalina / 'conf/gaia-after-sales.properties'),
             'configs': {p: digest(web / 'api' / p) for p in CONFIGS},
             'indexes': {p: digest(web / 'ROOT' / p) for p in ['index.html', 'after-sales/index.html']}}
@@ -119,16 +152,34 @@ def assets(root):
     return result
 
 
+def has_embedded_map_default(content):
+    # A Spring placeholder with a nonempty default embeds a credential in bytecode.
+    return re.search(br'\$\{gd\.map\.key:[^}]+\}', content) is not None
+
+
 def package(war, web, release, api, core):
     manifest = json.loads((release / 'manifest.json').read_text())
     with zipfile.ZipFile(war) as archive:
         require(archive.testzip() is None, 'Invalid WAR')
+        for path in CONFIGS[:2]:
+            content = archive.read(path)
+            require(strip_embedded_external_credentials(content) == content, 'External service credentials remain embedded in WAR configuration')
+        tools_name = 'WEB-INF/lib/gaia-sys-tools-core-3.0-SNAPSHOT.jar'
+        if tools_name in archive.namelist():
+            with zipfile.ZipFile(io.BytesIO(archive.read(tools_name))) as tools:
+                map_class = 'com/ehsure/gaia/tools/service/impl/GdMapServiceImpl.class'
+                if map_class in tools.namelist():
+                    require(not has_embedded_map_default(tools.read(map_class)), 'Shared map dependency still embeds a credential default; clean the source dependency before publishing')
         dependencies = {}
         for module, local in [('api', api), ('core', core)]:
             name = 'WEB-INF/lib/gaia-after-sales-' + module + '-3.0-SNAPSHOT.jar'
             value = hashlib.sha256(archive.read(name)).hexdigest()
             require(value == digest(local), 'Stale after-sales dependency: ' + module)
             dependencies[name] = value
+        with zipfile.ZipFile(io.BytesIO(archive.read('WEB-INF/lib/gaia-after-sales-core-3.0-SNAPSHOT.jar'))) as domain:
+            if 'com/ehsure/gaia/afterSales/external/ExternalSettingsService.class' in domain.namelist():
+                require(manifest['remote'].get('externalEncryptionReady') is True, 'External services require a provisioned private encryption master on the target; no application changes performed')
+                require(manifest['remote'].get('mapRootReady') is True, 'AMap JS requires the authenticated root proxy route; provision the Tomcat Host rewrite before publishing')
     with tarfile.open(release / 'root-dist.tar.gz', 'w:gz') as tar:
         tar.add(web, arcname='.', filter=lambda info: None if info.issym() or info.islnk() else info)
     shutil.copyfile(war, release / 'gaia-saas-web.war')
@@ -157,7 +208,9 @@ def stage(release, base=BASE):
         known = web / 'ROOT/.well-known'
         require(known.is_dir() and not known.is_symlink() and not any(p.is_symlink() for p in known.rglob('*')), 'Unexpected well-known links')
         shutil.copytree(web / 'ROOT/.well-known', root / '.well-known')
-    replacements = {p: (web / 'api' / p).read_bytes() for p in CONFIGS}
+    replacements = {p: strip_embedded_external_credentials((web / 'api' / p).read_bytes())
+                    if p.endswith('.properties') else (web / 'api' / p).read_bytes() for p in CONFIGS}
+    manifest['expectedConfigs'] = {p: hashlib.sha256(value).hexdigest() for p, value in replacements.items()}
     with zipfile.ZipFile(release / 'gaia-saas-web.war') as old, zipfile.ZipFile(release / 'api-preserved.war', 'w') as new:
         require(set(CONFIGS).issubset(old.namelist()), 'Missing WAR runtime configuration')
         for info in old.infolist():
@@ -166,7 +219,7 @@ def stage(release, base=BASE):
     with zipfile.ZipFile(release / 'api-preserved.war') as archive:
         require(archive.testzip() is None, 'Invalid preserved WAR')
         archive.extractall(api)
-    for file, value in {**manifest['dependencies'], **manifest['remote']['configs']}.items():
+    for file, value in {**manifest['dependencies'], **manifest['expectedConfigs']}.items():
         require(digest(api / file) == value, 'Staged dependency or configuration mismatch')
     manifest['liveWar'] = digest(release / 'api-preserved.war')
     save(release / 'manifest.json', manifest)
@@ -176,7 +229,7 @@ def verify_live(release, base=BASE):
     manifest = json.loads((release / 'manifest.json').read_text())
     current = probe(base)
     expected = manifest['remote']
-    require(current['war'] == manifest['liveWar'] and current['configs'] == expected['configs'] and current['externalConfig'] == expected['externalConfig'], 'Published WAR or runtime configuration mismatch')
+    require(current['war'] == manifest['liveWar'] and current['configs'] == manifest.get('expectedConfigs', expected['configs']) and current['externalConfig'] == expected['externalConfig'], 'Published WAR or runtime configuration mismatch')
     web = base / 'tomcat11/webapps'
     for file, value in manifest['dependencies'].items():
         require(digest(web / 'api' / file) == value, 'Published dependency mismatch')

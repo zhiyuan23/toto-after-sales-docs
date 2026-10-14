@@ -7,6 +7,19 @@ import test from 'node:test'
 import { HOST_FINGERPRINT, knownFailureMatch, parseCredentials, parseOptions, snapshot, sourceUnchanged, uploadMiniPrograms, parseMobileCheck } from './deploy-test.mjs'
 import { uploadEnvironment } from './deploy-test/mobile.mjs'
 
+test('preserving runtime configuration cannot reintroduce external-service credentials', () => {
+  const script = `import importlib.util
+spec=importlib.util.spec_from_file_location('support','scripts/deploy-test/support.py')
+m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+sample=b'spring.datasource.url=jdbc:mysql://test/db\\r\\ngaia.after-sales.dispatch.ai.api-key=test-private\\r\\ngaia.after-sales.amap.js-security-code=test-code\\r\\ngaia.after-sales.external-services.encryption-key=test-master\\r\\nother.setting=retained\\r\\n'
+safe=m.strip_embedded_external_credentials(sample)
+assert safe==b'spring.datasource.url=jdbc:mysql://test/db\\r\\nother.setting=retained\\r\\n'
+assert m.strip_embedded_external_credentials(safe)==safe
+assert m.strip_embedded_external_credentials(b'# gaia.after-sales.ai.api-key=example\\n')==b'# gaia.after-sales.ai.api-key=example\\n'
+`
+  execFileSync('python3', ['-c', script], { cwd: process.cwd() })
+})
+
 test('deployment requires an explicit action and rejects target overrides and shell-like release IDs', () => {
   assert.equal(parseOptions([]).mode, 'help')
   assert.equal(parseOptions(['--check']).mode, 'check')
@@ -128,4 +141,35 @@ test('source snapshots preserve dirty inputs and detect same-status concurrent c
     writeFileSync(join(root, 'untracked.txt'), 'new source')
     assert.ok(!sourceUnchanged({ repo: second }, { repo: snapshot(root) }))
   } finally { rmSync(root, { recursive: true, force: true }) }
+})
+
+test('deployment detects inherited map credential defaults without printing their value', () => {
+  const script = `import importlib.util
+spec=importlib.util.spec_from_file_location('support','scripts/deploy-test/support.py')
+m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+assert m.has_embedded_map_default(b'annotation \x24{gd.map.key:synthetic-test-only}')
+assert not m.has_embedded_map_default(b'annotation \x24{gd.map.key:}')
+assert not m.has_embedded_map_default(b'ordinary-map-code')
+`
+  execFileSync('python3', ['-c', script], { cwd: process.cwd() })
+})
+
+test('map root deployment readiness requires both a Host valve and the exact bounded alias', () => {
+  const script = `import importlib.util,tempfile
+from pathlib import Path
+spec=importlib.util.spec_from_file_location('support','scripts/deploy-test/support.py')
+m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+with tempfile.TemporaryDirectory() as folder:
+ p=Path(folder);(p/'conf').mkdir()
+ assert not m.map_root_ready(p)
+ (p/'conf/server.xml').write_text('<Server><Service><Engine name="Catalina"><Host name="localhost"><Valve className="org.apache.catalina.valves.rewrite.RewriteValve"/></Host></Engine></Service></Server>')
+ rules=p/'conf/Catalina/localhost/rewrite.config';rules.parent.mkdir(parents=True)
+ rules.write_text('# '+m.AMAP_ROOT_RULE)
+ assert not m.map_root_ready(p)
+ rules.write_text(m.AMAP_ROOT_RULE+'\\n')
+ assert m.map_root_ready(p)
+ (p/'conf/server.xml').write_text('<Server><Service><Engine name="Catalina"><Host name="localhost"/></Engine></Service></Server>')
+ assert not m.map_root_ready(p)
+`
+  execFileSync('python3', ['-c', script], { cwd: process.cwd() })
 })
