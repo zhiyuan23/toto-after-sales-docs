@@ -63,10 +63,50 @@ class DeploymentTest(unittest.TestCase):
             for file in deploy.CONFIGS:
                 archive.writestr(file, b'wrong local config')
             for module in ['api', 'core']:
-                archive.writestr(f'WEB-INF/lib/gaia-after-sales-{module}-3.0-SNAPSHOT.jar', module.encode())
-                (self.base / (module + '.jar')).write_bytes(module.encode())
+                buffer = io.BytesIO()
+                with zipfile.ZipFile(buffer, 'w') as dependency:
+                    dependency.writestr('fixture.txt', module.encode())
+                archive.writestr(f'WEB-INF/lib/gaia-after-sales-{module}-3.0-SNAPSHOT.jar', buffer.getvalue())
+                (self.base / (module + '.jar')).write_bytes(buffer.getvalue())
         deploy.package(war, self.new, self.release, self.base / 'api.jar', self.base / 'core.jar')
         return original
+
+    def test_external_source_defaults_to_server_and_readiness_never_returns_secrets(self):
+        properties = '\n'.join(name + '=private-fixture' for name in [
+            'gaia.after-sales.ai.api-key', 'gaia.after-sales.amap.web-service-key',
+            'gaia.after-sales.amap.js-api-key', 'gaia.after-sales.amap.js-security-code'])
+        result = deploy.external_credential_status(properties)
+        self.assertEqual(result, {'externalCredentialSource': 'SERVER', 'externalServerCredentialsReady': True})
+        self.assertNotIn('private-fixture', json.dumps(result))
+        self.assertFalse(deploy.external_credential_status(properties.replace('gaia.after-sales.ai.api-key=private-fixture', 'gaia.after-sales.ai.api-key='))['externalServerCredentialsReady'])
+        self.assertFalse(deploy.external_credential_status(properties.replace('gaia.after-sales.ai.api-key=private-fixture', 'gaia.after-sales.dispatch.ai.api-key=private-fixture'))['externalServerCredentialsReady'])
+        self.assertEqual(deploy.external_credential_status('gaia.after-sales.external-services.credential-source=DATABASE')['externalCredentialSource'], 'DATABASE')
+        self.assertEqual(deploy.external_credential_status('gaia.after-sales.external-services.credential-source=')['externalCredentialSource'], '')
+
+    def test_external_package_rejects_missing_server_credentials_and_invalid_source(self):
+        import base64
+        self.external.write_text('gaia.after-sales.external-services.encryption-key=' + base64.b64encode(bytes(32)).decode())
+        original = deploy.probe(self.base)
+        original['mapRootReady'] = True
+        deploy.save(self.release / 'manifest.json', {'remote': original})
+        core = self.base / 'core.jar'
+        with zipfile.ZipFile(core, 'w') as domain:
+            domain.writestr('com/ehsure/gaia/afterSales/external/ExternalSettingsService.class', b'fixture')
+        api = self.base / 'api.jar'; api.write_bytes(b'api')
+        war = self.base / 'new.war'
+        with zipfile.ZipFile(war, 'w') as archive:
+            for file in deploy.CONFIGS: archive.writestr(file, b'fixture config')
+            archive.writestr('WEB-INF/lib/gaia-after-sales-core-3.0-SNAPSHOT.jar', core.read_bytes())
+            archive.writestr('WEB-INF/lib/gaia-after-sales-api-3.0-SNAPSHOT.jar', api.read_bytes())
+        with self.assertRaisesRegex(ValueError, 'Server-managed'):
+            deploy.package(war, self.new, self.release, api, core)
+        original['externalCredentialSource'] = 'TYPO'
+        deploy.save(self.release / 'manifest.json', {'remote': original})
+        with self.assertRaisesRegex(ValueError, 'source'):
+            deploy.package(war, self.new, self.release, api, core)
+        original['externalCredentialSource'] = 'DATABASE'
+        deploy.save(self.release / 'manifest.json', {'remote': original})
+        deploy.package(war, self.new, self.release, api, core)
 
     def test_staging_preserves_configs_checks_dependencies_and_keeps_live_files_untouched(self):
         original = self.prepare()

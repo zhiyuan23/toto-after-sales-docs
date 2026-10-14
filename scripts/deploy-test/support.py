@@ -76,6 +76,19 @@ def map_root_ready(tomcat):
         return False
 
 
+def external_credential_status(text):
+    """Read readiness only; never return a private value."""
+    def value(name):
+        matches = re.findall(r'^[ \t]*' + re.escape(name) + r'[ \t]*=[ \t]*([^\r\n]*)$', text, re.M)
+        return matches[-1].strip() if matches else ''
+    source_values = re.findall(r'^[ \t]*gaia\.after-sales\.external-services\.credential-source[ \t]*=[ \t]*([^\r\n]*)$', text, re.M)
+    source = source_values[-1].strip().upper() if source_values else 'SERVER'
+    names = ['gaia.after-sales.ai.api-key', 'gaia.after-sales.amap.web-service-key',
+             'gaia.after-sales.amap.js-api-key', 'gaia.after-sales.amap.js-security-code']
+    ready = all(value(name) and len(value(name)) <= 512 and not value(name).startswith('${') for name in names)
+    return {'externalCredentialSource': source, 'externalServerCredentialsReady': bool(ready)}
+
+
 def probe(base=BASE):
     catalina = base / 'tomcat11'
     web = catalina / 'webapps'
@@ -105,6 +118,7 @@ def probe(base=BASE):
     except (ValueError, TypeError):
         encryption_ready = False
     return {'pid': pids[0], 'war': digest(web / 'api.war'), 'externalEncryptionReady': encryption_ready, 'mapRootReady': map_root_ready(catalina),
+            **external_credential_status(external_text),
             'externalConfig': digest(catalina / 'conf/gaia-after-sales.properties'),
             'configs': {p: digest(web / 'api' / p) for p in CONFIGS},
             'indexes': {p: digest(web / 'ROOT' / p) for p in ['index.html', 'after-sales/index.html']}}
@@ -179,6 +193,10 @@ def package(war, web, release, api, core):
         with zipfile.ZipFile(io.BytesIO(archive.read('WEB-INF/lib/gaia-after-sales-core-3.0-SNAPSHOT.jar'))) as domain:
             if 'com/ehsure/gaia/afterSales/external/ExternalSettingsService.class' in domain.namelist():
                 require(manifest['remote'].get('externalEncryptionReady') is True, 'External services require a provisioned private encryption master on the target; no application changes performed')
+                source = manifest['remote'].get('externalCredentialSource')
+                require(source in ('SERVER', 'DATABASE'), 'External credential source must be explicitly valid; no application changes performed')
+                if source == 'SERVER':
+                    require(manifest['remote'].get('externalServerCredentialsReady') is True, 'Server-managed AI and AMap credentials must be provisioned in private target configuration before publishing')
                 require(manifest['remote'].get('mapRootReady') is True, 'AMap JS requires the authenticated root proxy route; provision the Tomcat Host rewrite before publishing')
     with tarfile.open(release / 'root-dist.tar.gz', 'w:gz') as tar:
         tar.add(web, arcname='.', filter=lambda info: None if info.issym() or info.islnk() else info)
