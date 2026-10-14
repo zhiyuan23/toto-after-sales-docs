@@ -1,0 +1,95 @@
+/* Shared card feedback. Tune these tokens once for the whole presentation. */
+.report-v3{
+ --report-card-feedback-duration:160ms;
+ --report-card-press-duration:100ms;
+ --report-card-hover-offset:calc(3 * var(--display-unit,1px));
+ --report-card-hover-scale:.993;
+ --report-card-press-scale:.988;
+}
+.report-v3 .report-card{
+ --report-card-feedback-offset:0px;
+ --report-card-feedback-scale:1;
+ --report-card-outline-color:transparent;
+ --report-card-state-duration:var(--report-card-feedback-duration);
+ /* Individual transforms compose with the existing WAAPI entrance transform. */
+ translate:0 var(--report-card-feedback-offset);
+ scale:var(--report-card-feedback-scale);
+ transform-origin:center bottom;
+ transition:translate var(--report-card-state-duration) var(--ease-out),
+            scale var(--report-card-state-duration) var(--ease-out);
+}
+.report-v3 svg .report-card{transform-box:fill-box}
+/* A solid lower edge compresses as the face moves down. No shadow fading.
+   Scaling the whole card keeps its white background and base the same width. */
+:where(.report-v3 .report-card){--report-card-rest-depth:0px}
+.report-v3 .report-card-html{
+ position:relative;
+ box-shadow:none!important;
+ outline:calc(1 * var(--display-unit,1px)) solid var(--report-card-outline-color);
+ outline-offset:calc(-1 * var(--display-unit,1px));
+}
+.report-v3 .report-card-html::before{
+ content:"";
+ position:absolute;
+ top:calc(-1 * var(--report-card-border-top,0px));
+ right:calc(-1 * var(--report-card-border-right,0px));
+ bottom:calc(-1 * var(--report-card-border-bottom,0px));
+ left:calc(-1 * var(--report-card-border-left,0px));
+ border-radius:inherit;
+ box-shadow:0 max(0px,calc((var(--report-card-rest-depth) - var(--report-card-feedback-offset)) / var(--report-card-feedback-scale))) 0 var(--report-card-edge,color-mix(in srgb,var(--tone,var(--blue)) 18%,var(--bg)));
+ z-index:-1;
+ pointer-events:none;
+ transition:box-shadow var(--report-card-state-duration) var(--ease-out);
+}
+/* SVG depth stays inside the card, so it scales with the face and background. */
+.report-v3 .cover-object{--report-card-rest-depth:calc(4 * var(--display-unit,1px))}
+.report-v3 .cover-object.cover-peripheral{--report-card-rest-depth:0px}
+.report-v3 .hero-order{--report-card-rest-depth:calc(5 * var(--display-unit,1px))}
+.report-v3 .report-card>.cover-role-edge,
+.report-v3 .report-card>.cover-order-edge,
+.report-v3 .report-card>.v3-puzzle-tile-edge{
+ translate:0 calc(-1 * min(var(--report-card-rest-depth),var(--report-card-feedback-offset)));
+ transition:translate var(--report-card-state-duration) var(--ease-out);
+}
+.report-v3 .v3-puzzle-tile-edge{fill:var(--report-card-edge,var(--line));stroke:none}
+.report-v3 .v3-platform-piece{--report-card-edge:color-mix(in srgb,var(--tone,var(--blue)) 18%,var(--bg))}
+/* The browser illustration previously clipped its own children. Let its
+   shadow extend outside; keep the chrome's top corners rounded independently. */
+.report-v3 .web-app.report-card-html{overflow:visible}
+.report-v3 .web-app.report-card-html>.browser-bar{
+ border-top-left-radius:inherit;
+ border-top-right-radius:inherit;
+}
+/* Hover persists on ancestors while a nested card reacts independently.
+   Only the innermost card receives the deeper press feedback. */
+@media (hover:hover) and (pointer:fine){
+ .report-v3 .report-card:hover{
+  --report-card-feedback-offset:min(calc(var(--report-card-rest-depth) * .6),var(--report-card-hover-offset));
+  --report-card-feedback-scale:var(--report-card-hover-scale);
+ }
+}
+.report-v3 .report-card:active:not(:has(.report-card:active)){
+ --report-card-feedback-offset:var(--report-card-rest-depth);
+ --report-card-feedback-scale:var(--report-card-press-scale);
+ --report-card-state-duration:var(--report-card-press-duration);
+}
+/* Reduced motion retains the outline feedback without spatial or opacity animation. */
+@media (prefers-reduced-motion:reduce){
+ .report-v3 .report-card:hover,
+ .report-v3 .report-card:active:not(:has(.report-card:active)){
+  --report-card-outline-color:color-mix(in srgb,var(--tone,var(--blue)) 14%,var(--line));
+ }
+ .report-v3 .report-card,
+ .report-v3 .report-card:hover,
+ .report-v3 .report-card:active:not(:has(.report-card:active)){
+  --report-card-feedback-offset:0px;
+  --report-card-feedback-scale:1;
+  translate:none;
+  scale:none;
+  transition:none;
+ }
+ .report-v3 .report-card-html::before,
+ .report-v3 .report-card>.cover-role-edge,
+ .report-v3 .report-card>.cover-order-edge,
+ .report-v3 .report-card>.v3-puzzle-tile-edge{transition:none}
+}
