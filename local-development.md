@@ -2,7 +2,7 @@
 type: "llm-wiki-operation"
 topic: "TOTO售后服务"
 status: "active"
-updated: "2026-10-14"
+updated: "2026-10-17"
 owner: "shared"
 confidence: "medium"
 belongs_to:
@@ -33,6 +33,7 @@ sensitivity: "internal"
 - 数据库凭据只保存在宿主 `.local/application.properties`，目录已忽略，文件权限为 `600`。不要提交、分享或把密码复制到前端环境变量。连接使用 TLS 加密；当前 `sslMode=REQUIRED` 不等同于已配置 CA 和服务器身份校验。
 - 新版两端小程序及Web地址解析共用外部服务配置中的高德Web服务Key 和售后后端 `AmapReverseGeocodeClient`；消费者接口从结果取当前城市，服务人员地图逆解析接口取完整地址；现场签到只保存 GCJ-02 经纬度及精度／授权事实，不调用逆解析、不要求省市区和详细地址。后续需要签到位置地址时可由后端按已保存坐标调用公共客户端，解析结果不得自动覆盖工单地址。当前默认SERVER模式从后端私密文件读取Web服务Key，不进入小程序或前端制品；修改凭证须重启实际宿主，页面开关／模型保存后下一次调用生效。DATABASE网页凭证管理仅供未来运维显式启用，缺失不跨来源回退；升级边界见[外部配置指南](specs/2026-09-18-售后AI外部配置与部署指南.md)。
 - Web 使用 `VITE_API_URL=http://127.0.0.1:8080/api/`；两个小程序的 `pnpm dev`／`pnpm dev:h5` 默认注入 `GAIA_API_BASE_URL=http://127.0.0.1:8080/api/api`。宿主部署 context 为 `/api`、控制器路径也以 `/api` 开头；小程序通用请求合并重复完整段后，实际请求仍为 `/api/api/...`。本机已有 `.env.development.local` 的旧 `/api` 基址需同步更新；Web 基址和代理规则独立，不能用单层 HTTP 200 判断接口存在。
+- 售后认证／日志／配置的模块边界见[宿主隔离契约](specs/2026-10-17-售后宿主模块级隔离.md)：运行日志新增独立 `after-sales.log`，公共 `all.log`／`error.log` 格式保持；真实私密配置位置不变。
 - Redis 使用独立本地端口 `16379`，不连接共享测试 Redis，也不占用已有的 `6379`。自动改表、业务启动初始化、日志消费者、租户同步订阅和通知已在本机配置中关闭。
 
 2026-10-10 本机授权快照 15 秒超时排查：实际测试库连接曾被 Clash gVisor TUN 接管，即便策略为 DIRECT、系统代理有内网例外也仍走 `utun0`。经用户授权，仅将 `10.1.1.106/32` 加入 Clash Verge 的「虚拟网卡模式 → 排除自定义网段」，路由已改走 `en0`；授权复测成功但仍耗时 32.565 秒，物理网关亦有延迟抖动，故障尚未关闭。用户选择先保留诊断，待稳定内网连接后复测；详见[诊断与恢复方式](specs/2026-09-30-Web统一账号授权快照.md#local-authorization-timeout-20261010)。
