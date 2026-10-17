@@ -204,12 +204,14 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 
 ## 3. 后端修改如何进入运行宿主
 
-本节适用于已确认需要接入宿主的功能；当前售后工程只有普通 JAR，没有启动类和真实 API，也尚未加入宿主依赖。
+当前售后Core／API已装配进Gaia的WAR及可执行Jar宿主，日常本机入口为统一启动器。售后仓库另有`gaia-after-sales-web`运行外壳；未来独立运行宿主仍需准备Gaia认证、租户、数据源和日志装配，不表示已经完成独立部署。
 
 1. 在功能 Spec 中确认 `api`、`xcx-api` 的实际使用范围；首次接入时在宿主根 POM 配置对应版本/依赖管理，并在 `gaia-saas-web-jar/pom.xml` 引入所需模块。
 2. 在售后仓库执行 `mvn -B install`，将父子制品一起安装到本机 Maven 仓库。它包含 verify 阶段；同一份源码已成功 install 时无需重复 verify。只做文档修改不需要 install。
 3. 在宿主执行 `mvn -B -pl gaia-saas-web-jar -am verify`，再按已核实的测试环境配置启动或重启 `WebApplication`。其他独立 Gaia 仓库不在该 Reactor 内，缺失的依赖仍需单独取得。
 4. 核对运行中实际依赖的售后版本、包扫描、拦截器和租户上下文，再请求功能 Spec 中的接口并从页面验收。
+
+公共地图实现已精确恢复为远端master；售后需求不得再改其默认Key、取值写法或新增主系统必填配置。若本地此前装配过售后修改的公共库，先在`backend/gaia-sys`验证并安装已恢复的`gaia-sys-tools-core`，再安装售后和装配宿主。此前追加的本机`gd.map.key`已撤销，私密配置与追加前原字节一致，售后原配置保留。AI默认endpoint／model由售后Core持有，不需在宿主复制。最新[master原样与零差异证据](specs/2026-10-17-售后宿主模块级隔离.md#8-主系统地图精确保持master原样2026-10-17最终确认)及[未来独立宿主配置](specs/2026-10-17-售后宿主模块级隔离.md#63-将来独立部署的配置契约)分别维护；8080未重启。
 
 仅重启宿主不会自动使用售后仓库未安装的新源码。连续修改可以集中安装一次；如果只修改页面，不需要安装后端制品。
 
@@ -337,3 +339,10 @@ git clone --branch 'feature/20260907_蓝鲸售后服务_志远_喆宇' \
 | `gaia-customer-service-uni` | “TOTO客服助手”服务人员独立小程序 | 共同底座已从消费者端复制并配置独立 AppID；真实身份和 W01～W16 业务待 Spec 实施 |
 
 `gaia-ui/src/views/common` 是受保护的公共子仓库，未经单独明确授权不得修改或提交。`gaia-saas-proj` 可按已确认 Spec 修改，但不得自动提交。菜单、权限和租户平台按需复用 `gaia-sys`、`gaia-tenant`；售后业务主数据自有，出库与追溯只按另行确认的外部接口契约接入，不直接引用主系统业务表或默认同步。
+
+
+### 2026-10-17公共源码原样与售后功能分支
+
+`backend/gaia-sys`当前使用本地`feature/20260907_蓝鲸售后服务_志远_喆宇`，从最新远端master创建；当前没有公共源码差异。原master的4条售后开发提交保留在`codex/backup-gaia-sys-master-before-isolation-20261017`，本地master已与远端master对齐，不将备份分支安装为运行依赖。复现本轮装配先构建／安装该远端原样的SYS、工具及日志制品，再安装售后API/Core，最后装配宿主；已运行8080仍是旧制品，不把新构建当作已加载。
+
+宿主WAR／Jar的公共配置去掉可选售后导入块后必须与远端master逐字一致；Cookie、数据源、Redis及连接池按环境在私密覆盖文件维护。原Windows售后分支中的`gaia_local_token`、Redis库5等不再是源码默认值；切换运行配置前核对环境覆盖，不改公共默认值来解决单一子系统问题。本机既有私密文件保持，未重启或迁移共享环境。领域审计默认false归`AfterSalesAuditSupport`，外部配置仍可覆盖。来源及验证见[全面整改](specs/2026-10-17-售后宿主模块级隔离.md#9-主系统保持远端master原样的全面整改2026-10-17)。

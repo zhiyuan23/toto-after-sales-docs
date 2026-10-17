@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "../03-开发管理/03-AI开发执行规范.md#subsystem-first-development"
   - "../specs/2026-09-11-渠道与网点二版开发与测试记录.md#dictionary-layout-20261017"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#410-图片布局与紧凑身份区2026-10-16"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#49-公共操作流程与标签关闭保护2026-10-16"
@@ -31,6 +32,8 @@ sensitivity: "internal"
 - 当前基线：已开发的独立子系统“商品分类”功能
 
 ## 1. 开发位置与适用边界
+
+遵循[子系统优先开发约束](../03-开发管理/03-AI开发执行规范.md#subsystem-first-development)：页面、样式、组件和通用交互默认在售后子系统内实现；非必要不修改主系统全局组件、样式或配置。确需跨边界时，先明确必要性与最小影响范围，并回归受影响的非售后页面。
 
 后续 Web 售后功能默认在 `gaia-ui/apps/after-sales` 开发，使用子系统自身的路由、页面、通用组件、composables 和 API 适配层。除非用户明确要求维护旧入口，不再把新功能实现到主系统 `src/views/afterSales` 或 `src/components/commonV2` 中。
 

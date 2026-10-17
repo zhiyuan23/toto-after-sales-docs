@@ -143,13 +143,16 @@ test('source snapshots preserve dirty inputs and detect same-status concurrent c
   } finally { rmSync(root, { recursive: true, force: true }) }
 })
 
-test('deployment detects inherited map credential defaults without printing their value', () => {
+test('deployment preserves upstream map defaults and rejects after-sales credential wiring', () => {
   const script = `import importlib.util
 spec=importlib.util.spec_from_file_location('support','scripts/deploy-test/support.py')
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
-assert m.has_embedded_map_default(b'annotation \x24{gd.map.key:synthetic-test-only}')
-assert not m.has_embedded_map_default(b'annotation \x24{gd.map.key:}')
-assert not m.has_embedded_map_default(b'ordinary-map-code')
+assert not m.has_after_sales_map_bridge(b'annotation \x24{gd.map.key:synthetic-test-only}')
+assert not m.has_after_sales_map_bridge(b'annotation \x24{gd.map.key:}')
+assert not m.has_after_sales_map_bridge(b'ordinary-map-code')
+assert m.has_after_sales_map_bridge(b'gaiaAmapWebCredential')
+assert m.has_after_sales_map_bridge(b'com/ehsure/gaia/afterSales/external/Settings')
+assert m.has_after_sales_map_bridge(b'gaia.after-sales.amap.web-service-key')
 `
   execFileSync('python3', ['-c', script], { cwd: process.cwd() })
 })

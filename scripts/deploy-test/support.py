@@ -166,9 +166,11 @@ def assets(root):
     return result
 
 
-def has_embedded_map_default(content):
-    # A Spring placeholder with a nonempty default embeds a credential in bytecode.
-    return re.search(br'\$\{gd\.map\.key:[^}]+\}', content) is not None
+def has_after_sales_map_bridge(content):
+    # Preserve the public library's upstream defaults; reject domain credential wiring.
+    return (b'gaiaAmapWebCredential' in content
+            or b'com/ehsure/gaia/afterSales/' in content
+            or b'gaia.after-sales.' in content)
 
 
 def package(war, web, release, api, core):
@@ -183,7 +185,7 @@ def package(war, web, release, api, core):
             with zipfile.ZipFile(io.BytesIO(archive.read(tools_name))) as tools:
                 map_class = 'com/ehsure/gaia/tools/service/impl/GdMapServiceImpl.class'
                 if map_class in tools.namelist():
-                    require(not has_embedded_map_default(tools.read(map_class)), 'Shared map dependency still embeds a credential default; clean the source dependency before publishing')
+                    require(not has_after_sales_map_bridge(tools.read(map_class)), 'Shared map dependency contains after-sales credential wiring; restore its upstream implementation before publishing')
         dependencies = {}
         for module, local in [('api', api), ('core', core)]:
             name = 'WEB-INF/lib/gaia-after-sales-' + module + '-3.0-SNAPSHOT.jar'
