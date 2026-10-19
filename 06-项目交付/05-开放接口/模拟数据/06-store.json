@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "code": "OA26_STORE",
+      "name": "开放接口测试门店",
+      "dealerCode": "OA26_DEALER2",
+      "organizationCode": "集团",
+      "provinceName": "上海市",
+      "cityName": "上海市",
+      "districtName": "浦东新区",
+      "address": "模拟地址（非实际门店）",
+      "profile": {
+        "sourceSystem": "OPENAPI-20261019",
+        "sourceStoreId": "OA26_STORE",
+        "intro": "受控接口测试数据"
+      }
+    }
+  ]
+}
