@@ -2,12 +2,14 @@
 type: "llm-wiki-operation"
 topic: "TOTO售后服务"
 status: "active"
-updated: "2026-10-17"
+updated: "2026-10-19"
 owner: "shared"
 confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-19 用户补充售后服务助手第三套账号；合并承载后台四角色，本轮仅预存配置，尚未开发。"
+  - "2026-10-19 用户提供两套新小程序账号资料，替换两端 AppID、上传私钥及本机后端私密配置；不含共享发布。"
   - "本仓库既有文档：local-development.md；格式整理不表示重新验证业务与运行事实。"
 tags:
   - "llm-wiki"
@@ -193,7 +195,7 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 | --- | --- | --- |
 | 业务身份与权限 | 经确认的功能 Spec；核对宿主会话拦截和 `gaia-sys` 权限配置 | 待确认售后身份、菜单、API 与资源权限 |
 | TOTO 测试环境 | 从项目环境负责人获取配置；核对宿主实际加载的 profile、数据库和 Redis | 获取入口、测试数据源与可用性待确认 |
-| 小程序 AppID 与接口地址 | 从项目及微信平台配置负责人确认，更新 `build/tenant/profiles/toto.ts` | 当前 `touristappid`、`https://example.invalid/` 和租户编码仍为占位 |
+| 小程序 AppID 与接口地址 | 更新各端 `build/tenant/profiles/toto.ts`，后端配套独立私密凭证 | 2026-10-19 两端已切换新 AppID；test 接口仍为 `http://10.1.1.53:8011`，新凭证尚未同步到共享服务器，见下节 |
 | 管理后台请求地址 | 核对 `gaia-ui` 的 Vite 代理、环境变量、请求封装和目标宿主上下文 | TOTO 联调地址待验证 |
 | 测试身份和数据 | 准备可追踪的脱敏业务数据、不同权限身份及必要的跨租户测试条件 | 待需求确认后准备；账号获取方式待落实 |
 | 数据结构与菜单交付 | 核对目标环境迁移、初始化与恢复机制，在功能 Spec 中明确动作 | 待首个相关功能确定 |
@@ -201,6 +203,33 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 文档只记录配置项、配置文件位置与获取方式，不保存密码、令牌、私钥或完整环境配置。小程序 `VITE_` 与 profile 会进入客户端；本地覆盖方法见[小程序 README](../../mobile/gaia-after-sales-uni/README.md)。
 
 两个小程序的微信上传私钥统一存放于本仓库已忽略的 `.local/wechat-ci/`，按 AppID 区分文件，目录权限为 `700`、私钥权限为 `600`。消费者端和服务人员端分别在各自已忽略的 `.env.upload.local` 中配置 `GAIA_APP_ENV=test` 与对应私钥的绝对路径；从对应小程序仓库运行 `pnpm upload` 默认打包并上传 TOTO 开发版本，可用 `pnpm upload --desc "本次修改说明"` 设置上传备注。实际上传需在微信平台版本管理中核验，内网测试地址构建的版本不能直接作为体验版或正式版使用。
+
+### 两端新小程序账号配置（2026-10-19）
+
+| 对应端 | 当前源码 AppID | 本机后端私密配置前缀 |
+| --- | --- | --- |
+| 消费者 `gaia-after-sales-uni` | `wx89fe2581ccada529` | `after-sales.consumer.wechat-app-id` / `wechat-app-secret` |
+| 服务人员 `gaia-customer-service-uni` | `wx262113345e1e6d72` | `after-sales.mobile.wechat-app-id` / `wechat-app-secret` |
+
+本次按用户提供资料替换各端 TOTO profile、既有配置断言、派生租户总览和人员端发布说明；端内显示名称、租户编码及接口地址保持。上传私钥按新 AppID 放入上述私密目录，各端 `.env.upload.local` 已指向对应文件；两份私钥格式校验通过。本机后端四项账号凭证仅写入 `gaia-saas-proj/.local/application.properties`，该文件及私钥权限为 `600`，旧配置在本仓库忽略的 `.local/wechat-account-switch-20261019/` 中备份。
+
+研发验证：两端 `pnpm verify` 均通过，包含完整 check 与微信/H5 development 构建；生成的 `project.config.json` 和 `tenant-build.json` 均为各端新 AppID。两端正式上传辅助入口 `check` 通过，确认新私钥可读取、CI 依赖可加载；此预检未调用微信上传接口，不证明新账号的上传权限、IP 白名单或 AppSecret 在线有效。另已回读确认四项后端凭证与用户提供资料一致、上传私钥与原文件一致、密钥未进入代码差异及两端构建产物；项目文档校验246份通过。原始验证日志只留本机忽略目录。
+
+本轮未重启现有共享本机后端，运行进程仍须重启才会加载新凭证；未更新共享测试服务器或上传微信开发版。当前 test 构建仍连接共享测试服务器，因此完成服务端凭证同步前不能据此认定新 AppID 的真实微信登录可用。原 AppID 的微信绑定不在本次迁移范围；新应用下的既有账号识别、服务人员重新绑定及真机登录另需验证。本次为账号配置替换，不改变业务入口或验收计数。
+
+### 第三个小程序：售后服务助手预留配置（2026-10-19）
+
+用户确认第三个小程序“售后服务助手”合并承载后台总部运营、客服作业、服务站作业、门店业务四个角色视角，账号 AppID 为 `wx6246e026fb0bb208`。这是独立于消费者、服务人员端的第三个小程序，当前尚无对应工程与业务实现；角色、权限及数据范围仍按后续确认的功能契约实施，不能因账号预配置视为已开放。
+
+| 配置 | 保存位置与用途 |
+| --- | --- |
+| AppID / AppSecret | 宿主 `gaia-saas-proj/.local/application.properties` 中预留 `after-sales.service-assistant.wechat-app-id` 与 `after-sales.service-assistant.wechat-app-secret`；目前无运行代码读取这两项 |
+| 上传私钥 | 本文档仓库 `.local/wechat-ci/private.wx6246e026fb0bb208.key` |
+| 上传配置 | 本文档仓库 `.local/wechat-ci/service-assistant.upload.env`，包含 `GAIA_APP_ENV=test`、`WECHAT_APP_ID`、私钥绝对路径与默认 `WECHAT_CI_ROBOT=1`；供后续工程接入时使用，现有两端上传脚本不读取该文件 |
+
+三份账号资料已落在项目自己的配置与私密目录，日常使用不依赖最初接收资料的临时文件夹。AppSecret、私钥及上传配置均不进入 Git 或交付网页；私密文件权限 `600`，私钥目录权限 `700`。原配置备份位于忽略的 `.local/wechat-account-switch-20261019/assistant-*/`。
+
+新增私钥格式、来源一致性、三套账号对应关系、已有两端凭证保持及 Git 忽略检查通过；本次只预存第三套配置，不新增工程、登录接口、角色功能或部署上传入口，也不将第三个小程序加入现有两个小程序的自动发布流程。没有第三端构建或在线凭证验证；既有双端源码未在本续轮修改，无需重复此前完整构建。共享服务器、现有进程及业务验收状态保持，后续启用时须接入真实配置读取并另做构建、登录与权限验证。
 
 ## 3. 后端修改如何进入运行宿主
 
