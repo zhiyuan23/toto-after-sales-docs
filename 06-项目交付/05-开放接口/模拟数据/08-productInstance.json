@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "uniqueCode": "OA26_INSTANCE_001",
+      "productCode": "OA26_PRODUCT",
+      "factoryCode": "OA26_FACTORY",
+      "factoryName": "模拟工厂",
+      "warehouseCode": "OA26_WH",
+      "warehouseName": "模拟仓库",
+      "dealerCode": "OA26_DEALER2",
+      "storeCode": "OA26_STORE"
+    }
+  ]
+}

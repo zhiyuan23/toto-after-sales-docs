@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "code": "OA26_PRODUCT",
+      "name": "开放接口测试商品",
+      "categoryCode": "OA26_CAT",
+      "seriesCode": "OA26_SERIES",
+      "model": "OA26_PRODUCT_MODEL",
+      "warrantyEnabled": true,
+      "warrantyMonths": 12,
+      "warrantyType": "FIXED",
+      "warrantyScope": "WHOLE_PRODUCT",
+      "warrantyStartRule": "PURCHASE_DATE",
+      "physicalProduct": true,
+      "listed": false,
+      "miniappVisible": false,
+      "networkSupported": true,
+      "installationParts": [
+        {
+          "partCode": "OA26_PART",
+          "quantity": 2
+        }
+      ],
+      "productDescription": "OPENAPI-20261019受控样本"
+    }
+  ]
+}

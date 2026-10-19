@@ -1,0 +1,2185 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "售后基础数据开放接口",
+    "version": "1.0.0",
+    "description": "与现有平台v1.0认证、响应及监控日志兼容。完整业务规则见同目录接口文档。"
+  },
+  "servers": [
+    {
+      "url": "http://10.1.1.53:8011/api/openapi/v1.0/afterSales"
+    }
+  ],
+  "paths": {
+    "/category/save": {
+      "post": {
+        "summary": "商品分类save",
+        "operationId": "categorysave",
+        "tags": [
+          "商品分类"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/category"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/category"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "code": "OA26_CAT",
+                    "name": "开放接口测试分类",
+                    "parentCode": "",
+                    "remark": "OPENAPI-20261019受控样本"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/category/pageList": {
+      "post": {
+        "summary": "商品分类pageList",
+        "operationId": "categorypageList",
+        "tags": [
+          "商品分类"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/category/status": {
+      "post": {
+        "summary": "商品分类status",
+        "operationId": "categorystatus",
+        "tags": [
+          "商品分类"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "enabled"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/series/save": {
+      "post": {
+        "summary": "商品系列save",
+        "operationId": "seriessave",
+        "tags": [
+          "商品系列"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/series"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/series"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "code": "OA26_SERIES",
+                    "name": "开放接口测试系列",
+                    "sortOrder": 10,
+                    "remark": "OPENAPI-20261019受控样本"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/series/pageList": {
+      "post": {
+        "summary": "商品系列pageList",
+        "operationId": "seriespageList",
+        "tags": [
+          "商品系列"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/series/status": {
+      "post": {
+        "summary": "商品系列status",
+        "operationId": "seriesstatus",
+        "tags": [
+          "商品系列"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "enabled"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/part/save": {
+      "post": {
+        "summary": "配件档案save",
+        "operationId": "partsave",
+        "tags": [
+          "配件档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/part"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/part"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "code": "OA26_PART",
+                    "name": "开放接口测试配件",
+                    "brand": "模拟品牌",
+                    "factory": "模拟工厂",
+                    "costPrice": 10,
+                    "retailPrice": 20,
+                    "model": "OA26_PART_MODEL",
+                    "remark": "OPENAPI-20261019受控样本"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/part/pageList": {
+      "post": {
+        "summary": "配件档案pageList",
+        "operationId": "partpageList",
+        "tags": [
+          "配件档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/part/status": {
+      "post": {
+        "summary": "配件档案status",
+        "operationId": "partstatus",
+        "tags": [
+          "配件档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "enabled"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/product/save": {
+      "post": {
+        "summary": "商品档案save",
+        "operationId": "productsave",
+        "tags": [
+          "商品档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/product"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/product"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "code": "OA26_PRODUCT",
+                    "name": "开放接口测试商品",
+                    "categoryCode": "OA26_CAT",
+                    "seriesCode": "OA26_SERIES",
+                    "model": "OA26_PRODUCT_MODEL",
+                    "warrantyEnabled": true,
+                    "warrantyMonths": 12,
+                    "warrantyType": "FIXED",
+                    "warrantyScope": "WHOLE_PRODUCT",
+                    "warrantyStartRule": "PURCHASE_DATE",
+                    "physicalProduct": true,
+                    "listed": false,
+                    "miniappVisible": false,
+                    "networkSupported": true,
+                    "installationParts": [
+                      {
+                        "partCode": "OA26_PART",
+                        "quantity": 2
+                      }
+                    ],
+                    "productDescription": "OPENAPI-20261019受控样本"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/product/pageList": {
+      "post": {
+        "summary": "商品档案pageList",
+        "operationId": "productpageList",
+        "tags": [
+          "商品档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/product/status": {
+      "post": {
+        "summary": "商品档案status",
+        "operationId": "productstatus",
+        "tags": [
+          "商品档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "enabled"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/dealer/save": {
+      "post": {
+        "summary": "代理商管理save",
+        "operationId": "dealersave",
+        "tags": [
+          "代理商管理"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/dealer"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/dealer"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "code": "OA26_DEALER1",
+                    "name": "开放接口一级代理商",
+                    "agent": "FIRST",
+                    "parentCode": "",
+                    "organizationCode": "集团",
+                    "provinceName": "上海市",
+                    "cityName": "上海市",
+                    "districtName": "浦东新区",
+                    "address": "模拟地址（非实际门店）"
+                  },
+                  {
+                    "code": "OA26_DEALER2",
+                    "name": "开放接口二级代理商",
+                    "agent": "SECOND",
+                    "parentCode": "OA26_DEALER1",
+                    "organizationCode": "集团",
+                    "provinceName": "上海市",
+                    "cityName": "上海市",
+                    "districtName": "浦东新区"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/dealer/pageList": {
+      "post": {
+        "summary": "代理商管理pageList",
+        "operationId": "dealerpageList",
+        "tags": [
+          "代理商管理"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/dealer/status": {
+      "post": {
+        "summary": "代理商管理status",
+        "operationId": "dealerstatus",
+        "tags": [
+          "代理商管理"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "enabled"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/store/save": {
+      "post": {
+        "summary": "门店管理save",
+        "operationId": "storesave",
+        "tags": [
+          "门店管理"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/store"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/store"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "code": "OA26_STORE",
+                    "name": "开放接口测试门店",
+                    "dealerCode": "OA26_DEALER2",
+                    "organizationCode": "集团",
+                    "provinceName": "上海市",
+                    "cityName": "上海市",
+                    "districtName": "浦东新区",
+                    "address": "模拟地址（非实际门店）",
+                    "profile": {
+                      "sourceSystem": "OPENAPI-20261019",
+                      "sourceStoreId": "OA26_STORE",
+                      "intro": "受控接口测试数据"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/store/pageList": {
+      "post": {
+        "summary": "门店管理pageList",
+        "operationId": "storepageList",
+        "tags": [
+          "门店管理"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/store/status": {
+      "post": {
+        "summary": "门店管理status",
+        "operationId": "storestatus",
+        "tags": [
+          "门店管理"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "enabled"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/salesRegion/save": {
+      "post": {
+        "summary": "销售区域save",
+        "operationId": "salesRegionsave",
+        "tags": [
+          "销售区域"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/salesRegion"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/salesRegion"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "subjectType": "DEALER",
+                    "subjectCode": "OA26_DEALER1",
+                    "scopeLevel": "CITY",
+                    "areas": [
+                      {
+                        "provinceCode": "310000",
+                        "provinceName": "上海市",
+                        "cityCode": "310100",
+                        "cityName": "上海市"
+                      }
+                    ]
+                  },
+                  {
+                    "subjectType": "STORE",
+                    "subjectCode": "OA26_STORE",
+                    "scopeLevel": "CITY",
+                    "areas": [
+                      {
+                        "provinceCode": "310000",
+                        "provinceName": "上海市",
+                        "cityCode": "310100",
+                        "cityName": "上海市"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/salesRegion/pageList": {
+      "post": {
+        "summary": "销售区域pageList",
+        "operationId": "salesRegionpageList",
+        "tags": [
+          "销售区域"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/productInstance/save": {
+      "post": {
+        "summary": "实物档案save",
+        "operationId": "productInstancesave",
+        "tags": [
+          "实物档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/productInstance"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "items"
+                    ],
+                    "properties": {
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/productInstance"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "items": [
+                  {
+                    "uniqueCode": "OA26_INSTANCE_001",
+                    "productCode": "OA26_PRODUCT",
+                    "factoryCode": "OA26_FACTORY",
+                    "factoryName": "模拟工厂",
+                    "warehouseCode": "OA26_WH",
+                    "warehouseName": "模拟仓库",
+                    "dealerCode": "OA26_DEALER2",
+                    "storeCode": "OA26_STORE"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/productInstance/pageList": {
+      "post": {
+        "summary": "实物档案pageList",
+        "operationId": "productInstancepageList",
+        "tags": [
+          "实物档案"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "uniqueCode": {
+                    "type": "string"
+                  },
+                  "subjectType": {
+                    "type": "string"
+                  },
+                  "subjectCode": {
+                    "type": "string"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 15
+                  },
+                  "keyword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    },
+    "/image/upload": {
+      "post": {
+        "summary": "图片upload",
+        "operationId": "imageupload",
+        "tags": [
+          "图片"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "uploadFile"
+                ],
+                "properties": {
+                  "uploadFile": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "使用code判断业务结果；批量失败时检查results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "平台Token认证拒绝"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "category": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "名称"
+          },
+          "parentCode": {
+            "type": "string",
+            "description": "上级编号；顶级分类／一级代理商传空字符串"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "排序值，非负整数"
+          },
+          "remark": {
+            "type": "string",
+            "description": "remark"
+          },
+          "code": {
+            "type": "string",
+            "description": "唯一业务编号；按编号新增或更新，编号不能通过本接口改号"
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "平台图片引用；先上传取得access；空字符串清空"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "code"
+        ],
+        "x-required-on-create": [
+          "code",
+          "name"
+        ]
+      },
+      "series": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "唯一业务编号；按编号新增或更新，编号不能通过本接口改号"
+          },
+          "name": {
+            "type": "string",
+            "description": "名称"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "排序值，非负整数"
+          },
+          "remark": {
+            "type": "string",
+            "description": "remark"
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "平台图片引用；先上传取得access；空字符串清空"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "code"
+        ],
+        "x-required-on-create": [
+          "code",
+          "name"
+        ]
+      },
+      "part": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "唯一业务编号；按编号新增或更新，编号不能通过本接口改号"
+          },
+          "name": {
+            "type": "string",
+            "description": "名称"
+          },
+          "factory": {
+            "type": "string",
+            "description": "factory"
+          },
+          "brand": {
+            "type": "string",
+            "description": "brand"
+          },
+          "costPrice": {
+            "type": "number",
+            "description": "成本价，非负金额"
+          },
+          "retailPrice": {
+            "type": "number",
+            "description": "零售价，非负金额"
+          },
+          "model": {
+            "type": "string",
+            "description": "型号；商品型号按现有设置执行唯一校验"
+          },
+          "packageLength": {
+            "type": "string",
+            "description": "packageLength"
+          },
+          "packageWidth": {
+            "type": "string",
+            "description": "packageWidth"
+          },
+          "packageHeight": {
+            "type": "string",
+            "description": "packageHeight"
+          },
+          "grossWeight": {
+            "type": "string",
+            "description": "grossWeight"
+          },
+          "netWeight": {
+            "type": "string",
+            "description": "netWeight"
+          },
+          "functionDescription": {
+            "type": "string",
+            "description": "functionDescription"
+          },
+          "remark": {
+            "type": "string",
+            "description": "remark"
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "平台图片引用；先上传取得access；空字符串清空"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "productCode"
+              ],
+              "properties": {
+                "productCode": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "default": 1
+                }
+              }
+            },
+            "description": "配件适用商品数组：[{productCode,quantity}]；传入整体替换，[]解除"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "code"
+        ],
+        "x-required-on-create": [
+          "code",
+          "name"
+        ]
+      },
+      "product": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "唯一业务编号；按编号新增或更新，编号不能通过本接口改号"
+          },
+          "name": {
+            "type": "string",
+            "description": "名称"
+          },
+          "barcode": {
+            "type": "string",
+            "description": "条码；按现有设置执行唯一校验"
+          },
+          "specification": {
+            "type": "string",
+            "description": "specification"
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "已存在的售后商品分类编号"
+          },
+          "model": {
+            "type": "string",
+            "description": "型号；商品型号按现有设置执行唯一校验"
+          },
+          "baseModel": {
+            "type": "string",
+            "description": "baseModel"
+          },
+          "tankModel": {
+            "type": "string",
+            "description": "tankModel"
+          },
+          "color": {
+            "type": "string",
+            "description": "color"
+          },
+          "seriesCode": {
+            "type": "string",
+            "description": "已存在的商品系列编号；空字符串解除关联"
+          },
+          "warrantyEnabled": {
+            "type": "boolean",
+            "description": "是否保修；默认true"
+          },
+          "warrantyMonths": {
+            "type": "integer",
+            "description": "固定保修1～600个月；启用固定保修时必填"
+          },
+          "physicalProduct": {
+            "type": "boolean",
+            "description": "是否实物，默认true"
+          },
+          "unitName": {
+            "type": "string",
+            "description": "unitName"
+          },
+          "listed": {
+            "type": "boolean",
+            "description": "是否上架，默认true；接口模拟数据false"
+          },
+          "listedAt": {
+            "type": "string",
+            "format": "date",
+            "description": "上架日期yyyy-MM-dd；上架时遵守页面日期校验"
+          },
+          "delistedAt": {
+            "type": "string",
+            "format": "date",
+            "description": "下架日期yyyy-MM-dd"
+          },
+          "networkSupported": {
+            "type": "boolean",
+            "description": "是否支持网点，默认false"
+          },
+          "productSize": {
+            "type": "string",
+            "description": "productSize"
+          },
+          "productDescription": {
+            "type": "string",
+            "description": "productDescription"
+          },
+          "productFunction": {
+            "type": "string",
+            "description": "productFunction"
+          },
+          "imageUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "平台图片引用数组，最多10张；[]清空，未传保留",
+            "maxItems": 10
+          },
+          "faults": {
+            "type": "array",
+            "items": {},
+            "description": "商品新增时可携带故障，更新不接受非空faults；复杂从属资料建议后台维护"
+          },
+          "manuals": {
+            "type": "array",
+            "items": {},
+            "description": "商品新增时可携带资料，更新不接受非空manuals；资料文件继续使用平台上传引用"
+          },
+          "installationParts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "partCode"
+              ],
+              "properties": {
+                "partCode": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9999,
+                  "default": 1
+                }
+              }
+            },
+            "description": "安装配件数组，至少1项；[{partCode,quantity}]，数量1～9999"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          },
+          "warrantyType": {
+            "type": "string",
+            "description": "FIXED固定期限／LIFETIME终身；终身需政策依据和限制"
+          },
+          "warrantyScope": {
+            "type": "string",
+            "description": "WHOLE_PRODUCT整机／LIMITED_SCOPE有限范围"
+          },
+          "warrantyScopeDescription": {
+            "type": "string",
+            "description": "有限范围保障说明"
+          },
+          "warrantyPolicyReference": {
+            "type": "string",
+            "description": "保修政策依据；终身必填"
+          },
+          "warrantyLimitations": {
+            "type": "string",
+            "description": "主要限制；终身必填"
+          },
+          "miniappVisible": {
+            "type": "boolean",
+            "description": "是否在小程序展示；新增默认false"
+          },
+          "warrantyStartRule": {
+            "type": "string",
+            "description": "PURCHASE_DATE／INSTALLATION_COMPLETED／MANUAL；默认按既有保修规则"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "code"
+        ],
+        "x-required-on-create": [
+          "code",
+          "name",
+          "categoryCode",
+          "installationParts"
+        ]
+      },
+      "dealer": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "唯一业务编号；按编号新增或更新，编号不能通过本接口改号"
+          },
+          "name": {
+            "type": "string",
+            "description": "名称"
+          },
+          "agent": {
+            "type": "string",
+            "description": "代理商等级FIRST／SECOND／THIRD；二／三级必须提供相应上级代理商"
+          },
+          "parentCode": {
+            "type": "string",
+            "description": "上级编号；顶级分类／一级代理商传空字符串"
+          },
+          "organizationCode": {
+            "type": "string",
+            "description": "平台组织代码；测试库为集团"
+          },
+          "provinceName": {
+            "type": "string",
+            "description": "省名称，使用现有地址字典标准名称"
+          },
+          "cityName": {
+            "type": "string",
+            "description": "市名称"
+          },
+          "districtName": {
+            "type": "string",
+            "description": "区县名称"
+          },
+          "streetName": {
+            "type": "string",
+            "description": "街道名称"
+          },
+          "address": {
+            "type": "string",
+            "description": "address"
+          },
+          "longitude": {
+            "type": "string",
+            "description": "经度字符串"
+          },
+          "latitude": {
+            "type": "string",
+            "description": "纬度字符串"
+          },
+          "businessInfo": {
+            "type": "object",
+            "description": "工商信息对象，字段见下方"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {},
+            "description": "附件数组，未传保留；传入整体替换"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "code"
+        ],
+        "x-required-on-create": [
+          "code",
+          "name",
+          "agent",
+          "organizationCode",
+          "provinceName"
+        ]
+      },
+      "store": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "唯一业务编号；按编号新增或更新，编号不能通过本接口改号"
+          },
+          "name": {
+            "type": "string",
+            "description": "名称"
+          },
+          "dealerCode": {
+            "type": "string",
+            "description": "已存在的售后代理商编号"
+          },
+          "organizationCode": {
+            "type": "string",
+            "description": "平台组织代码；测试库为集团"
+          },
+          "storeTypeCode": {
+            "type": "string",
+            "description": "现有门店类型字典编码；不可自造"
+          },
+          "activeState": {
+            "type": "string",
+            "description": "现有门店营业状态字典编码；不可自造"
+          },
+          "serviceType": {
+            "type": "string",
+            "description": "门店服务类型"
+          },
+          "provinceName": {
+            "type": "string",
+            "description": "省名称，使用现有地址字典标准名称"
+          },
+          "cityName": {
+            "type": "string",
+            "description": "市名称"
+          },
+          "districtName": {
+            "type": "string",
+            "description": "区县名称"
+          },
+          "streetName": {
+            "type": "string",
+            "description": "街道名称"
+          },
+          "address": {
+            "type": "string",
+            "description": "address"
+          },
+          "longitude": {
+            "type": "string",
+            "description": "经度字符串"
+          },
+          "latitude": {
+            "type": "string",
+            "description": "纬度字符串"
+          },
+          "businessInfo": {
+            "type": "object",
+            "description": "工商信息对象，字段见下方"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {},
+            "description": "附件数组，未传保留；传入整体替换"
+          },
+          "profile": {
+            "type": "object",
+            "description": "门店扩展资料对象，字段见下方"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "code"
+        ],
+        "x-required-on-create": [
+          "code",
+          "name",
+          "dealerCode",
+          "organizationCode",
+          "provinceName"
+        ]
+      },
+      "salesRegion": {
+        "type": "object",
+        "properties": {
+          "subjectType": {
+            "type": "string",
+            "description": "DEALER代理商／STORE门店"
+          },
+          "subjectCode": {
+            "type": "string",
+            "description": "对应主体编号；销售区域以主体类型+编号为唯一键"
+          },
+          "scopeLevel": {
+            "type": "string",
+            "description": "PROVINCE／CITY／DISTRICT；areas中每项均为同一层级"
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "provinceCode": {
+                  "type": "string"
+                },
+                "provinceName": {
+                  "type": "string"
+                },
+                "cityCode": {
+                  "type": "string"
+                },
+                "cityName": {
+                  "type": "string"
+                },
+                "districtCode": {
+                  "type": "string"
+                },
+                "districtName": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "区域数组，整体替换；传[]清除覆盖范围"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "subjectType",
+          "subjectCode"
+        ],
+        "x-required-on-create": [
+          "subjectType",
+          "subjectCode",
+          "scopeLevel",
+          "areas"
+        ]
+      },
+      "productInstance": {
+        "type": "object",
+        "properties": {
+          "uniqueCode": {
+            "type": "string",
+            "description": "商品唯一码，唯一且不可改号"
+          },
+          "productCode": {
+            "type": "string",
+            "description": "已存在的售后商品编号"
+          },
+          "factoryCode": {
+            "type": "string",
+            "description": "工厂代码"
+          },
+          "factoryName": {
+            "type": "string",
+            "description": "工厂名称"
+          },
+          "warehouseCode": {
+            "type": "string",
+            "description": "仓库代码"
+          },
+          "warehouseName": {
+            "type": "string",
+            "description": "仓库名称"
+          },
+          "dealerCode": {
+            "type": "string",
+            "description": "已存在的售后代理商编号"
+          },
+          "storeCode": {
+            "type": "string",
+            "description": "代理商下的门店编号；空字符串解除可选关联"
+          },
+          "version": {
+            "type": "string",
+            "description": "可选并发令牌，使用查询返回的version；不传时服务端锁定当前版本后执行"
+          }
+        },
+        "description": "新增按required约束；更新只要求唯一编号，未传字段保留。",
+        "required": [
+          "uniqueCode"
+        ],
+        "x-required-on-create": [
+          "uniqueCode",
+          "productCode",
+          "dealerCode"
+        ]
+      },
+      "OpenResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "errMsg": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "data": {
+            "description": "保存为批量结果；查询为rows/records；启停为详情；上传为平台access等文件元数据"
+          }
+        }
+      }
+    }
+  }
+}
