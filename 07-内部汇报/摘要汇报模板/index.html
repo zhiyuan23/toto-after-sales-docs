@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="TOTO 售后服务下一阶段开发计划，16:9 会议投屏单页。">
+  <meta name="color-scheme" content="light">
+  <title>TOTO 售后服务 · 下一阶段开发计划</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root { --ink:#172c43; --blue:#22439c; --muted:#5b6876; --line:#dce2e8; --paper:#fffefa; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#e9eef2; color:var(--ink); font-family:"PingFang SC","Microsoft YaHei",sans-serif; -webkit-font-smoothing:antialiased; }
+    ::selection { background:#dce7ff; color:#16306b; }
+    :focus-visible { outline:2px solid var(--blue); outline-offset:5px; }
+    button { font:inherit; }
+    .workspace { height:100vh; height:100dvh; display:flex; flex-direction:column; gap:16px; padding:20px 32px 16px; }
+    .tools { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:36px; flex-shrink:0; font-size:12px; }
+    .tool-caption { color:var(--muted); }
+    .tool-actions { display:flex; gap:8px; }
+    .tool-button { cursor:pointer; min-height:36px; padding:8px 13px; background:transparent; border:1px solid #bec9d3; border-radius:6px; color:var(--ink); transition:background .15s ease; }
+    .tool-button:hover { background:white; }
+    .tool-button[aria-pressed="true"] { background:var(--blue); border-color:var(--blue); color:white; }
+    .stage { display:grid; place-items:center; flex:1; min-height:0; }
+    .slide-frame { width:100%; aspect-ratio:16 / 9; position:relative; }
+    .report { position:absolute; top:0; left:0; transform-origin:top left; width:1920px; height:1080px; background:var(--paper); padding:64px 96px 42px; display:flex; flex-direction:column; box-shadow:0 20px 70px -28px #32455844; }
+    .masthead { display:flex; align-items:center; justify-content:space-between; gap:24px; }
+    .identity { display:flex; align-items:center; gap:28px; }
+    .logo { display:block; width:140px; height:auto; }
+    .project-name { border-left:1px solid #b9c3cd; padding-left:28px; font-size:26px; font-weight:500; letter-spacing:.06em; }
+    .issue { font-size:22px; color:var(--muted); font-variant-numeric:tabular-nums; letter-spacing:.06em; }
+    h1 { margin:54px 0 0; font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:76px; line-height:1.3; font-weight:600; letter-spacing:-.025em; }
+    h1 span { color:var(--blue); }
+    .agenda { list-style:none; padding:0; margin:42px 0 0; display:grid; grid-template-rows:repeat(4,1fr); flex:1; min-height:0; }
+    .agenda li { display:grid; grid-template-columns:70px minmax(0,1fr); align-items:center; gap:30px; border-top:1px solid var(--line); }
+    .number { font-size:32px; color:var(--blue); font-weight:500; font-variant-numeric:tabular-nums; align-self:center; }
+    h2 { margin:0 0 11px; font-size:41px; line-height:1.35; font-weight:600; letter-spacing:.01em; }
+    .agenda p { margin:0; color:var(--muted); font-size:30px; line-height:1.6; }
+    .report-footer { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:22px; margin-top:0; color:var(--muted); font-size:19px; line-height:1.4; }
+    .folio { color:var(--blue); font-variant-numeric:tabular-nums; }
+    .help { min-height:18px; margin:0; flex-shrink:0; color:var(--muted); text-align:center; font-size:11px; line-height:1.6; }
+    [contenteditable] { outline:1px dashed #8da3cc; outline-offset:4px; caret-color:var(--blue); }
+    [contenteditable]:focus { outline:2px solid var(--blue); }
+    :fullscreen .workspace { padding:0; gap:0; background:#172438; }
+    :fullscreen .tools,:fullscreen .help { display:none; }
+    :fullscreen .report { box-shadow:none; }
+    @media(max-width:640px) { .workspace { padding:12px; gap:10px; } .tools { flex-wrap:wrap; justify-content:center; gap:8px; } .tool-caption { width:100%; text-align:center; font-size:11px; } .tool-actions { gap:5px; } .tool-button { font-size:11px; padding:7px 9px; min-height:32px; } .help { font-size:10px; } }
+    @page { size:320mm 180mm; margin:0; }
+    @media print { html,body { width:320mm; height:180mm; background:white; } .workspace { display:block; padding:0; width:320mm; height:180mm; } .tools,.help { display:none; } .stage { display:block; width:320mm; height:180mm; } .slide-frame { width:320mm!important; height:180mm!important; } .report { transform:scale(0.6299212598)!important; box-shadow:none; print-color-adjust:exact; -webkit-print-color-adjust:exact; } [contenteditable] { outline:none; } }
+  </style>
+</head>
+<body>
+  <div class="workspace">
+    <nav class="tools" aria-label="模板工具">
+      <span class="tool-caption">16:9 · 会议投屏单页</span>
+      <div class="tool-actions">
+        <button class="tool-button" id="edit" type="button" aria-pressed="false">编辑内容</button>
+        <button class="tool-button" id="save" type="button">保存 HTML</button>
+        <button class="tool-button" id="print" type="button">打印 / PDF</button>
+        <button class="tool-button" id="present" type="button">全屏演示</button>
+      </div>
+    </nav>
+    <div class="stage">
+      <div class="slide-frame">
+        <main class="report" aria-label="TOTO 售后服务下一阶段开发计划">
+          <header class="masthead">
+            <div class="identity"><svg class="logo" role="img" aria-label="TOTO" xmlns="http://www.w3.org/2000/svg" width="116" height="26" viewBox="0 0 58 13"><path fill="#22439c" d="M10.7,12.5v-1.5H9c-0.4,0-0.8-0.2-0.8-0.7V2.1h0.9c1.7,0,2.5,1.3,2.5,2.9v0.2h1.7V0.5H0v4.6h1.7V5c0-1.6,0.8-2.9,2.5-2.9h1v8.3c0,0.5-0.4,0.7-0.8,0.7H2.6v1.5H10.7zM26,1.2C24.8,0.3,22.6,0,21.3,0c-1.3,0-3.4,0.3-4.7,1.2c-1.2,0.9-2.4,2.6-2.4,5.3c0,2.7,1.2,4.3,2.4,5.3c1.2,0.9,3.4,1.2,4.7,1.2c1.3,0,3.4-0.3,4.7-1.2c1.2-0.9,2.5-2.6,2.5-5.3C28.4,3.8,27.2,2.2,26,1.2 M24.1,10.2c-0.6,0.8-1.7,1.3-2.7,1.3c-1,0-2.1-0.4-2.7-1.3c-0.6-0.8-0.9-2.4-0.9-3.7c0-1.3,0.3-2.9,0.9-3.7c0.6-0.8,1.7-1.3,2.7-1.3c1.1,0,2.1,0.4,2.7,1.3C24.7,3.6,25,5.2,25,6.5C25,7.7,24.7,9.4,24.1,10.2zM40.2,12.5v-1.5h-1.7c-0.4,0-0.8-0.2-0.8-0.7V2.1h0.9c1.7,0,2.5,1.3,2.5,2.9v0.2h1.7V0.5H29.6v4.6h1.7V5c0-1.6,0.8-2.9,2.5-2.9h0.9v8.3c0,0.5-0.4,0.7-0.8,0.7h-1.7v1.5H40.2zM55.6,1.2C54.4,0.3,52.2,0,50.9,0c-1.3,0-3.4,0.3-4.7,1.2c-1.2,0.9-2.4,2.6-2.4,5.3c0,2.7,1.2,4.3,2.4,5.3c1.2,0.9,3.4,1.2,4.7,1.2c1.3,0,3.4-0.3,4.7-1.2c1.2-0.9,2.4-2.6,2.4-5.3C58,3.8,56.8,2.2,55.6,1.2 M53.6,10.2C53,11,52,11.4,50.9,11.4c-1.1,0-2.1-0.4-2.7-1.3c-0.6-0.8-0.9-2.4-0.9-3.7c0-1.3,0.3-2.9,0.9-3.7c0.6-0.8,1.7-1.3,2.7-1.3c1,0,2.1,0.4,2.7,1.3c0.6,0.8,0.9,2.4,0.9,3.7C54.6,7.7,54.3,9.4,53.6,10.2"/></svg><span class="project-name" data-edit>售后服务项目</span></div>
+            <time class="issue" data-edit>2026.10.19</time>
+          </header>
+          <h1 data-edit>下一阶段<span>开发计划</span></h1>
+          <ol class="agenda" aria-label="下一阶段四项开发重点">
+            <li><span class="number" aria-hidden="true">01</span><div><h2 data-edit>测试团队介入，推进问题闭环</h2><p data-edit>开展功能测试与业务场景验证，持续跟进缺陷修复。</p></div></li>
+            <li><span class="number" aria-hidden="true">02</span><div><h2 data-edit>补齐剩余功能，完善 SLA 与付费服务</h2><p data-edit>完成项目内尚未完善的功能，补齐服务时效与收费流程。</p></div></li>
+            <li><span class="number" aria-hidden="true">03</span><div><h2 data-edit>完成数据同步接口开发与联调</h2><p data-edit>打通外部系统数据对接，验证同步数据的准确性与完整性。</p></div></li>
+            <li><span class="number" aria-hidden="true">04</span><div><h2 data-edit>完成四类后台角色的小程序端开发</h2><p data-edit>覆盖渠道、服务站、客服与总部，补齐移动端业务能力。</p></div></li>
+          </ol>
+          <footer class="report-footer"><span data-edit>下一期工作重点</span><span class="folio">01</span></footer>
+        </main>
+      </div>
+    </div>
+    <p class="help" id="help" role="status" aria-live="polite">点击「全屏演示」开始投屏，按 Esc 退出。可直接编辑内容并保存 HTML。</p>
+  </div>
+  <script>
+    (() => {
+      const editButton = document.getElementById('edit');
+      const presentButton = document.getElementById('present');
+      const help = document.getElementById('help');
+      const stage = document.querySelector('.stage');
+      const frame = document.querySelector('.slide-frame');
+      const report = document.querySelector('.report');
+      let editing = false;
+      const defaultHelp = '点击「全屏演示」开始投屏，按 Esc 退出。可直接编辑内容并保存 HTML。';
+      function fit() {
+        const scale = Math.min(stage.clientWidth / 1920, stage.clientHeight / 1080);
+        frame.style.width = `${1920 * scale}px`;
+        frame.style.height = `${1080 * scale}px`;
+        report.style.transform = `scale(${scale})`;
+      }
+      new ResizeObserver(fit).observe(stage);
+      fit();
+      function setEditing(value) {
+        editing = value;
+        document.querySelectorAll('[data-edit]').forEach(el => {
+          if (value) { el.setAttribute('contenteditable', 'plaintext-only'); el.setAttribute('spellcheck', 'false'); }
+          else { el.removeAttribute('contenteditable'); el.removeAttribute('spellcheck'); }
+        });
+        editButton.setAttribute('aria-pressed', String(value));
+        editButton.textContent = value ? '完成编辑' : '编辑内容';
+        help.textContent = value ? '直接点击文字修改；请保持每项一个短标题和一句说明，完成后保存 HTML。' : defaultHelp;
+      }
+      editButton.addEventListener('click', () => setEditing(!editing));
+      document.getElementById('save').addEventListener('click', () => {
+        setEditing(false);
+        const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+        const url = URL.createObjectURL(new Blob([html], {type:'text/html;charset=utf-8'}));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'TOTO-下一阶段开发计划.html';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        help.textContent = '已生成 HTML 下载文件，请查看浏览器下载列表。';
+      });
+      document.getElementById('print').addEventListener('click', () => { setEditing(false); window.print(); });
+      presentButton.addEventListener('click', async () => {
+        setEditing(false);
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else await document.documentElement.requestFullscreen();
+        } catch { help.textContent = '当前浏览器未开启全屏，请使用浏览器的全屏功能投屏。'; }
+      });
+      document.addEventListener('fullscreenchange', () => {
+        presentButton.textContent = document.fullscreenElement ? '退出全屏' : '全屏演示';
+        fit();
+      });
+    })();
+  </script>
+</body>
+</html>
