@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "code": "OA26_PART",
+      "name": "开放接口测试配件",
+      "brand": "模拟品牌",
+      "factory": "模拟工厂",
+      "costPrice": 10,
+      "retailPrice": 20,
+      "model": "OA26_PART_MODEL",
+      "remark": "OPENAPI-20261019受控样本"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "code": "OA26_BATCH_OK",
+      "name": "批量成功分类"
+    },
+    {
+      "code": "OA26_BATCH_BAD",
+      "name": "批量失败分类",
+      "parentCode": "OA26_NOT_EXISTS"
+    }
+  ]
+}

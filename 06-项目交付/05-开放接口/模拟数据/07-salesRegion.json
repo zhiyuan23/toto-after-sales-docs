@@ -1,0 +1,30 @@
+{
+  "items": [
+    {
+      "subjectType": "DEALER",
+      "subjectCode": "OA26_DEALER1",
+      "scopeLevel": "CITY",
+      "areas": [
+        {
+          "provinceCode": "310000",
+          "provinceName": "上海市",
+          "cityCode": "310100",
+          "cityName": "上海市"
+        }
+      ]
+    },
+    {
+      "subjectType": "STORE",
+      "subjectCode": "OA26_STORE",
+      "scopeLevel": "CITY",
+      "areas": [
+        {
+          "provinceCode": "310000",
+          "provinceName": "上海市",
+          "cityCode": "310100",
+          "cityName": "上海市"
+        }
+      ]
+    }
+  ]
+}

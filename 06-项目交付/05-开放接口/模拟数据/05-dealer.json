@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "code": "OA26_DEALER1",
+      "name": "开放接口一级代理商",
+      "agent": "FIRST",
+      "parentCode": "",
+      "organizationCode": "集团",
+      "provinceName": "上海市",
+      "cityName": "上海市",
+      "districtName": "浦东新区",
+      "address": "模拟地址（非实际门店）"
+    },
+    {
+      "code": "OA26_DEALER2",
+      "name": "开放接口二级代理商",
+      "agent": "SECOND",
+      "parentCode": "OA26_DEALER1",
+      "organizationCode": "集团",
+      "provinceName": "上海市",
+      "cityName": "上海市",
+      "districtName": "浦东新区"
+    }
+  ]
+}
