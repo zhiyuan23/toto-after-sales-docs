@@ -1,0 +1,677 @@
+{
+  "format": "TOTO测试协作结构说明",
+  "schema_version": 1,
+  "prepared_on": "2026-10-18",
+  "base_name": "TOTO售后服务测试协作",
+  "status": "仅准备；未创建钉钉Base或验证平台配置",
+  "not_api_payload": true,
+  "authority": {
+    "requirements": "项目文档中的需求／技术设计／Spec",
+    "execution": "导入后的钉钉AI表格",
+    "release": "03-开发管理/09-测试服务器部署.md",
+    "repository_seed": "一次性种子及来源快照，不在Git中日常镜像状态"
+  },
+  "tables": [
+    {
+      "name": "测试执行",
+      "seed_file": "测试执行.csv",
+      "seed_rows": 48,
+      "primary_text_field": "执行编号",
+      "fields": [
+        {
+          "name": "执行编号",
+          "type": "text"
+        },
+        {
+          "name": "用例编号",
+          "type": "text"
+        },
+        {
+          "name": "轮次",
+          "type": "text"
+        },
+        {
+          "name": "本轮范围",
+          "type": "singleSelect",
+          "options": [
+            "候选",
+            "计划",
+            "排除"
+          ]
+        },
+        {
+          "name": "提测核对",
+          "type": "singleSelect",
+          "options": [
+            "待核对",
+            "已核对"
+          ]
+        },
+        {
+          "name": "执行状态",
+          "type": "singleSelect",
+          "options": [
+            "未执行",
+            "执行中",
+            "通过",
+            "失败",
+            "阻塞",
+            "待复测"
+          ]
+        },
+        {
+          "name": "执行人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        },
+        {
+          "name": "是否最新",
+          "type": "singleSelect",
+          "options": [
+            "是",
+            "否"
+          ]
+        },
+        {
+          "name": "尝试次数",
+          "type": "number"
+        },
+        {
+          "name": "用例版本",
+          "type": "text"
+        },
+        {
+          "name": "标题",
+          "type": "text"
+        },
+        {
+          "name": "主应用",
+          "type": "singleSelect",
+          "options": [
+            "Web管理后台",
+            "消费者小程序",
+            "服务人员小程序"
+          ]
+        },
+        {
+          "name": "协作应用",
+          "type": "text"
+        },
+        {
+          "name": "模块",
+          "type": "text"
+        },
+        {
+          "name": "关联入口",
+          "type": "text"
+        },
+        {
+          "name": "优先级",
+          "type": "singleSelect",
+          "options": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        {
+          "name": "执行岗位",
+          "type": "text"
+        },
+        {
+          "name": "平台要求",
+          "type": "text"
+        },
+        {
+          "name": "前置条件",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "数据准备",
+          "type": "text"
+        },
+        {
+          "name": "操作步骤",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "预期结果",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "需求与Spec来源",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "契约核对说明",
+          "type": "text"
+        },
+        {
+          "name": "轮次状态",
+          "type": "singleSelect",
+          "options": [
+            "待启动",
+            "进行中",
+            "已结束"
+          ]
+        },
+        {
+          "name": "目标环境",
+          "type": "text"
+        },
+        {
+          "name": "参考发布",
+          "type": "text"
+        },
+        {
+          "name": "实际版本",
+          "type": "text"
+        },
+        {
+          "name": "测试数据标识",
+          "type": "text"
+        },
+        {
+          "name": "实际结果",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "关联缺陷",
+          "type": "text"
+        },
+        {
+          "name": "证据链接",
+          "type": "text"
+        },
+        {
+          "name": "执行时间",
+          "type": "dateTime",
+          "timezone": "Asia/Shanghai"
+        },
+        {
+          "name": "阻塞原因",
+          "type": "text"
+        },
+        {
+          "name": "解除条件",
+          "type": "text"
+        },
+        {
+          "name": "协调责任人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        },
+        {
+          "name": "修复版本",
+          "type": "text"
+        },
+        {
+          "name": "范围变更原因及决定人",
+          "type": "text"
+        }
+      ],
+      "unique_key": [
+        "轮次",
+        "用例编号",
+        "尝试次数"
+      ]
+    },
+    {
+      "name": "用例库",
+      "seed_file": "用例库.csv",
+      "seed_rows": 60,
+      "primary_text_field": "用例编号",
+      "fields": [
+        {
+          "name": "用例编号",
+          "type": "text"
+        },
+        {
+          "name": "标题",
+          "type": "text"
+        },
+        {
+          "name": "主应用",
+          "type": "singleSelect",
+          "options": [
+            "Web管理后台",
+            "消费者小程序",
+            "服务人员小程序"
+          ]
+        },
+        {
+          "name": "协作应用",
+          "type": "text"
+        },
+        {
+          "name": "模块",
+          "type": "text"
+        },
+        {
+          "name": "关联入口",
+          "type": "text"
+        },
+        {
+          "name": "优先级",
+          "type": "singleSelect",
+          "options": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        {
+          "name": "用例状态",
+          "type": "singleSelect",
+          "options": [
+            "待评审",
+            "可执行",
+            "暂缓",
+            "退役"
+          ]
+        },
+        {
+          "name": "用例版本",
+          "type": "text"
+        },
+        {
+          "name": "首批安排",
+          "type": "singleSelect",
+          "options": [
+            "首轮候选",
+            "条件成熟后安排"
+          ]
+        },
+        {
+          "name": "执行岗位",
+          "type": "text"
+        },
+        {
+          "name": "平台要求",
+          "type": "text"
+        },
+        {
+          "name": "前置条件",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "数据准备",
+          "type": "text"
+        },
+        {
+          "name": "操作步骤",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "预期结果",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "需求与Spec来源",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "契约核对说明",
+          "type": "text"
+        },
+        {
+          "name": "解除或启动条件",
+          "type": "text"
+        },
+        {
+          "name": "用例维护人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        },
+        {
+          "name": "准备协调人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        }
+      ],
+      "unique_key": [
+        "用例编号"
+      ]
+    },
+    {
+      "name": "缺陷",
+      "seed_file": "缺陷.csv",
+      "seed_rows": 0,
+      "primary_text_field": "缺陷编号",
+      "fields": [
+        {
+          "name": "缺陷编号",
+          "type": "text"
+        },
+        {
+          "name": "标题",
+          "type": "text"
+        },
+        {
+          "name": "主应用",
+          "type": "singleSelect",
+          "options": [
+            "Web管理后台",
+            "消费者小程序",
+            "服务人员小程序"
+          ]
+        },
+        {
+          "name": "角色视角",
+          "type": "text"
+        },
+        {
+          "name": "模块与入口",
+          "type": "text"
+        },
+        {
+          "name": "关联需求或Spec",
+          "type": "text"
+        },
+        {
+          "name": "关联用例",
+          "type": "text"
+        },
+        {
+          "name": "关联执行编号",
+          "type": "text"
+        },
+        {
+          "name": "提出人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        },
+        {
+          "name": "提出日期",
+          "type": "dateTime",
+          "timezone": "Asia/Shanghai"
+        },
+        {
+          "name": "最后更新时间",
+          "type": "dateTime",
+          "timezone": "Asia/Shanghai"
+        },
+        {
+          "name": "优先级",
+          "type": "singleSelect",
+          "options": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        {
+          "name": "严重程度",
+          "type": "singleSelect",
+          "options": [
+            "阻断",
+            "严重",
+            "一般",
+            "轻微"
+          ]
+        },
+        {
+          "name": "状态",
+          "type": "singleSelect",
+          "options": [
+            "待确认",
+            "已确认",
+            "待处理",
+            "处理中",
+            "待验证",
+            "已关闭",
+            "阻塞",
+            "暂缓",
+            "拒绝",
+            "重复"
+          ]
+        },
+        {
+          "name": "负责人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        },
+        {
+          "name": "环境与版本",
+          "type": "text"
+        },
+        {
+          "name": "前置条件",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "复现步骤",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "预期结果",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "实际结果",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "验证标准",
+          "type": "text"
+        },
+        {
+          "name": "证据链接",
+          "type": "text"
+        },
+        {
+          "name": "处理说明",
+          "type": "text",
+          "display": "多行文本"
+        },
+        {
+          "name": "修复版本",
+          "type": "text"
+        },
+        {
+          "name": "复测结论",
+          "type": "text"
+        },
+        {
+          "name": "复测人",
+          "type": "member",
+          "import_note": "初始为空；导入后在组织内选择真实成员，不填虚构账号。"
+        },
+        {
+          "name": "复测时间",
+          "type": "dateTime",
+          "timezone": "Asia/Shanghai"
+        },
+        {
+          "name": "阻塞或重复说明",
+          "type": "text"
+        }
+      ],
+      "unique_key": [
+        "缺陷编号"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "测试执行.用例编号",
+      "to": "用例库.用例编号",
+      "mode": "稳定文本编号；可后配关联字段",
+      "constraint": "步骤／预期采用执行快照，不用动态查找覆盖历史。"
+    },
+    {
+      "from": "测试执行.关联缺陷",
+      "to": "缺陷.缺陷编号",
+      "mode": "一个执行可关联多个BUG编号；缺陷记录关联执行编号",
+      "constraint": "缺陷编号与项目已有编号查重，不自动分配重号。"
+    }
+  ],
+  "views": [
+    {
+      "table": "测试执行",
+      "name": "提测准备",
+      "filter": "轮次=选定轮次 AND 是否最新=是 AND (本轮范围=候选 OR 提测核对=待核对)",
+      "group_by": [
+        "主应用",
+        "协调责任人"
+      ]
+    },
+    {
+      "table": "测试执行",
+      "name": "我的待测",
+      "filter": "轮次=选定轮次 AND 本轮范围=计划 AND 提测核对=已核对 AND 是否最新=是 AND 执行人=当前用户 AND 执行状态 IN [未执行,执行中]",
+      "sort": [
+        "优先级",
+        "用例编号"
+      ],
+      "show": [
+        "执行编号",
+        "标题",
+        "执行状态",
+        "执行人",
+        "优先级",
+        "平台要求",
+        "执行岗位",
+        "前置条件",
+        "数据准备",
+        "操作步骤",
+        "预期结果",
+        "实际版本",
+        "实际结果",
+        "关联缺陷",
+        "证据链接",
+        "执行时间"
+      ]
+    },
+    {
+      "table": "测试执行",
+      "name": "失败与待复测",
+      "filter": "轮次=选定轮次 AND 本轮范围=计划 AND 是否最新=是 AND 执行状态 IN [失败,待复测]",
+      "show": [
+        "标题",
+        "执行状态",
+        "关联缺陷",
+        "修复版本",
+        "实际版本",
+        "执行人"
+      ]
+    },
+    {
+      "table": "测试执行",
+      "name": "阻塞事项",
+      "filter": "轮次=选定轮次 AND 本轮范围=计划 AND 是否最新=是 AND 执行状态=阻塞",
+      "group_by": "协调责任人"
+    },
+    {
+      "table": "测试执行",
+      "name": "本轮进度",
+      "filter": "轮次=选定轮次 AND 本轮范围=计划 AND 是否最新=是",
+      "group_by": [
+        "主应用",
+        "模块",
+        "执行状态"
+      ],
+      "aggregate": "记录数"
+    },
+    {
+      "table": "测试执行",
+      "name": "历史执行",
+      "filter": "全部",
+      "sort": [
+        "轮次",
+        "用例编号",
+        "尝试次数"
+      ]
+    },
+    {
+      "table": "用例库",
+      "name": "条件待落实",
+      "filter": "首批安排=条件成熟后安排",
+      "show": [
+        "用例编号",
+        "标题",
+        "关联入口",
+        "解除或启动条件",
+        "准备协调人"
+      ]
+    },
+    {
+      "table": "缺陷",
+      "name": "待确认与待处理",
+      "filter": "状态 IN [待确认,已确认,待处理,处理中,阻塞]",
+      "group_by": "负责人"
+    },
+    {
+      "table": "缺陷",
+      "name": "待验证",
+      "filter": "状态=待验证",
+      "show": [
+        "缺陷编号",
+        "标题",
+        "关联用例",
+        "修复版本",
+        "负责人",
+        "复测人"
+      ]
+    }
+  ],
+  "dashboard": {
+    "scope": "选定轮次 AND 本轮范围=计划 AND 是否最新=是",
+    "counts": [
+      "未执行",
+      "执行中",
+      "通过",
+      "失败",
+      "阻塞",
+      "待复测"
+    ],
+    "group_by": [
+      "主应用",
+      "模块"
+    ],
+    "pass_share": "最新通过用例数 / 本轮计划用例数；分母为0显示待启动",
+    "integrity": "同轮同用例恰好一条最新记录；六种状态数之和等于计划用例数。"
+  },
+  "permissions": {
+    "测试负责人": "管理轮次、范围、分配、历史记录及成员访问",
+    "测试人员": "维护用例、本人执行及复测，提出缺陷",
+    "开发人员": "补充缺陷处理及目标环境已生效的修复版本",
+    "项目负责人": "确认阶段结论和最终业务验收",
+    "fallback": "若权益不支持细粒度权限，由测试负责人集中维护范围与历史；建表后用两个账号验证。"
+  },
+  "startup": {
+    "round": "R1-20261018",
+    "state": "待启动",
+    "candidate_executions": 48,
+    "confirmed_plan": 0,
+    "test_results": "全部未执行",
+    "required": [
+      "用例评审",
+      "核对实际发布版本",
+      "分配真实执行人",
+      "准备专用账号和数据",
+      "设置本轮范围为计划并记录轮次启动",
+      "验证视图及成员权限"
+    ]
+  },
+  "import_notes": [
+    "XLSX和CSV选一种导入，不重复导入。",
+    "导入不会自动创建视图、人员映射、单选、权限或关联，需按此文件配置并实测。",
+    "缺陷.csv只有字段头，平台不接受空表时手动建字段，禁止导入虚构缺陷凑行。",
+    "成员和实际版本等执行事实初始为空；不要将参考发布冒充实际已核对版本。",
+    "复测追加执行记录并更新最新标记，原失败历史保留。"
+  ]
+}
