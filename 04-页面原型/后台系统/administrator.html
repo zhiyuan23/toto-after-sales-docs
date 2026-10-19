@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="系统管理员工作台交互评审原型；全部为虚构演示数据。">
+  <title>工作台 · 系统管理员原型</title>
+  <link rel="stylesheet" href="administrator.css?v=20261019-density-5">
+  <link rel="stylesheet" href="../perspective.css?v=20261019-native-navigation-10">
+  <script src="../prototype-catalog.js?v=20261019-native-navigation-10" defer></script>
+  <script src="../perspective.js?v=20261019-native-navigation-10" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="administrator.html"><strong>蓝鲸数字</strong><span>售后服务</span></a>
+    <details class="view-switch"><summary>系统管理员 <i data-icon="chevron-down"></i></summary><div class="view-options"><span>系统管理员 · 当前视角</span><a href="headquarters-map.html">总部运营</a><a href="customer-service-v03.html">客服作业</a><a href="service-station-v02.html">服务站作业</a><a href="dealer.html">门店业务</a></div></details>
+    <nav class="modules" aria-label="模块"><button class="active" data-module="系统管理">系统管理</button><button data-module="服务运营">服务运营</button><button data-module="基础资料">基础资料</button><button data-module="配件库存">配件库存</button></nav>
+    <span class="prototype-tag">交互原型 · 示例数据</span>
+    <span class="avatar" aria-label="演示管理员">管</span>
+  </header>
+  <aside class="sidebar" aria-label="功能导航"><div id="sideMenus"></div><a class="prototype-index" href="../index.html#administrator">全部应用原型 <i data-icon="arrow-up-right"></i></a></aside>
+  <div class="page-tab"><i data-icon="gauge"></i> 工作台</div>
+  <main>
+    <header class="page-heading"><div class="heading-copy"><h1>工作台</h1><span>2026年10月19日，星期一</span></div><div class="heading-actions"><span id="updated">示例更新于 09:42</span><button class="button" id="tasksButton"><i data-icon="archive"></i>我的导入导出</button><button class="button" id="refreshButton"><i data-icon="refresh"></i>刷新概览</button></div></header>
+    <section class="overview" aria-label="今日概览">
+      <button class="overview-item" id="failureOverview"><span class="overview-icon failure-icon"><i data-icon="triangle-alert"></i></span><span class="overview-label">今日失败记录</span><span class="overview-number" id="failureCount">18<small>条</small></span><span class="overview-note" id="failureNote">当前可查来源</span></button>
+      <button class="overview-item" id="configOverview"><span class="overview-icon config-icon"><i data-icon="sliders"></i></span><span class="overview-label">服务配置待补齐</span><span class="overview-number amber-text">1<small>项</small></span><span class="overview-note">地图 JS 服务</span></button>
+      <figure class="distribution" id="distributionPanel" aria-labelledby="distributionTitle"><figcaption><strong id="distributionTitle">今日失败构成</strong><span id="distributionScope">当前授权来源 · 18 条</span></figcaption><div id="distributionChart"></div></figure>
+    </section>
+    <div class="work-grid">
+      <section class="panel logs-panel" aria-labelledby="logsTitle">
+        <header class="panel-heading"><div><h2 id="logsTitle"><i data-icon="clipboard"></i>今日失败记录</h2><p>先看失败结果，再通过追踪编号定位原因</p></div><button class="text-button" id="allLogs">查看日志 <i data-icon="arrow-right"></i></button></header>
+        <div class="log-tabs" role="tablist" aria-label="最近记录分类"><button role="tab" aria-selected="true" data-filter="全部">全部类型</button><button role="tab" aria-selected="false" data-filter="请求">请求</button><button role="tab" aria-selected="false" data-filter="外部调用">外部调用</button><button role="tab" aria-selected="false" data-filter="安全">安全</button><button role="tab" aria-selected="false" data-filter="客户端">客户端</button><span id="listScope">最近 6 条</span></div>
+        <p class="source-warning" id="sourceWarning" hidden><i data-icon="triangle-alert"></i>部分来源暂不可查询，以下数量与记录不完整。<button class="text-button" data-retry>重试</button></p>
+        <div class="log-columns" aria-hidden="true"><span>时间</span><span>事件 / 追踪编号</span><span>来源 / 业务对象</span><span>失败结果</span><span></span></div>
+        <div id="logContent" class="log-content" role="region" aria-label="最近失败记录，可滚动" tabindex="0" aria-live="polite"></div>
+        <footer class="log-footer"><i data-icon="clock"></i><span>今日 00:00 至当前 · 当前授权来源</span><span>记录数 ≠ 独立故障数</span></footer>
+      </section>
+      <div class="right-column">
+        <section class="panel services-panel" id="servicesPanel" aria-labelledby="servicesTitle">
+          <header class="panel-heading"><div><h2 id="servicesTitle"><i data-icon="sliders"></i>外部服务配置 <small class="heading-status">3 项启用</small></h2></div><button class="text-button" data-open="外部服务配置" aria-label="查看外部服务配置">管理 <i data-icon="arrow-up-right"></i></button></header>
+          <button class="service-item service-attention" data-open="外部服务配置"><span class="service-icon"><i data-icon="map"></i></span><span class="service-name"><strong>地图 JS 服务</strong><small>已启用</small></span><span class="badge amber"><i data-icon="triangle-alert"></i>配置待补齐</span><i data-icon="chevron-right"></i></button>
+          <button class="service-item" data-open="外部服务配置"><span class="service-icon"><i data-icon="layers"></i></span><span class="service-name"><strong>AI 服务</strong><small>已启用</small></span><span class="badge green"><i data-icon="check"></i>配置齐全</span><i data-icon="chevron-right"></i></button>
+          <button class="service-item" data-open="外部服务配置"><span class="service-icon"><i data-icon="map-pin"></i></span><span class="service-name"><strong>地图 Web 服务</strong><small>已启用</small></span><span class="badge green"><i data-icon="check"></i>配置齐全</span><i data-icon="chevron-right"></i></button>
+          <dl class="config-meta"><div><dt>凭证来源</dt><dd><i data-icon="database"></i>数据库配置</dd></div><div><dt>加密配置</dt><dd><i data-icon="shield"></i>已配置</dd></div><div><dt>配置修订号</dt><dd>12</dd></div><div><dt>最近更新</dt><dd>今日 09:12</dd></div></dl>
+          <p class="config-compact"><i data-icon="database"></i>数据库配置<span>今日 09:12 更新</span></p>
+          <div class="service-note"><i data-icon="info"></i><p>配置齐全不代表连接正常，可进入配置页测试。</p></div>
+        </section>
+        <section class="panel access-panel" id="accessPanel" aria-labelledby="accessTitle">
+          <header class="panel-heading"><h2 id="accessTitle"><i data-icon="shield"></i>账号与权限</h2><span class="heading-status">售后范围 · 示例</span></header>
+          <div class="user-summary"><div><span>用户启停分布</span><span id="userStatus">启用 22 · 停用 2</span></div><div class="user-track" id="userChart" role="img" aria-label="24 个示例用户：启用 22，停用 2"><span id="enabledSegment"></span><span id="disabledSegment"></span></div></div>
+          <div class="management-links">
+            <button data-open="用户管理"><i data-icon="users"></i><span class="management-copy"><strong>用户管理</strong><small>关联售后角色的用户</small></span><span class="management-count"><b id="userCount">24</b><small>个用户</small></span><i data-icon="chevron-right"></i></button>
+            <button data-open="角色管理"><i data-icon="shield"></i><span class="management-copy"><strong>角色管理</strong><small>仅售后角色</small></span><span class="management-count"><b id="roleCount">7</b><small>个角色</small></span><i data-icon="chevron-right"></i></button>
+            <button data-open="菜单与权限"><i data-icon="lock"></i><span class="management-copy"><strong>菜单与权限</strong><small>不含目录与操作权限</small></span><span class="management-count"><b id="menuCount">48</b><small>个页面</small></span><i data-icon="chevron-right"></i></button>
+          </div>
+          <div class="quick-links" aria-label="基础配置入口"><button data-open="业务字典"><i data-icon="database"></i><span>业务字典</span></button><button data-open="导入导出模板"><i data-icon="archive"></i><span>导入导出模板</span></button></div>
+        </section>
+      </div>
+    </div>
+    <footer class="review-bar"><span>设计评审 V5 · 所有记录与数量均为虚构示例</span><label for="scenario">评审场景</label><select id="scenario"><option value="default">默认有数据</option><option value="empty">今日无失败记录</option><option value="error">日志读取失败</option><option value="partial">部分来源不可用</option><option value="denied">无日志查看权限</option><option value="externalError">配置读取失败</option><option value="externalDenied">无配置查看权限</option><option value="accessError">账号概览读取失败</option><option value="accessDenied">无账号概览查看权限</option><option value="tasksEmpty">本人暂无任务</option><option value="tasksError">任务读取失败</option><option value="tasksDenied">无任务查看权限</option></select><a href="02-系统管理员工作台设计说明.md">查看设计依据</a></footer>
+  </main>
+  <dialog id="detailDialog" aria-labelledby="detailTitle"><header class="drawer-heading"><div><span class="drawer-caption" id="detailCaption">日志详情</span><h2 id="detailTitle"></h2></div><button class="icon-button" id="closeDialog" aria-label="关闭详情"><i data-icon="x"></i></button></header><div id="detailBody" class="drawer-body"></div></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script src="administrator.js?v=20261019-density-5"></script>
+</body>
+</html>

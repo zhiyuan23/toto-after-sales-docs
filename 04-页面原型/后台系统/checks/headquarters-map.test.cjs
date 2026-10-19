@@ -9,11 +9,11 @@ const css=fs.readFileSync(path.join(root,'headquarters-map.css'),'utf8')
 const js=fs.readFileSync(path.join(root,'headquarters-map.js'),'utf8')
 const mapData=fs.readFileSync(path.join(root,'assets/china-data.js'),'utf8')
 
-test('现版工作台保留并提供独立地图版入口',()=>{
-  assert.ok(fs.existsSync(path.join(root,'index.html')))
-  assert.match(html,/href="index\.html"/)
-  assert.match(html,/运营工作台（现版）/)
+test('总部只保留地图工作台，并接入五角色与跨应用入口',()=>{
   assert.match(html,/href="headquarters-map\.html" class="menu-item is-active"/)
+  assert.match(html,/href="administrator\.html"/)
+  assert.match(html,/href="\.\.\/index\.html#headquarters"/)
+  assert.doesNotMatch(html,/运营工作台（现版）|查看现版工作台/)
 })
 
 test('总部队列使用当前实现中的四个正式队列',()=>{

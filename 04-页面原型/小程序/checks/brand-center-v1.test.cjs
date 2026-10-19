@@ -21,9 +21,9 @@ function fixture({ hash = '', search = '' } = {}) {
   });
   const get = selector => { if (!elements.has(selector)) elements.set(selector, element()); return elements.get(selector); };
   const location = { hash, search };
-  const document = { body: element(), querySelector: get, addEventListener: (type, fn) => events.set(type, fn) };
+  const document = { body: element(), querySelector: get, addEventListener: (type, fn) => events.set(type, fn), dispatchEvent: event => { events.get(event.type)?.(event); return true; } };
   const context = vm.createContext({
-    document, location, console, URLSearchParams,
+    document, location, console, URLSearchParams, Event,
     FileReader: class { readAsDataURL(file) { this.result=file.data;readers.push(this); } },
     Image: class { set src(value) { this.value=value;images.push(this); } },
     history: { replaceState(_state, _title, next) { location.hash = next; } },

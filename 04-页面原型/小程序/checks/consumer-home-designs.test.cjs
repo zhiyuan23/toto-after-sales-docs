@@ -36,13 +36,14 @@ function fixture({ search = '?consumerVersion=0.15', hash = '#c-home' } = {}) {
   }
   const document = {
     body: element(), documentElement: element(), querySelector: get, querySelectorAll: () => [],
+    dispatchEvent: event => { events.get(event.type)?.(event); return true; },
     addEventListener: (type, fn) => {
       const previous=events.get(type);
       events.set(type,event=>{previous?.(event);if(!event.immediateStopped)fn(event);});
     },
   };
   const context = vm.createContext({
-    document, location, console, URL, URLSearchParams,
+    document, location, console, URL, URLSearchParams, Event,
     FileReader: class { readAsDataURL(file) { this.result = file.data; } },
     Image: class { set src(value) { this.value = value; } },
     history: { replaceState(_state, _title, next) { url = new URL(next, url); } },
@@ -53,7 +54,8 @@ function fixture({ search = '?consumerVersion=0.15', hash = '#c-home' } = {}) {
   const bootstrap = index.match(/<script>\s*([\s\S]*?)<\/script>/);
   assert.ok(bootstrap, 'index exposes its version bootstrap');
   vm.runInContext(bootstrap[1], context, { filename: 'index.html:bootstrap' });
-  const scripts = [...index.matchAll(/<script\b[^>]*\bsrc="([^"?]+)(?:\?[^"<>]*)?"[^>]*><\/script>/g)].map(match => match[1]);
+  // Shared perspective navigation has its own frame/DOM fixture; this VM exercises the phone controller.
+  const scripts = [...index.matchAll(/<script\b[^>]*\bsrc="([^"?]+)(?:\?[^"<>]*)?"[^>]*><\/script>/g)].map(match => match[1]).filter(file => !file.startsWith('../'));
   assert.equal(scripts.at(-1), 'app.js', 'controller runs after its screen adapters');
   let originalHomeBody;
   for (const file of scripts) {

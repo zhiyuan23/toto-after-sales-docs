@@ -140,6 +140,7 @@
     view = 'screen';
     render();
     if(id==='w-tasks'&&previousId&&previousId!=='w-tasks')worker?.restoreListPosition($('#phone-body'));
+    if(!captureId)document.dispatchEvent(new Event('toto-prototype-pagechange'));
   }
   function renderOutletOverlay() {
     const overlay=$('#outlet-overlay');

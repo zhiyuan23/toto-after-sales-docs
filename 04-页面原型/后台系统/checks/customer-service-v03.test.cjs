@@ -8,17 +8,17 @@ const html=fs.readFileSync(path.join(root,'customer-service-v03.html'),'utf8')
 const css=fs.readFileSync(path.join(root,'customer-service-v03.css'),'utf8')
 const js=fs.readFileSync(path.join(root,'customer-service-v03.js'),'utf8')
 
-test('客服 v0.17 使用独立入口并保留现版',()=>{
+test('客服 v0.17 保留最新入口并移除旧版本导航',()=>{
   assert.match(html,/customer-service-v03\.css/)
   assert.match(html,/customer-service-v03\.js/)
   assert.match(html,/v0\.17/)
-  assert.match(js,/href="customer-service\.html"/)
-  assert.match(js,/已保留/)
+  assert.doesNotMatch(js,/href="customer-service\.html"/)
+  assert.match(js,/全部应用原型/)
 })
 
-test('顶部工作视角可切换到四个角色原型',()=>{
-  for(const href of ['index.html','customer-service-v03.html','service-station-v02.html','dealer.html'])assert.match(js,new RegExp(`href="${href.replace('.','\\.')}"`),`missing ${href}`)
-  for(const copy of ['四视角原型目录','总部运营','客服作业','服务站作业','门店业务','4 / 4'])assert.ok(js.includes(copy),`missing ${copy}`)
+test('顶部工作视角可切换到五个角色原型',()=>{
+  for(const href of ['administrator.html','index.html','customer-service-v03.html','service-station-v02.html','dealer.html'])assert.match(js,new RegExp(`href="${href.replace('.','\\.')}"`),`missing ${href}`)
+  for(const copy of ['五角色原型目录','系统管理员','总部运营','客服作业','服务站作业','门店业务','5 / 5'])assert.ok(js.includes(copy),`missing ${copy}`)
   assert.match(js,/id="perspectiveButton" aria-haspopup="dialog" aria-controls="prototypePanel"/)
 })
 
