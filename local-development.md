@@ -2,12 +2,14 @@
 type: "llm-wiki-operation"
 topic: "TOTO售后服务"
 status: "active"
-updated: "2026-10-19"
+updated: "2026-10-20"
 owner: "shared"
 confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-20 用户要求新增 yarn stop:afs 一键停止当前 TOTO 工作区本地服务；临时进程实测与当前环境只读预览。"
+  - "2026-10-20 本地启动故障：售后 reportMapper 与宿主 DisplayReportMapper 的 Resource 字段冲突；源码修复及定向回归。"
   - "2026-10-19 新账号共享发布：20261019161913-2d34d738，外部凭证同步、后端重启、双端上传及在线凭证核验通过。"
   - "2026-10-19 用户补充售后服务助手第三套账号；合并承载后台四角色，本轮仅预存配置，尚未开发。"
   - "2026-10-19 用户提供两套新小程序账号资料，替换两端 AppID、上传私钥及本机后端私密配置；不含共享发布。"
@@ -76,6 +78,19 @@ yarn dev:afs
 
 本目录命令只转发到 `frontend/gaia-ui` 的 `yarn dev:afs`；继续在 `frontend/gaia-ui` 根目录执行同名命令也保持有效。它使用同一个公共启动器确保 16379 Redis 和 8080 Gaia 聚合后端，然后只启动 9010 售后子系统，不启动 7004 主系统。9010 就绪后自动打开 `http://127.0.0.1:9010/after-sales/#/`。后端已由任一小程序启动时直接复用；由该命令启动后，再启动任一小程序也不会重复启动。
 
+<a id="stop-local-services"></a>
+
+**一键停止（`TECH-20261020-STOP-AFS`）：** 在 `docs/toto` 或 `frontend/gaia-ui` 根目录执行：
+
+```bash
+yarn stop:afs             # 停止当前工作区的本地开发服务
+yarn stop:afs --dry-run   # 仅预览待停止进程，不发送信号或改动运行状态
+```
+
+范围包括 Web 主站／售后前端、消费者和服务人员两端微信／H5 开发监听、标准启动链及其正在运行的 Maven 子进程、共享 8080 受管后端（含未监听端口的残留 JVM）和专用 16379 Redis。停止顺序为前端／启动器、后端、Redis，因此两端小程序也会失去本机 API；需要继续开发时重新执行对应 `dev` 命令。命令核对实际工作目录、标准启动脚本／运行 JAR、Redis PID 文件及进程启动时间，不按端口或 `java` 名称批量结束；其他工作区、6379 Redis、编辑器语言服务及独立构建／上传不属于目标。归属无法确认时不强制处理；只清理本工作区已停止服务的状态文件和失效启动锁，不删除源码、日志、运行包或数据库数据。进程先接收 TERM，20 秒内未退出时再次核对身份再发送 KILL；重复执行无服务时正常返回。停止期间统一后端启动器拒绝重新拉起，仅支持 macOS/Linux，依赖 `ps` 与 `lsof`。
+
+研发验证：停止命令的临时工作区实测覆盖 TERM 不退出的父／子进程、其他项目进程保留、预览不修改状态及重复执行；当前工作区 `yarn stop:afs --dry-run` 正确列出 Web、后端及日志子进程和专用 Redis 共 9 个进程，未发送停止信号，刚恢复的服务保持运行。未实际执行当前环境的一键停止，未覆盖所有小程序真实进程及正在装配的真实 Maven；这两类归属／子树规则已有定向测试。已本地提交并归并[v0.24.19](03-开发管理/10-版本信息.md#v0-24-19)，未推送／部署。
+
 两个小程序分别在各自仓库执行下列命令；两条命令都先确保同一个 8080 后端，再启动对应微信或 H5 前端：
 
 ```bash
@@ -97,7 +112,11 @@ redis-server --bind 127.0.0.1 --port 16379 --protected-mode yes --save '' --appe
 bash scripts/start-local-backend.sh
 ```
 
-本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用自己的 Logback 文件仍在 `.local/logs/gaia_saas/` 按大小滚动。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log`；旧版无上限的 `shared-backend.log` 不再使用。
+本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，启动器直接输出该路径；单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用自己的 Logback 文件仍在 `.local/logs/gaia_saas/` 按大小滚动。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log`；旧版无上限的 `shared-backend.log` 不再使用。检测到 Spring 的 `APPLICATION FAILED TO START`／`Application run failed` 时，即使 JVM 尚未退出也立即报告失败，并按工作目录、运行 JAR 和 PID 核对归属后停止本次失败 JVM；不再等满 12 分钟。后端就绪前 9010 尚未启动，此时浏览器连接被拒绝应先查后端日志。
+
+<a id="startup-report-mapper-20261020"></a>
+
+2026-10-20 `BUG-20261020-01` 本机启动故障：两次 Maven 装配均成功，但 Spring 提示 `reportMapper` 实际为售后报表代理，宿主字段却要求 `DisplayReportMapper`；`@Resource` 优先按字段名称匹配导致类型冲突。启动失败后 JVM 仍存活，原启动器只检查进程存活和 HTTP 就绪，因而继续等待并留下两个未监听端口的失败实例。售后 Mapper 已改名为 `AfterSalesReportMapper`，同步接口、XML namespace 和引用；主系统源码保持。启动脚本对售后模块执行 `clean install`，避免旧类／XML 残留。已核对工作目录、运行 JAR、失败日志及无监听状态后停止两个失败实例；宿主字段名注入共存与报表统计／范围／权限回归 3 项、启动器与日志 14 项测试通过，实际重新执行 `yarn dev:afs` 后，后端 PID 94727 通过 Web／移动端双探针并启动 9010；入口 HTTP 200、9010 代理返回预期匿名 4001，浏览器沿用已有会话进入系统管理员工作台并加载真实概览。回读运行 JAR 确认新 Mapper／XML 存在、旧类／XML 均不存在，两个失败 JVM 已退出。原始日志仅留忽略的本机日志及临时目录；未执行数据库迁移或业务写入，已本地提交并归并[v0.24.19](03-开发管理/10-版本信息.md#v0-24-19)，未推送／共享部署。本次售后干净构建已由定向 Maven `clean test` 验证，脚本随后补入 `clean install` 的语法检查通过；没有为仅改变清理步骤再次重启已恢复的共享后端。
 
 在 `frontend/gaia-ui` 下启动前端；当前根项目和售后子项目均使用 Node 24.21.0；根项目使用 Yarn，子项目使用 pnpm：
 

@@ -6,6 +6,7 @@ import test from 'node:test'
 import {
   abandonedManagedRuntime,
   backendRuntimeIsFresh,
+  backendStartupFailure,
   fingerprintBackendFiles,
   isMobileProbeReady,
   isUnifiedBackendReady,
@@ -15,6 +16,25 @@ import {
   managedBackendRuntime,
   startedManagedRuntime,
 } from './local-backend.mjs'
+
+test('detects a failed Spring context even while the JVM remains alive', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'toto-backend-failure-'))
+  const logFile = join(directory, 'backend.log')
+  try {
+    assert.equal(backendStartupFailure(logFile), '')
+    writeFileSync(logFile, 'BUILD SUCCESS\nTomcat initialized with port 8080\n')
+    assert.equal(backendStartupFailure(logFile), '')
+    writeFileSync(logFile, `${'build output\n'.repeat(10000)}\u001b[31mAPPLICATION FAILED TO START\u001b[0m\nDescription:\nThe bean reportMapper could not be injected\n`)
+    assert.match(backendStartupFailure(logFile), /^APPLICATION FAILED TO START/)
+    assert.match(backendStartupFailure(logFile), /reportMapper could not be injected/)
+    assert.ok(!backendStartupFailure(logFile).includes('\u001b'))
+    writeFileSync(logFile, 'ERROR Application run failed\nBeanCreationException\n')
+    assert.match(backendStartupFailure(logFile), /BeanCreationException/)
+  }
+  finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
 
 test('shared local backend uses the Gaia context path on one canonical port', () => {
   assert.equal(LOCAL_BACKEND_BASE_URL, 'http://127.0.0.1:8080/api')

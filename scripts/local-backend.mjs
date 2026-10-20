@@ -6,6 +6,7 @@ import {
   fchmodSync,
   mkdirSync,
   openSync,
+  readSync,
   readdirSync,
   readFileSync,
   rmSync,
@@ -30,6 +31,7 @@ const logRoot = resolve(backendRoot, '.local/logs')
 const backendScript = resolve(scriptDirectory, 'start-local-backend.sh')
 const boundedBackendLogScript = resolve(scriptDirectory, 'bounded-backend-log.mjs')
 const startupLock = resolve(runtimeRoot, 'shared-backend-start.lock')
+const servicesStopLock = resolve(runtimeRoot, 'shared-services-stop.lock')
 const backendBootstrapLog = resolve(logRoot, 'shared-backend-bootstrap.log')
 const backendLogForPid = pid => resolve(logRoot, `shared-backend-${pid}.log`)
 const backendStateFile = resolve(runtimeRoot, 'shared-backend-state.json')
@@ -361,6 +363,14 @@ function processIsAlive(pid) {
   }
 }
 
+export function assertServicesNotStopping(stopLock = servicesStopLock) {
+  try {
+    const pid = Number(readFileSync(stopLock, 'utf8').trim())
+    if (processIsAlive(pid)) throw new Error('TOTO 本地服务正在停止，请在 stop:afs 完成后重新启动')
+  }
+  catch (error) { if (error.code !== 'ENOENT') throw error }
+}
+
 function clearStaleLock() {
   if (!existsSync(startupLock)) return
   try {
@@ -440,8 +450,27 @@ function probeFailureMessage(probes) {
   return `Web 探针=${web}；移动端探针=${mobile}`
 }
 
+export function backendStartupFailure(logFile) {
+  if (!existsSync(logFile)) return ''
+  const descriptor = openSync(logFile, 'r')
+  try {
+    const size = statSync(logFile).size
+    const tail = Buffer.alloc(Math.min(size, 64 * 1024))
+    const length = readSync(descriptor, tail, 0, tail.length, size - tail.length)
+    const output = tail.subarray(0, length).toString('utf8').replace(/\x1b\[[0-9;]*m/g, '')
+    const marker = /APPLICATION FAILED TO START|Application run failed/.exec(output)
+    return marker ? output.slice(marker.index, marker.index + 2000).trim() : ''
+  }
+  finally {
+    closeSync(descriptor)
+  }
+}
+
 async function waitForBackend(startPid) {
   return waitUntil(async () => {
+    assertServicesNotStopping()
+    const failure = backendStartupFailure(backendLogForPid(startPid))
+    if (failure) throw new Error(`Gaia 统一后端已启动失败（PID ${startPid}）：\n${failure}`)
     const probes = await probeUnifiedBackend()
     if (isUnifiedBackendReady(probes)) return probes
     if (!processIsAlive(startPid))
@@ -455,6 +484,7 @@ export async function ensureLocalBackend() {
   if (!existsSync(backendScript)) throw new Error(`缺少后端启动脚本：${backendScript}`)
   mkdirSync(runtimeRoot, { recursive: true })
   mkdirSync(logRoot, { recursive: true })
+  assertServicesNotStopping()
 
   const sourceSnapshot = backendSourceSnapshot()
   const initial = await inspectLocalBackend(sourceSnapshot)
@@ -478,6 +508,7 @@ export async function ensureLocalBackend() {
   let backendLog = backendBootstrapLog
   let startedPid = null
   try {
+    assertServicesNotStopping()
     await stopAbandonedBackends()
     const locked = await inspectLocalBackend(sourceSnapshot)
     if (locked.ready && locked.fresh) {
@@ -493,6 +524,7 @@ export async function ensureLocalBackend() {
     }
 
     await ensureRedis()
+    assertServicesNotStopping()
     const pid = await spawnDetached('bash', [backendScript], {
       cwd: workspaceRoot,
       logFile: backendBootstrapLog,
@@ -501,6 +533,7 @@ export async function ensureLocalBackend() {
     startedPid = pid
     backendLog = backendLogForPid(pid)
     console.log(`[backend] 正在装配售后模块并启动共享后端（PID ${pid}），首次启动通常需要约 1–2 分钟`)
+    console.log(`[backend] 构建与启动日志：${backendLog}`)
     const readyProbes = await waitForBackend(pid)
     const started = await inspectLocalBackend(sourceSnapshot, readyProbes)
     if (!started.ready || started.managed?.pid !== pid) throw new Error('新后端已响应但无法确认其属于本次启动的进程，拒绝记录为可复用实例')
