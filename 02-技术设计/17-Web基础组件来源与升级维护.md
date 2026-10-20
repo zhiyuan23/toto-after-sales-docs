@@ -9,6 +9,7 @@ belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#list-display-fixes-20261020"
+  - "2026-10-20 用户要求：将本轮视觉升级迁入CRM，通用规则更新知识库，并在后续底座Git提交时提醒同步。"
   - "2026-10-20 用户确认：组件来源与本地适配信息集中维护到TOTO项目文档，源码只保留README入口和许可。"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#fa-foundation-product-20261020"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#fa-foundation-closeout-20261020"
@@ -144,7 +145,7 @@ sensitivity: "internal"
 
 通用约束统一维护在个人知识库的 `30-Topics/gaoge-admin-standards/`：总入口稳定 ID 为 `kb:topic:admin-frontend-development`，ElementPlus-FaEs 具体底座合同为 `kb:reference:gaoge-admin-elementplus-faes`。本文维护 TOTO 源码映射和项目差异，知识库维护跨项目规则与参考基线，其他项目只记录采用范围、实际来源快照和自身适配。
 
-本轮用户授权将 TOTO 视觉升级迁入 `gaoge-crm/apps/admin`；CRM 保留 Node JWT、租户／Resource RBAC、服务端导航、本地图标注册和 Element Plus 按需加载，不能直接覆盖为 TOTO 的 Gaia/Spring、业务菜单或整体安装方式。迁入以来源工作树的逐文件散列为证据，未提交改动不能冒充某个干净 Git 提交。
+本轮用户授权将 TOTO 视觉升级迁入 `gaoge-crm/apps/admin`；CRM 保留 Node JWT、租户／Resource RBAC、服务端导航、本地图标注册和 Element Plus 按需加载，不能直接覆盖为 TOTO 的 Gaia/Spring、业务菜单或整体安装方式。迁入开始时以来源工作树的逐文件散列为证据；本轮选定内容后已逐字节核验对应TOTO视觉升级提交 `fc471b3ae3f0f11b69b0d5574e0d476267f13138`。该提交之后仍在开发的表格扩展不并入本次冻结快照；未提交改动不能冒充某个干净Git提交。
 
 后续 TOTO 修改通用底座时，现有 `check-doc-impact.mjs` 及已安装的 Git Hook 根据暂存路径显示非阻断同步提醒，包含删除路径和本说明／UI规范单独修改的情况。Agent 完成相关 Git 提交后，应向用户说明知识库规范、CRM及其他实际采用该底座项目的已同步／待同步／不适用状态；存在待同步时明确提醒更新。提示不表示同步完成，不自动改码、提交、推送或发布其他仓库。
 
