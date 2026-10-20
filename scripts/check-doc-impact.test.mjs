@@ -8,9 +8,20 @@ import { inspectEvidence, isTextDocumentation } from './evidence-policy.mjs'
 
 import {
   findImpactedFiles,
+  foundationSyncReminder,
   globToRegExp,
   matchesAny
 } from './check-doc-impact.mjs'
+
+test('底座提醒只覆盖通用候选与底座说明，不把业务或其他端当作底座', () => {
+  const changes = files => [{ repository: { id: 'gaia-ui' }, files }]
+  assert.equal(foundationSyncReminder(changes(['apps/after-sales/src/views/catalog/index.vue'])), '')
+  assert.equal(foundationSyncReminder([{ repository: { id: 'gaia-after-sales-uni' }, files: ['src/ui/button.vue'] }]), '')
+  assert.match(foundationSyncReminder(changes(['apps/after-sales/src/ui/components/FaButton/index.vue'])), /非阻断/)
+  assert.match(foundationSyncReminder(changes(['apps/after-sales/package.json'])), /gaoge-crm/)
+  assert.match(foundationSyncReminder([], ['02-技术设计/17-Web基础组件来源与升级维护.md']), /ElementPlus-FaEs/)
+  assert.equal(foundationSyncReminder([], ['specs/业务功能.md']), '')
+})
 
 test('双星号匹配跨目录路径', () => {
   assert.equal(globToRegExp('**/src/main/**').test('module/src/main/java/App.java'), true)
@@ -125,6 +136,38 @@ test('只有截图不能满足跨仓文档同步，增加正文结论后通过',
   result = check('--staged', '--all')
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /specs\/page.md/)
+})
+
+test('底座提醒读取暂存边界，纯文档触发且不替代文档影响门禁', t => {
+  const { docs, code, write, add, check } = fixture(t)
+  write(docs, 'scripts/docs-impact-map.json', JSON.stringify({
+    documentationPatterns: ['specs/**'],
+    repositories: [{ id: 'gaia-ui', path: 'frontend/app', impactPatterns: ['apps/after-sales/src/**'] }]
+  }))
+  const component = 'apps/after-sales/src/ui/components/FaButton/index.vue'
+  write(code, component, '<template>fixture</template>\n')
+  let result = check('--staged', '--all')
+  assert.equal(result.status, 0)
+  assert.doesNotMatch(result.stdout, /底座同步提醒/)
+  add(code, component)
+  result = check('--staged', '--all')
+  assert.equal(result.status, 1)
+  assert.match(result.stdout, /底座同步提醒/)
+  result = check('--staged', '--all', '--no-doc-impact', '测试用临时夹具无需更新业务文档')
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /底座同步提醒/)
+  // A staged deletion must still remind, even though it is not documentation evidence.
+  execFileSync('git', ['-C', code, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.test', 'commit', '-qm', 'fixture'])
+  rmSync(join(code, component))
+  add(code, component)
+  result = check('--staged', '--all')
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /底座同步提醒/)
+  write(docs, '02-技术设计/17-Web基础组件来源与升级维护.md', '底座来源与保留边界。\n')
+  add(docs, '02-技术设计/17-Web基础组件来源与升级维护.md')
+  result = check('--staged', '--repo', docs)
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /底座同步提醒/)
 })
 
 test('Hook 安装覆盖文档仓库且保留已有自定义和默认 Hook', t => {

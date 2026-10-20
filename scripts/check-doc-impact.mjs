@@ -81,15 +81,16 @@ function gitLines(repositoryRoot, args) {
   return output.split('\n').map(line => line.trim()).filter(Boolean)
 }
 
-function changedFiles(repositoryRoot, mode) {
+function changedFiles(repositoryRoot, mode, includeDeleted = false) {
+  const filter = includeDeleted ? '--diff-filter=ACMRD' : '--diff-filter=ACMR'
   const staged = gitLines(repositoryRoot, [
-    'diff', '--cached', '--name-only', '--diff-filter=ACMR'
+    'diff', '--cached', '--name-only', filter
   ])
 
   if (mode === 'staged') return staged
 
   const unstaged = gitLines(repositoryRoot, [
-    'diff', '--name-only', '--diff-filter=ACMR'
+    'diff', '--name-only', filter
   ])
   const untracked = gitLines(repositoryRoot, [
     'ls-files', '--others', '--exclude-standard'
@@ -149,6 +150,36 @@ export function findImpactedFiles(files, impactPatterns) {
   return files.filter(filePath => matchesAny(filePath, impactPatterns))
 }
 
+export function foundationSyncReminder(repositoryChanges, documentationFiles = []) {
+  const patterns = [
+    'apps/after-sales/src/ui/**',
+    'apps/after-sales/src/components/common/**',
+    'apps/after-sales/src/assets/styles/**',
+    'apps/after-sales/src/composables/**',
+    'apps/after-sales/src/features/preferences/**',
+    'apps/after-sales/src/layouts/**',
+    'apps/after-sales/src/store/settings/**',
+    'apps/after-sales/src/store/tabbar/**',
+    'apps/after-sales/src/slots/**',
+    'apps/after-sales/src/locales/**',
+    'apps/after-sales/package.json',
+    'apps/after-sales/pnpm-lock.yaml',
+    'apps/after-sales/uno.config.*',
+    'apps/after-sales/vite.config.*',
+  ]
+  const code = repositoryChanges.filter(({ repository }) => repository.id === 'gaia-ui')
+    .flatMap(({ files, foundationFiles = files }) => foundationFiles.filter(file => matchesAny(file, patterns)))
+  const docs = documentationFiles.filter(file => matchesAny(file, [
+    '02-技术设计/05-gaia-ui售后服务UI样式规范.md',
+    '02-技术设计/17-Web基础组件来源与升级维护.md',
+  ]))
+  if (!code.length && !docs.length) return ''
+  return `底座同步提醒（非阻断）：检测到 ${code.length} 个通用候选代码路径、${docs.length} 个底座说明路径。\n`
+    + '提交后请提醒用户评估更新知识库 gaoge-admin 规范中的 ElementPlus-FaEs 底座，以及 gaoge-crm 和其他实际采用该底座的项目。\n'
+    + '先核对项目接入、成员状态、参考快照与保留差异；通用规则归知识库，源码按项目独立合并和验证。\n'
+    + '交付时说明各项已同步、待同步或不适用；本提醒不证明已同步，也不授权自动修改、提交或推送其他仓库。'
+}
+
 export function checkEvidenceRetention(repositoryRoot, mode) {
   const files = changedFiles(repositoryRoot, mode)
   const read = filePath => mode === 'staged'
@@ -182,8 +213,11 @@ function main() {
     if (!existsSync(resolve(repositoryRoot, '.git'))) continue
 
     const files = changedFiles(repositoryRoot, options.mode)
-    repositoryChanges.push({ repository, files })
+    repositoryChanges.push({ repository, files, foundationFiles: changedFiles(repositoryRoot, options.mode, true) })
   }
+
+  const reminder = foundationSyncReminder(repositoryChanges, changedFiles(documentationRoot, options.mode, true))
+  if (reminder) console.log(reminder)
 
   // Run even on documentation-only commits and before the no-impact escape hatch.
   let retentionFailed = false
