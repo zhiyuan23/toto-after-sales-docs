@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#list-display-fixes-20261020"
   - "2026-10-20 用户确认：先处理列设置兼容问题，再按页面用途补齐推荐列表；后续适用页面随功能开发同步接入。"
   - "17-Web基础组件来源与升级维护.md"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#record-identity-spacing-20261020"
@@ -148,6 +149,8 @@ FaPageMain
 <a id="table-native-first"></a>
 
 ### 4.2 表格内置能力优先与扩展边界（2026-10-20）
+
+- 日期时间列通过`TableColumn.format: "datetime"`显式声明，公共层复用`formatDateTime`；不按字段名或文本形状猜测，不修改原始排序／查询值。当前接入列展示至秒，工单创建时间最小190px；普通文本省略时提供完整title，宽表沿用横向滚动与固定操作列。FaPagination在候选中保留当前有效页容量，不能因候选缺项显示空白或自动更改查询容量。接入及验证见[本轮修复](../specs/2026-10-15-Web公共组件与阅读交互优化.md#list-display-fixes-20261020)。
 
 新增或调整表格功能时，按以下顺序选择实现；本规则约束后续任务，不要求本次批量重构已有页面或开放全部插件功能。
 

@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#list-display-fixes-20261020"
   - "2026-10-20 用户确认：组件来源与本地适配信息集中维护到TOTO项目文档，源码只保留README入口和许可。"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#fa-foundation-product-20261020"
   - "../specs/2026-10-15-Web公共组件与阅读交互优化.md#fa-foundation-closeout-20261020"
@@ -128,7 +129,7 @@ sensitivity: "internal"
 | 弹窗与抽屉 | 保留 `FaModal / FaDrawer` 的关闭守卫、焦点处理、键盘行为、国际化及公共包装，核对遮罩只显示一层。未带来源文件头的项目包装层也需要按实际影响回归。 |
 | 下拉与右键菜单 | 保留 `FaDropdown` 既有接口与 `FaContextMenu` 的 `openChange`；核对 Portal、关闭恢复、无箭头及现有浮层动画，不覆盖已确认的 Esc 传播边界。 |
 | 输入与普通选择 | 保留数字输入默认值、原始值类型、禁用／清空／校验及程序回填行为；布尔 `false`、数字 `0`、字符串 `0` 和空值不能混淆。业务适配仍由既有 Es 公共层与业务页面承担。 |
-| 表格与分页 | 保留 `EsTable` 的后端分页、固定／最小列宽、列设置、行操作、权限、卡片模式、加载／空态及失败重试契约。优先使用既有表格内置能力，不另建表格体系。 本次FaTable已接入v9列宽、分组聚合、多级表头与区域选择，保留受控状态、键盘路由及EsTable业务包装；aggregate使用上下文定义，不能以v8签名覆盖。业务页须在开发时评估并同步启用适用能力，见[本轮契约](../specs/2026-10-15-Web公共组件与阅读交互优化.md#table-page-capabilities-20261020)。 |
+| 表格与分页 | 保留当前有效页容量的展示补项及EsTable显式日期格式／完整文本提示；见[日期与分页显示修复](../specs/2026-10-15-Web公共组件与阅读交互优化.md#list-display-fixes-20261020)。 保留 `EsTable` 的后端分页、固定／最小列宽、列设置、行操作、权限、卡片模式、加载／空态及失败重试契约。优先使用既有表格内置能力，不另建表格体系。 本次FaTable已接入v9列宽、分组聚合、多级表头与区域选择，保留受控状态、键盘路由及EsTable业务包装；aggregate使用上下文定义，不能以v8签名覆盖。业务页须在开发时评估并同步启用适用能力，见[本轮契约](../specs/2026-10-15-Web公共组件与阅读交互优化.md#table-page-capabilities-20261020)。 |
 | 宿主扩展和复杂控件 | Auth、NotAllowed、SystemInfo、SmartFixedBlock、独立 Notification，以及仍使用 Element 的树、远程／复杂选择等，按本地职责维护；不能仅凭 `Fa` 名称替换，也不从视觉组件推断业务、权限或数据范围。 |
 
 ## 4. 后续同步方式
