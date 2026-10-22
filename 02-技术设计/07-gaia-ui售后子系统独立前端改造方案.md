@@ -2,12 +2,13 @@
 type: "llm-wiki-system-context"
 topic: "TOTO售后服务"
 status: "active"
-updated: "2026-10-14"
+updated: "2026-10-22"
 owner: "shared"
 confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "../specs/2026-09-30-主系统菜单iframe访问售后子系统.md#appearance-follow-20261022"
   - "本仓库既有文档：02-技术设计/07-gaia-ui售后子系统独立前端改造方案.md；格式整理不表示重新验证业务与运行事实。"
 tags:
   - "llm-wiki"
@@ -41,6 +42,8 @@ sensitivity: "internal"
 | --- | --- | --- |
 | 独立运行 | 直接打开 `/after-sales/`；兼容 `entry=standalone` | 子站完整布局，保留自身登录、侧栏、顶栏和标签栏；身份管理仍按既有开关及 Gaia 授权显示 |
 | 主系统 iframe 接入 | 主站 `/afterSales/**` 菜单 → `/after-sales/?entry=main&view=<视角>#/<业务路径>` | 保留主站导航，子站只渲染业务正文与弹窗；主站售后侧栏按当前工作视角展示 |
+
+内嵌入口的语言与深浅色跟随主站，独立入口每次加载跟随电脑深浅色；主站繁中暂回退简中，内嵌状态不覆盖独立语言偏好。既有手动主题操作只影响本次页面会话，刷新恢复自动；契约和验证见[语言与主题跟随](../specs/2026-09-30-主系统菜单iframe访问售后子系统.md#appearance-follow-20261022)。
 
 运行模式由实际窗口上下文和入口参数共同决定：是否处于 iframe 决定子站布局，`entry=main` 决定登录返回主站等认证导航，`view` 仅恢复展示偏好。单独添加入口或视角参数不能创建身份或权限；两端仍校验 Gaia 菜单授权，业务按钮与数据权限沿用现有后端。
 
