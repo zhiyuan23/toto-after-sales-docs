@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-22 7004持续loading恢复：8080与专用Redis已停止；仅补齐后端，配置API及浏览器登录页恢复，前端PID保持。"
   - "2026-10-22 根 yarn install 自动冻结安装售后依赖；两命令统一安装与打包，验证见 Web 架构安装契约。"
   - "2026-10-22 按用户确认重排开发管理目录并修正引用；内容与业务状态保持，稳定ID不变。"
   - "2026-10-22 部署操作与历史记录归位，修正直接引用；路径维护不表示重新部署或业务验收。"
@@ -115,6 +116,14 @@ redis-server --bind 127.0.0.1 --port 16379 --protected-mode yes --save '' --appe
 ```bash
 bash scripts/start-local-backend.sh
 ```
+
+已有7004／9010正常运行，但页面持续loading且终端出现 `ECONNREFUSED 127.0.0.1:8080` 时，先核对8080与16379；根 `yarn dev` 只启动前端。确认缺失后可在本目录仅补齐共享后端和专用Redis，保留原前端：
+
+```bash
+node scripts/local-backend.mjs
+```
+
+等待输出“已就绪并保持运行”后刷新页面；Redis重新启动后原登录会话可能失效，需要重新登录。2026-10-22实际恢复及验证见[本地后端恢复](02-技术设计/01-架构与运行/01-Web子系统架构与运行规范.md#backend-loading-recovery-20261022)。从全停状态启动主系统及售后的完整环境仍使用 `yarn dev:full`。
 
 本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，启动器直接输出该路径；单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用自己的 Logback 文件仍在 `.local/logs/gaia_saas/` 按大小滚动。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log`；旧版无上限的 `shared-backend.log` 不再使用。检测到 Spring 的 `APPLICATION FAILED TO START`／`Application run failed` 时，即使 JVM 尚未退出也立即报告失败，并按工作目录、运行 JAR 和 PID 核对归属后停止本次失败 JVM；不再等满 12 分钟。后端就绪前 9010 尚未启动，此时浏览器连接被拒绝应先查后端日志。
 

@@ -9,6 +9,7 @@ belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
   - "2026-10-22 用户要求保持现有构建部署模式，增加售后检查分步骤进度与耗时，并验证原生增量类型缓存优化。"
+  - "2026-10-22 用户反馈7004持续loading；核验8080／Redis已停，仅恢复后端，真实配置API与登录页通过，原前端进程保持。"
   - "2026-10-22 用户要求仅在售后范围修复 Jenkins 依赖源；子项目 npmrc 与专用安装入口隔离父环境 registry，保留冻结锁文件及完整性校验。"
   - "2026-10-22 用户要求根 yarn install 自动安装售后依赖；根 postinstall 复用固定 Node／pnpm 入口与售后冻结锁文件。"
   - "2026-10-22 用户确认Demo默认仅更新售后；独立构建及完整资源检查入口，本次未提交／部署。"
@@ -278,6 +279,12 @@ yarn dev                 # 同时运行主系统和子系统
 yarn dev:main            # 只运行主系统
 yarn dev:afs             # 清理旧进程后运行售后子系统及本地后端依赖
 ```
+
+<a id="backend-loading-recovery-20261022"></a>
+
+### 本地后端停止导致页面持续 loading 的恢复（2026-10-22）
+
+7004持续loading恢复：此前后端PID59451于18:13正常关闭，专用Redis也已停止；用户随后执行的根 `yarn dev` 仅启动前端，7004／9010本身健康。主系统登录路由需等待 `LOGIN_PAGE_CONFIG` 和 `SYS_THEME`，通用请求超时500000ms，后端连接拒绝时表现为长时间loading。仅执行文档仓 `node scripts/local-backend.mjs` 补齐Redis16379与共享后端8080；三段既有Maven构建成功，统一后端双探针通过。两项配置经7004代理均HTTP200／业务码0，浏览器刷新并关闭旧会话提示后实际显示登录表单，未追加登录或业务验收。原前端PID99099／99105保持，新后端PID486与Redis PID476继续供本机开发使用；未修改本轮业务源码、数据库结构或代理配置。截图仅留忽略目录 `.local/verification-artifacts/20261022-main-loading/`，本轮未提交／部署。
 
 ## 5. 登录、权限与租户
 
