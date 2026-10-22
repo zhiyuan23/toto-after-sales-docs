@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-22 用户要求仅在售后范围修复 Jenkins 依赖源；子项目 npmrc 与专用安装入口隔离父环境 registry，保留冻结锁文件及完整性校验。"
   - "2026-10-22 用户要求根 yarn install 自动安装售后依赖；根 postinstall 复用固定 Node／pnpm 入口与售后冻结锁文件。"
   - "2026-10-22 用户确认Demo默认仅更新售后；独立构建及完整资源检查入口，本次未提交／部署。"
   - "../../specs/05-平台集成与公共能力/2026-09-30-主系统菜单iframe访问售后子系统.md#appearance-follow-20261022"
@@ -451,7 +452,7 @@ yarn build
 
 构建机使用 `yarn install --frozen-lockfile` 可同时冻结主项目锁文件；售后安装始终冻结。两套依赖目录和锁文件互不覆盖；售后依赖变更用 `yarn after-sales:pnpm add <包名>` 等入口更新其清单和锁文件。`--ignore-scripts` 会跳过根自动安装，使用该选项时需自行执行 `yarn after-sales:pnpm install --frozen-lockfile`。
 
-当前 gaia-ui 与子系统均固定 Node 24.21.0，根项目使用 Yarn 1.22.22，售后 pnpm 10.8.1 由子系统 `packageManager` 与 Corepack 固定。要求本机提供固定 Node 和 Corepack；缺少 Node 时明确失败，不自动下载 Node。
+主项目使用 Yarn 1.22.22，Node 由根 `package.json` 的 `volta.node` 确定；售后 Node 24.21.0 由子目录 `.nvmrc` 独立维护，pnpm 10.8.1 由子系统 `packageManager` 与 Corepack 固定。要求本机提供固定 Node 和 Corepack；缺少 Node 时明确失败，不自动下载 Node。
 
 生产服务器只接收静态产物，不安装 Yarn、pnpm 或 `node_modules`。
 
@@ -467,6 +468,18 @@ yarn build
 - 首次根构建曾因共享工作区common版本不匹配引用不存在的 `src/i18n/useGlobalI18n` 失败；common回到主仓记录的 `3e210c97` 后根构建复验通过。本任务未修改、切换或提交common。原始日志留在忽略目录 `.local/verification-artifacts/20261022-root-install/`。
 
 本轮Web已本地提交`0b681ff7`，归并[v0.24.38](../../03-开发管理/03-版本记录/2026-10.md#v0-24-38)；未推送或部署，Windows实机未验证，不增加业务验收计数。
+
+<a id="subsystem-registry-20261022"></a>
+
+#### 6.2.2 售后依赖源与父环境隔离（2026-10-22）
+
+售后默认 registry 仅在 `apps/after-sales/.npmrc` 配置为 `https://registry.npmmirror.com/`。`npmmirror.com` 是网站域名，不能作为依赖 registry；本轮实际下载该地址得到 HTML，其 SHA-512 精确匹配 Jenkins 失败日志中的错误摘要，而正确镜像及 npm 官方包均匹配现有锁文件。
+
+根安装钩子和 `yarn after-sales:pnpm` 专用入口从子项目 `.npmrc` 读取该值，只给售后子进程设置 `npm_config_registry` 与 `NPM_CONFIG_REGISTRY`。这是必要的子系统入口隔离：仅添加项目 `.npmrc` 时，配置查询可显示正确值，但实际冷安装仍受父环境变量影响、下载网站 HTML；已用错误父环境复现，不能仅凭 `pnpm config get registry` 判断下载行为。
+
+主系统 Yarn 安装、根包清单、Jenkins 全局／节点配置、用户 npm 配置和其他任务均不因此改变；子项目外不写 registry 配置。需要更换售后依赖源时，在子项目 `.npmrc` 单独维护。两个锁文件及依赖版本保持，冻结安装、完整性校验和失败向根命令传递继续有效。
+
+研发验证：初始基线真实 Yarn／Corepack／pnpm 安装回归及工具链共7项通过，最新目标基线4项真实安装回归通过；包括父环境大小写 registry 错误、售后生命周期接收到正确 registry、宿主配置保持，以及生命周期失败／锁文件过期仍拒绝。错误环境下使用全新 store 与空 node_modules 实际下载并安装991个包（reused=0），完整性校验通过。最终构建与提交结果见[本轮执行记录](../../03-开发管理/01-环境部署/部署记录/2026-10-22-Demo完整前端更新记录.md#subsystem-registry-20261022)。修复已通过 `gaia-ui@bd462848` 推送 `dev_test`，归并[v0.24.39](../../03-开发管理/03-版本记录/2026-10.md#v0-24-39)。这些结果不表示 Jenkins 已重建或 Demo 已更新。
 
 ### 6.3 构建与组装顺序
 
