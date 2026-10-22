@@ -35,7 +35,7 @@ H5 使用正式编译页面，在隔离浏览器中拦截身份／资料请求�
 
 ## 卡片间距补充
 
-用户复核后指出资料卡之间偏近。本轮用 UI UX Pro Max 的触控间隔、4／8 步进与分组层级规则作参考，并核对消费者 `src/consumer/style.scss` 的 `--c-card-gap: 12px` 和服务人员 `TaskCard.vue` 的 `26rpx`，选择 `24rpx` 作为普通独立卡片的共同默认值；不是把技能的最低触控间隔当成唯一最佳值。
+用户复核后指出资料卡之间偏近。本轮用 UI UX Pro Max 的触控间隔、4／8 步进与分组层级规则作参考，并核对消费者 `src/consumer/styles/consumer.scss` 的 `--c-card-gap: 12px` 和服务人员 `TaskCard.vue` 的 `26rpx`，选择 `24rpx` 作为普通独立卡片的共同默认值；不是把技能的最低触控间隔当成唯一最佳值。
 
 - 两仓等价新增 `--app-card-gap: 24rpx`；消费者／服务人员资料列表和服务人员任务资料条目改用这一变量。原卡内紧凑间距 16rpx、跨区块间距 32rpx 保留；`.app-card` 本体不加 margin。
 - 两仓再次执行 `pnpm verify` 均通过：消费者 105 项、服务人员 124 项及微信／H5 构建；两仓公共样式内容相同，`git diff --check` 通过。
