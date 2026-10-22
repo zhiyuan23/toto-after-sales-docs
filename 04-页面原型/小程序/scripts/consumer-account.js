@@ -1,0 +1,142 @@
+'use strict';
+// Local prototype only: no real WeChat authorization, storage or business API.
+(() => {
+  const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const mask = value => String(value).replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2');
+  const productImageAttrs = product => `class="c-product-image" data-image-background="${product?.imageBackgroundType === 'scene' ? 'scene' : 'solid'}"`;
+  const initial = () => ({userName:'陈女士',phone:'13800000026',region:'示例省 / 示例市 / 示例区',address:'样板路88号1栋101室（虚构）',serviceNotice:true,avatar:'',interests:[],contentPreferences:[],usageScenes:[],purchasePlan:'',interestsAnswered:false,preferencesSaved:false});
+  let profile = initial(), draft = {...profile}, phoneAuthorization = '';
+  const interestOptions = [['smart-toilet','智能一体型座便器'],['washlet','智能座便盖'],['toilet','普通座便器'],['faucet-shower','龙头与淋浴'],['bathtub','浴缸'],['bathroom-heater','浴室暖风设备'],['bathroom-space','整体卫浴']];
+  const planOptions = [['none','暂无购买计划'],['undecided','时间未定'],['within-3-months','3个月内'],['3-to-6-months','3～6个月'],['after-6-months','6个月以后']];
+  const sceneOptions = [['new-home','新房装修'],['renovation','旧房翻新'],['replacement','现有产品换新']];
+  const emptyPreferences = () => ({interests:[],usageScenes:[],purchasePlan:'',interestsAnswered:false});
+  let preferenceDraft = emptyPreferences();
+  let avatarVersion=0, avatarPending=false, avatarError='';
+  const owns = id => ['c-profile','c-preferences','c-purchases'].includes(id);
+  const avatarMarkup = value => `<img class="c-avatar" src="${e(value || '../assets/icons/default-avatar.svg')}" alt="${value?'个人头像':'默认头像'}">`;
+  const preferenceSummary = () => {
+    const products=interestOptions.filter(([id])=>profile.interests.includes(id)).map(([,label])=>label);
+    if(products.length)return products.slice(0,2).join('、')+(products.length>2?`等${products.length}类`:'');
+    if(profile.purchasePlan)return planOptions.find(([id])=>id===profile.purchasePlan)?.[1] || '选择您关注的产品';
+    return profile.interestsAnswered?'暂无明确产品偏好':profile.usageScenes.length?'已填写使用场景':'选择您关注的产品';
+  };
+  const read = root => Object.fromEntries([...root.querySelectorAll('input,select,textarea')].filter(el => el.name).map(el => [el.name,el.type==='checkbox'?el.checked:el.value]));
+  const saveDraft = root => {
+    const values=read(root);
+    if ('userName' in values) draft={...draft,...values};
+    const fields=[...root.querySelectorAll('input,select,textarea')];
+    if(fields.some(el=>el.name==='interests')) {
+      preferenceDraft.interests=interestOptions.map(([id])=>id).filter(id=>fields.some(el=>el.name==='interests' && el.value===id && el.checked));
+      preferenceDraft.interestsAnswered=preferenceDraft.interests.length>0 || fields.some(el=>el.name==='interests' && el.value==='none' && el.checked);
+    }
+    if(fields.some(el=>el.name==='usageScenes'))preferenceDraft.usageScenes=sceneOptions.map(([id])=>id).filter(id=>fields.some(el=>el.name==='usageScenes' && el.value===id && el.checked));
+    if(fields.some(el=>el.name==='purchasePlan'))preferenceDraft.purchasePlan=fields.find(el=>el.name==='purchasePlan')?.value || '';
+
+  };
+  const authorizationOverlay = () => {
+    if (!phoneAuthorization) return '';
+    const profileChange=phoneAuthorization==='profile';
+    return `<button class="c-account-backdrop" data-account="dismiss-phone-auth" tabindex="-1" aria-label="关闭微信手机号授权"></button><section class="c-wechat-dialog" role="dialog" aria-modal="true" aria-labelledby="wechat-phone-title" aria-describedby="wechat-phone-description"><span class="c-wechat-mark" aria-hidden="true">微信</span><h2 id="wechat-phone-title">${profileChange?'更换绑定手机号':'授权手机号'}</h2><p id="wechat-phone-description">${profileChange?'使用微信绑定的手机号更新账户资料。':'用于查找已接入的购买记录与产品。'}</p><div class="c-wechat-phone"><span>微信绑定号码</span><strong>${e(mask(profileChange?'13900000000':profile.phone))}</strong></div><div class="c-wechat-actions"><button type="button" data-account="dismiss-phone-auth">取消</button><button type="button" data-account="confirm-phone-auth">允许</button></div></section>`;
+  };
+  const avatarEditor = () => `<div class="c-avatar-editor" aria-label="个人头像"><button type="button" class="c-avatar-row" data-account="choose-avatar" aria-label="更换头像"><span>头像</span><span class="c-avatar-value">${avatarMarkup(draft.avatar)}<span class="c-avatar-arrow" aria-hidden="true">›</span></span></button><input type="file" id="c-avatar-file" accept="image/jpeg,image/png,image/webp" aria-label="选择头像图片" hidden>${avatarPending?'<p class="c-hint" role="status">正在读取头像…</p>':avatarError?`<p class="field-error" role="alert">${e(avatarError)}</p>`:''}</div>`;
+  const preferenceGroup = (name,title,description,options) => `<section class="c-preference-group" aria-label="${title}"><h2>${title}<small>可多选</small></h2><p class="c-preference-description">${description}</p><div class="c-preference-options">${options.map(([id,label])=>`<label class="c-preference-option"><input type="checkbox" name="${name}" value="${id}"${(id==='none'?preferenceDraft.interestsAnswered && !preferenceDraft.interests.length:preferenceDraft[name].includes(id))?' checked':''}><span><span class="c-preference-check" aria-hidden="true">✓</span>${label}</span></label>`).join('')}</div></section>`;
+  const preferenceBody = () => `<p class="c-preferences-intro">用于了解您的产品需求，全部选填，可随时修改或清空。</p><form id="c-preferences-form" data-account-form="preferences">${preferenceGroup('interests','关注的产品','您目前对哪些产品感兴趣？',[...interestOptions,['none','暂无明确偏好']])}<section class="c-preference-group"><h2>购买计划<small>单选</small></h2><p class="c-preference-description">针对您整体的卫浴需求。</p><label class="c-plan-label"><select name="purchasePlan" aria-label="购买计划"><option value="">未填写</option>${planOptions.map(([id,label])=>`<option value="${id}"${preferenceDraft.purchasePlan===id?' selected':''}>${label}</option>`).join('')}</select><span aria-hidden="true">⌄</span></label></section>${preferenceGroup('usageScenes','使用场景','您正在考虑哪类家居需求？',sceneOptions)}<p class="c-preference-footnote">选择偏好不会开启营销通知。</p><div class="c-preference-tools"><button type="button" class="c-text-button" data-account="clear-preferences">清空填写</button></div></form>`;
+  function persistPreferences() {
+    profile={...profile,interests:[...preferenceDraft.interests],usageScenes:[...preferenceDraft.usageScenes],purchasePlan:preferenceDraft.purchasePlan,interestsAnswered:preferenceDraft.interestsAnswered,preferencesSaved:Boolean(preferenceDraft.interestsAnswered || preferenceDraft.purchasePlan || preferenceDraft.usageScenes.length)};
+  }
+  function updatePreferences(input,api) {
+    if(!['interests','usageScenes','purchasePlan'].includes(input.name))return false;
+    saveDraft(api.root);
+    if(input.name==='interests' && input.value==='none' && input.checked){preferenceDraft.interests=[];preferenceDraft.interestsAnswered=true;}
+    else if(input.name==='interests')preferenceDraft.interestsAnswered=preferenceDraft.interests.length>0;
+    if(!planOptions.some(([id])=>id===preferenceDraft.purchasePlan))preferenceDraft.purchasePlan='';
+    persistPreferences();api.render();return true;
+  }
+  function changeAvatar(input, api) {
+    if (input.id!=='c-avatar-file') return false;
+    const file=input.files?.[0];
+    if (!file) return true;
+    saveDraft(api.root);
+    input.value='';
+    const version=++avatarVersion;
+    const refresh=()=>{saveDraft(api.root);api.render();};
+    const fail=message=>{if(version!==avatarVersion)return;avatarPending=false;avatarError=message;refresh();};
+    avatarError='';avatarPending=false;
+    if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {fail('请选择 JPG、PNG 或 WebP 图片。');return true;}
+    if (!file.size || file.size>5*1024*1024) {fail('图片为空或超过 5 MB，请重新选择。');return true;}
+    avatarPending=true;api.render();
+    const reader=new FileReader();
+    reader.onerror=()=>fail('图片读取失败，请重新选择。');
+    reader.onload=()=>{
+      if(version!==avatarVersion)return;
+      const preview=new Image();
+      preview.onerror=()=>fail('无法识别这张图片，请选择其他图片。');
+      preview.onload=()=>{
+        if(version!==avatarVersion)return;
+        draft.avatar=reader.result;profile.avatar=reader.result;avatarPending=false;refresh();api.showToast('头像已更新到本次演示。');
+      };
+      preview.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+    return true;
+  }
+  const profileBody = () => `<div class="c-account-phone"><div><span>当前绑定手机号</span><strong>${e(mask(profile.phone))}</strong></div><button type="button" class="c-text-button" data-account="change-phone">更换手机号 ›</button></div><section id="c-profile-form" class="c-profile-form" aria-label="个人资料"><div class="c-profile-card c-profile-details">${avatarEditor()}<label class="c-profile-field-row"><span>姓名</span><input name="userName" maxlength="30" value="${e(draft.userName)}" placeholder="未填写"></label><label class="c-profile-field-row"><span>所在地区</span><select name="region"><option value="">未填写</option><option value="示例省 / 示例市 / 示例区"${draft.region?' selected':''}>示例省 / 示例市 / 示例区</option></select></label><label class="c-profile-field-row"><span>详细地址</span><input name="address" maxlength="200" value="${e(draft.address)}" placeholder="未填写"></label></div></section><button class="c-menu-row c-preference-entry" data-go="c-preferences"><span><strong>兴趣偏好</strong><small>${e(preferenceSummary())}</small></span><span aria-hidden="true">›</span></button>`;
+  function updateProfileField(input, api) {
+    const labels={userName:'姓名',region:'所在地区',address:'详细地址'};
+    if (!Object.hasOwn(labels,input.name)) return false;
+    const value=String(input.value || '').trim();
+    draft={...draft,[input.name]:value};
+    profile={...profile,[input.name]:value};
+    api.showToast(`${labels[input.name]}已更新。`);
+    return true;
+  }
+  function records(ctx) {
+    const groups=new Map();
+    for (const product of ctx.hasProducts===false?[]:ctx.products || []) {
+      const info=product.registration || {}, key=info.purchaseRecordId || product.id;
+      if (!info.purchaseRecordId && !info.purchaseDate) continue;
+      if (!groups.has(key)) groups.set(key,{id:key,date:info.purchaseDate || '',store:info.storeName || '',source:info.method==='existing-record'?'手机号同步':info.method==='scan-credential'?'凭证码扫码':info.method==='scan-unique'?'实物码扫码':'用户申报',products:[]});
+      groups.get(key).products.push(product);
+    }
+    return [...groups.values()].sort((a,b)=>b.date.localeCompare(a.date));
+  }
+  const empty = () => '<div class="c-account-empty"><span class="c-empty-mark" data-icon="service" aria-hidden="true"></span><h2>还没有购买记录</h2><p>授权微信手机号后，可同步已接入的购买产品。</p><button class="primary" data-phone-sync data-sync-target="purchases">授权并同步购买记录</button><button class="c-text-button" data-go="c-register">扫一扫添加其他产品 ›</button></div>';
+  const purchaseBody = ctx => {
+    const list=records(ctx);
+    if (!list.length) return empty();
+    return `<p class="c-list-summary">共 ${list.length} 条记录 · ${list.reduce((sum,r)=>sum+r.products.length,0)} 件产品</p><div class="c-purchase-list">${list.map(record=>`<article class="c-purchase-card"><header><div><span>购买日期</span><h3>${e(record.date || '尚未提供')}</h3><p class="c-purchase-store">${e(record.store || '购买门店未提供')}</p></div><span class="c-tag">${e(record.source)}</span></header><div class="c-purchase-products">${record.products.map(p=>`<button class="c-record-product" data-product="${e(p.id)}" data-go="c-product"><img ${productImageAttrs(p)} src="${e(p.image)}" alt="${e(p.name)}"><span><strong>${e(p.name)}</strong><small>${e(p.model)}</small></span><span class="c-record-quantity">1 件<span aria-hidden="true"> ›</span></span></button>`).join('')}</div></article>`).join('')}</div><button class="c-menu-row c-purchase-refresh" data-phone-sync data-sync-target="purchases"><span>同步购买记录</span><span aria-hidden="true">↻</span></button>`;
+  };
+  function handle(el, api) {
+    const action=el.dataset.account;
+    if (!action) return false;
+    saveDraft(api.root);
+    if (action==='choose-avatar') {api.root.querySelector('#c-avatar-file')?.click();}
+    else if (action==='clear-preferences') {preferenceDraft=emptyPreferences();persistPreferences();api.render();}
+    else if (action==='change-phone') {phoneAuthorization='profile';api.renderOverlay();}
+    else if (action==='dismiss-phone-auth') {phoneAuthorization='';api.renderOverlay();}
+    else if (action==='confirm-phone-auth') {
+      const purpose=phoneAuthorization;phoneAuthorization='';
+      if (purpose==='profile') {
+        profile.phone='13900000000';draft.phone=profile.phone;api.render();api.showToast('手机号已通过微信授权更新。');
+      } else if (purpose==='sync') api.authorizePhone();
+      api.renderOverlay();
+    }
+    return true;
+  }
+  function submit(form, api) {
+    if (!form.matches('form[data-account-form]')) return false;
+    if (!form.checkValidity()) return true;
+    saveDraft(api.root);
+    if (form.id==='c-preferences-form') {
+      persistPreferences();api.render();
+    }
+    return true;
+  }
+  window.TOTO_ACCOUNT={owns,saveDraft,handle,submit,changeAvatar,updateProfileField,updatePreferences,avatarMarkup,empty,records,overlay:authorizationOverlay,dismiss:()=>{if(!phoneAuthorization)return false;phoneAuthorization='';return true;},clearOverlay:()=>{phoneAuthorization='';},requestPhoneAuthorization:api=>{phoneAuthorization='sync';api.renderOverlay();},profile:()=>({...profile,interests:[...profile.interests],contentPreferences:[...profile.contentPreferences],usageScenes:[...profile.usageScenes]}),reset:()=>{++avatarVersion;avatarPending=false;avatarError='';preferenceDraft=emptyPreferences();profile=initial();draft={...profile};phoneAuthorization='';}};
+  const screens=window.TOTO_SCREENS.consumer.screens;
+  screens.splice(screens.findIndex(s=>s.id==='c-mine')+1,0,
+    {id:'c-profile',title:'个人信息',entry:'C13 · 个人信息、地址及偏好',parent:'c-mine',goal:'手机号优先展示；头像、姓名和地址使用小程序常见的资料列表，每项修改后独立更新，兴趣偏好单独编辑。',note:'CAPP-010 设计草案。姓名、地区和地址均可留空，输入框失焦或选择变化后单项更新，不设置页面级保存。手机号通过微信原生授权能力获取。正式小程序使用微信原生头像选择及上传能力；本原型仅做本地演示，不访问真实微信数据。',body:profileBody,footer:''},
+    {id:'c-preferences',title:'兴趣偏好',entry:'C13 · 个人信息下的兴趣偏好',parent:'c-profile',goal:'选填关注产品、整体购买计划与使用场景，选择后独立自动保存，不打断资料编辑。',note:'2026-10-02 购买倾向设计稿。产品多选、购买计划单选、使用场景多选；默认未填，暂无明确偏好与未填写分开。选择后模拟自动保存，返回可回显；真实接口需合并连续选择、保留失败草稿并就近重试。不从购买记录自动勾选，不开启营销通知。本原型只在内存演示，不表示真实资料已保存。',body:preferenceBody,footer:''},
+    {id:'c-purchases',title:'购买记录',entry:'C11 · 自动同步与其他来源',parent:'c-mine',goal:'按购买事实汇总记录，卡片只保留日期、门店、来源和产品，同步操作在当前页直接刷新。',note:'CAPP-012 设计草案。购买记录不再设来源详情展开层；点击产品进入产品资料，同步按钮直接请求刷新，首次使用时先调起微信手机号授权。',body:purchaseBody}
+  );
+})();

@@ -11,6 +11,10 @@ repository_root="$(git rev-parse --show-toplevel)"
 unset GIT_INDEX_FILE GIT_DIR GIT_WORK_TREE GIT_COMMON_DIR
 unset GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_PREFIX
 
+if [[ "$repository_root" == "$documentation_root" ]]; then
+    node "$documentation_root/scripts/validate-knowledge-base.mjs" --kb-root "$documentation_root"
+fi
+
 node "$documentation_root/scripts/check-doc-impact.mjs" \
     --staged \
     --repo "$repository_root"

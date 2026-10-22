@@ -5,9 +5,9 @@ const assert=require('node:assert/strict')
 const root=path.resolve(__dirname,'..')
 
 test('门店首页以购买登记为主任务，代客建单必须从购买记录发起',()=>{
-  const dealer=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
-  const dealerJs=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
-  const dealerCss=fs.readFileSync(path.join(root,'dealer-workbench.css'),'utf8')
+  const dealer=fs.readFileSync(path.join(root,'当前原型/dealer.html'),'utf8')
+  const dealerJs=fs.readFileSync(path.join(root,'scripts/dealer-workbench.js'),'utf8')
+  const dealerCss=fs.readFileSync(path.join(root,'assets/styles/dealer-workbench.css'),'utf8')
   for(const copy of ['登记一笔购买','消费者','购买记录','商品实例','保存后只生成购买记录，不会自动创建服务工单','未申请安装','部分申请','安装状态仅供筛选，不代表顾客已提出需求','服务工单查询'])assert.ok(dealer.includes(copy),`missing ${copy}`)
   assert.ok(!dealer.includes('主要工作 · 购买发生时'))
   assert.ok(!dealerJs.includes('商品安装码（与数量一致）'))
@@ -21,9 +21,9 @@ test('门店首页以购买登记为主任务，代客建单必须从购买记�
 })
 
 test('门店概览只使用购买登记可解释的数据及趋势',()=>{
-  const dealer=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
-  const dealerJs=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
-  const dealerCss=fs.readFileSync(path.join(root,'dealer-workbench.css'),'utf8')
+  const dealer=fs.readFileSync(path.join(root,'当前原型/dealer.html'),'utf8')
+  const dealerJs=fs.readFileSync(path.join(root,'scripts/dealer-workbench.js'),'utf8')
+  const dealerCss=fs.readFileSync(path.join(root,'assets/styles/dealer-workbench.css'),'utf8')
   for(const copy of ['今日登记商品','近 30 天销售商品','近 30 天成交客户','近 30 天购买记录','较前 30 天','近 30 日登记趋势','热销商品','新客与复购','商品数按商品实例计','客户数按购买人手机号去重','storeTrendChart','productMixChart','customerMixChart'])assert.ok(dealer.includes(copy),`missing ${copy}`)
   for(const token of ['todayProducts','productTrend','customerTrend','topProducts','customerMix','drawStoreTrend','drawProductMix','drawCustomerMix','renderProductRank','renderStoreInsight'])assert.ok(dealerJs.includes(token),`missing ${token}`)
   for(const token of ['kpi-main','kpi-meta','kpi-icon','productRankList','按登记件数排序','register-button-icon','relationship-node','relationship-connector','#i-user','#i-receipt','#i-package'])assert.ok(dealer.includes(token),`missing ${token}`)
@@ -48,7 +48,7 @@ test('门店概览只使用购买登记可解释的数据及趋势',()=>{
 })
 
 test('门店服务提交绑定购买记录和商品实例，工单只读查看',()=>{
-  const dealer=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
+  const dealer=fs.readFileSync(path.join(root,'scripts/dealer-workbench.js'),'utf8')
   for(const token of ['recordId: record.id','instanceId: instance.id','name="type"','name="instanceId"','data-create-service','activeOrderForInstance','openRecord','openService(id)','openOrder','submitRegistration','submitService','PENDING_DISPATCH','代消费者办理 · 来自购买记录'])assert.ok(dealer.includes(token),`missing ${token}`)
   assert.match(dealer,/type === 'INSTALLATION' && instance\.status !== 'AVAILABLE'/)
   assert.match(dealer,/code: `TOTO-\$\{instanceId\}`/)
@@ -56,8 +56,8 @@ test('门店服务提交绑定购买记录和商品实例，工单只读查看',
 })
 
 test('门店原型字段与当前购买登记、建单和工单查询契约一致',()=>{
-  const html=fs.readFileSync(path.join(root,'dealer.html'),'utf8')
-  const dealer=fs.readFileSync(path.join(root,'dealer-workbench.js'),'utf8')
+  const html=fs.readFileSync(path.join(root,'当前原型/dealer.html'),'utf8')
+  const dealer=fs.readFileSync(path.join(root,'scripts/dealer-workbench.js'),'utf8')
   for(const token of ['id="searchType"','value="mobile"','value="name"','服务工单查询'])assert.ok(html.includes(token),`missing ${token}`)
   for(const token of ['PENDING_DISPATCH','PENDING_ASSIGNMENT','PENDING_COMPLETION','name="storeId"','name="sourceType"','name="quantity"','name="contactName"','name="expectedTimeWindow"','name="faultId"','name="problemDescription"','name="province"','name="district"','clientRequestId'])assert.ok(dealer.includes(token),`missing ${token}`)
   assert.match(html,/当前账号授权门店/)

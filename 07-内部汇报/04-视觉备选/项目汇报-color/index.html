@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="蓝鲸数字售后服务 · TOTO 内部汇报，浅色彩色设计版。">
+  <title>蓝鲸数字 · TOTO 内部汇报</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="foundation.css?v=ece7c5dbf0">
+  <link rel="stylesheet" href="color.css?v=ff8fbb09bd">
+  <script src="content.js?v=64f817b4ea" defer></script>
+  <script src="presentation.js?v=c37f0713ad" defer></script>
+</head>
+<body>
+  <div id="viewport">
+    <div id="canvas">
+      <header class="topbar">
+        <a class="brand" href="#cover" aria-label="蓝鲸数字售后服务 · TOTO 内部汇报"><img src="brand-logo.png" alt="" width="30" height="30"><strong>蓝鲸数字</strong><span></span>售后服务</a>
+        <span class="project-label">TOTO</span>
+      </header>
+      <main id="stage" tabindex="-1" aria-label="蓝鲸数字售后服务项目内部汇报"></main>
+      <footer><span id="chapter-label"></span><span id="counter" aria-label="页码"></span></footer>
+    </div>
+  </div>
+  <nav class="controls" aria-label="演示工具">
+    <button id="previous" aria-label="上一页" title="上一页（←）">←</button>
+    <button id="contents" title="目录（M）">目录</button>
+    <button id="notes-toggle" aria-pressed="false" aria-controls="notes" title="讲解备注（N）">备注</button>
+    <button id="motion-toggle" aria-pressed="false" title="暂停动画（P）">暂停</button>
+    <button id="fullscreen" title="全屏（F）">全屏</button>
+    <button id="next" aria-label="下一页" title="下一页（→）">→</button>
+  </nav>
+  <dialog id="directory" aria-labelledby="directory-title">
+    <header class="dialog-head"><div><p>CONTENTS</p><h2 id="directory-title">内容目录</h2></div><button id="directory-close" aria-label="关闭目录">关闭</button></header>
+    <nav id="directory-list" aria-label="选择展示页面"></nav>
+    <div class="directory-demo"><a href="../../../06-项目交付/02-角色手册/index.html" target="_blank" rel="noopener">角色手册目录 ↗</a><a href="../../../06-项目交付/03-项目说明/index.html" target="_blank" rel="noopener">项目说明阅读版 ↗</a><a href="../../../06-项目交付/04-交付材料/index.html" target="_blank" rel="noopener">交付清单 ↗</a><a href="../../03-演示专题/业务流程/index.html?from=color" target="_blank" rel="noopener">业务流程地图 ↗</a><a href="../../../06-项目交付/03-项目说明/网页演示/工单流转/index.html" target="_blank" rel="noopener">独立工单协同演示 ↗</a></div>
+  </dialog>
+  <aside id="notes" hidden aria-label="内部讲解备注"><header class="dialog-head"><strong>讲解备注 · 仅内部准备</strong><button id="notes-close">关闭</button></header><h2 id="notes-title"></h2><p id="notes-body"></p><small>方向键 / 空格：翻页 · M：目录 · N：备注 · F：全屏 · P：暂停动画 · R：重播本页</small></aside>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+  <noscript>请启用 JavaScript 查看项目汇报。</noscript>
+</body>
+</html>

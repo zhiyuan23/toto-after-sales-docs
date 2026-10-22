@@ -4,9 +4,9 @@ const path=require('node:path')
 const test=require('node:test')
 const assert=require('node:assert/strict')
 const root=path.resolve(__dirname,'..')
-const html=fs.readFileSync(path.join(root,'parts-management.html'),'utf8')
-const js=fs.readFileSync(path.join(root,'parts-management.js'),'utf8')
-const css=fs.readFileSync(path.join(root,'parts-management.css'),'utf8')
+const html=fs.readFileSync(path.join(root,'当前原型/parts-management.html'),'utf8')
+const js=fs.readFileSync(path.join(root,'scripts/parts-management.js'),'utf8')
+const css=fs.readFileSync(path.join(root,'assets/styles/parts-management.css'),'utf8')
 
 test('配件专业页具有固定入口和独立资源',()=>{
   assert.match(html,/id="partsApp"/)

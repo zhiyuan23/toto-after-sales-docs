@@ -1,8 +1,8 @@
 # <功能名称> Spec
 
-> 复制为 `YYYY-MM-DD-功能名.md` 后填写。按实际风险删减不适用项并注明原因，不为填模板虚构角色、接口或数据。本文是模板，不是业务授权。
+> 先检索已有 Spec；同一功能优先更新原文件。新 Spec 按主要业务归属放入已登记的分类，文件名为 `YYYY-MM-DD-功能名.md`，禁止放在 `specs/` 根目录。按实际风险删减不适用项并注明原因，不为填模板虚构角色、接口或数据。本文是模板，不是业务授权。
 
-复制后执行 `node scripts/prepare-wiki-page.mjs specs/YYYY-MM-DD-功能名.md` 添加独立的 Schema v2 身份，补齐真实来源；更新说明必须位于 YAML 文件头结束之后。提交前运行 `node scripts/validate-knowledge-base.mjs --kb-root .`。知识页的 `active` 不表示本 Spec 已经业务确认或验收。
+创建示例：`node scripts/create-spec.mjs --category 03 --name 服务工单示例`，生成到 `specs/03-服务工单与调度/YYYY-MM-DD-服务工单示例.md` 并添加独立的 Schema v2 身份。手动复制时必须使用同样的分类路径，再执行 `node scripts/prepare-wiki-page.mjs <分类内文件路径>`；分类与归属说明见 [Spec 生成规则](README.md#spec-generation)。不要复制既有文件的稳定 ID，移动既有文件则必须保留其 ID。补齐真实来源；更新说明必须位于 YAML 文件头结束之后。提交前运行 `node scripts/validate-knowledge-base.mjs --kb-root .`。知识页的 `active` 不表示本 Spec 已经业务确认或验收。
 
 - 状态：草稿 / 待确认 / 已确认 / 开发中 / 待验收 / 已验收 / 暂缓（选择一项）
 - 日期、版本：待填写
@@ -15,7 +15,7 @@
 - 关联材料：原型、既有契约、依赖功能（按需）
 - 研发任务：MNU-xx（入口骨架）或 FS-xxx（业务切片）
 
-`Axx` 与 `Dxx` 均属于同一个 Web 管理后台，只代表历史入口编号；门店业务通过角色视角区分，不单独写成应用端。本 Spec 保留实现与验收明细，完成后回写对应应用入口明细和 `03-开发管理/00-开发进度与下一步.md`，不另建菜单或切片进度表。
+`Axx` 与 `Dxx` 均属于同一个 Web 管理后台，只代表历史入口编号；门店业务通过角色视角区分，不单独写成应用端。本 Spec 保留实现与验收明细，完成后回写对应应用入口明细和 `03-开发管理/05-开发进度/00-开发进度与下一步.md`，不另建菜单或切片进度表。
 
 ## 1. 目标与范围
 

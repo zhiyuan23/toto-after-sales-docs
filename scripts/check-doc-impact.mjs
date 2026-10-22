@@ -170,8 +170,8 @@ export function foundationSyncReminder(repositoryChanges, documentationFiles = [
   const code = repositoryChanges.filter(({ repository }) => repository.id === 'gaia-ui')
     .flatMap(({ files, foundationFiles = files }) => foundationFiles.filter(file => matchesAny(file, patterns)))
   const docs = documentationFiles.filter(file => matchesAny(file, [
-    '02-技术设计/05-gaia-ui售后服务UI样式规范.md',
-    '02-技术设计/17-Web基础组件来源与升级维护.md',
+    '02-技术设计/02-开发规范/02-WebUI与前端复用规范.md',
+    '02-技术设计/02-开发规范/05-Web组件来源与升级维护.md',
   ]))
   if (!code.length && !docs.length) return ''
   return `底座同步提醒（非阻断）：检测到 ${code.length} 个通用候选代码路径、${docs.length} 个底座说明路径。\n`

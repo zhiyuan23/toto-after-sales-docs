@@ -5,7 +5,7 @@ const vm=require('node:vm');
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const CHEN='WX202609130018',SUN='AZ202609100002',HUANG='WX202609120009',ZHAO='AZ202609110006';
-function fixture(transform=s=>s){const window={};const src=readFileSync(resolve(__dirname,'../worker.js'),'utf8');vm.runInNewContext(transform(src),{window});return {w:window.TOTO_WORKER,page:id=>window.TOTO_SCREENS.worker.screens.find(p=>p.id===id)};}
+function fixture(transform=s=>s){const window={};const src=readFileSync(resolve(__dirname,'../scripts/worker.js'),'utf8');vm.runInNewContext(transform(src),{window});return {w:window.TOTO_WORKER,page:id=>window.TOTO_SCREENS.worker.screens.find(p=>p.id===id)};}
 test('unpublished, unassigned and unreleased-status tasks are excluded from the task list and deep links',()=>{
   for(const extra of ["published:false,","assignedTo:null,","assignedTo:'another-worker',","queue:'publish',"]){
     const {w,page}=fixture(src=>src.replace("name:'陈女士',type:'维修',queue:'pending',", "name:'陈女士',type:'维修',queue:'pending',"+extra));
@@ -132,7 +132,7 @@ test('worker mine follows the consumer account-hub structure without duplicating
 test('root-tab navigation switches to a compact white title after content scrolls',()=>{
   const {page}=fixture();
   for(const [id,title] of [['w-tasks','任务'],['w-parts','配件']])assert.match(page(id).rootNav(),new RegExp(`w-root-nav-compact-title">${title}`));
-  const app=readFileSync(resolve(__dirname,'../app.js'),'utf8'),css=readFileSync(resolve(__dirname,'../worker.css'),'utf8');
+  const app=readFileSync(resolve(__dirname,'../scripts/app.js'),'utf8'),css=readFileSync(resolve(__dirname,'../assets/styles/worker.css'),'utf8');
   assert.match(app,/phone-body'\)\.scrollTop>16/);assert.match(app,/addEventListener\('scroll',syncWorkerRootNavigation/);
   assert.match(css,/worker-nav-compact\[data-nav="root"\][\s\S]*background:#fff[\s\S]*left:50%[\s\S]*translateX\(-50%\)[\s\S]*w-root-nav-compact-title/);
 });

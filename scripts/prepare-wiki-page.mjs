@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseFrontmatter, listMarkdownFiles } from './knowledge-base-core.mjs';
+import { readSpecLayout, specPathError } from './spec-layout.mjs';
 
 export const PROJECT_ID = 'kb:project:toto-after-sales-docs';
 
@@ -35,6 +36,9 @@ export function pageMetadata(relativePath, { date, created = date, sources } = {
 }
 
 export function prepareWikiPage(root, relativePath, date) {
+  relativePath = path.relative(path.resolve(root), path.resolve(root, relativePath)).split(path.sep).join('/');
+  const layoutError = specPathError(relativePath, readSpecLayout(root));
+  if (layoutError) throw new Error(`${layoutError}：Spec 必须归入已登记业务分类，不能在 specs 根目录创建功能文档。`);
   const absolute = path.resolve(root, relativePath);
   if (!listMarkdownFiles(root).includes(absolute)) throw new Error('目标不在正式知识范围内');
   const content = readFileSync(absolute, 'utf8');

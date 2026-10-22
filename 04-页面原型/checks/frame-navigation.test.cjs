@@ -66,7 +66,7 @@ test('本地文件内的共享下拉在捕获阶段转发两端点击，不在if
   const documentListeners={},messages=[]
   const parent={postMessage(data,origin){messages.push({data,origin})}}
   const window={parent,addEventListener(){}}
-  const location=new URL('file:///prototype/后台系统/headquarters-map.html')
+  const location=new URL('file:///prototype/后台系统/当前原型/headquarters-map.html')
   const document={currentScript:{src:'file:///prototype/prototype-catalog.js'},body:{classList:{contains(){return false}}},querySelector(){return null},addEventListener(type,fn,options){if(options===true)documentListeners[type]=fn}}
   const context={URL,window,document,location}
   vm.runInNewContext(catalogSource,context)
@@ -94,7 +94,7 @@ test('子页按钮直接跳转到专业页后，同步新入口并退役旧缓�
 test('小程序 replaceState 选页事件同步当前页，无须触发 hashchange',()=>{
   const handlers={},messages=[]
   const window={parent:{postMessage(data){messages.push(data)}},addEventListener(){}}
-  const location=new URL('file:///prototype/小程序/index.html?consumerVersion=0.13#w-tasks')
+  const location=new URL('file:///prototype/小程序/当前原型/index.html?consumerVersion=0.13#w-tasks')
   const document={currentScript:{src:'file:///prototype/prototype-catalog.js'},body:{classList:{contains(){return false}}},querySelector(){return null},addEventListener(type,fn){handlers[type]=fn}}
   const context={URL,window,document,location}
   vm.runInNewContext(catalogSource,context)
@@ -118,7 +118,7 @@ test('本地文件消息支持 file:// 序列化，同时仍拒绝非已装载�
 test('原生顶层链接不被点击处理取消，切换不依赖消息投递',()=>{
   const handlers={},messages=[]
   const window={parent:{postMessage(data){messages.push(data)}},addEventListener(){}}
-  const location=new URL('file:///prototype/后台系统/headquarters-map.html')
+  const location=new URL('file:///prototype/后台系统/当前原型/headquarters-map.html')
   const document={currentScript:{src:'file:///prototype/prototype-catalog.js'},body:{classList:{contains(){return false}}},querySelector(){return null},addEventListener(type,fn,capture){if(capture===true)handlers[type]=fn}}
   const context={URL,window,document,location}
   vm.runInNewContext(catalogSource,context)

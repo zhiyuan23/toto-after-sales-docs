@@ -4,7 +4,7 @@ const {resolve}=require('node:path');
 const vm=require('node:vm');
 const test=require('node:test');
 const assert=require('node:assert/strict');
-function fixture(){const window={};vm.runInNewContext(readFileSync(resolve(__dirname,'../worker.js'),'utf8'),{window});return window.TOTO_WORKER;}
+function fixture(){const window={};vm.runInNewContext(readFileSync(resolve(__dirname,'../scripts/worker.js'),'utf8'),{window});return window.TOTO_WORKER;}
 const current=w=>w.snapshot().tasks.find(t=>t.id===w.snapshot().taskId);
 const req=(w,extra={})=>w.submitAction('requisition',{workOrder:w.snapshot().taskId,note:'维修领料',...extra});
 const photo=(w,k)=>{w.simulate('upload-fail');w.actAction('media',k);assert.equal(current(w).media[k],'failed');w.actAction('media',k);assert.equal(current(w).media[k],'ready');};

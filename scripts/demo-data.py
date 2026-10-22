@@ -541,7 +541,7 @@ def credentials():
     account = os.environ.get('TOTO_DEMO_ACCOUNT', 'afs_admin')
     password = os.environ.get('TOTO_DEMO_PASSWORD')
     if not password:
-        manual = ROOT / '06-项目交付/01-业务指南/售后数据权限测试账号手册.md'
+        manual = ROOT / '03-开发管理/04-测试与验收/测试协作资料/售后数据权限测试账号手册.md'
         match = re.search(r'统一密码：`([^`]+)`', manual.read_text())
         require(match, '请设置 TOTO_DEMO_PASSWORD 环境变量')
         password = match.group(1)

@@ -44,7 +44,7 @@ sensitivity: "internal"
 
 ## 截图
 
-服务人员旧版线框、版本截图、日程与地图示意素材已于 2026-09-18 删除，避免被误作当前开发基线。当前服务人员端只允许参考 [唯一有效原型入口](../index.html?consumerVersion=0.13#w-tasks) 及其实际加载的 `worker.js` / `worker.css`。
+服务人员旧版线框、版本截图、日程与地图示意素材已于 2026-09-18 删除，避免被误作当前开发基线。当前服务人员端只允许参考 [唯一有效原型入口](../当前原型/index.html?consumerVersion=0.13#w-tasks) 及其实际加载的 `worker.js` / `worker.css`。
 
 `icons/calendar.svg` 继续用于首页“今日预约”筛选按钮；图形来自 Lucide `calendar-days`，使用 ISC 许可，来源与许可见 [Lucide](https://github.com/lucide-icons/lucide/blob/main/LICENSE)。
 

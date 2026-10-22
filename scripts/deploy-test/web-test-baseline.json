@@ -1,5 +1,5 @@
 {
-  "source": "2026-10-13 Web历史测试失败逐项修复：原36项逐项核对；导航12项沿用e1c89463当前契约并补Logo／异步拒绝／失败重试，剩余24项修复测试适配或功能。全量0失败，历史例外集合清零；任一新增失败仍禁止发布。详见specs/2026-10-13-Web历史测试失败逐项修复.md",
+  "source": "2026-10-13 Web历史测试失败逐项修复：原36项逐项核对；导航12项沿用e1c89463当前契约并补Logo／异步拒绝／失败重试，剩余24项修复测试适配或功能。全量0失败，历史例外集合清零；任一新增失败仍禁止发布。详见specs/06-测试验证与数据操作/2026-10-13-Web历史测试失败逐项修复.md",
   "failures": [],
   "resolvedFailures": [
     "customer-service dispatch keeps station assignment while station page is wired for personnel assignment",

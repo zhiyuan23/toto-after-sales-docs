@@ -50,18 +50,18 @@ function fixture({ search = '?consumerVersion=0.15', hash = '#c-home' } = {}) {
     setTimeout: () => 1, clearTimeout() {},
     window: { addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  const index = readFileSync(resolve(root, 'index.html'), 'utf8');
+  const index = readFileSync(resolve(root, '当前原型/index.html'), 'utf8');
   const bootstrap = index.match(/<script>\s*([\s\S]*?)<\/script>/);
   assert.ok(bootstrap, 'index exposes its version bootstrap');
   vm.runInContext(bootstrap[1], context, { filename: 'index.html:bootstrap' });
   // Shared perspective navigation has its own frame/DOM fixture; this VM exercises the phone controller.
-  const scripts = [...index.matchAll(/<script\b[^>]*\bsrc="([^"?]+)(?:\?[^"<>]*)?"[^>]*><\/script>/g)].map(match => match[1]).filter(file => !file.startsWith('../'));
-  assert.equal(scripts.at(-1), 'app.js', 'controller runs after its screen adapters');
+  const scripts = [...index.matchAll(/<script\b[^>]*\bsrc="([^"?]+)(?:\?[^"<>]*)?"[^>]*><\/script>/g)].map(match => match[1]).filter(file => file.startsWith('../scripts/'));
+  assert.equal(scripts.at(-1), '../scripts/app.js', 'controller runs after its screen adapters');
   let originalHomeBody;
   for (const file of scripts) {
-    if (file === 'consumer-home.js') originalHomeBody = context.window.TOTO_SCREENS.consumer.screens.find(screen => screen.id === 'c-home').body;
-    let source = readFileSync(resolve(root, file), 'utf8');
-    if (file === 'app.js') {
+    if (file === '../scripts/consumer-home.js') originalHomeBody = context.window.TOTO_SCREENS.consumer.screens.find(screen => screen.id === 'c-home').body;
+    let source = readFileSync(resolve(root, '当前原型', file), 'utf8');
+    if (file === '../scripts/app.js') {
       const end = source.lastIndexOf('})();');
       assert.ok(end > 0);
       // Expose closure state in this VM copy only; no globals are added to the actual prototype.
@@ -196,8 +196,8 @@ test('v0.15 bootstraps the five layouts and keeps its selection in the current U
   assert.deepEqual(Object.keys(f.variants).sort(), [...styles].sort());
   assert.deepEqual(copy(f.designs.options.map(option => option.id)), styles);
   assert.deepEqual(buttons(f.get('#home-design-picker').innerHTML).map(button => button.dataset.homeDesign), ['showcase', 'space', 'concierge']);
-  assert.ok(f.scripts.indexOf('consumer-brand.js') < f.scripts.indexOf('consumer-home.js'));
-  assert.ok(f.scripts.indexOf('consumer-home-variants.js') < f.scripts.indexOf('consumer-home.js'));
+  assert.ok(f.scripts.indexOf('../scripts/consumer-brand.js') < f.scripts.indexOf('../scripts/consumer-home.js'));
+  assert.ok(f.scripts.indexOf('../scripts/consumer-home-variants.js') < f.scripts.indexOf('../scripts/consumer-home.js'));
   choose(f, 'showcase');
   const url = new URL(f.location.href);
   assert.equal(url.searchParams.get('consumerVersion'), '0.15');
@@ -704,13 +704,13 @@ test('v0.17 public archive matches selection and preserves owned data and catalo
 });
 
 test('v0.17 catalog uses complete local image assets while earlier catalogs retain search',()=>{
-  const data={window:{}};vm.runInNewContext(readFileSync(resolve(root,'consumer-catalog-data.js'),'utf8'),data);
+  const data={window:{}};vm.runInNewContext(readFileSync(resolve(root,'scripts/consumer-catalog-data.js'),'utf8'),data);
   const fixtureData=data.window.TOTO_CATALOG_DATA;
   assert.equal(fixtureData.categories.length,11);assert.equal(fixtureData.series.length,3);assert.equal(fixtureData.products.length,12);
   for(const p of fixtureData.products) {
     assert.ok(fixtureData.categories.some(c=>c.id===p.categoryId));
     assert.ok(!p.seriesId||fixtureData.series.some(s=>s.id===p.seriesId));
-    assert.ok(existsSync(resolve(root,p.image)));
+    assert.ok(existsSync(resolve(root,'当前原型',p.image)));
   }
   for(const version of ['0.14','0.15','0.16']) {
     const f=fixture({search:'?consumerVersion='+version,hash:'#c-brand-catalog'});

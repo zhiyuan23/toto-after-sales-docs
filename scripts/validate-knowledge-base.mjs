@@ -3,6 +3,7 @@
 import { existsSync, statSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { validateSpecLayout } from './spec-layout.mjs';
 import {
   extractResolvedLinks,
   loadKnowledgeBase,
@@ -640,7 +641,7 @@ export function validateKnowledgeBase(root, { strictWorkspaceLinks = false } = {
   const knowledgeBase = loadKnowledgeBase(root);
   const configuration = readKnowledgeConfiguration(root);
   const { records } = knowledgeBase;
-  const errors = [];
+  const errors = validateSpecLayout(root);
   const warnings = [];
   const options = { strictWorkspaceLinks, workspaceReferences: configuration.workspaceReferences };
   if (records.length === 0) addError(errors, 'empty_knowledge_scope', root);

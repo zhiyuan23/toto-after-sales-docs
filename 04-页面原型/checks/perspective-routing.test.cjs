@@ -10,16 +10,16 @@ const catalog=sandbox.window.TOTO_PROTOTYPE_CATALOG
 
 test('同一小程序路径按端和版本解析，保持人员端唯一基线',()=>{
   const resolve=value=>catalog.resolveView(new URL(value,catalog.root))
-  assert.equal(resolve('小程序/index.html?consumerVersion=0.17#c-home'),'consumer')
-  assert.equal(resolve('小程序/index.html?consumerVersion=0.13#c-mine'),'consumer-013')
-  assert.equal(resolve('小程序/index.html?consumerVersion=0.13#w-tasks'),'worker')
-  assert.equal(resolve('小程序/index.html?consumerVersion=0.13&prototypeRevision=20261019-native-header-1#w-tasks'),'worker')
-  assert.equal(resolve('小程序/index.html#c-service'),'consumer-014')
+  assert.equal(resolve('小程序/当前原型/index.html?consumerVersion=0.17#c-home'),'consumer')
+  assert.equal(resolve('小程序/当前原型/index.html?consumerVersion=0.13#c-mine'),'consumer-013')
+  assert.equal(resolve('小程序/当前原型/index.html?consumerVersion=0.13#w-tasks'),'worker')
+  assert.equal(resolve('小程序/当前原型/index.html?consumerVersion=0.13&prototypeRevision=20261019-native-header-1#w-tasks'),'worker')
+  assert.equal(resolve('小程序/当前原型/index.html#c-service'),'consumer-014')
 })
 
 test('旧总部入口只解析为最新视角，外部来源不接管',()=>{
   assert.equal(catalog.resolveView(new URL('index.html#headquarters-classic',catalog.root)),'headquarters')
-  assert.equal(catalog.resolveView(new URL('后台系统/index.html',catalog.root)),'headquarters')
+  assert.equal(catalog.resolveView(new URL('后台系统/当前原型/index.html',catalog.root)),'headquarters')
   assert.equal(catalog.resolveView(new URL('https://example.com/index.html#administrator')),undefined)
 })
 

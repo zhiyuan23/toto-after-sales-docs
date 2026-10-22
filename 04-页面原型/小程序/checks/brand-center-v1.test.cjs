@@ -30,13 +30,13 @@ function fixture({ hash = '', search = '' } = {}) {
     setTimeout: () => 1, clearTimeout() {},
     window: { TOTO_CONSUMER_VERSION:'brand-center-v1', addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  for (const file of ['consumer.js', 'worker.js', 'consumer-outlets.js', 'consumer-account.js', 'consumer-ai.js', 'brand-center-v1.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
-  const source = readFileSync(resolve(root, 'brand-center-v1-app.js'), 'utf8');
+  for (const file of ['scripts/consumer.js', 'scripts/worker.js', 'scripts/consumer-outlets.js', 'scripts/consumer-account.js', 'scripts/consumer-ai.js', 'scripts/brand-center-v1.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
+  const source = readFileSync(resolve(root, 'scripts/brand-center-v1-app.js'), 'utf8');
   // Expose closure state only in this VM copy, keeping the prototype's production global surface unchanged.
   const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,prepareAssistantRequest,current:()=>current};';
   const index = source.lastIndexOf('})();');
   assert.ok(index > 0);
-  vm.runInContext(source.slice(0, index) + hook + source.slice(index), context, { filename: 'app.js' });
+  vm.runInContext(source.slice(0, index) + hook + source.slice(index), context, { filename: 'scripts/app.js' });
   const api = context.window.testController;
   const fields = values => { get('#phone-body').fields = Object.entries(values).map(([name, value]) => ({ name, type: typeof value === 'boolean' ? 'checkbox' : 'text', value: typeof value === 'boolean' ? '' : value, checked: value === true })); };
   const click = dataset => events.get('click')({ preventDefault() {}, target: { closest: () => ({

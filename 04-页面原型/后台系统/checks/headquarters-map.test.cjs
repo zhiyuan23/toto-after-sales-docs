@@ -4,15 +4,15 @@ const test=require('node:test')
 const assert=require('node:assert/strict')
 
 const root=path.resolve(__dirname,'..')
-const html=fs.readFileSync(path.join(root,'headquarters-map.html'),'utf8')
-const css=fs.readFileSync(path.join(root,'headquarters-map.css'),'utf8')
-const js=fs.readFileSync(path.join(root,'headquarters-map.js'),'utf8')
+const html=fs.readFileSync(path.join(root,'当前原型/headquarters-map.html'),'utf8')
+const css=fs.readFileSync(path.join(root,'assets/styles/headquarters-map.css'),'utf8')
+const js=fs.readFileSync(path.join(root,'scripts/headquarters-map.js'),'utf8')
 const mapData=fs.readFileSync(path.join(root,'assets/china-data.js'),'utf8')
 
 test('总部只保留地图工作台，并接入五角色与跨应用入口',()=>{
   assert.match(html,/href="headquarters-map\.html" class="menu-item is-active"/)
   assert.match(html,/href="administrator\.html"/)
-  assert.match(html,/href="\.\.\/index\.html#headquarters"/)
+  assert.match(html,/href="\.\.\/\.\.\/index\.html#headquarters"/)
   assert.doesNotMatch(html,/运营工作台（现版）|查看现版工作台/)
 })
 

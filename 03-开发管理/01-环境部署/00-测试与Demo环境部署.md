@@ -1,0 +1,244 @@
+---
+type: "llm-wiki-operation"
+topic: "TOTO售后服务"
+status: "active"
+updated: "2026-10-22"
+owner: "shared"
+confidence: "medium"
+belongs_to:
+  - "kb:project:toto-after-sales-docs"
+sources:
+  - "2026-10-22 按用户确认重排开发管理目录并修正引用；内容与业务状态保持，稳定ID不变。"
+  - "2026-10-22 部署操作与历史记录归位，修正直接引用；路径维护不表示重新部署或业务验收。"
+  - "2026-10-22 用户要求：集中部署文档，补齐AI快速更新测试环境及demo的操作说明；本次不执行部署。"
+  - "../../scripts/deploy-test.mjs"
+  - "../../scripts/deploy-test/mobile.mjs"
+  - "部署记录/2026-10-21-Demo首次部署与接口切换记录.md"
+  - "宿主 origin/dev/test 的 AGENTS.md 与 deploy/demo/README.md，及前端 origin/dev_test 的构建入口。"
+  - "2026-10-22 用户要求：合入 demo 分支文档，并将双端小程序 build／upload 默认接口切换 demo；仅本地修改与研发验证。"
+  - "2026-10-21 正式发布20261020235153-733bbdec：服务端及开发机检查通过、双端微信test 0.1.1均UPLOADED；客服／服务站SSE及提醒只读复验。"
+  - "../../specs/05-平台集成与公共能力/2026-09-29-窜货监控系统通知详细设计.md#first-batch-reminders-20261020"
+  - "../../specs/05-平台集成与公共能力/2026-10-07-客服与服务站待办SSE实时更新.md#reliability-fix-20261020"
+  - "2026-10-19 开放接口菜单及剩余修改完整提交推送和测试更新：20261019180142-7e462e40，Web后端COMPLETE、双端UPLOADED、真实菜单及日志权限核验。"
+  - "2026-10-19 新微信账号完整测试更新：20261019161913-2d34d738；Web后端COMPLETE、双端UPLOADED、两套凭证在线核验。"
+  - "2026-10-19 完整测试更新：20261019085917-1665f3c7；正式COMPLETE、两端UPLOADED及共享只读验证。"
+  - "../../specs/05-平台集成与公共能力/2026-10-17-售后角色系统管理授权范围补齐.md"
+  - "../../specs/06-测试验证与数据操作/2026-10-17-后端集成测试夹具与全量回归修复.md"
+  - "../../specs/05-平台集成与公共能力/2026-10-15-系统管理视角与全部功能入口.md"
+  - "本仓库既有文档：03-开发管理/01-环境部署/00-测试与Demo环境部署.md；格式整理不表示重新验证业务与运行事实。"
+tags:
+  - "llm-wiki"
+  - "TOTO"
+  - "03-开发管理"
+schema_version: "2"
+id: "kb:project:toto-doc-d169a6a4e0dbf56c"
+created: "2026-10-14"
+sensitivity: "internal"
+---
+
+# 测试与 Demo 环境部署
+
+本页是 TOTO **持续更新的唯一操作入口**，供 AI 和研发共同使用。先读“如何下达任务”和环境表，再只读目标环境的执行章节。实际服务器状态、当前源码及本次功能 Spec 优先于历史快照。
+
+| 要查什么 | 唯一位置 |
+| --- | --- |
+| 现在怎样更新测试／demo、怎样验证及恢复 | 本页 |
+| 测试站每次发布、失败与恢复结果 | [测试环境发布记录](部署记录/测试环境发布记录.md) |
+| demo 首次部署、迁移及小程序地址切换证据 | [Demo首次部署与接口切换记录](部署记录/2026-10-21-Demo首次部署与接口切换记录.md)；以后 demo 发布记录也集中放在此目录 |
+| 本机服务启动与联调 | [本地开发与联调](../../local-development.md) |
+
+历史 Spec 和源码仓库中的 `deploy/demo/README.md`／AGENTS 仅作为来源及仓库约束，不再要求读者拼接多份流程。环境事实变化时更新本页，执行证据写部署记录；功能规则与迁移脚本仍归对应功能 Spec。
+
+<a id="ai-entry"></a>
+
+## 如何下达任务
+
+| 用户指令 | AI 执行范围 |
+| --- | --- |
+| “更新测试环境”或未指明环境的“部署” | 测试站完整售后后端、实际聚合宿主、Web主站＋售后子站；成功后顺序上传两个微信开发版，沿用已有授权规则 |
+| “更新测试环境，仅Web／后端” | 同一测试站完整Web／后端，使用 `--web-only`，不上传小程序 |
+| “更新demo”或“更新demo前后端” | demo主站＋售后子站、售后后端及必要宿主增量；本次整理约定默认不附带小程序上传 |
+| “只更新demo前端” | 仅组合前端；默认同时包含主站与售后子站，不替换后端、不重启共享Tomcat |
+| “只更新demo后端” | 仅售后Core／API及实际需要的宿主增量，不替换前端 |
+| “检查测试环境／demo部署条件” | 只读核查目标、分支、工具、凭据可用性、现有部署及空间；不发布制品、改配置、换应用或重启 |
+| “上传两端小程序” | 只执行本页[小程序上传](#mini-program-upload)，不顺带部署服务器 |
+
+用户已指定环境及范围后直接推进必要的检查、构建、备份、更新和验证，不重复确认已知地址与目录。只在缺少可用凭据、存在无法自行核实的服务器身份变化、并发发布冲突或超出本次授权时询问。部署任务本身不自动执行Git提交、推送、共享历史改写或业务数据重导。
+
+**能力边界：** 测试站已有经使用的自动部署脚本；demo目前由AI按下文步骤执行，尚无统一的一键事务脚本。不能给出不存在的 `deploy-demo --deploy` 命令，也不能声称demo具备测试脚本的断线续查与自动回退能力。
+
+## 两套环境与凭据
+
+| 项目 | 共享测试站 | Demo |
+| --- | --- | --- |
+| 应用入口 | `http://10.1.1.53:8011/` | `https://demo.cloud-test.ljsz.xyz:1443/` |
+| 售后入口 | `http://10.1.1.53:8011/after-sales/` | `https://demo.cloud-test.ljsz.xyz:1443/after-sales/` |
+| SSH | `root@10.1.1.53:22` | `ehsure@10.1.1.56:22`，通常无需sudo |
+| Tomcat | `/yundata/saas_test/tomcat11` | `/yundata/tomcat/saas_test/gaia-web` |
+| HTTP内部端口 | 8011 | 8001；公网验收仍用上述域名 |
+| 前端 | `webapps/ROOT`、其内`after-sales` | `webapps/ROOT`、其内`after-sales` |
+| 后端 | `webapps/api.war`、`webapps/api` | `webapps/api.war`、`webapps/api` |
+| 外部售后配置 | `conf/gaia-after-sales.properties` | `conf/gaia-after-sales.properties` |
+| 业务数据 | `10.1.1.106/gaia_wh_init_wzy`，既有单租户配置1001 | 中央库`10.1.1.15/gaia_tenant`，业务库`10.1.1.15/gaia_wh_init`；demo（27）与101（28）共用该库 |
+| 源码基线 | 当前用户指定工作区源码及指纹，不因发布自动拉取或合并 | 售后、宿主`dev/test`；前端`dev_test`，先与远端及待发布功能核对 |
+| 发布方式 | 保留运行配置后的完整宿主WAR＋完整组合前端 | 保留服务器公共依赖的后端增量＋组合前端；可按明确范围独立更新 |
+
+表中为已记录事实，不代替每次只读预检。demo不能套用测试站单租户配置、数据库、主密钥或完整WAR；测试站脚本也不能通过更换IP直接改投demo。demo同一Tomcat还有`webView`、`lcdp`、`lcdp#api`，不可顺带替换这些应用。
+
+### 私密来源
+
+- 测试脚本只读取本仓库忽略文件 `.local/test-server.env`，要求0600；键为`TOTO_TEST_SSH_HOST`、`TOTO_TEST_SSH_USER`、`TOTO_TEST_HTTP_URL`、`TOTO_TEST_SSH_PASSWORD`，目标由脚本固定校验。已固定Ed25519指纹为`SHA256:32uCUmbKNWdximqXT8HzyEktQDv7WlZIKkSGxvBdGnI`；首次记录未经独立渠道核验，变化先调查，不能关闭校验。
+- demo先复用当前机器已有、经核验的SSH密钥／SSH agent与known_hosts。如使用口令，本工作区统一存入忽略文件 `.local/demo-server.env`（0600）；只供AI的安全连接工具读取，当前没有自动读取该文件的demo部署脚本。可记录`TOTO_DEMO_SSH_HOST=10.1.1.56`、`TOTO_DEMO_SSH_USER=ehsure`、`TOTO_DEMO_SSH_PORT=22`及私密认证项，不在文档填写实值。首次可信指纹须从已授权可靠渠道取得，不能自动信任`ssh-keyscan`结果。源Windows私密目录不是其他机器天然可用的凭据来源；现有密钥和私密文件均不可用时，只询问缺失的认证方式。
+- 不把环境文件当shell脚本`source`，不把口令或密钥正文放在命令参数、终端、日志、Git或客户端配置中。Maven认证使用机器既有私密settings中的`repo-ehsure`服务项；原生Windows与本机工具链按实际仓库说明选择。
+- 两端微信私钥仍分别通过各仓忽略的`.env.upload.local`指向仓库外文件，本机集中在本仓`.local/wechat-ci/`；目录0700、私钥0600。只校验可读性及AppID对应关系，不打印正文。
+
+## 共用执行规则
+
+1. 记录目标、范围和必要功能Spec；检查涉及仓库的分支、远端差异、暂存及未提交内容，保留并发修改。只更新应用不自动同步Git；用户同时要求同步时才执行对应拉取／合并流程。构建期间源码或服务器快照变化，先核实，不能继续覆盖。
+2. 核对JDK21、Maven、主站和子站各自锁定Node及包管理器、SSH／Python等工具。优先复用已安装依赖；不因全局pnpm版本不同修改工程约束。构建不启动本地联调服务，也不停止用户已有服务。
+3. 检查功能所需结构、权限和外部配置，应用发布不自动重复执行历史迁移。正常功能开发的测试库变更沿用[项目授权边界](../../AGENTS.md#测试环境部署)：先确认测试库、影响、备份／回退，再执行本功能必要迁移与回读。清库、大范围破坏性、跨功能批量修改及生产操作须另有明确授权。
+4. 在隔离的发布证据目录保存源码快照、制品和部署前摘要、检查结果及发布清单；原始日志／备份／含配置的WAR只放忽略的私密目录，权限收紧。先完成构建、传输、备份和校验，再进入切换窗口。
+5. 必要检查失败时调查处理，不删除断言、修改失败基线或把历史失败说明当作长期放行授权。主系统`common`子仓库保持其既有授权边界，不能随部署擅自修改、提交或回退。
+6. 不把数据库迁移、菜单调整、首次数据复制和应用发布混成必做的一套。测试库持续授权不自动覆盖demo的数据操作；demo只有本次功能明确需要且已有授权时才执行对应迁移／权限增量。
+
+<a id="test-update"></a>
+<a id="正式部署脚本"></a>
+
+## 测试环境：正式部署脚本
+
+从本仓根目录执行，入口为[`scripts/deploy-test.mjs`](../../scripts/deploy-test.mjs)，辅助文件在[`scripts/deploy-test/`](../../scripts/deploy-test/)。支持macOS／Linux标准跨仓工作区；Windows使用WSL或已核验的等价流程，不直接调用当前脚本。脚本需要本机Python3.9+、OpenSSH、Expect，服务器需要Python3.9+、Bash及`flock`，不会自动安装。
+
+```bash
+# 单独只读预检；--deploy本身已包含预检，发布时无需重复先check。
+node scripts/deploy-test.mjs --check
+# 完整Web／后端，成功后上传两端微信开发版本。
+node scripts/deploy-test.mjs --deploy
+# 明确只更新Web／后端。
+node scripts/deploy-test.mjs --deploy --web-only
+# 断线或本地等待中断后，把实际输出的发布编号放入TOTO_RELEASE_ID再查询。
+node scripts/deploy-test.mjs --status "$TOTO_RELEASE_ID"
+```
+
+`--check --web-only`只预检Web／后端。现有脚本没有单独前端／单独后端开关；用户只授权其中一端时，不运行完整发布模式，按已授权范围执行构建、独立备份、替换和验证，不擅自扩大范围。
+
+### 自动执行及状态含义
+
+- 快照包括售后后端、聚合宿主、Web，以及本次包含上传的两端小程序。构建售后API／Core并装配`gaia-saas-web.war`；发布阶段后端构建沿用`-DskipTests`，本次功能必要后端测试仍须在之前完成并记录，不把打包通过称为全量测试通过。
+- Web完整check必须通过；当前`web-test-baseline.json`的`failures=[]`。历史参数`--allow-known-web-failures`不再放行任何失败，日常命令不使用它。主站`productionSAAS`、子站production构建后组合为`dist/after-sales`，检查包体和入口资源再打包。
+- 远端保护五份内嵌运行配置、外部售后配置、`WW_verify_*.txt`及`.well-known`；备份并核对原WAR、展开API及ROOT，精确停止目标Tomcat、切换、启动及验证。不要运行`gaia-ui/push.sh`的上传步骤，其既有目标不属于这两套环境。
+- 本机证据：`.local/verification-artifacts/deploy-test/<编号>/`；服务端制品与状态：`/yundata/saas_test/packages/<编号>/`；备份：`/yundata/saas_test/backups/<编号>/`。本机及服务端都有发布锁，不自动清理旧备份。
+- `FAILED`表示切换前失败；`ROLLED_BACK`表示切换后已恢复旧应用并恢复健康；`NEEDS_ATTENTION`表示停止／恢复／健康尚未可靠完成，需按同编号核查。服务端事务脱离SSH运行，断线先`--status`，不要重新发布。
+- `COMPLETE`只表示服务端Web／后端校验通过。脚本随后在开发机回读入口资源摘要、公开业务码及匿名拒绝，再逐端上传小程序；本地HTTP验证或单端上传失败必须分别报告，不回退已成功的Web，也不自动重传回执不明的小程序。
+- **2026-10-22起，小程序上传辅助入口固定连接demo HTTPS及API租户`demo`，Web／后端仍发布到`10.1.1.53`。** 这是当前实际配置，不能再描述为小程序连接本次测试站。完整测试更新授权仍包括两次开发版上传；用户明确不上传时使用`--web-only`。
+
+<a id="demo-update"></a>
+
+## Demo：AI持续更新流程
+
+以下是AI直接执行的操作流程，不要求先重读首次部署记录。默认前后端更新；单独前端／后端任务只执行对应步骤及共用验证。新一轮必须重新取服务器现状，不能复用10月21日的文件清单、PID或备份。
+
+### 1. 只读预检与源码准备
+
+- 使用环境表中的SSH目标，保持`StrictHostKeyChecking=yes`，通过已核验身份确认主机、`catalina.base`、Java21、Tomcat11、内部8001、主／子站及`api.war`确属demo。只记录必要进程信息，不能将含秘密的完整命令行／配置输出到普通日志。
+- 核对本实例目标JVM、Tomcat其他上下文、磁盘及备份空间、应用目录和相关配置摘要；确认没有同事正在切换。健康访问以指定demo域名为准，IP入口可能落到不同租户。首次就不健康时先定位原因，不把部署当作无条件修复。
+- 从当前工作区或隔离检出取得售后`dev/test`、宿主`dev/test`和Web`dev_test`的待发布快照，核对远端变化及用户指定功能提交。功能只在开发分支时，先核实差异并在合适隔离工作区集成所需内容，保留demo原有公共模块、认证、多租户、多语言及common引用；不把功能分支整个WAR或前端旧包直接覆盖到demo。部署不自动commit／push这些集成结果。
+- 本机证据目录统一为`.local/verification-artifacts/deploy-demo/<上海时间编号>/`；记录源分支、commit、工作区指纹及待发布范围。此目录可放本次私密清单和脚本，但不能把它作为团队唯一部署规则。
+
+### 2. 构建完整组合前端（只更新后端时跳过）
+
+在本次选定的`frontend/gaia-ui`源码根目录，使用仓库锁定的工具链执行：
+
+```bash
+# 主站+售后子站的既有聚合生产构建；内部处理各自Node及目录组合。
+yarn production:saas
+# 显式复核两个入口及子站资源引用。
+yarn verify:dist
+```
+
+构建前在`apps/after-sales`运行其锁定工具链下的`corepack pnpm --ignore-workspace run check`；构建后运行该子站`node scripts/check-bundle-size.mjs`。聚合入口等价于主站`productionSAAS`和售后production；最终交付是根`dist`及其`after-sales`子目录。主站必要检查按本次变化执行；历史记录中的6项旧失败不是本次自动豁免。
+
+核对部署用环境仍走demo同域相对API，不能写入本机8080、旧测试站地址或私密凭证。只更新售后前端也先核对主／子站兼容；用户明确只替换子目录时才缩小到`ROOT/after-sales`。
+
+### 3. 构建后端及核对增量（只更新前端时跳过）
+
+售后制品使用**未发布过的唯一F版本**，例如`F3.0-demo-<上海日期>.<递增号>`；不能覆盖已发布的`F3.0-demo-20261021.1`。AI将所选版本放入非敏感变量`TOTO_DEMO_VERSION`，本轮证据目录放入`TOTO_DEPLOY_EVIDENCE`。先检查远端仓库可用性和实际Maven插件版本，再执行以下示例；不修改全局settings或泄露认证。
+
+```bash
+# 先确认AI已为本轮设置唯一版本及私密证据目录，空值直接停止。
+: "${TOTO_DEMO_VERSION:?必须设置尚未发布的F版本}"
+: "${TOTO_DEPLOY_EVIDENCE:?必须设置本轮证据目录}"
+# 在本次售后dev/test源码根目录：先跑Reactor测试。
+mvn -B -pl gaia-after-sales-api -am clean verify -Drevision="$TOTO_DEMO_VERSION"
+# 上一步通过后发布同一批父POM/Core/API及既有sources配置。
+mvn -B -pl gaia-after-sales-api -am source:jar-no-fork deploy -Drevision="$TOTO_DEMO_VERSION" -DskipTests
+# 用空本地仓库验证父POM及全部传递依赖，避免仅依赖本机缓存。
+mvn -B -U -Dmaven.repo.local="$TOTO_DEPLOY_EVIDENCE/maven-clean" dependency:get -Dartifact="com.ehsure.gaia:gaia-after-sales-api:$TOTO_DEMO_VERSION" -Dtransitive=true
+# 转到本次宿主dev/test源码根目录，用同一售后版本构建实际WAR。
+mvn -B -pl gaia-saas-web -am package -Dgaia.afterSales.version="$TOTO_DEMO_VERSION" -DskipTests
+```
+
+执行前先确认两个变量非空、F版本不存在、证据目录位于本次忽略的私密目录；变量仅为本轮输入，并非已有自动版本选择器。Maven仓库为既有`repo-ehsure`；优先使用POM的`distributionManagement`，只有地址确需覆盖时才按当前deploy插件语法使用参数。宿主打包跳过测试不代替本次Shiro／MVC／装配变更的必要测试。
+
+若本次只改宿主且售后未变，可沿用已核验的F制品，不重复发布。对比当前服务器和新WAR的类／JAR摘要：
+
+- 默认替换售后Core／API；按实际变化增补`ShiroConfig.class`、`WebConfig.class`等宿主装配文件。首次“六文件”只是历史清单，不能机械套用。
+- 服务器公共JAR逐项保留，特别是同事更新的DMS、MD、SYS、tenant-i18n。新售后制品如果依赖公共包的新API，先证明现有包兼容；确需更新时列明最小公共包范围及回归，不以完整WAR的依赖集合覆盖。
+- 外部配置保留实际Prod、多租户、中央库、Redis、MinIO、密文主密钥、微信及第三方凭据；`gaia.after-sales.scheduling.enabled=false`保持，除非另有明确变更授权。只在本次配置导入或日志装配确有差异时做最小补丁。
+- 以**部署前最新服务器WAR／展开应用**为基础形成候选包；若WAR与展开目录已不一致，先核实实际加载内容并保留现有改动，不能用旧WAR覆盖展开应用。按本次精确清单合入变更，同时让`api.war`与`webapps/api`最终内容一致。重封装排除`META-INF/war-tracker`，保留其余原资源；不复制测试站配置到demo。
+
+### 4. 传输、备份及切换
+
+- 服务器本次暂存目录建议`<Tomcat>/deploy-staging/<编号>/`，备份在`<Tomcat>/deploy-backup/<编号>/`；均为本实例所属、不可复用旧编号。制品和含配置备份仅部署用户可读。上传后先逐项SHA-256校验，不通过不替换。
+- 保存当前ROOT；后端范围还保存当前`api.war`、展开`api`和有关`conf`。记录目标文件、权限、原值摘要、候选摘要及恢复方法；保留ROOT下的`WW_verify_*.txt`、`.well-known`及经核实不属于构建产物的现有文件。不要无条件删除服务器ROOT再上传。
+- 在切换前再次比较预检快照和当前进程／文件；变化意味着可能存在并发发布，先协调并重新生成候选包与备份，不能沿用旧WAR覆盖同事更新。构建和传输尽量在停服之前完成。
+- **仅前端：** 在同一文件系统准备新ROOT并保留原ROOT，协调一次受控目录切换；保留上一版hash静态资源直到发布验证和已有页面过渡完成，避免旧浏览器懒加载404。核对Tomcat对ROOT变更的实际行为；不因前端发布默认重启整个Tomcat，不替换API或conf。若当前运行方式必须停服，先说明影响再按已有授权范围执行。
+- **含后端：** 需要重启此Tomcat，影响同实例其他上下文；切换前说明预计窗口并核对没有并发更新。按精确`catalina.base`识别唯一JVM，优雅SIGTERM并等待退出，不按所有Java进程批量停止。现有shutdown脚本可能因JMX9998冲突失败，不叠加执行startup；旧进程未退出则停止切换。
+- 旧进程退出后安装已校验候选WAR／展开内容和必要配置补丁，保持既有所有者与权限，再运行本实例`bin/startup.sh`。启动子进程不得继承发布锁；若AI生成本次执行脚本，应记录切换前后阶段和退出码，断线不能造成无人确认的半成品。
+- 首次完整启动约5分钟，仅作等待参考；依据**本次启动日志**和实际接口判断全部上下文已恢复，不能以端口监听或启动命令退出码代替。过程504只记录为过程现象，最终恢复后再验收。
+
+### 5. demo发布验证
+
+1. 在指定域名核对`/`和`/after-sales/`，回读本次两个入口引用的JS／CSS，比较本次制品摘要；确认API配置没有落到本机或旧测试站。服务器内端口检查只作为辅助。
+2. Web使用其实际主系统`/api/api/...`路径；售后对外`/api/afterSales/...`由宿主适配，不因本地context不同批量改路由。移动端使用根基址加相对业务路径、`x-tenant: demo`；旧TOTO租户头曾返回404，不把两者混用。
+3. 匿名读取`/api/afterSales/mobile/consumer/support-channels`应返回业务码0；匿名消费者商品接口应拒绝且无受保护数据。人员context的422不能证明登录成功。公开接口、静态哈希和TLS通过仍不代表真实登录后功能通过。
+4. 使用本次已有授权且可用的demo账号真实登录，核对原主系统菜单、售后管理员／总部工作台、客服入口及商品／分类代表性只读接口；只更新某端时覆盖该端及必要兼容路径。账号密码不进入记录；账号不可用时明确“应用已发布，登录后验证未完成”，不能编造验收。
+5. 普通账号缺少`sys_module_list`时下载场景管理403可能属于既有权限边界，不为验证扩大授权。客服SSE降级轮询是既有待查项，按本次是否涉及实时链路记录，不因这条提示直接重启。
+
+### 6. demo失败与恢复
+
+- 切换前失败：保留原应用，不停止服务；记录失败步骤和未发布状态。Maven制品已发布但应用未切换时分别报告，不覆写该F版本。
+- 切换后失败：先核对本次发布编号、目标JVM及是否有后续同事修改。前端只恢复本次ROOT／对应子目录；后端先精确停止本实例，再恢复本次最新应用及本次改动的配置，启动并执行同样验证；不动业务数据库、其他上下文或无关公共更新。
+- 有后续写入／并发发布时，不能直接整包恢复旧WAR；先比较并保留后续变化，只恢复本次改动。首次数据迁移和附件映射不随应用回滚重复导入或删除。
+- SSH断开、命令响应丢失或本地取消后，先查远端本次目录、制品摘要、JVM及日志，判定未切换／已切换／已恢复／待人工处理；不宣称存在demo脚本的自动`--status`，也不直接重新部署。无法证明健康恢复时如实报告待处理状态与备份位置。
+
+<a id="mini-program-upload"></a>
+
+## 两端小程序上传
+
+当前两仓TOTO profile和项目上传辅助入口的API根地址均为`https://demo.cloud-test.ljsz.xyz:1443`，API租户请求编码为`demo`；TOTO品牌／构建标识、消费者AppID`wx89fe2581ccada529`及人员AppID`wx262113345e1e6d72`保持。`pnpm dev`／`dev:h5`继续使用本机共享后端。`test`是客户端构建环境名，不代表它现在连接原HTTP测试服务器。
+
+上述接口切换目前是本工作区已验证、尚待单独提交的源码配置；本次文档整理提交不包含小程序配置或上传辅助脚本的行为修改。其他检出目录不能仅凭本文认定切换已生效，执行前须核对两仓 profile、`scripts/deploy-test/mobile.mjs` 与实际 `tenant-build.json`，发现仍为旧测试站时先报告差异，不按 demo 已生效继续上传。
+
+两仓分别使用各自锁定pnpm，在各仓运行；不要并发构建同一仓的同一平台产物：
+
+```bash
+pnpm check
+pnpm build
+# build只生成TOTO/test微信产物，不上传。
+pnpm upload --desc "本次更新说明"
+```
+
+`.env.upload.local`应有`GAIA_APP_ENV=test`和对应私钥路径。`pnpm upload`会重新构建并校验AppID、环境、非示例及路由模块，上传微信**开发版本**；版本默认取各端正式台账的下一patch，不改正式台账。显式`GAIA_API_BASE_URL`仍可覆盖手工构建／上传，项目测试部署辅助入口则强制demo，操作前核对实际环境和`tenant-build.json`，不因口头“test”省略这一步。
+
+上传有明确成功回执再标记成功；回执不明先核对微信平台，不自动重试。两端分别报告，单端成功不重复上传。小程序不会随配置文档修改自动上传；demo部署默认不包含此步骤，测试完整部署仍按既有范围包含。合法域名、HTTPS证书、1443端口、真实微信登录和真机业务独立验证，不自动指定体验版、提交审核或正式发布。
+
+## 发布记录与完成判定
+
+- 每次执行在`部署记录/`追加简短记录：北京时间、授权范围、目标与租户、源码commit及工作区指纹、制品摘要、配置保护、备份路径、发布状态、开发机验证、真实登录与未验项；小程序逐端列AppID／版本／环境／API目标及回执状态。不要另建平行进度台账。
+- 测试站追加到[测试环境发布记录](部署记录/测试环境发布记录.md)；demo按日期在同目录建立新记录并由本页登记链接。首次迁移与2026-10-22接口切换仍保留在[首次记录](部署记录/2026-10-21-Demo首次部署与接口切换记录.md)。
+- 功能Spec只补功能相关验证及部署记录链接，三个应用进度只汇总结论；README和AGENTS只指向本页。源码仓库可以保留必要构建说明，环境发布操作以本页为准，环境凭据不复制。
+- 服务器发布、登录后研发验证、微信上传及最终业务验收分别报告。未实际执行的流程只能标为文档／本地验证完成，不能写成已部署、已恢复或已验收。
+
+## 本页整理验证（2026-10-22）
+
+本次统一操作入口和历史记录，并明确测试脚本与demo的AI执行方式；不创建Skill或伪装成可一键发布的demo命令。严格工作区文档校验257份通过，0错误／警告；133处部署引用及章节、4段shell代码块语法检查通过；11份交付HTML已重生成、190处本地链接通过。现有部署脚本13项Node及9项Python回归通过，帮助输出明确测试Web／后端与demo小程序目标，`git diff --check`通过。以上是文档、链接和隔离脚本验证；未连接服务器、构建发布制品、发布Maven、部署或上传微信。

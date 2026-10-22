@@ -30,13 +30,13 @@ function fixture({ hash = '', search = '' } = {}) {
     setTimeout: () => 1, clearTimeout() {},
     window: { addEventListener: (type, fn) => windowEvents.set(type, fn) },
   });
-  for (const file of ['consumer.js', 'worker.js', 'consumer-outlets.js', 'consumer-account.js', 'consumer-ai.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
-  const source = readFileSync(resolve(root, 'app.js'), 'utf8');
+  for (const file of ['scripts/consumer.js', 'scripts/worker.js', 'scripts/consumer-outlets.js', 'scripts/consumer-account.js', 'scripts/consumer-ai.js']) vm.runInContext(readFileSync(resolve(root, file), 'utf8'), context, { filename: file });
+  const source = readFileSync(resolve(root, 'scripts/app.js'), 'utf8');
   // Expose closure state only in this VM copy, keeping the prototype's production global surface unchanged.
   const hook = 'window.testController={consumer,registrationDraft,registrationContext,completeRegistration,lookupRegistrationCode,resetConsumer,showScreen,consumerContext,renderFlows,renderAtlas,prepareAssistantRequest,current:()=>current};';
   const index = source.lastIndexOf('})();');
   assert.ok(index > 0);
-  vm.runInContext(source.slice(0, index) + hook + source.slice(index), context, { filename: 'app.js' });
+  vm.runInContext(source.slice(0, index) + hook + source.slice(index), context, { filename: 'scripts/app.js' });
   const api = context.window.testController;
   const fields = values => { get('#phone-body').fields = Object.entries(values).map(([name, value]) => ({ name, type: typeof value === 'boolean' ? 'checkbox' : 'text', value: typeof value === 'boolean' ? '' : value, checked: value === true })); };
   const click = dataset => events.get('click')({ preventDefault() {}, target: { closest: () => ({
@@ -67,12 +67,12 @@ const copy = value => JSON.parse(JSON.stringify(value));
 const personal = { userName: '虚构顾客', phone: '13800000000', useType: 'self', region: '示例省 / 示例市 / 示例区', address: '虚构地址一号', privacyConsent: true };
 
 test('v0.11 and v0.13 expose the same consumer screens and differ only by visual styles', () => {
-  const index=readFileSync(resolve(root,'index.html'),'utf8');
+  const index=readFileSync(resolve(root,'当前原型/index.html'),'utf8');
   assert.match(index,/consumerVersion=0\.13/);
   assert.match(index,/consumerVersion=0\.11/);
   assert.match(index,/consumer-v011-legacy\.css/);
   assert.doesNotMatch(index,/consumer-v012\.(?:js|css)/);
-  assert.ok(existsSync(resolve(root,'consumer-v011-legacy.css')));
+  assert.ok(existsSync(resolve(root,'assets/styles/consumer-v011-legacy.css')));
   assert.equal(fixture().apps.consumer.screens.length,32);
   assert.ok(!fixture().apps.consumer.screens.some(screen=>screen.id==='c-phone-sync'));
 });
@@ -95,7 +95,7 @@ test('profile fields are optional, update independently, and never rewrite histo
 
 test('mine page uses one compact product summary instead of repeating product cards', () => {
   const f=fixture({hash:'#c-mine'}), html=f.get('#phone-body').innerHTML;
-  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  const css=readFileSync(resolve(root,'assets/styles/consumer.css'),'utf8');
   assert.match(html,/c-my-products-summary/);
   assert.match(html,/3 件产品/);
   assert.doesNotMatch(html,/当前：|智能坐便器 · CES8G820GCN|我的服务/);
@@ -111,7 +111,7 @@ test('mine page uses one compact product summary instead of repeating product ca
 });
 
 test('account and registration cards share one spacing rhythm', () => {
-  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  const css=readFileSync(resolve(root,'assets/styles/consumer.css'),'utf8');
   assert.match(css,/--c-card-gap: 12px;/);
   assert.match(css,/--c-card-padding: 16px;/);
   assert.match(css,/data-screen="c-profile"\] \.c-account-phone \{ margin-bottom: var\(--c-card-gap\); \}/);
@@ -125,19 +125,19 @@ test('account and registration cards share one spacing rhythm', () => {
 
 test('product gallery stays focused on selecting a product without duplicate acquisition actions', () => {
   const f=fixture({hash:'#c-products'}), html=f.get('#phone-body').innerHTML;
-  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  const css=readFileSync(resolve(root,'assets/styles/consumer.css'),'utf8');
   assert.match(html,/我的产品 · 共 3 件/);
-  assert.match(html,/class="c-product-image" data-image-background="scene" src="assets\/product-bathtub-scene\.jpg"/);
-  assert.match(html,/class="c-product-image" data-image-background="solid" src="assets\/product-toilet\.jpg"/);
+  assert.match(html,/class="c-product-image" data-image-background="scene" src="\.\.\/assets\/product-bathtub-scene\.jpg"/);
+  assert.match(html,/class="c-product-image" data-image-background="solid" src="\.\.\/assets\/product-toilet\.jpg"/);
   assert.match(css,/img\.c-product-image\[data-image-background="scene"\] \{[^}]*object-fit:cover;[^}]*mix-blend-mode:normal;[^}]*border-radius:9px;/);
   assert.doesNotMatch(html,/当前产品|购买记录自动同步|扫一扫添加其他产品|data-go="c-register"/);
   f.showScreen('c-purchases');
-  assert.match(f.get('#phone-body').innerHTML,/class="c-product-image" data-image-background="scene" src="assets\/product-bathtub-scene\.jpg"/);
+  assert.match(f.get('#phone-body').innerHTML,/class="c-product-image" data-image-background="scene" src="\.\.\/assets\/product-bathtub-scene\.jpg"/);
 });
 
 test('home uses outlined pill product tabs and equal clear service actions', () => {
   const f=fixture({hash:'#c-home'}), html=f.get('#phone-body').innerHTML;
-  const css=readFileSync(resolve(root,'consumer.css'),'utf8');
+  const css=readFileSync(resolve(root,'assets/styles/consumer.css'),'utf8');
   assert.match(html,/class="c-product-switcher"/);
   assert.match(html,/class="c-add-product"[^>]*aria-label="添加产品"[^>]*>.*<span>添加<\/span>/);
   assert.match(html,/data-product="t01"[^>]*aria-pressed="true"[^>]*class="is-selected"/);
@@ -163,7 +163,7 @@ test('home uses outlined pill product tabs and equal clear service actions', () 
 
 test('outlet page keeps only the compact type switch in its top controls', () => {
   const f=fixture({hash:'#c-outlets'}), html=f.get('#phone-body').innerHTML;
-  const css=readFileSync(resolve(root,'consumer-outlets.css'),'utf8');
+  const css=readFileSync(resolve(root,'assets/styles/consumer-outlets.css'),'utf8');
   assert.match(html,/class="o-top-controls"><div class="o-type-switch"/);
   assert.match(html,/class="o-type-switch"/);
   assert.match(html,/>维修网点<\/button>.*>授权门店<\/button>/);
@@ -428,7 +428,7 @@ test('all templates render across consumer scenarios, registration methods, code
             const html = [screen.body, screen.footer].map(value => typeof value === 'function' ? value(ctx) : value || '').join('');
             assert.equal(typeof html, 'string');
             for (const [, id] of html.matchAll(/data-go="([^"]+)"/g)) assert.ok(ids.has(id), `${screen.id} has unknown route ${id}`);
-            for (const [, src] of html.matchAll(/(?:src|href)="([^"]+)"/g)) if (!/^(?:https?:|#|data:)/.test(src)) assert.ok(existsSync(resolve(root, src)), `${screen.id} has missing local asset ${src}`);
+            for (const [, src] of html.matchAll(/(?:src|href)="([^"]+)"/g)) if (!/^(?:https?:|#|data:)/.test(src)) assert.ok(existsSync(resolve(root, '当前原型', src)), `${screen.id} has missing local asset ${src}`);
             for (const [, value] of html.matchAll(/data-reg-method="([^"]+)"/g)) assert.ok(['manual', 'product-code'].includes(value));
             if (screen.id === 'c-installation-code') assert.doesNotMatch(html, /<input|<form|type="submit"/);
             combinations++;

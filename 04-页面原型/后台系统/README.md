@@ -33,11 +33,11 @@ sensitivity: "internal"
 
 | 角色 | 统一入口 | 当前页面 |
 | --- | --- | --- |
-| 系统管理员 | [查看](../index.html#administrator) | [紧凑版 V2](administrator.html)，桌面一屏与日志内部滚动；[设计说明](02-系统管理员工作台设计说明.md) |
-| 总部运营 | [查看](../index.html#headquarters) | [全国地图工作台](headquarters-map.html)，仅保留这一版 |
-| 客服作业 | [查看](../index.html#customer-service) | [状态辨识版 v0.17](customer-service-v03.html)，`v03` 为稳定文件名 |
-| 服务站作业 | [查看](../index.html#station) | [今日安排与配件版](service-station-v02.html) |
-| 门店业务 | [查看](../index.html#dealer) | [购买登记与记录版](dealer.html) |
+| 系统管理员 | [查看](../index.html#administrator) | [紧凑版 V2](当前原型/administrator.html)，桌面一屏与日志内部滚动；[设计说明](设计说明/02-系统管理员工作台设计说明.md) |
+| 总部运营 | [查看](../index.html#headquarters) | [全国地图工作台](当前原型/headquarters-map.html)，仅保留这一版 |
+| 客服作业 | [查看](../index.html#customer-service) | [状态辨识版 v0.17](当前原型/customer-service-v03.html)，`v03` 为稳定文件名 |
+| 服务站作业 | [查看](../index.html#station) | [今日安排与配件版](当前原型/service-station-v02.html) |
+| 门店业务 | [查看](../index.html#dealer) | [购买登记与记录版](当前原型/dealer.html) |
 
 删除了旧客服 `customer-service.html`、旧服务站 `service-station.html`、旧总部首页的页面内容，以及仅服务于它们的 `admin.js`、`role-workbench.js` 和旧版专用测试。`index.html` 只跳转总部地图版；`workbenches.html` 只跳转到上级统一入口，原 `workbenches.js/css` 已移除。`role-workbench.css` 仍由最新客服页引用，继续保留；门店已有回归已迁入独立检查文件。Git 历史不改写。
 
@@ -45,14 +45,14 @@ sensitivity: "internal"
 
 左上视角下拉内的“其他页面与方案”提供：
 
-- [服务质量新版](../index.html#quality) · [运营报表新版](../index.html#report)。[质量实施基线](service-quality.html)与[报表实施基线](operations-report.html)继续保留，属于专业页面参考，不是后台工作台旧版本。
+- [服务质量新版](../index.html#quality) · [运营报表新版](../index.html#report)。[质量实施基线](当前原型/service-quality.html)与[报表实施基线](当前原型/operations-report.html)继续保留，属于专业页面参考，不是后台工作台旧版本。
 - [配件管理](../index.html#parts)：入库、库存、领料、退料与相应演示流程。
-- [会员档案与购买倾向](../index.html#member)：基础资料、购买商品、保修信息和倾向分析；正式保修与画像实现差异见[会员 Spec](../../specs/2026-10-01-消费者资料与品牌会员画像.md)。
+- [会员档案与购买倾向](../index.html#member)：基础资料、购买商品、保修信息和倾向分析；正式保修与画像实现差异见[会员 Spec](../../specs/02-商品注册消费者与会员/2026-10-01-消费者资料与品牌会员画像.md)。
 - [服务站卡片样式](../index.html#station-cards)：组件布局评审，不作为旧岗位工作台删除。
 
 本轮只整理原型入口和旧文件，不修改正式业务应用、数据权限或验收计数。原型内部菜单的展示快照、门店页面与实际实现的差异仍须按当前功能 Spec 核对。
 
-2026-10-12 正式门店已恢复“左侧购买记录、右侧经营图表”，控件、查询生命周期和当前样式以正式源码及[恢复契约](../../specs/2026-09-12-四视角首页工作台.md#dealer-record-list-20261012)为准；原型不是正式实现的替代事实源。
+2026-10-12 正式门店已恢复“左侧购买记录、右侧经营图表”，控件、查询生命周期和当前样式以正式源码及[恢复契约](../../specs/05-平台集成与公共能力/2026-09-12-四视角首页工作台.md#dealer-record-list-20261012)为准；原型不是正式实现的替代事实源。
 
 ## 运行与验证
 
@@ -89,9 +89,9 @@ sensitivity: "internal"
 
 ## 设计依据
 
-- [四视角首页工作台](../../specs/2026-09-12-四视角首页工作台.md)
-- [后台菜单与角色权限手册](../../02-技术设计/09-后台菜单与岗位权限矩阵.md)
-- [后台 UI 样式与复用规范](../../02-技术设计/05-gaia-ui售后服务UI样式规范.md)
+- [四视角首页工作台](../../specs/05-平台集成与公共能力/2026-09-12-四视角首页工作台.md)
+- [后台菜单与角色权限手册](../../02-技术设计/04-平台接口与权限/01-后台菜单与岗位权限矩阵.md)
+- [后台 UI 样式与复用规范](../../02-技术设计/02-开发规范/02-WebUI与前端复用规范.md)
 
 原型中的工单、购买记录、顾客、服务站、排班、数量、趋势和及时率都是页面内演示数据。原型不代表功能已验收或相关报表口径已全部确认。
 

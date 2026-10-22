@@ -1,0 +1,12 @@
+{
+  "categories": [
+    "01-基础资料与服务网络",
+    "02-商品注册消费者与会员",
+    "03-服务工单与调度",
+    "04-服务履约配件与费用",
+    "05-平台集成与公共能力",
+    "06-测试验证与数据操作"
+  ],
+  "rootFiles": ["README.md", "_template.md"],
+  "supportDirectories": ["assets", "evidence", "sql", "support"]
+}
