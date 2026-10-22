@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-22 用户要求根 yarn install 自动安装售后依赖；根 postinstall 复用固定 Node／pnpm 入口与售后冻结锁文件。"
   - "2026-10-22 用户确认Demo默认仅更新售后；独立构建及完整资源检查入口，本次未提交／部署。"
   - "../../specs/05-平台集成与公共能力/2026-09-30-主系统菜单iframe访问售后子系统.md#appearance-follow-20261022"
   - "本仓库既有文档：02-技术设计/01-架构与运行/01-Web子系统架构与运行规范.md；格式整理不表示重新验证业务与运行事实。"
@@ -439,16 +440,33 @@ yarn factory:saas
 
 ### 6.2 依赖安装
 
-构建机分别执行：
+在 gaia-ui 根目录执行以下两个命令，即可安装并打包主项目与售后子系统：
 
 ```bash
-yarn install --frozen-lockfile
-pnpm --dir apps/after-sales --ignore-workspace install --frozen-lockfile
+yarn install
+yarn build
 ```
 
-两套依赖、缓存和锁文件互不覆盖。当前 gaia-ui 与子系统均固定 Node 24.21.0，根项目使用 Yarn 1.22.22；pnpm 版本由子系统 `packageManager` 或 Corepack 固定。
+根 `postinstall` 调用 `node scripts/frontends/after-sales.mjs install --frozen-lockfile`，按子项目 `.nvmrc` 解析 Node，再由 Corepack 执行其 `packageManager` 固定的 pnpm；显式 `--ignore-workspace`，不接管主项目依赖。售后安装失败使根安装失败，锁文件不匹配时拒绝安装，不静默更新。`push.sh` 通过根安装触发该流程，已去掉重复的子项目安装。
+
+构建机使用 `yarn install --frozen-lockfile` 可同时冻结主项目锁文件；售后安装始终冻结。两套依赖目录和锁文件互不覆盖；售后依赖变更用 `yarn after-sales:pnpm add <包名>` 等入口更新其清单和锁文件。`--ignore-scripts` 会跳过根自动安装，使用该选项时需自行执行 `yarn after-sales:pnpm install --frozen-lockfile`。
+
+当前 gaia-ui 与子系统均固定 Node 24.21.0，根项目使用 Yarn 1.22.22，售后 pnpm 10.8.1 由子系统 `packageManager` 与 Corepack 固定。要求本机提供固定 Node 和 Corepack；缺少 Node 时明确失败，不自动下载 Node。
 
 生产服务器只接收静态产物，不安装 Yarn、pnpm 或 `node_modules`。
+
+<a id="root-install-20261022"></a>
+
+#### 6.2.1 根安装联动售后依赖的研发验证（2026-10-22）
+
+- 根安装钩子复用已有 `after-sales.mjs`，只增加主项目安装后的必要装配；未改动业务、公共组件或依赖版本。根 README、子系统 README、本地联调手册及 `push.sh` 已同步。
+- Node24.21.0／Yarn1.22.22 下，实际 `yarn install --frozen-lockfile` 成功，日志确认根 `postinstall` 自动执行售后 pnpm10.8.1 冻结安装；两套锁文件均无变更。
+- `node --test scripts/frontends/install.test.mjs` 的3项真实离线安装回归通过：首次／重复根安装均执行售后安装且使用固定Node，售后生命周期失败使根安装失败，售后锁文件过期明确拒绝且不改写锁文件。组合资源检查的1项既有回归及 `push.sh` shell语法检查通过。
+- 提交前扩展运行安装、工具链和组合资源测试，共7项中6项通过；工具链版本断言仍期望根Node22.23.1，而当前HEAD已固定24.21.0，该既有失败不属于本轮安装钩子变更。工具链其余2项通过，本次未改动该测试或版本配置。
+- 售后独立生产构建及根 `yarn build` 均通过，包含950项完整检查、336项JS／CSS包体检查与售后340文件／2941处资源引用检查；最终组合产物校验主站1297文件、售后340文件，入口位于根 `dist/index.html` 和 `dist/after-sales/index.html`。
+- 首次根构建曾因共享工作区common版本不匹配引用不存在的 `src/i18n/useGlobalI18n` 失败；common回到主仓记录的 `3e210c97` 后根构建复验通过。本任务未修改、切换或提交common。原始日志留在忽略目录 `.local/verification-artifacts/20261022-root-install/`。
+
+本轮Web已本地提交`0b681ff7`，归并[v0.24.38](../../03-开发管理/03-版本记录/2026-10.md#v0-24-38)；未推送或部署，Windows实机未验证，不增加业务验收计数。
 
 ### 6.3 构建与组装顺序
 

@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-22 根 yarn install 自动冻结安装售后依赖；两命令统一安装与打包，验证见 Web 架构安装契约。"
   - "2026-10-22 按用户确认重排开发管理目录并修正引用；内容与业务状态保持，稳定ID不变。"
   - "2026-10-22 部署操作与历史记录归位，修正直接引用；路径维护不表示重新部署或业务验收。"
   - "2026-10-22 用户要求：合入 demo 分支文档，并将双端小程序 build／upload 默认接口切换 demo；仅本地修改与研发验证。"
@@ -198,7 +199,7 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 | --- | --- | --- |
 | `gaia-after-sales` | JDK 21、Maven 3.9.x、Gaia 父 POM `3.5.0-SNAPSHOT` | `mvn -B -o verify`；缓存不全时配置好内部制品源后使用 `mvn -B verify` |
 | `gaia-after-sales-uni` | Node `>=24.19.0 <25`，`.nvmrc` 为 `24.19.0`；pnpm `10.34.5` | `pnpm install --frozen-lockfile`；`pnpm tenant:check TOTO`；`pnpm dev TOTO` 或 `pnpm dev:h5 TOTO` |
-| `gaia-ui` 主系统 | `package.json` 的 Volta 固定 Node `24.21.0`、Yarn `1.22.22`，有 `yarn.lock` | `yarn install --frozen-lockfile`；`yarn dev`；`yarn build`；根编排命令会为售后子项目选择其独立 Node |
+| `gaia-ui` 主系统 | `package.json` 的 Volta 固定 Node `24.21.0`、Yarn `1.22.22`，有 `yarn.lock` | `yarn install --frozen-lockfile`；`yarn dev`；`yarn build`；根安装自动冻结安装售后依赖，根构建合并主子产物 |
 | `gaia-ui/apps/after-sales` | Node `>=24.21.0 <25`，`.nvmrc`／Volta 固定 `24.21.0`；pnpm `10.8.1` | 子目录先 `nvm use` 再执行 `corepack pnpm --ignore-workspace ...`；或在根目录执行 `yarn after-sales:pnpm <命令>` |
 | `gaia-saas-proj` | JDK 21、内部 Gaia 制品；Web JAR 为默认售后宿主 | 装配前提满足后执行 `mvn -B -pl gaia-saas-web-jar -am verify`；入口 `com.ehsure.gaia.WebApplication` |
 
@@ -308,19 +309,19 @@ JDK21离线 Maven 编译及 `ExcelExportConsumerTest` 1项通过，覆盖队列�
 
 ## 售后独立前端底座（2026-09-08）
 
-`gaia-ui/apps/after-sales` 已建立单包独立工程。当前 Gaia 主系统固定 Node 24.21.0 / Yarn 1.22.22，售后子项目固定 Node 24.21.0 LTS / pnpm 10.8.1；各自安装依赖：
+`gaia-ui/apps/after-sales` 已建立单包独立工程。当前 Gaia 主系统固定 Node 24.21.0 / Yarn 1.22.22，售后子项目固定 Node 24.21.0 LTS / pnpm 10.8.1；在根目录统一安装、打包：
 
 ```bash
 # gaia-ui 根目录
-yarn install --frozen-lockfile
-node scripts/frontends/after-sales.mjs install --frozen-lockfile
+yarn install
+yarn build
 ```
 
-根目录的 `after-sales.mjs` 会读取子项目 `.nvmrc`，使用 Node 24.21.0 和子项目 `packageManager` 执行命令，不改变根进程 Node。直接进入子目录执行时，先运行 `nvm use`，再使用 `corepack pnpm --ignore-workspace ...`；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
+根安装的 `postinstall` 自动调用 `after-sales.mjs install --frozen-lockfile`，读取子项目 `.nvmrc`，使用 Node 24.21.0 和子项目 `packageManager` 执行 pnpm，不改变根进程 Node；安装失败使根命令失败。两套锁文件和依赖目录独立。构建机用 `yarn install --frozen-lockfile` 同时冻结主项目依赖；`--ignore-scripts` 会跳过自动安装。单独安装或调整售后依赖继续使用 `yarn after-sales:pnpm <命令>`。直接进入子目录执行时，先运行 `nvm use`，再使用 `corepack pnpm --ignore-workspace ...`；不要在 Gaia 根目录创建 pnpm workspace 或替换 yarn.lock。
 
 日常开发默认在 gaia-ui 根目录或本仓库运行 `yarn dev:afs`，启动售后子系统及其本地 Redis、Gaia 聚合后端，直接访问 `http://127.0.0.1:9010/after-sales/#/`。用户明确要求主系统验证时，可在 gaia-ui 根目录运行 `yarn dev:full`；已有 `yarn dev` 同时启动主应用 7004 和子应用 9010，`yarn dev:main` 只启动主系统。从主系统进入时由主系统链接携带 `entry=main`。子项目可通过根目录 `yarn after-sales:pnpm dev|typecheck|test|build` 独立执行，也可在子目录 `nvm use` 后运行对应 Corepack 命令；这些命令只启动或验证售后前端。新子系统首页不依赖后端，也不包含临时身份。
 
-原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以各自配置的 Node 24.21.0 构建主项目和子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装也使用同一 Node 24 编排入口，构建失败会中止；上传和发布仍需单独授权。
+原 `yarn build`、`production`、`factory`、`production:saas`、`factory:saas` 现在顺序以各自配置的 Node 24.21.0 构建主项目和子项目并组装根 `dist/after-sales/`；子系统统一使用 production 环境和同域相对 API，主项目模式保持原样。`yarn verify:dist` 校验合并产物。`push.sh` 的子项目冻结安装通过根 `postinstall` 自动完成，安装或构建失败会中止；上传和发布仍需单独授权。
 
 验证通过：子系统冻结安装、typecheck、production build、仓库外隔离构建、31 项底座测试、原主构建、统一 production:saas、静态产物校验、双服务访问、HMR 和 SIGINT 清理。Chrome 售后入口的品牌、布局及控制台验证通过。原 legacy 页面和主路由无修改。
 
