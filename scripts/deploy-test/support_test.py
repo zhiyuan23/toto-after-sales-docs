@@ -129,6 +129,116 @@ class DeploymentTest(unittest.TestCase):
             deploy.stage(self.release, self.base)
         self.assertEqual((self.web / 'api.war').read_bytes(), b'old war')
 
+    def test_staging_keeps_old_lazy_chunks_without_replacing_new_entries(self):
+        for directory in ['assets', 'after-sales/assets']:
+            folder = self.old / directory
+            folder.mkdir(exist_ok=True)
+            (folder / 'old-route-AbCd1234.js').write_text('old lazy route')
+            (folder / 'old-dialog-AbCd1234.css').write_text('old lazy style')
+            (folder / 'mutable.js').write_text('do not retain mutable paths')
+        self.prepare()
+        deploy.stage(self.release, self.base)
+        ready = self.release / 'root-ready'
+        self.assertEqual((ready / 'index.html').read_bytes(), (self.new / 'index.html').read_bytes())
+        self.assertEqual((ready / 'after-sales/index.html').read_bytes(), (self.new / 'after-sales/index.html').read_bytes())
+        retained = json.loads((self.release / 'manifest.json').read_text())['retainedAssets']
+        self.assertEqual(len(retained), 4)
+        for file, value in retained.items():
+            self.assertEqual(deploy.digest(ready / file), value)
+        self.assertFalse((ready / 'after-sales/assets/mutable.js').exists())
+
+    def test_numeric_main_build_assets_are_retained_and_mutable_files_are_not(self):
+        folder = self.old / 'assets'
+        folder.mkdir()
+        (folder / 'index.1792643492822.js').write_text('old main entry')
+        (folder / 'index.1792643492822246.js').write_text('old main chunk')
+        (folder / 'index.js').write_text('mutable')
+        retained = deploy.preserve_hashed_assets(self.old, self.new)
+        self.assertEqual(set(retained), {'assets/index.1792643492822.js', 'assets/index.1792643492822246.js'})
+
+    def test_html_policy_is_scoped_to_html_and_never_overwrites_other_configuration(self):
+        value = deploy.install_entry_cache_policy(self.new)
+        descriptor = self.new / 'WEB-INF/web.xml'
+        self.assertEqual(value, deploy.digest(descriptor))
+        self.assertEqual(deploy.install_entry_cache_policy(self.new), value)
+        tree = deploy.ET.fromstring(descriptor.read_text())
+        namespace = {'j': 'https://jakarta.ee/xml/ns/jakartaee'}
+        self.assertEqual(tree.findtext('j:filter/j:init-param/j:param-name', namespaces=namespace), 'ExpiresByType text/html')
+        self.assertEqual(tree.findtext('j:filter/j:init-param/j:param-value', namespaces=namespace), 'access plus 0 seconds')
+        descriptor.write_text('<web-app><display-name>other runtime config</display-name></web-app>')
+        with self.assertRaisesRegex(ValueError, 'Unexpected ROOT web.xml'):
+            deploy.install_entry_cache_policy(self.new)
+
+    def test_asset_manifest_covers_lazy_chunks_not_preloaded_by_html(self):
+        lazy = self.new / 'after-sales/assets/lazy-AbCd1234.js'
+        lazy.write_text('export default "lazy"')
+        self.assertEqual(deploy.assets(self.new)['after-sales/assets/lazy-AbCd1234.js'], deploy.digest(lazy))
+        lazy.unlink()
+        lazy.symlink_to(self.new / 'main.js')
+        with self.assertRaisesRegex(ValueError, 'asset link'):
+            deploy.assets(self.new)
+
+    def test_retention_rejects_hash_collisions_and_symlinks(self):
+        folder = self.old / 'after-sales/assets'
+        folder.mkdir()
+        old = folder / 'route-AbCd1234.js'
+        old.write_text('old')
+        new = self.new / 'after-sales/assets' / old.name
+        new.write_text('different bytes at same hashed URL')
+        with self.assertRaisesRegex(ValueError, 'collision'):
+            deploy.preserve_hashed_assets(self.old, self.new)
+        self.assertEqual(new.read_text(), 'different bytes at same hashed URL')
+        old.unlink()
+        old.symlink_to(self.old / 'index.html')
+        with self.assertRaisesRegex(ValueError, 'asset link'):
+            deploy.preserve_hashed_assets(self.old, self.new)
+
+    def test_http_gate_checks_retained_chunks_as_well_as_new_assets(self):
+        content = {'after-sales/assets/new-AbCd1234.js': b'new',
+                   'after-sales/assets/old-AbCd1234.js': b'old'}
+        import hashlib
+        manifest = {'assets': {p: hashlib.sha256(v).hexdigest() for p, v in content.items() if 'new-' in p},
+                    'retainedAssets': {p: hashlib.sha256(v).hexdigest() for p, v in content.items() if 'old-' in p}}
+        class Opener:
+            def open(self, request, timeout):
+                path = request.full_url.removeprefix('http://fixture/')
+                if path in content:
+                    value = content[path]
+                else:
+                    value = json.dumps({'code': 0 if '/' + path in deploy.PUBLIC else 4001}).encode()
+                response = io.BytesIO(value)
+                response.status = 200
+                return response
+        with patch.object(deploy, 'build_opener', return_value=Opener()):
+            result = deploy.http(manifest, 'http://fixture')
+            self.assertEqual((result['staticFiles'], result['retainedFiles']), (2, 1))
+            content['after-sales/assets/old-AbCd1234.js'] = b'HTML fallback instead of old JS'
+            with self.assertRaisesRegex(ValueError, 'HTTP asset mismatch'):
+                deploy.http(manifest, 'http://fixture')
+
+    def test_http_gate_requires_cache_headers_for_both_html_entries_and_welcome_urls(self):
+        import hashlib
+        content = {'index.html': b'main', 'after-sales/index.html': b'child'}
+        manifest = {'assets': {p: hashlib.sha256(v).hexdigest() for p, v in content.items()}}
+        policy = {'Cache-Control': 'max-age=0'}
+        visited = []
+        class Opener:
+            def open(self, request, timeout):
+                path = request.full_url.removeprefix('http://fixture/')
+                visited.append(path)
+                entry = {'': 'index.html', 'after-sales/': 'after-sales/index.html'}.get(path, path)
+                value = content.get(entry, json.dumps({'code': 0 if '/' + path in deploy.PUBLIC else 4001}).encode())
+                response = io.BytesIO(value)
+                response.status = 200
+                response.headers = policy
+                return response
+        with patch.object(deploy, 'build_opener', return_value=Opener()):
+            deploy.http(manifest, 'http://fixture')
+            self.assertTrue({'', 'index.html', 'after-sales/', 'after-sales/index.html'}.issubset(visited))
+            policy.clear()
+            with self.assertRaisesRegex(ValueError, 'HTML entry cache policy missing'):
+                deploy.http(manifest, 'http://fixture')
+
     def test_wrong_database_or_multiple_processes_are_rejected(self):
         (self.web / 'api' / deploy.CONFIGS[0]).write_text('spring.datasource.url=jdbc:mysql://production/db\ngaia.multi-tenant=false')
         with self.assertRaisesRegex(ValueError, 'database'):

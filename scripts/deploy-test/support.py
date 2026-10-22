@@ -29,6 +29,24 @@ PUBLIC = ['/api/afterSales/mobile/consumer/privacy-policy',
           '/api/afterSales/mobile/consumer/support-channels']
 PRIVATE = ['/api/afterSales/authorization', '/api/afterSales/mobile/consumer/products',
            '/api/afterSales/customer/work-orders']
+ENTRY_CACHE_DESCRIPTOR = '''<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" version="6.1">
+  <filter>
+    <filter-name>totoHtmlRevalidation</filter-name>
+    <filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class>
+    <async-supported>true</async-supported>
+    <init-param>
+      <param-name>ExpiresByType text/html</param-name>
+      <param-value>access plus 0 seconds</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>totoHtmlRevalidation</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+</web-app>
+'''
 
 
 def digest(path):
@@ -163,7 +181,56 @@ def assets(root):
             require(file.resolve().is_relative_to(root.resolve()) and file.is_file() and not file.is_symlink(), 'Missing or unsafe Web asset: ' + relative)
             result[relative] = digest(file)
     require(any(p.startswith('after-sales/assets/') for p in result), 'Missing subsystem assets')
+    # Entry HTML lists preload hints, not every lazy route or dialog chunk.
+    for directory in ['assets', 'after-sales/assets']:
+        folder = root / directory
+        require(not folder.is_symlink(), 'Unexpected asset directory link')
+        if not folder.exists():
+            continue
+        for file in folder.rglob('*'):
+            require(not file.is_symlink(), 'Unexpected asset link')
+            if file.is_file():
+                result[file.relative_to(root).as_posix()] = digest(file)
     return result
+
+
+def immutable_asset(name):
+    return bool(re.search(r'(?:-[A-Za-z0-9_-]{8,}|\.\d{13,})\.[A-Za-z0-9.]+$', name))
+
+
+def install_entry_cache_policy(root):
+    descriptor = root / 'WEB-INF/web.xml'
+    require(not descriptor.exists() or descriptor.read_text() == ENTRY_CACHE_DESCRIPTOR,
+            'Unexpected ROOT web.xml; review before replacing its configuration')
+    descriptor.parent.mkdir(parents=True, exist_ok=True)
+    descriptor.write_text(ENTRY_CACHE_DESCRIPTOR)
+    return digest(descriptor)
+
+
+def preserve_hashed_assets(previous, target):
+    """Keep immutable chunks used by already-open pages; never copy old entries."""
+    retained = {}
+    for directory in ['assets', 'after-sales/assets']:
+        folder = previous / directory
+        require(not folder.is_symlink(), 'Unexpected previous asset directory link')
+        if not folder.exists():
+            continue
+        for file in folder.rglob('*'):
+            require(not file.is_symlink(), 'Unexpected previous asset link')
+            if not file.is_file() or not immutable_asset(file.name):
+                continue
+            relative = file.relative_to(previous)
+            destination = target / relative
+            require(destination.resolve().is_relative_to(target.resolve()) and not destination.is_symlink(), 'Unsafe retained asset')
+            value = digest(file)
+            if destination.exists():
+                require(destination.is_file() and digest(destination) == value, 'Hashed asset collision: ' + relative.as_posix())
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(file, destination)
+            require(digest(destination) == value, 'Retained asset copy mismatch')
+            retained[relative.as_posix()] = value
+    return retained
 
 
 def has_after_sales_map_bridge(content):
@@ -200,12 +267,13 @@ def package(war, web, release, api, core):
                 if source == 'SERVER':
                     require(manifest['remote'].get('externalServerCredentialsReady') is True, 'Server-managed AI and AMap credentials must be provisioned in private target configuration before publishing')
                 require(manifest['remote'].get('mapRootReady') is True, 'AMap JS requires the authenticated root proxy route; provision the Tomcat Host rewrite before publishing')
+    cache_policy = install_entry_cache_policy(web)
     with tarfile.open(release / 'root-dist.tar.gz', 'w:gz') as tar:
         tar.add(web, arcname='.', filter=lambda info: None if info.issym() or info.islnk() else info)
     shutil.copyfile(war, release / 'gaia-saas-web.war')
     manifest.update({'war': digest(release / 'gaia-saas-web.war'),
                      'web': digest(release / 'root-dist.tar.gz'), 'dependencies': dependencies,
-                     'assets': assets(web)})
+                     'assets': assets(web), 'entryCachePolicy': cache_policy})
     save(release / 'manifest.json', manifest)
 
 
@@ -221,6 +289,11 @@ def stage(release, base=BASE):
     api.mkdir()
     extract_web(release / 'root-dist.tar.gz', root)
     require(assets(root) == manifest['assets'], 'Staged Web mismatch')
+    require(digest(root / 'WEB-INF/web.xml') == manifest['entryCachePolicy'], 'Staged cache policy mismatch')
+    previous_descriptor = web / 'ROOT/WEB-INF/web.xml'
+    require(not previous_descriptor.exists() or previous_descriptor.read_text() == ENTRY_CACHE_DESCRIPTOR,
+            'Unexpected live ROOT web.xml; review before replacing its configuration')
+    manifest['retainedAssets'] = preserve_hashed_assets(web / 'ROOT', root)
     for file in (web / 'ROOT').glob('WW_verify_*.txt'):
         require(file.is_file() and not file.is_symlink(), 'Unexpected verification file link')
         shutil.copy2(file, root / file.name)
@@ -251,9 +324,10 @@ def verify_live(release, base=BASE):
     expected = manifest['remote']
     require(current['war'] == manifest['liveWar'] and current['configs'] == manifest.get('expectedConfigs', expected['configs']) and current['externalConfig'] == expected['externalConfig'], 'Published WAR or runtime configuration mismatch')
     web = base / 'tomcat11/webapps'
+    require(digest(web / 'ROOT/WEB-INF/web.xml') == manifest['entryCachePolicy'], 'Published cache policy mismatch')
     for file, value in manifest['dependencies'].items():
         require(digest(web / 'api' / file) == value, 'Published dependency mismatch')
-    for file, value in manifest['assets'].items():
+    for file, value in {**manifest.get('retainedAssets', {}), **manifest['assets']}.items():
         require(digest(web / 'ROOT' / file) == value, 'Published Web mismatch')
     backup = base / 'backups' / release.name
     for file in (backup / 'ROOT').glob('WW_verify_*.txt'):
@@ -282,10 +356,18 @@ def http(manifest, base_url):
     def get(path):
         with opener.open(Request(base_url.rstrip('/') + '/' + path.lstrip('/'), headers={'Cache-Control': 'no-cache'}), timeout=15) as response:
             require(response.status == 200, 'Unexpected HTTP status: ' + path)
+            if path in ('', 'index.html', 'after-sales/', 'after-sales/index.html'):
+                policy = response.headers.get('Cache-Control', '').lower()
+                require(bool(re.search(r'(?:^|,)\s*(?:no-cache|no-store|max-age\s*=\s*0)\s*(?:,|$)', policy)),
+                        'HTML entry cache policy missing: ' + path)
             return response.read()
-    for path, value in manifest['assets'].items():
+    checked_assets = {**manifest.get('retainedAssets', {}), **manifest['assets']}
+    for path, value in checked_assets.items():
         require(hashlib.sha256(get(path)).hexdigest() == value, 'HTTP asset mismatch: ' + path)
-    result = {'staticFiles': len(manifest['assets']), 'apis': []}
+    for alias, entry in [('', 'index.html'), ('after-sales/', 'after-sales/index.html')]:
+        if entry in manifest['assets']:
+            require(hashlib.sha256(get(alias)).hexdigest() == manifest['assets'][entry], 'HTTP welcome entry mismatch: ' + alias)
+    result = {'staticFiles': len(checked_assets), 'retainedFiles': len(manifest.get('retainedAssets', {})), 'apis': []}
     for path in PUBLIC + PRIVATE:
         data = json.loads(get(path))
         code = data.get('code')
