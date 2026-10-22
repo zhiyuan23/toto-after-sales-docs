@@ -290,7 +290,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { aborted = true; activeChild?.kill('SIGTERM') })
   try {
     const options = parseOptions(process.argv.slice(2))
-    if (options.mode === 'help') console.log('TOTO 测试环境更新（macOS／Linux，固定 10.1.1.53）\n  node scripts/deploy-test.mjs --check [--web-only]\n  node scripts/deploy-test.mjs --deploy [--allow-known-web-failures] [--web-only]\n  node scripts/deploy-test.mjs --status <发布编号>\n默认更新完整 Web／后端并上传两个小程序 test 开发版本；--web-only 仅更新 Web／后端。\n不会拉取／提交／推送代码、迁移数据库或提交小程序审核／正式发布。')
+    if (options.mode === 'help') console.log('TOTO 测试环境更新（macOS／Linux，固定 10.1.1.53）\n  node scripts/deploy-test.mjs --check [--web-only]\n  node scripts/deploy-test.mjs --deploy [--allow-known-web-failures] [--web-only]\n  node scripts/deploy-test.mjs --status <发布编号>\n默认更新完整 Web／后端并上传两个小程序 test 开发版本；--web-only 仅更新 Web／后端。\nWeb／后端固定发布到 10.1.1.53；小程序 API 固定连接 demo.cloud-test.ljsz.xyz:1443（API 租户 demo）。\n不会拉取／提交／推送代码、迁移数据库或提交小程序审核／正式发布。')
     else await execute(options)
   } catch (error) {
     console.error('部署未确认完成：' + error.message)

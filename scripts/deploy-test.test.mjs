@@ -32,10 +32,10 @@ test('deployment requires an explicit action and rejects target overrides and sh
   assert.equal(HOST_FINGERPRINT, 'SHA256:32uCUmbKNWdximqXT8HzyEktQDv7WlZIKkSGxvBdGnI')
 })
 
-test('mini-program uploads force test endpoint and use each repository private-key configuration', () => {
+test('mini-program uploads force demo endpoint and use each repository private-key configuration', () => {
   const env = uploadEnvironment('GAIA_APP_ENV=production\nGAIA_API_BASE_URL=https://production.invalid\nGAIA_EXAMPLES=true\nWECHAT_CI_PRIVATE_KEY_PATH=/fixture/worker.key\n', { WECHAT_CI_PRIVATE_KEY_PATH: '/fixture/consumer.key' })
   assert.equal(env.GAIA_APP_ENV, 'test')
-  assert.equal(env.GAIA_API_BASE_URL, 'http://10.1.1.53:8011')
+  assert.equal(env.GAIA_API_BASE_URL, 'https://demo.cloud-test.ljsz.xyz:1443')
   assert.equal(env.GAIA_EXAMPLES, 'false')
   assert.equal(env.WECHAT_CI_PRIVATE_KEY_PATH, '/fixture/worker.key')
 })

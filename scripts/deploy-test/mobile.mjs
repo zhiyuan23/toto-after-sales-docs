@@ -5,7 +5,7 @@ import { parseEnv } from 'node:util'
 import { snapshot } from '../deploy-test.mjs'
 
 export function uploadEnvironment(local, inherited = process.env) {
-  return { ...inherited, ...parseEnv(local), GAIA_APP_ENV: 'test', GAIA_API_BASE_URL: 'http://10.1.1.53:8011', GAIA_EXAMPLES: 'false', COREPACK_ENABLE_NETWORK: '0' }
+  return { ...inherited, ...parseEnv(local), GAIA_APP_ENV: 'test', GAIA_API_BASE_URL: 'https://demo.cloud-test.ljsz.xyz:1443', GAIA_EXAMPLES: 'false', COREPACK_ENABLE_NETWORK: '0' }
 }
 
 export async function prepareUpload(root) {
