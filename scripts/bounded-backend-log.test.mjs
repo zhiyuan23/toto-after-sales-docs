@@ -36,6 +36,16 @@ test('CLI drains output larger than a pipe buffer before closing', () => {
   }
 })
 
+test('Redis output collection does not prune unrelated backend run logs', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'toto-redis-log-'))
+  try {
+    for (let index = 0; index < 7; index++) writeFileSync(join(directory, `shared-backend-${900000 + index}.log`), 'old run\n')
+    execFileSync(process.execPath, [new URL('./bounded-backend-log.mjs', import.meta.url).pathname, join(directory, 'shared-redis.log')], { input: 'Redis ready\n', timeout: 10_000 })
+    assert.equal(readdirSync(directory).length, 8)
+    assert.match(readFileSync(join(directory, 'shared-redis.log'), 'utf8'), /Redis ready/)
+  } finally { rmSync(directory, { recursive: true, force: true }) }
+})
+
 test('an existing oversized log is compacted before more output is appended', () => {
   const directory = mkdtempSync(join(tmpdir(), 'toto-bounded-log-'))
   const path = join(directory, 'backend.log')

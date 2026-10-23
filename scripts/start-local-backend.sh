@@ -31,6 +31,8 @@ if lsof -nP -tiTCP:8080 -sTCP:LISTEN | grep -q .; then
     exit 1
 fi
 
+node "$workspace_root/docs/toto/scripts/local-backend-preflight.mjs" "$backend_root/.local/application.properties"
+
 mvn -B -f "$workspace_root/backend/gaia-sys/pom.xml" \
     -pl gaia-sys-api,gaia-sys-integrate-api,gaia-sys-open-api,gaia-log-api,gaia-sys-tools-api,gaia-sys-xcx-api \
     -am clean install -DskipTests
@@ -56,6 +58,9 @@ cd "$backend_root"
 # Keep the workspace MySQL and MinIO test hosts on their direct internal route.
 exec java '-Dhttp.nonProxyHosts=localhost|127.*|10.1.1.106|10.1.1.43' '-DsocksNonProxyHosts=localhost|127.*|10.1.1.106|10.1.1.43' -jar "$backend_runtime_jar" \
     --spring.config.additional-location=file:.local/ \
+    --logging.config="file:$workspace_root/docs/toto/scripts/local-backend-logback.xml" \
+    --spring.datasource.druid.max-wait=15000 \
+    --excel.export.consumer.enabled=false \
     --after-sales.mobile.single-tenant-id=1001 \
     --after-sales.consumer.support.phone=400-820-9787 \
     --after-sales.consumer.support.hours='周一至周日 8:00-22:00（法定节假日除外）' \

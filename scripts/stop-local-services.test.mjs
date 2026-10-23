@@ -22,6 +22,7 @@ test('recognizes only this workspace development entry points, not builds or too
   assert.equal(localServiceKind(info('node ./scripts/tenant-command.mjs dev:h5 TOTO', mobile), root), 'frontend')
   assert.equal(localServiceKind(info(`node ${docs}/scripts/local-backend.mjs`, mobile), root), 'launcher')
   assert.equal(localServiceKind(info(`bash ${docs}/scripts/start-local-backend.sh`, root), root), 'backend')
+  assert.equal(localServiceKind(info(`bash ${docs}/scripts/start-local-redis.sh`, root), root), 'redis')
   assert.equal(localServiceKind(info(`node ${docs}/scripts/bounded-backend-log.mjs ${backend}/.local/logs/shared-backend-100.log`, root), root), 'backend')
   for (const action of ['build', 'build:h5', 'upload', 'release', 'check']) {
     assert.equal(localServiceKind(info(`node scripts/tenant-command.mjs ${action} TOTO`, mobile), root), '')

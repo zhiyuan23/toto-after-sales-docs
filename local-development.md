@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-23 用户授权清理本地历史日志和已完成验证产物、保留必要备份、收紧本地日志规则并重启验证；当前规则见 local-log-retention。"
   - "03-开发管理/01-环境部署/部署记录/测试环境发布记录.md#personnel-wechat-release-20261023"
   - "2026-10-22 7004持续loading恢复：8080与专用Redis已停止；仅补齐后端，配置API及浏览器登录页恢复，前端PID保持。"
   - "2026-10-22 根 yarn install 自动冻结安装售后依赖；两命令统一安装与打包，验证见 Web 架构安装契约。"
@@ -128,7 +129,7 @@ node scripts/local-backend.mjs
 
 等待输出“已就绪并保持运行”后刷新页面；Redis重新启动后原登录会话可能失效，需要重新登录。2026-10-22实际恢复及验证见[本地后端恢复](02-技术设计/01-架构与运行/01-Web子系统架构与运行规范.md#backend-loading-recovery-20261022)。从全停状态启动主系统及售后的完整环境仍使用 `yarn dev:full`。
 
-本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，启动器直接输出该路径；单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用自己的 Logback 文件仍在 `.local/logs/gaia_saas/` 按大小滚动。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log`；旧版无上限的 `shared-backend.log` 不再使用。检测到 Spring 的 `APPLICATION FAILED TO START`／`Application run failed` 时，即使 JVM 尚未退出也立即报告失败，并按工作目录、运行 JAR 和 PID 核对归属后停止本次失败 JVM；不再等满 12 分钟。后端就绪前 9010 尚未启动，此时浏览器连接被拒绝应先查后端日志。
+本地后端每次运行的构建与控制台输出写到 `backend/gaia-saas-proj/.local/logs/shared-backend-<PID>.log`，启动器直接输出该路径；单文件最多 16 MiB，保留最近 5 份已结束进程的日志。应用 Logback、Redis 和验证产物的保留规则统一见[本地日志与验证产物清理](#local-log-retention)。启动失败时同时检查 `.local/logs/shared-backend-bootstrap.log` 和 `.local/logs/gaia_saas/error.log`。检测到 Spring 的 `APPLICATION FAILED TO START`／`Application run failed` 时，即使 JVM 尚未退出也立即报告失败，并按工作目录、运行 JAR 和 PID 核对归属后停止本次失败 JVM；不再等满 12 分钟。后端就绪前 9010 尚未启动，此时浏览器连接被拒绝应先查后端日志。
 
 <a id="startup-report-mapper-20261020"></a>
 
@@ -198,6 +199,8 @@ yarn dev --host 127.0.0.1 --port 7004 --strictPort
 <a id="excel-consumer-recovery-20261014"></a>
 
 ### 2026-10-14 Excel 导出消费线程恢复与停止
+
+以下是2026-10-14提交时点的历史记录。2026-10-23核对当前SYS源码已回到远端master实现，`ExcelExportConsumer`未保留本段的退避／销毁退出逻辑；不能据历史提交认定当前已修复。本地标准启动链现显式关闭该公共导出消费者，公共库整改另行处理；见[当前本地规则](#local-log-retention)。
 
 本次工作区提交包含 `gaia-sys-tools-core` 的导出消费者修复：队列或导出处理异常后按1秒起步、最高60秒指数退避，成功轮次重置延迟；容器销毁时标记停止并中断消费线程，退出时清理线程引用，避免失败后持续空转及关闭后继续重试。原租户切换、用户上下文清理和队列处理规则保持，不新增失败任务重入队或自动补偿能力。
 
@@ -413,3 +416,59 @@ git clone --branch 'feature/20260907_蓝鲸售后服务_志远_喆宇' \
 `backend/gaia-sys`当前使用本地`feature/20260907_蓝鲸售后服务_志远_喆宇`，从最新远端master创建；当前没有公共源码差异。原master的4条售后开发提交保留在`codex/backup-gaia-sys-master-before-isolation-20261017`，本地master已与远端master对齐，不将备份分支安装为运行依赖。复现本轮装配先构建／安装该远端原样的SYS、工具及日志制品，再安装售后API/Core，最后装配宿主；已运行8080仍是旧制品，不把新构建当作已加载。
 
 宿主WAR／Jar的公共配置去掉可选售后导入块后必须与远端master逐字一致；Cookie、数据源、Redis及连接池按环境在私密覆盖文件维护。原Windows售后分支中的`gaia_local_token`、Redis库5等不再是源码默认值；切换运行配置前核对环境覆盖，不改公共默认值来解决单一子系统问题。本机既有私密文件保持，未重启或迁移共享环境。领域审计默认false归`AfterSalesAuditSupport`，外部配置仍可覆盖。来源及验证见[全面整改](specs/05-平台集成与公共能力/2026-10-17-售后宿主模块级隔离.md#9-主系统保持远端master原样的全面整改2026-10-17)。
+
+
+<a id="local-log-retention"></a>
+
+## 本地日志与验证产物清理（2026-10-23）
+
+本节只约束本机TOTO标准启动链及本机忽略目录。测试／Demo服务器的日志、制品和备份仍由[部署手册](03-开发管理/01-环境部署/00-测试与Demo环境部署.md)管理；数据库审计、开放接口报文和业务附件不属于文件日志清理范围。
+
+### 启动预检与错误定位
+
+`start-local-backend.sh` 在Maven构建前运行 `local-backend-preflight.mjs`，仅从宿主私密配置读取MySQL主机和端口，用5秒绝对期限验证初始协议握手；不发送用户名／密码、不登录或写数据库，不输出连接串。端口能连接但收不到握手也视为失败，并提示检查内网VPN／路由。握手通过只证明网络及协议入口可用，不能代替认证、TLS或SQL验证。
+
+标准启动链为本机进程设置 `spring.datasource.druid.max-wait=15000`，限制连接池借用等待；JDBC连接／读取超时继续来自私密配置。启动器看到本次日志的 `Started WebApplication` 后才发送Web／移动双探针，避免Tomcat已监听而Spring仍初始化时不断堆积请求；最终仍要求两个探针及受管PID一致。公共ERROR同步进入受限启动日志，数据库错误也可在打印的日志路径查到。
+
+标准启动链显式设置 `excel.export.consumer.enabled=false`，防止本机公共消费者读取共享导出队列及失败高速重试；不改公共SYS源码，也不禁用售后独立下载中心。原公共消费者的永久退避／停止整改仍待单独处理。
+
+### 文件、轮转与容量
+
+本地启动通过 `--logging.config` 选择本仓库 `scripts/local-backend-logback.xml`，并纳入源码指纹。共享宿主和售后模块原Logback默认值保持；不能把本机生效记为测试／Demo已更新。
+
+| 文件 | 本地规则 | 说明 |
+| --- | --- | --- |
+| `shared-backend-<PID>.log` | 16 MiB；满后保留最新8 MiB继续写；启动时保留最近5份已结束进程日志 | 收集构建、生命周期及错误输出；仍存活PID的文件不按数量删除 |
+| `shared-redis.log` | 16 MiB；同一有界收集器持续裁切 | 专用16379 Redis；复用旧Redis时不强制重启，旧进程仍用原输出方式 |
+| `shared-backend-bootstrap.log`／`shared-redis-bootstrap.log` | 每次拉起对应服务时覆盖 | 收集命名管道／收集器启动异常 |
+| `gaia_saas/all.log`／`error.log`／`after-sales.log` | 每路10 MB分卷、保留7天、归档各128 MB | 每日和大小轮转并gzip；启动时清理过期归档；售后日志不进入公共all／error |
+| `console.log` | 10 MB分卷、7天、归档32 MB | 启动／生命周期摘要，与完整业务日志分开 |
+
+Logback归档预算合计416 MB，当前文件和原始输出另计，常规单实例总体预算约0.6 GiB。`totalSizeCap`按各路归档计算并异步清理，不是整目录实时硬上限；异常高频日志仍须修复重试源头。清理前先保留故障结论及必要关键摘录，不留重复堆栈全集。
+
+### 清理命令与保留边界
+
+在文档仓库运行，默认仅预览；macOS/Linux依赖Python3.10+和 `lsof`，需具备读取本机进程文件的权限：
+
+```bash
+yarn clean:local
+# 或：python3 scripts/cleanup-local-artifacts.py
+python3 scripts/cleanup-local-artifacts.py --apply
+```
+
+1. 自动候选仅包括宿主 `.local/logs` 下已知格式且日期和修改时间均超过7天的归档、遗留压缩临时文件及废弃 `shared-backend.log`；不删除当前 `all.log` 等活跃文件。PID日志数量保留由收集器负责。
+2. 本机 `verification-artifacts/deploy-test` 仅清理状态为 `COMPLETE`、发布时间超过7天且不属于最近3次成功发布的 `gaia-saas-web.war`、`root-dist.tar.gz`、`root-dist.tar` 副本。保留发布目录、状态、manifest、摘要和验证记录；缺状态、失败、回退、`STARTING`等不自动判定已完成。
+3. 其他已完成任务由执行者先依据已确认Spec／执行记录审核，再用私密JSON清单明确列出可重建的 `node_modules`、`target`、`dist`、`.vite` 或冷安装缓存。清单字段为 `version: 1`、`items: [{path, reason, evidence}]`，路径相对本仓库 `.local/verification-artifacts`，以 `--manifest <本机清单>` 传入；不能按目录日期批量删除整份任务。
+4. 脚本检查实际打开的文件和工作目录，使用中条目跳过；进程读取失败则拒绝清理。拒绝根外路径、上级穿越及路径祖先符号链接；缓存内部链接只删除链接本身，不跟随删除目标。并发清理由私密锁拒绝；异常退出遗留锁时先核对其中PID确已退出再移除，不盲删活锁。
+5. `.local/backups`、宿主 `.local/config-backups`、原凭据、数据库转储、源码快照、测试基准及产品资源不在自动清理范围。必要回退点未解除前保留；服务器备份不因删除本机重复制品而删除。旧状态不明批次需先核对完成／恢复证据。
+6. 建议每周或大型验证／发布收尾时先预览，再在已授权范围执行；没有安装定时自动删除任务。可用 `--report .local/verification-artifacts/<任务>/cleanup.json` 保存本机明细，正式文档只记录范围、回收量、保留项和验证结论。
+
+规则与测试入口：`node --test scripts/local-backend.test.mjs scripts/bounded-backend-log.test.mjs scripts/local-backend-preflight.test.mjs scripts/stop-local-services.test.mjs`、`python3 scripts/cleanup-local-artifacts_test.py`。已有宿主打包后可运行 `python3 scripts/test-local-backend-logback.py`，使用产物中的依赖验证真实Logback分流、分卷和启动过期清理；临时产物自动清除。
+
+### 本次清理与恢复记录
+
+2026-10-23用户授权清理本地历史日志和已完成任务无用验证产物，保留必要备份并重启验证。清理前宿主日志约1.67 GiB，主要为9月23日导出消费者在数据源关闭后重复异常；文档验证目录约8.9 GiB，主要为部署制品、冷安装缓存及隔离快照。实际移除2772个历史日志、25份较早成功发布的重复制品，以及4处已完成冷安装验证的缓存／构建目录，按文件逻辑大小合计6,347,330,899字节（约5.91 GiB），`du`实占合计下降约6.19 GiB。后端日志降至约8.6 MiB，文档验证目录约8.90→4.38 GiB。339个必要备份文件逐一SHA-256比对保持，最近3次成功发布的完整制品／状态／manifest均存在；源码快照、状态不明批次及服务器备份保留。执行后同清单再次预览候选为0。
+
+通过标准 `node scripts/local-backend.mjs` 补齐专用Redis并重新装配启动后端，实际PID `88105`、运行包 `gaia-web-20261023194514-88105.jar`。北京时间19:47:01输出 `Started WebApplication in 106.917 seconds`；启动器随后确认双探针及PID一致并保持运行。独立回读Web探针HTTP200／业务4001未登录，移动探针HTTP200／业务4001“登录状态已失效”，Redis16379为PONG。实际JVM参数包含本地Logback、15秒连接借用等待与关闭公共导出消费者；线程快照中的数据库连接等待和公共Excel导出消费者均为0，原先启动请求堆积已消除。
+
+启动／日志／握手／停止回归25项及清理保护5项通过，真实Spring/Logback配置测试覆盖三路10 MB分卷、启动过期归档清理和售后追踪分流；知识校验271份通过。启动链中的Maven构建跳过业务测试，双探针不等同业务验收；本次不修改业务表、不发布共享环境，未提交或推送。清理明细、备份摘要和最小运行回读仅留本机忽略目录，团队依据本节文字结论理解结果。

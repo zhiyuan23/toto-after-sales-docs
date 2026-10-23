@@ -35,8 +35,6 @@ const servicesStopLock = resolve(runtimeRoot, 'shared-services-stop.lock')
 const backendBootstrapLog = resolve(logRoot, 'shared-backend-bootstrap.log')
 const backendLogForPid = pid => resolve(logRoot, `shared-backend-${pid}.log`)
 const backendStateFile = resolve(runtimeRoot, 'shared-backend-state.json')
-const redisLog = resolve(logRoot, 'shared-redis.log')
-const redisPidFile = resolve(runtimeRoot, 'shared-redis.pid')
 const wait = milliseconds => new Promise(resolveWait => setTimeout(resolveWait, milliseconds))
 const ignoredSourceDirectories = new Set(['.git', '.local', 'node_modules', 'target'])
 const abandonedRuntimeAgeMs = 20 * 60 * 1000
@@ -89,6 +87,9 @@ function backendSourceSnapshot() {
   })))
   entries.push({ key: 'docs/toto/scripts/start-local-backend.sh', path: backendScript })
   entries.push({ key: 'docs/toto/scripts/bounded-backend-log.mjs', path: boundedBackendLogScript })
+  for (const name of ['local-backend-logback.xml', 'local-backend-preflight.mjs']) {
+    entries.push({ key: `docs/toto/scripts/${name}`, path: resolve(scriptDirectory, name) })
+  }
   return fingerprintBackendFiles(entries)
 }
 
@@ -432,14 +433,11 @@ async function ensureRedis() {
     return
   }
   if (await portIsOpen(LOCAL_REDIS_PORT)) throw new Error(`端口 ${LOCAL_REDIS_PORT} 已被非 Redis 服务占用`)
-  await spawnDetached('redis-server', [
-    '--bind', '127.0.0.1',
-    '--port', String(LOCAL_REDIS_PORT),
-    '--protected-mode', 'yes',
-    '--save', '',
-    '--appendonly', 'no',
-    '--pidfile', redisPidFile,
-  ], { cwd: workspaceRoot, logFile: redisLog })
+  await spawnDetached('bash', [resolve(scriptDirectory, 'start-local-redis.sh')], {
+    cwd: workspaceRoot,
+    logFile: resolve(logRoot, 'shared-redis-bootstrap.log'),
+    truncateLog: true,
+  })
   await waitUntil(redisIsReady, 10000, 'Redis ')
   console.log(`[redis] 已启动 127.0.0.1:${LOCAL_REDIS_PORT}`)
 }
@@ -450,7 +448,7 @@ function probeFailureMessage(probes) {
   return `Web 探针=${web}；移动端探针=${mobile}`
 }
 
-export function backendStartupFailure(logFile) {
+function backendLogTail(logFile) {
   if (!existsSync(logFile)) return ''
   const descriptor = openSync(logFile, 'r')
   try {
@@ -458,12 +456,21 @@ export function backendStartupFailure(logFile) {
     const tail = Buffer.alloc(Math.min(size, 64 * 1024))
     const length = readSync(descriptor, tail, 0, tail.length, size - tail.length)
     const output = tail.subarray(0, length).toString('utf8').replace(/\x1b\[[0-9;]*m/g, '')
-    const marker = /APPLICATION FAILED TO START|Application run failed/.exec(output)
-    return marker ? output.slice(marker.index, marker.index + 2000).trim() : ''
+    return output
   }
   finally {
     closeSync(descriptor)
   }
+}
+
+export function backendStartupFailure(logFile) {
+  const output = backendLogTail(logFile)
+  const marker = /APPLICATION FAILED TO START|Application run failed/.exec(output)
+  return marker ? output.slice(marker.index, marker.index + 2000).trim() : ''
+}
+
+export function backendApplicationStarted(logFile) {
+  return /Started WebApplication\b/.test(backendLogTail(logFile))
 }
 
 async function waitForBackend(startPid) {
@@ -471,6 +478,10 @@ async function waitForBackend(startPid) {
     assertServicesNotStopping()
     const failure = backendStartupFailure(backendLogForPid(startPid))
     if (failure) throw new Error(`Gaia 统一后端已启动失败（PID ${startPid}）：\n${failure}`)
+    if (!processIsAlive(startPid)) throw new Error(`Gaia 统一后端启动进程 PID ${startPid} 已提前退出`)
+    // Tomcat can accept requests before schema/sequence initialization finishes.
+    // Do not accumulate timed-out readiness requests waiting for DB connections.
+    if (!backendApplicationStarted(backendLogForPid(startPid))) return false
     const probes = await probeUnifiedBackend()
     if (isUnifiedBackendReady(probes)) return probes
     if (!processIsAlive(startPid))

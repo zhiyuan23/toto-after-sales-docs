@@ -76,7 +76,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (!path) throw new Error('expected log path')
   const writer = createBoundedLogWriter(path)
   try {
-    pruneFinishedBackendLogs(path)
+    if (/^shared-backend-\d+\.log$/.test(basename(path))) pruneFinishedBackendLogs(path)
     const chunk = Buffer.allocUnsafe(64 * 1024)
     for (;;) {
       const length = readSync(0, chunk, 0, chunk.length, null)

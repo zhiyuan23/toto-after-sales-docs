@@ -7,6 +7,7 @@ import {
   abandonedManagedRuntime,
   backendRuntimeIsFresh,
   backendStartupFailure,
+  backendApplicationStarted,
   fingerprintBackendFiles,
   isMobileProbeReady,
   isUnifiedBackendReady,
@@ -24,6 +25,9 @@ test('detects a failed Spring context even while the JVM remains alive', () => {
     assert.equal(backendStartupFailure(logFile), '')
     writeFileSync(logFile, 'BUILD SUCCESS\nTomcat initialized with port 8080\n')
     assert.equal(backendStartupFailure(logFile), '')
+    assert.equal(backendApplicationStarted(logFile), false)
+    writeFileSync(logFile, 'Tomcat started on port 8080\nStarted WebApplication in 120 seconds\n')
+    assert.equal(backendApplicationStarted(logFile), true)
     writeFileSync(logFile, `${'build output\n'.repeat(10000)}\u001b[31mAPPLICATION FAILED TO START\u001b[0m\nDescription:\nThe bean reportMapper could not be injected\n`)
     assert.match(backendStartupFailure(logFile), /^APPLICATION FAILED TO START/)
     assert.match(backendStartupFailure(logFile), /reportMapper could not be injected/)

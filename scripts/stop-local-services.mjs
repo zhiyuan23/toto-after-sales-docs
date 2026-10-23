@@ -27,6 +27,7 @@ export function localServiceKind(info, workspaceRoot, redisPid) {
   if (executable === 'redis-server' && info.pid === redisPid && info.cwd === workspaceRoot
     && /^\S*redis-server\s+127\.0\.0\.1:16379(?:\s|$)/.test(info.command)) return 'redis'
   if (executable === 'bash' && runsScript(info, resolve(docs, 'scripts/start-local-backend.sh'))) return 'backend'
+  if (executable === 'bash' && runsScript(info, resolve(docs, 'scripts/start-local-redis.sh'))) return 'redis'
   if (executable !== 'node') return ''
   if (runsScript(info, resolve(docs, 'scripts/local-backend.mjs'))) return 'launcher'
   if (runsScript(info, resolve(docs, 'scripts/bounded-backend-log.mjs'))

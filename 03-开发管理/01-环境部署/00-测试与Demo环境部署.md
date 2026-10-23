@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-23 用户授权清理本机历史日志和已完成验证产物；明确本机制品副本与服务端必要备份的保留边界。"
   - "2026-10-23 用户要求将服务人员微信多账号迁移纳入后续Demo后端部署，避免遗漏；当前不更新Demo。"
   - "部署记录/测试环境发布记录.md#personnel-wechat-release-20261023"
   - "2026-10-23 用户提供Jenkins缺私密凭证导致Knip失败的日志，确认构建时静态复用同仓主系统高德配置；不改Jenkins或主系统。"
@@ -148,7 +149,7 @@ node scripts/deploy-test.mjs --status "$TOTO_RELEASE_ID"
 - 远端保护五份内嵌运行配置、外部售后配置、`WW_verify_*.txt`及`.well-known`；备份并核对原WAR、展开API及ROOT，精确停止目标Tomcat、切换、启动及验证。不要运行`gaia-ui/push.sh`的上传步骤，其既有目标不属于这两套环境。
 - 静态资源过渡：暂存新ROOT时，从当前ROOT的`assets/`和`after-sales/assets/`保留带内容哈希或13位以上构建时间戳的旧资源，补齐旧页面后续加载所需的JS／CSS等文件；新入口及同名新资源保持。相同哈希URL出现内容冲突、符号链接或越界路径时，在停服前拒绝发布。暂不自动清理已保留的旧资源。manifest分别记录新资源与`retainedAssets`，服务器及开发机HTTP摘要校验覆盖完整资源目录（含未被入口预加载的懒加载分块）及旧资源。该逻辑于2026-10-22故障后修复，见[旧分块404恢复](部署记录/测试环境发布记录.md#asset-recovery-20261022)。
 - 入口缓存与换版：ROOT自带`WEB-INF/web.xml`使用Tomcat内置`ExpiresFilter`，仅对`text/html`设置`max-age=0`；已有不同ROOT描述符时停服前拒绝覆盖。主站`/`、`/index.html`及子站`/after-sales/`、`/after-sales/index.html`均必须回读入口摘要及重新校验响应头；哈希／时间戳资源保留原缓存策略。主站售后容器把本次主站模块入口文件名作为`hostBuild`查询参数，主站换版时改变iframe文档URL，同版本内导航保持稳定。真实主站复验必须核对iframe地址／实际脚本版本、滚动高度及外观传递，首页200不能代替。实现与证据见[入口缓存与换版修复](部署记录/测试环境发布记录.md#entry-cache-release-20261022)。
-- 本机证据：`.local/verification-artifacts/deploy-test/<编号>/`；服务端制品与状态：`/yundata/saas_test/packages/<编号>/`；备份：`/yundata/saas_test/backups/<编号>/`。本机及服务端都有发布锁，不自动清理旧备份。
+- 本机证据：`.local/verification-artifacts/deploy-test/<编号>/`；服务端制品与状态：`/yundata/saas_test/packages/<编号>/`；备份：`/yundata/saas_test/backups/<编号>/`。本机及服务端都有发布锁，不自动清理旧备份。 本机已成功发布且过期的重复WAR／静态包可按[本地清理规则](../../local-development.md#local-log-retention)清理，保留最近3次成功发布完整制品及各批次状态／manifest／回读结论；本地规则不删除服务端packages／backups，也不自动解除数据库或配置备份。
 - `FAILED`表示切换前失败；`ROLLED_BACK`表示切换后已恢复旧应用并恢复健康；`NEEDS_ATTENTION`表示停止／恢复／健康尚未可靠完成，需按同编号核查。服务端事务脱离SSH运行，断线先`--status`，不要重新发布。
 - `COMPLETE`只表示服务端Web／后端校验通过。脚本随后在开发机回读入口资源摘要、公开业务码及匿名拒绝，再逐端上传小程序；本地HTTP验证或单端上传失败必须分别报告，不回退已成功的Web，也不自动重传回执不明的小程序。
 - **2026-10-22起，小程序上传辅助入口固定连接demo HTTPS及API租户`demo`，Web／后端仍发布到`10.1.1.53`。** 这是当前实际配置，不能再描述为小程序连接本次测试站。完整测试更新授权仍包括两次开发版上传；用户明确不上传时使用`--web-only`。

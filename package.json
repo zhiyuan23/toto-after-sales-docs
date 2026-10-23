@@ -9,6 +9,7 @@
     "dev:afs": "yarn --cwd ../../frontend/gaia-ui dev:afs",
     "stop:afs": "node scripts/stop-local-services.mjs",
     "test:stop-afs": "node --test scripts/stop-local-services.test.mjs",
-    "test:local-backend": "node --test scripts/local-backend.test.mjs"
+    "test:local-backend": "node --test scripts/local-backend.test.mjs scripts/bounded-backend-log.test.mjs scripts/local-backend-preflight.test.mjs",
+    "clean:local": "python3 scripts/cleanup-local-artifacts.py"
   }
 }
