@@ -35,7 +35,7 @@ mvn -B -f "$workspace_root/backend/gaia-sys/pom.xml" \
     -pl gaia-sys-api,gaia-sys-integrate-api,gaia-sys-open-api,gaia-log-api,gaia-sys-tools-api,gaia-sys-xcx-api \
     -am clean install -DskipTests
 # Remove renamed classes and XML resources instead of packaging stale bean names.
-mvn -B -f "$workspace_root/backend/gaia-after-sales/pom.xml" -pl gaia-after-sales-api -am clean install -DskipTests
+mvn -B -f "$workspace_root/backend/gaia-after-sales/pom.xml" -pl gaia-after-sales-api -am clean install -Drevision=3.0-SNAPSHOT -DskipTests
 mvn -B -f "$backend_root/pom.xml" -pl gaia-saas-web-jar -am package -DskipTests
 if lsof -nP -tiTCP:8080 -sTCP:LISTEN | grep -q .; then
     printf '%s\n' '构建期间 8080 已被监听，拒绝再启动一个后端 JVM。' >&2

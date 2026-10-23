@@ -224,7 +224,7 @@ async function execute(options) {
       return run(command, args, { cwd, env, log: join(release, label + '.log') })
     }
     for (const plan of mobilePlans) await build(plan.repo.split('/')[1] + '-check', 'pnpm', ['check'], plan.root, plan.toolchain.env)
-    await build('after-sales-build', 'mvn', ['-B', '-pl', 'gaia-after-sales-api', '-am', 'clean', 'install', '-DskipTests'], join(workspace, repositories[0]), javaEnv)
+    await build('after-sales-build', 'mvn', ['-B', '-pl', 'gaia-after-sales-api', '-am', 'clean', 'install', '-Drevision=3.0-SNAPSHOT', '-DskipTests'], join(workspace, repositories[0]), javaEnv)
     await build('host-build', 'mvn', ['-B', '-pl', 'gaia-saas-web', '-am', 'package', '-DskipTests'], join(workspace, repositories[1]), javaEnv)
     const web = join(workspace, repositories[2])
     const child = join(web, 'apps/after-sales')
