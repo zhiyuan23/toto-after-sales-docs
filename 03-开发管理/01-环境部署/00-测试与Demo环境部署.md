@@ -232,12 +232,14 @@ node scripts/verify-dist.mjs --directory "$TOTO_DEMO_CANDIDATE" --manifest "$TOT
 # 在本次售后dev/test源码根目录：先跑Reactor测试。
 mvn -B -pl gaia-after-sales-api -am clean verify -Drevision="$TOTO_DEMO_VERSION"
 # 上一步通过后发布同一批父POM/Core/API及既有sources配置。
-mvn -B -pl gaia-after-sales-api -am source:jar-no-fork deploy -Drevision="$TOTO_DEMO_VERSION" -DskipTests
+mvn -B -pl gaia-after-sales-api -am deploy -Drevision="$TOTO_DEMO_VERSION" -DskipTests
 # 用空本地仓库验证父POM及全部传递依赖，避免仅依赖本机缓存。
 mvn -B -U -Dmaven.repo.local="$TOTO_DEPLOY_EVIDENCE/maven-clean" dependency:get -Dartifact="com.ehsure.gaia:gaia-after-sales-api:$TOTO_DEMO_VERSION" -Dtransitive=true
 # 转到本次宿主dev/test源码根目录，用同一售后版本构建实际WAR。
 mvn -B -pl gaia-saas-web -am package -Dgaia.afterSales.version="$TOTO_DEMO_VERSION" -DskipTests
 ```
+
+当前售后 POM 已在 compile 阶段绑定 sources；发布仅执行 `deploy`，不要再额外调用 `source:jar-no-fork`，否则 maven-source-plugin 3.3.0 会因重复 sources 附件终止。若父 POM 已发布而 Core/API 在打包前失败，先核对远端实际内容，再从失败模块恢复，不能覆盖既有 F 制品。
 
 执行前先确认两个变量非空、F版本不存在、证据目录位于本次忽略的私密目录；变量仅为本轮输入，并非已有自动版本选择器。Maven仓库为既有`repo-ehsure`；优先使用POM的`distributionManagement`，只有地址确需覆盖时才按当前deploy插件语法使用参数。宿主打包跳过测试不代替本次Shiro／MVC／装配变更的必要测试。
 
