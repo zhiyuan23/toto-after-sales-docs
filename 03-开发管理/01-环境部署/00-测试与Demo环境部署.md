@@ -8,6 +8,7 @@ confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-23 用户提供Jenkins缺私密凭证导致Knip失败的日志，确认构建时静态复用同仓主系统高德配置；不改Jenkins或主系统。"
   - "2026-10-23 用户最终确认本地独立启动、测试和Demo统一采用与主系统相同的JSAPI直连；不修改主系统、后端或服务器配置。"
   - "2026-10-22 用户确认：Demo默认仅更新售后模块，非必要不动主站与common；补齐构建与资源检查，本次不提交、不部署。"
   - "2026-10-22 用户要求：Demo更新前先拉取核对gaia-ui与common对应分支的最新代码，保留他人修改，更新common引用后再打包部署；本次仅补充说明，不执行部署。"
@@ -105,7 +106,7 @@ sensitivity: "internal"
 
 ### 售后Web高德直连构建输入（2026-10-23）
 
-本地独立启动、测试和Demo的新售后Web统一采用JSAPI直连。构建前成对提供 `VITE_AMAP_DIRECT_JS_KEY`／`VITE_AMAP_DIRECT_SECURITY_CODE` 私密进程环境，或在当前售后检出的 `.local/amap-direct.json` 提供同名JSON字段（macOS／Linux权限600）。本机忽略文件不随Git或新工作树传播；CI／干净Demo检出必须独立准备，不从主系统源码自动兜底。无输入、单项缺失、文件错误或权限过宽均拒绝启动／构建；真实值不写命令参数、普通日志或Git。安全密钥会进入浏览器制品，属于用户已确认的直连方案，不再要求新增地图根转发或重启共享Tomcat。测试脚本保留 `mapRootReady` 诊断，但不再以它阻断新Web发布；AI／Web服务后端凭证和加密主密钥门禁保留。完整契约及验证见[统一直连](../../specs/05-平台集成与公共能力/2026-10-13-外部服务配置与密钥集中管理.md#unified-direct-amap-20261023)。本段不表示测试／Demo已更新，也不放宽下文源码同步及发布门禁。
+本地独立启动、测试和Demo的新售后Web统一采用JSAPI直连。构建前成对提供 `VITE_AMAP_DIRECT_JS_KEY`／`VITE_AMAP_DIRECT_SECURITY_CODE` 私密进程环境，或在当前售后检出的 `.local/amap-direct.json` 提供同名JSON字段（macOS／Linux权限600）。本机忽略文件不随Git或新工作树传播。按用户2026-10-23后继确认，缺少显式输入及私密文件的Jenkins／干净Demo检出，在真正Vite启动／构建阶段静态解析同仓主系统 `src/main.ts` 既有JSAPI初始化中的唯一配对字面量，不需新增Jenkins配置、不执行主系统代码。静态检查只注册插件，不依赖凭证。显式输入单项缺失、已有文件错误或权限过宽均拒绝，主系统也无有效静态配对配置时真正启动／构建失败；真实值不写命令参数、普通日志或Git。安全密钥会进入浏览器制品，属于用户已确认的直连方案，不再要求新增地图根转发或重启共享Tomcat。测试脚本保留 `mapRootReady` 诊断，但不再以它阻断新Web发布；AI／Web服务后端凭证和加密主密钥门禁保留。完整契约及验证见[统一直连](../../specs/05-平台集成与公共能力/2026-10-13-外部服务配置与密钥集中管理.md#unified-direct-amap-20261023)。本段不表示测试／Demo已更新，也不放宽下文源码同步及发布门禁。
 
 ## 共用执行规则
 
