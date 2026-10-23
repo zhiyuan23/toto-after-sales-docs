@@ -266,7 +266,8 @@ def package(war, web, release, api, core):
                 require(source in ('SERVER', 'DATABASE'), 'External credential source must be explicitly valid; no application changes performed')
                 if source == 'SERVER':
                     require(manifest['remote'].get('externalServerCredentialsReady') is True, 'Server-managed AI and AMap credentials must be provisioned in private target configuration before publishing')
-                require(manifest['remote'].get('mapRootReady') is True, 'AMap JS requires the authenticated root proxy route; provision the Tomcat Host rewrite before publishing')
+                # The after-sales JSAPI now connects directly in local/test/demo builds.
+                # mapRootReady remains diagnostic for old deployments, not a release prerequisite.
     cache_policy = install_entry_cache_policy(web)
     with tarfile.open(release / 'root-dist.tar.gz', 'w:gz') as tar:
         tar.add(web, arcname='.', filter=lambda info: None if info.issym() or info.islnk() else info)

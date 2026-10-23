@@ -83,11 +83,11 @@ class DeploymentTest(unittest.TestCase):
         self.assertEqual(deploy.external_credential_status('gaia.after-sales.external-services.credential-source=DATABASE')['externalCredentialSource'], 'DATABASE')
         self.assertEqual(deploy.external_credential_status('gaia.after-sales.external-services.credential-source=')['externalCredentialSource'], '')
 
-    def test_external_package_rejects_missing_server_credentials_and_invalid_source(self):
+    def test_direct_map_package_keeps_credential_guards_without_requiring_root_proxy(self):
         import base64
         self.external.write_text('gaia.after-sales.external-services.encryption-key=' + base64.b64encode(bytes(32)).decode())
         original = deploy.probe(self.base)
-        original['mapRootReady'] = True
+        original['mapRootReady'] = False
         deploy.save(self.release / 'manifest.json', {'remote': original})
         core = self.base / 'core.jar'
         with zipfile.ZipFile(core, 'w') as domain:

@@ -2,12 +2,13 @@
 type: "llm-wiki-operation"
 topic: "TOTO售后服务"
 status: "active"
-updated: "2026-10-22"
+updated: "2026-10-23"
 owner: "shared"
 confidence: "medium"
 belongs_to:
   - "kb:project:toto-after-sales-docs"
 sources:
+  - "2026-10-23 用户最终确认本地独立启动、测试和Demo统一采用与主系统相同的JSAPI直连；不修改主系统、后端或服务器配置。"
   - "2026-10-22 用户确认：Demo默认仅更新售后模块，非必要不动主站与common；补齐构建与资源检查，本次不提交、不部署。"
   - "2026-10-22 用户要求：Demo更新前先拉取核对gaia-ui与common对应分支的最新代码，保留他人修改，更新common引用后再打包部署；本次仅补充说明，不执行部署。"
   - "部署记录/测试环境发布记录.md#asset-recovery-20261022"
@@ -101,6 +102,10 @@ sensitivity: "internal"
 - demo先复用当前机器已有、经核验的SSH密钥／SSH agent与known_hosts。如使用口令，本工作区统一存入忽略文件 `.local/demo-server.env`（0600）；只供AI的安全连接工具读取，当前没有自动读取该文件的demo部署脚本。可记录`TOTO_DEMO_SSH_HOST=10.1.1.56`、`TOTO_DEMO_SSH_USER=ehsure`、`TOTO_DEMO_SSH_PORT=22`及私密认证项，不在文档填写实值。首次可信指纹须从已授权可靠渠道取得，不能自动信任`ssh-keyscan`结果。源Windows私密目录不是其他机器天然可用的凭据来源；现有密钥和私密文件均不可用时，只询问缺失的认证方式。
 - 不把环境文件当shell脚本`source`，不把口令或密钥正文放在命令参数、终端、日志、Git或客户端配置中。Maven认证使用机器既有私密settings中的`repo-ehsure`服务项；原生Windows与本机工具链按实际仓库说明选择。
 - 两端微信私钥仍分别通过各仓忽略的`.env.upload.local`指向仓库外文件，本机集中在本仓`.local/wechat-ci/`；目录0700、私钥0600。只校验可读性及AppID对应关系，不打印正文。
+
+### 售后Web高德直连构建输入（2026-10-23）
+
+本地独立启动、测试和Demo的新售后Web统一采用JSAPI直连。构建前成对提供 `VITE_AMAP_DIRECT_JS_KEY`／`VITE_AMAP_DIRECT_SECURITY_CODE` 私密进程环境，或在当前售后检出的 `.local/amap-direct.json` 提供同名JSON字段（macOS／Linux权限600）。本机忽略文件不随Git或新工作树传播；CI／干净Demo检出必须独立准备，不从主系统源码自动兜底。无输入、单项缺失、文件错误或权限过宽均拒绝启动／构建；真实值不写命令参数、普通日志或Git。安全密钥会进入浏览器制品，属于用户已确认的直连方案，不再要求新增地图根转发或重启共享Tomcat。测试脚本保留 `mapRootReady` 诊断，但不再以它阻断新Web发布；AI／Web服务后端凭证和加密主密钥门禁保留。完整契约及验证见[统一直连](../../specs/05-平台集成与公共能力/2026-10-13-外部服务配置与密钥集中管理.md#unified-direct-amap-20261023)。本段不表示测试／Demo已更新，也不放宽下文源码同步及发布门禁。
 
 ## 共用执行规则
 
